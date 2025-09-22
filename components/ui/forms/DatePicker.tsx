@@ -1,5 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { GlassContainer } from '@/components/glass';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -19,6 +20,7 @@ export default function DatePicker({
   error,
 }: DatePickerProps) {
   const colorScheme = useColorScheme();
+  const [showPicker, setShowPicker] = useState(false);
 
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -30,11 +32,14 @@ export default function DatePicker({
   };
 
   const handleDatePress = () => {
-    // TODO: Implement native date picker
-    // For now, just increment by one day for demo
-    const newDate = new Date(value);
-    newDate.setDate(newDate.getDate() + 1);
-    onChange(newDate);
+    setShowPicker(true);
+  };
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    setShowPicker(Platform.OS === 'ios');
+    if (selectedDate) {
+      onChange(selectedDate);
+    }
   };
 
   return (
@@ -56,6 +61,16 @@ export default function DatePicker({
 
       {error && (
         <Text style={styles.error}>{error}</Text>
+      )}
+
+      {showPicker && (
+        <DateTimePicker
+          value={value}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+          themeVariant={colorScheme}
+        />
       )}
     </View>
   );

@@ -12,7 +12,17 @@ export class LocalDatabase {
   static async getVacations(): Promise<Vacation[]> {
     try {
       const data = await AsyncStorage.getItem(STORAGE_KEYS.VACATIONS);
-      return data ? JSON.parse(data) : [];
+      if (!data) return [];
+
+      const vacations = JSON.parse(data);
+      // Convert date strings back to Date objects
+      return vacations.map((vacation: any) => ({
+        ...vacation,
+        startDate: new Date(vacation.startDate),
+        endDate: new Date(vacation.endDate),
+        createdAt: new Date(vacation.createdAt),
+        updatedAt: new Date(vacation.updatedAt),
+      }));
     } catch (error) {
       console.error('Error loading vacations:', error);
       return [];
@@ -52,8 +62,17 @@ export class LocalDatabase {
   static async getExpenses(vacationId?: string): Promise<Expense[]> {
     try {
       const data = await AsyncStorage.getItem(STORAGE_KEYS.EXPENSES);
-      const expenses = data ? JSON.parse(data) : [];
-      return vacationId ? expenses.filter((e: Expense) => e.vacationId === vacationId) : expenses;
+      if (!data) return [];
+
+      const expenses = JSON.parse(data);
+      // Convert date strings back to Date objects
+      const expensesWithDates = expenses.map((expense: any) => ({
+        ...expense,
+        date: new Date(expense.date),
+        createdAt: new Date(expense.createdAt),
+      }));
+
+      return vacationId ? expensesWithDates.filter((e: Expense) => e.vacationId === vacationId) : expensesWithDates;
     } catch (error) {
       console.error('Error loading expenses:', error);
       return [];
