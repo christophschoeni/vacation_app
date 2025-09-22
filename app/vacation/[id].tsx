@@ -38,7 +38,7 @@ export default function VacationDetailScreen() {
   }
 
   const handleAddExpense = () => {
-    router.push('/expense/add');
+    router.push(`/expense/add?vacationId=${vacationId}`);
   };
 
   const handleExpensePress = (expenseId: string) => {

@@ -7,9 +7,10 @@ import type { Vacation } from '@/types';
 interface VacationCardProps {
   vacation: Vacation;
   onPress: (id: string) => void;
+  onLongPress?: (id: string) => void;
 }
 
-export default function VacationCard({ vacation, onPress }: VacationCardProps) {
+export default function VacationCard({ vacation, onPress, onLongPress }: VacationCardProps) {
   const colorScheme = useColorScheme();
 
   const formatDateRange = (startDate: Date, endDate: Date) => {
@@ -23,6 +24,7 @@ export default function VacationCard({ vacation, onPress }: VacationCardProps) {
   return (
     <GlassCard
       onPress={() => onPress(vacation.id)}
+      onLongPress={onLongPress ? () => onLongPress(vacation.id) : undefined}
       style={styles.card}
       intensity="medium"
     >
