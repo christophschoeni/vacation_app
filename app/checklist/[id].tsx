@@ -14,7 +14,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { GlassButton, GlassContainer } from '@/components/glass';
+import { Button, Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface ChecklistItem {
@@ -146,7 +146,7 @@ export default function ChecklistDetailScreen() {
         }
         style={styles.header}
       >
-        <GlassContainer intensity="light" style={styles.headerContent}>
+        <Card style={styles.headerContent}>
           <View style={styles.headerTop}>
             <TouchableOpacity onPress={() => router.back()}>
               <Text style={[styles.backButton, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>
@@ -176,7 +176,7 @@ export default function ChecklistDetailScreen() {
               {progressPercent}%
             </Text>
           </View>
-        </GlassContainer>
+        </Card>
       </LinearGradient>
 
       <ScrollView
@@ -191,7 +191,7 @@ export default function ChecklistDetailScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        <GlassContainer intensity="light" style={styles.itemsCard}>
+        <Card style={styles.itemsCard}>
           <View style={styles.addItemContainer}>
             <TextInput
               style={[styles.addItemInput, {
@@ -205,7 +205,7 @@ export default function ChecklistDetailScreen() {
               onSubmitEditing={addNewItem}
               returnKeyType="done"
             />
-            <GlassButton
+            <Button
               title="+"
               onPress={addNewItem}
               size="small"
@@ -216,7 +216,7 @@ export default function ChecklistDetailScreen() {
           <View style={styles.itemsList}>
             {items.map(renderChecklistItem)}
           </View>
-        </GlassContainer>
+        </Card>
       </ScrollView>
     </SafeAreaView>
   );

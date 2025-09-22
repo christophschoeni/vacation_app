@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { GlassCard } from '@/components/glass';
+import { Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Expense, ExpenseCategory } from '@/types';
 
@@ -62,7 +62,7 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
       onLongPress={handleLongPress}
       activeOpacity={0.7}
     >
-      <GlassCard intensity="light" style={styles.card}>
+      <Card style={styles.card}>
         <View style={styles.cardHeader}>
           <View style={styles.categoryContainer}>
             <Text style={styles.categoryIcon}>
@@ -86,7 +86,7 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
             </Text>
           </View>
         </View>
-      </GlassCard>
+      </Card>
     </TouchableOpacity>
   );
 }

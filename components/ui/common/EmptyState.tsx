@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
-import { GlassContainer, GlassButton } from '@/components/glass';
+import { Card, Button } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface EmptyStateProps {
@@ -21,7 +21,7 @@ export default function EmptyState({
   const colorScheme = useColorScheme();
 
   return (
-    <GlassContainer intensity="light" style={styles.container}>
+    <Card style={styles.container}>
       <Text style={styles.icon}>{icon}</Text>
       <Text style={[styles.title, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
         {title}
@@ -29,13 +29,13 @@ export default function EmptyState({
       <Text style={[styles.subtitle, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
         {subtitle}
       </Text>
-      <GlassButton
+      <Button
         title={buttonTitle}
-        icon="+"
+        icon="plus"
         onPress={onButtonPress}
         style={styles.button}
       />
-    </GlassContainer>
+    </Card>
   );
 }
 

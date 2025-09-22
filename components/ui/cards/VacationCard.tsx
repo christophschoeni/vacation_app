@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { GlassCard } from '@/components/glass';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Vacation } from '@/types';
 
@@ -22,12 +22,12 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
   };
 
   return (
-    <GlassCard
+    <TouchableOpacity
       onPress={() => onPress(vacation.id)}
       onLongPress={onLongPress ? () => onLongPress(vacation.id) : undefined}
-      style={styles.card}
-      intensity="medium"
+      activeOpacity={0.8}
     >
+      <Card style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={styles.destinationContainer}>
           <Text style={[styles.destination, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
@@ -50,7 +50,8 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
           </Text>
         </View>
       </View>
-    </GlassCard>
+      </Card>
+    </TouchableOpacity>
   );
 }
 

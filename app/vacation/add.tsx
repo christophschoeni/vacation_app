@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AppHeader from '@/components/ui/layout/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
-import { GlassContainer } from '@/components/glass';
+import { Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/lib/database';
 import { Vacation } from '@/types';
@@ -52,19 +52,14 @@ export default function AddVacationScreen() {
       };
 
       await saveVacation(vacation);
-
-      Alert.alert(
-        'Erfolg',
-        'Ferien erfolgreich erstellt!',
-        [{ text: 'OK', onPress: () => router.push('/(tabs)') }]
-      );
-    } catch (error) {
+      router.back();
+    } catch {
       Alert.alert('Fehler', 'Ferien konnten nicht gespeichert werden.');
     }
   };
 
   const handleCancel = () => {
-    router.push('/(tabs)');
+    router.back();
   };
 
   const updateField = (field: string, value: string | Date) => {
@@ -96,7 +91,7 @@ export default function AddVacationScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <GlassContainer intensity="light" style={styles.formCard}>
+          <Card style={styles.formCard}>
             <FormInput
               label="Reiseziel"
               value={formData.destination}
@@ -147,7 +142,7 @@ export default function AddVacationScreen() {
               onChangeText={(value) => updateField('currency', value)}
               placeholder="CHF"
             />
-          </GlassContainer>
+          </Card>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

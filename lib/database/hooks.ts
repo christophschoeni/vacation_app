@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { LocalDatabase } from './storage';
 import { Vacation, Expense, Checklist } from '@/types';
+import { useOperationErrorHandler } from '@/hooks/useErrorHandler';
 
 // Custom hook for vacations
 export function useVacations() {
   const [vacations, setVacations] = useState<Vacation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { handleLoadError, handleSaveError, handleDeleteError } = useOperationErrorHandler();
 
   const loadVacations = useCallback(async () => {
     try {
@@ -15,31 +17,37 @@ export function useVacations() {
       const data = await LocalDatabase.getVacations();
       setVacations(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load vacations');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load vacations';
+      setError(errorMessage);
+      await handleLoadError(err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [handleLoadError]);
 
   const saveVacation = useCallback(async (vacation: Vacation) => {
     try {
       await LocalDatabase.saveVacation(vacation);
       await loadVacations(); // Refresh data
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save vacation');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save vacation';
+      setError(errorMessage);
+      await handleSaveError(err);
       throw err;
     }
-  }, [loadVacations]);
+  }, [loadVacations, handleSaveError]);
 
   const deleteVacation = useCallback(async (id: string) => {
     try {
       await LocalDatabase.deleteVacation(id);
       await loadVacations(); // Refresh data
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete vacation');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete vacation';
+      setError(errorMessage);
+      await handleDeleteError(err);
       throw err;
     }
-  }, [loadVacations]);
+  }, [loadVacations, handleDeleteError]);
 
   useEffect(() => {
     loadVacations();

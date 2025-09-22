@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { GlassCard } from '@/components/glass';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Checklist } from '@/types';
 
@@ -17,11 +17,11 @@ export default function ChecklistCard({ checklist, onPress }: ChecklistCardProps
   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   return (
-    <GlassCard
+    <TouchableOpacity
       onPress={() => onPress(checklist.id)}
-      style={styles.card}
-      intensity="light"
+      activeOpacity={0.8}
     >
+      <Card style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={styles.titleContainer}>
           <Text style={[styles.title, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
@@ -49,7 +49,8 @@ export default function ChecklistCard({ checklist, onPress }: ChecklistCardProps
           />
         </View>
       </View>
-    </GlassCard>
+      </Card>
+    </TouchableOpacity>
   );
 }
 

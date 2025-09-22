@@ -11,17 +11,20 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import AppHeader from '@/components/ui/layout/AppHeader';
+import { Header, Card } from '@/components/design';
 import { FormInput, DatePicker } from '@/components/ui/forms';
-import { GlassButton, GlassContainer } from '@/components/glass';
+import CategorySelector from '@/components/ui/CategorySelector';
+import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useExpenses } from '@/lib/database';
 import { Expense, ExpenseCategory } from '@/types';
+import { currencyService } from '@/lib/currency';
+import * as Haptics from 'expo-haptics';
 
 export default function AddExpenseScreen() {
   const colorScheme = useColorScheme();
   const { vacationId } = useLocalSearchParams();
-  const { saveExpense } = useExpenses();
+  const { saveExpense } = useExpenses(vacationId as string);
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -31,22 +34,50 @@ export default function AddExpenseScreen() {
     date: new Date(),
   });
 
-  const categories: { value: ExpenseCategory; label: string }[] = [
-    { value: 'food', label: 'Essen' },
-    { value: 'transport', label: 'Transport' },
-    { value: 'accommodation', label: 'Unterkunft' },
-    { value: 'entertainment', label: 'Unterhaltung' },
-    { value: 'shopping', label: 'Shopping' },
-    { value: 'other', label: 'Sonstiges' },
-  ];
+  const [chfAmount, setChfAmount] = useState<number | null>(null);
+  const [converting, setConverting] = useState(false);
+
+  // Convert to CHF whenever amount or currency changes
+  React.useEffect(() => {
+    const convertAmount = async () => {
+      if (!formData.amount || !parseFloat(formData.amount)) {
+        setChfAmount(null);
+        return;
+      }
+
+      if (formData.currency === 'CHF') {
+        setChfAmount(parseFloat(formData.amount));
+        return;
+      }
+
+      setConverting(true);
+      try {
+        const converted = await currencyService.convertToCHF(
+          parseFloat(formData.amount),
+          formData.currency
+        );
+        setChfAmount(converted);
+      } catch (error) {
+        console.warn('Currency conversion failed:', error);
+        setChfAmount(parseFloat(formData.amount)); // Fallback to original amount
+      } finally {
+        setConverting(false);
+      }
+    };
+
+    convertAmount();
+  }, [formData.amount, formData.currency]);
+
 
   const handleSave = async () => {
     if (!formData.amount || !formData.description) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Fehler', 'Bitte füllen Sie alle Pflichtfelder aus.');
       return;
     }
 
     if (!vacationId || Array.isArray(vacationId)) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Fehler', 'Keine gültige Ferien-ID gefunden.');
       return;
     }
@@ -57,7 +88,7 @@ export default function AddExpenseScreen() {
         vacationId: vacationId,
         amount: parseFloat(formData.amount),
         currency: formData.currency,
-        amountCHF: parseFloat(formData.amount), // TODO: Add currency conversion
+        amountCHF: chfAmount || parseFloat(formData.amount),
         category: formData.category,
         description: formData.description,
         date: formData.date,
@@ -65,18 +96,16 @@ export default function AddExpenseScreen() {
       };
 
       await saveExpense(expense);
-
-      Alert.alert(
-        'Erfolg',
-        'Ausgabe erfolgreich hinzugefügt!',
-        [{ text: 'OK', onPress: () => router.back() }]
-      );
-    } catch (error) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      router.back();
+    } catch {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Fehler', 'Ausgabe konnte nicht gespeichert werden.');
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.back();
   };
 
@@ -84,9 +113,11 @@ export default function AddExpenseScreen() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const isDark = colorScheme === 'dark';
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000' : '#f5f5f5' }]}>
-      <AppHeader
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <Header
         title="Neue Ausgabe"
         leftButton={{
           title: "Abbrechen",
@@ -109,7 +140,7 @@ export default function AddExpenseScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <GlassContainer intensity="light" style={styles.formCard}>
+          <Card style={styles.formCard}>
             <View style={styles.row}>
               <View style={styles.halfWidth}>
                 <FormInput
@@ -122,14 +153,23 @@ export default function AddExpenseScreen() {
                 />
               </View>
               <View style={styles.halfWidth}>
-                <FormInput
-                  label="Währung"
-                  value={formData.currency}
-                  onChangeText={(value) => updateField('currency', value)}
-                  placeholder="CHF"
+                <CurrencySelector
+                  selectedCurrency={formData.currency}
+                  onSelect={(currency) => updateField('currency', currency)}
                 />
               </View>
             </View>
+
+            {chfAmount !== null && formData.currency !== 'CHF' && (
+              <View style={styles.conversionDisplay}>
+                <Text style={[styles.conversionLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                  Umgerechnet in CHF:
+                </Text>
+                <Text style={[styles.conversionAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                  {converting ? 'Umrechnung...' : `CHF ${chfAmount.toFixed(2)}`}
+                </Text>
+              </View>
+            )}
 
             <FormInput
               label="Beschreibung"
@@ -139,30 +179,17 @@ export default function AddExpenseScreen() {
               required
             />
 
-            <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-                Kategorie
-              </Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-                {categories.map((category) => (
-                  <GlassButton
-                    key={category.value}
-                    title={category.label}
-                    onPress={() => updateField('category', category.value)}
-                    size="small"
-                    variant={formData.category === category.value ? 'primary' : 'outline'}
-                    style={styles.categoryButton}
-                  />
-                ))}
-              </ScrollView>
-            </View>
+            <CategorySelector
+              selectedCategory={formData.category}
+              onSelect={(category) => updateField('category', category)}
+            />
 
             <DatePicker
               label="Datum"
               value={formData.date}
               onChange={(date) => updateField('date', date)}
             />
-          </GlassContainer>
+          </Card>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -185,9 +212,12 @@ const styles = StyleSheet.create({
   },
   formCard: {
     marginTop: 16,
-  },
-  formGroup: {
-    marginBottom: 20,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   row: {
     flexDirection: 'row',
@@ -196,17 +226,22 @@ const styles = StyleSheet.create({
   halfWidth: {
     flex: 1,
   },
-  label: {
+  conversionDisplay: {
+    backgroundColor: 'rgba(0, 122, 255, 0.1)',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderLeftWidth: 3,
+    borderLeftColor: '#007AFF',
+  },
+  conversionLabel: {
+    fontSize: 14,
+    fontFamily: 'System',
+    marginBottom: 4,
+  },
+  conversionAmount: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 8,
     fontFamily: 'System',
-  },
-  categoryScroll: {
-    flexDirection: 'row',
-  },
-  categoryButton: {
-    marginRight: 8,
-    paddingHorizontal: 16,
   },
 });

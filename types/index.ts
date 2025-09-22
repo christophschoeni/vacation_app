@@ -50,7 +50,7 @@ export type ExpenseCategory =
   | 'transport'
   | 'accommodation'
   | 'food'
-  | 'activities'
+  | 'entertainment'
   | 'shopping'
   | 'other';
 

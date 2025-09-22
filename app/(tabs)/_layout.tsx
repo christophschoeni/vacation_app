@@ -3,23 +3,22 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
+import { Icon, Colors } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export default function TabLayout() {
+export default function MainLayout() {
   const colorScheme = useColorScheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors.primary[500],
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
           backgroundColor: colorScheme === 'dark'
-            ? 'rgba(0, 0, 0, 0.8)'
-            : 'rgba(255, 255, 255, 0.8)',
+            ? Colors.dark.surface
+            : Colors.light.surface,
           borderTopWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
@@ -35,28 +34,14 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Ferien',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="suitcase.fill" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={26} name="airplane" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="budget"
+        name="explore"
         options={{
-          title: 'Budget',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="creditcard.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="checklists"
-        options={{
-          title: 'Listen',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="checklist" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Mehr',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="gear" color={color} />,
+          title: 'Entdecken',
+          tabBarIcon: ({ color }) => <Icon size={26} name="compass" color={color} />,
         }}
       />
     </Tabs>

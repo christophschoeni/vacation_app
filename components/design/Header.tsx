@@ -1,60 +1,69 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors, Typography, Spacing, BorderRadius, Shadow } from '@/constants/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import Button from './Button';
+import { Button } from './Button';
+import { IconName } from './Icon';
+
+interface HeaderButton {
+  title: string;
+  onPress: () => void;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+  icon?: IconName;
+}
 
 interface HeaderProps {
   title: string;
   subtitle?: string;
-  leftButton?: {
-    title: string;
-    onPress: () => void;
-    variant?: 'primary' | 'secondary' | 'outline' | 'destructive';
-  };
-  rightButton?: {
-    title: string;
-    onPress: () => void;
-    variant?: 'primary' | 'secondary' | 'outline' | 'destructive';
-  };
+  leftButton?: HeaderButton;
+  rightButton?: HeaderButton;
   showBackButton?: boolean;
   onBackPress?: () => void;
+  style?: ViewStyle;
 }
 
-export default function Header({
+export function Header({
   title,
   subtitle,
   leftButton,
   rightButton,
   showBackButton,
   onBackPress,
+  style,
 }: HeaderProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  const headerStyles = {
-    backgroundColor: isDark ? '#000000' : '#F8F8F8',
-    borderBottomColor: isDark ? '#2C2C2E' : '#E5E5EA',
+  const headerStyles: ViewStyle = {
+    backgroundColor: isDark ? Colors.dark.background : Colors.light.background,
+    borderBottomWidth: 1,
+    borderBottomColor: isDark ? Colors.dark.border : Colors.light.border,
+    ...Shadow.sm,
   };
 
+  const titleColor = isDark ? Colors.dark.onBackground : Colors.light.onBackground;
+  const subtitleColor = isDark ? Colors.dark.onSurfaceVariant : Colors.light.onSurfaceVariant;
+
   return (
-    <SafeAreaView style={[styles.container, headerStyles]} edges={['top']}>
-      <View style={styles.header}>
+    <SafeAreaView style={[headerStyles, style]} edges={['top']}>
+      <View style={styles.container}>
         <View style={styles.topRow}>
           <View style={styles.leftSection}>
             {showBackButton && onBackPress ? (
               <Button
                 title="← Zurück"
                 onPress={onBackPress}
-                variant="outline"
+                variant="ghost"
                 size="small"
               />
             ) : leftButton ? (
               <Button
                 title={leftButton.title}
                 onPress={leftButton.onPress}
-                variant={leftButton.variant || 'outline'}
+                variant={leftButton.variant || 'ghost'}
                 size="small"
+                icon={leftButton.icon}
               />
             ) : (
               <View style={styles.placeholder} />
@@ -68,17 +77,18 @@ export default function Header({
                 onPress={rightButton.onPress}
                 variant={rightButton.variant || 'primary'}
                 size="small"
+                icon={rightButton.icon}
               />
             )}
           </View>
         </View>
 
         <View style={styles.titleSection}>
-          <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#000000' }]}>
+          <Text style={[styles.title, { color: titleColor }]}>
             {title}
           </Text>
           {subtitle && (
-            <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            <Text style={[styles.subtitle, { color: subtitleColor }]}>
               {subtitle}
             </Text>
           )}
@@ -90,17 +100,14 @@ export default function Header({
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 1,
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
   },
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: Spacing.sm,
     minHeight: 32,
   },
   leftSection: {
@@ -118,13 +125,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: Typography.fontSize['4xl'],
+    fontWeight: Typography.fontWeight.bold,
     fontFamily: 'System',
     marginBottom: 4,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: Typography.fontSize.lg,
     fontFamily: 'System',
   },
 });

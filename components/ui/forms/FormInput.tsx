@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { GlassContainer } from '@/components/glass';
+import { Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface FormInputProps {
@@ -34,7 +34,7 @@ export default function FormInput({
         {label}{required && ' *'}
       </Text>
 
-      <GlassContainer intensity="light" style={styles.inputContainer}>
+      <Card style={styles.inputContainer}>
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -51,7 +51,7 @@ export default function FormInput({
             }
           ]}
         />
-      </GlassContainer>
+      </Card>
 
       {error && (
         <Text style={styles.error}>{error}</Text>

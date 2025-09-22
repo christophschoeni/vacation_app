@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, StatusBar } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { GlassContainer, GlassButton } from '@/components/glass';
+import { Button } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface AppHeaderProps {
@@ -34,60 +33,59 @@ export default function AppHeader({
   const colorScheme = useColorScheme();
 
   return (
-    <LinearGradient
-      colors={colorScheme === 'dark'
-        ? ['rgba(28, 28, 30, 0.95)', 'rgba(28, 28, 30, 0.8)']
-        : ['rgba(248, 248, 248, 0.95)', 'rgba(248, 248, 248, 0.8)']
+    <View style={[
+      styles.header,
+      {
+        backgroundColor: colorScheme === 'dark' ? '#1C1C1E' : '#FFFFFF',
+        borderBottomWidth: 1,
+        borderBottomColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: colorScheme === 'dark' ? 0.3 : 0.1,
+        shadowRadius: 3,
+        elevation: 2,
       }
-      style={styles.header}
-    >
-      <GlassContainer intensity="light" style={styles.headerContent}>
-        <View style={styles.headerTop}>
+    ]}>
+      <View style={styles.headerContent}>
+        <View style={styles.titleRow}>
+          <Text style={[styles.title, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+            {title}
+          </Text>
+
           {showBackButton && onBackPress ? (
-            <GlassButton
+            <Button
               title="Zurück"
-              icon="←"
+              variant="outline"
               onPress={onBackPress}
               size="small"
-              variant="outline"
               style={styles.backButton}
             />
-          ) : leftButton ? (
-            <GlassButton
-              title={leftButton.title}
-              icon={leftButton.icon}
-              onPress={leftButton.onPress}
-              size="small"
-              variant={leftButton.variant || 'outline'}
-              style={styles.leftButton}
-            />
-          ) : (
-            <View style={styles.placeholder} />
-          )}
-
-          {rightButton && (
-            <GlassButton
+          ) : rightButton ? (
+            <Button
               title={rightButton.title}
-              icon={rightButton.icon}
+              variant={rightButton.variant === 'primary' ? 'primary' : 'outline'}
               onPress={rightButton.onPress}
               size="small"
-              variant={rightButton.variant || 'primary'}
               style={styles.rightButton}
             />
-          )}
+          ) : leftButton ? (
+            <Button
+              title={leftButton.title}
+              variant={leftButton.variant === 'primary' ? 'primary' : 'outline'}
+              onPress={leftButton.onPress}
+              size="small"
+              style={styles.leftButton}
+            />
+          ) : null}
         </View>
-
-        <Text style={[styles.title, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-          {title}
-        </Text>
 
         {subtitle && (
           <Text style={[styles.subtitle, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
             {subtitle}
           </Text>
         )}
-      </GlassContainer>
-    </LinearGradient>
+      </View>
+    </View>
   );
 }
 
@@ -95,16 +93,16 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: StatusBar.currentHeight || 44,
     paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingBottom: 12,
   },
   headerContent: {
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
-  headerTop: {
+  titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 2,
   },
   backButton: {
     minWidth: 80,
@@ -119,14 +117,14 @@ const styles = StyleSheet.create({
     width: 80,
   },
   title: {
-    fontSize: 34,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 4,
     fontFamily: 'System',
+    flex: 1,
   },
   subtitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '400',
-    marginBottom: 8,
+    marginBottom: 4,
   },
 });

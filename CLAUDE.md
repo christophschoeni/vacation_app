@@ -21,7 +21,7 @@ Claude has full autonomy to make technical decisions that best serve the project
 - Technology stack decisions within the React Native ecosystem
 
 ## Project Overview
-This is a React Native vacation assistance app built with Expo and Expo Router. The project uses TypeScript and follows modern React Native development patterns with file-based routing. The app features a glassmorphism design system inspired by Apple's Liquid Glass guidelines and uses NativeWind + React Native Paper for UI components.
+This is a React Native vacation assistance app built with Expo and Expo Router. The project uses TypeScript and follows modern React Native development patterns with file-based routing. The app features a custom design system with clean, modern components inspired by Apple's Human Interface Guidelines.
 
 ## Development Commands
 
@@ -87,28 +87,25 @@ constants/
 - React Native New Architecture enabled
 - TypeScript with typed routes
 - React Compiler enabled for optimization
-- Glassmorphism design with Apple's Liquid Glass aesthetic
-- NativeWind (Tailwind CSS) for styling
-- React Native Paper for Material Design components
+- Custom design system with comprehensive component library
+- Design tokens for consistent theming and spacing
+- Clean, modern UI components following iOS design patterns
 
-## UI Libraries & Design System
+## Custom Design System
 
-### NativeWind (Tailwind CSS for React Native)
-- Configured with custom glassmorphism colors in `tailwind.config.js`
-- Metro bundler setup in `metro.config.js` with NativeWind integration
-- Global CSS file: `global.css`
+### Design Tokens (`/constants/design.ts`)
+- **Colors**: Comprehensive color palette with primary, secondary, error, and neutral shades
+- **Typography**: Font sizes, weights, and line heights for consistent text hierarchy
+- **Spacing**: Standardized spacing values for margins, padding, and gaps
+- **BorderRadius**: Consistent border radius values for all UI elements
+- **Shadow**: Pre-defined shadow styles for depth and elevation
 
-### React Native Paper
-- Material Design components library
-- Integrates well with custom glassmorphism styling
-- Provides accessible, high-quality UI components
-
-### Glassmorphism Effects
-- Uses `@react-native-community/blur` for backdrop blur effects
-- Custom glass colors defined in Tailwind config:
-  - `glass-light`: rgba(255, 255, 255, 0.25)
-  - `glass-dark`: rgba(0, 0, 0, 0.25)
-  - `glass-border`: rgba(255, 255, 255, 0.18)
+### Custom Components (`/components/design/`)
+- **Button**: Variants (primary, secondary, outline, ghost, destructive) with haptic feedback
+- **Card**: Container component with elevation and outline variants
+- **Header**: App header with navigation and action buttons
+- **Icon**: Unicode-based icon system with consistent sizing
+- **FloatingActionButton**: Material Design inspired FAB with multiple sizes
 
 ### App Structure for Vacation Management
 The app is designed to manage vacation planning with the following main features:
@@ -121,7 +118,7 @@ The app is designed to manage vacation planning with the following main features
 ### Theme System
 The app uses a comprehensive theming system with:
 - Automatic color scheme detection
-- Theme-aware components (ThemedText, ThemedView)
-- Platform-specific color schemes defined in `constants/theme.ts`
+- Theme-aware components throughout the app
+- Platform-specific color schemes defined in `constants/design.ts`
 - React Navigation theme integration
-- Glassmorphism overlay effects for modern iOS-style design
+- Custom design tokens for consistent styling across all components
