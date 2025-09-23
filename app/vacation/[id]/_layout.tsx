@@ -1,9 +1,9 @@
 import { Tabs, useLocalSearchParams, router } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { Icon, Colors, Header } from '@/components/design';
+import { Icon, Colors } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/lib/database';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,27 +15,50 @@ export default function VacationDetailTabLayout() {
   const { vacations } = useVacations();
 
   const vacation = vacations.find(v => v.id === vacationId);
+  const isDark = colorScheme === 'dark';
 
   if (!vacation) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#000' : '#f5f5f5' }}>
-        <Header
-          title="Ferien nicht gefunden"
-          showBackButton
-          onBackPress={() => router.push('/(tabs)')}
-        />
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => router.push('/(tabs)')}
+            style={styles.backButton}
+            accessibilityLabel="Zurück"
+          >
+            <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            Ferien nicht gefunden
+          </Text>
+          <View style={styles.headerSpacer} />
+        </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#000' : '#f5f5f5' }}>
-      <Header
-        title={vacation.destination}
-        subtitle={vacation.hotel}
-        showBackButton
-        onBackPress={() => router.push('/(tabs)')}
-      />
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => router.push('/(tabs)')}
+          style={styles.backButton}
+          accessibilityLabel="Zurück"
+        >
+          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+        </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {vacation.destination}
+          </Text>
+          {vacation.hotel && (
+            <Text style={[styles.headerSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              {vacation.hotel}
+            </Text>
+          )}
+        </View>
+        <View style={styles.headerSpacer} />
+      </View>
 
       <Tabs
         screenOptions={{
@@ -75,3 +98,40 @@ export default function VacationDetailTabLayout() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
+  },
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    fontWeight: '400',
+    fontFamily: 'System',
+    marginTop: 2,
+  },
+  headerSpacer: {
+    width: 40,
+  },
+});

@@ -4,6 +4,8 @@ import {
   StyleSheet,
   RefreshControl,
   Alert,
+  View,
+  Text,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -40,13 +42,25 @@ export default function VacationsScreen() {
 
   const handleAddVacation = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    insights.track('vacation_add_started');
+    try {
+      if (insights && typeof insights.track === 'function') {
+        insights.track('vacation_add_started');
+      }
+    } catch (error) {
+      console.warn('Failed to track vacation add:', error);
+    }
     router.push('/vacation/add');
   };
 
   const handleVacationPress = async (id: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    insights.track('vacation_viewed');
+    try {
+      if (insights && typeof insights.track === 'function') {
+        insights.track('vacation_viewed');
+      }
+    } catch (error) {
+      console.warn('Failed to track vacation view:', error);
+    }
     router.push(`/vacation/${id}`);
   };
 
@@ -84,6 +98,12 @@ export default function VacationsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <View style={styles.header}>
+        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          Meine Ferien
+        </Text>
+      </View>
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -144,12 +164,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 16,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    fontFamily: 'System',
+  },
   content: {
     flex: 1,
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 16,
+    paddingTop: 8,
     paddingBottom: 120, // Space for tab bar
   },
   fab: {
