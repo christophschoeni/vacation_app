@@ -86,6 +86,44 @@ export const Colors = {
     1000: '#000000',
   },
 
+  // iOS System Colors (Light Mode)
+  systemColors: {
+    blue: '#007AFF',
+    green: '#34C759',
+    indigo: '#5856D6',
+    orange: '#FF9500',
+    pink: '#FF2D92',
+    purple: '#AF52DE',
+    red: '#FF3B30',
+    teal: '#5AC8FA',
+    yellow: '#FFCC00',
+    gray: '#8E8E93',
+    gray2: '#AEAEB2',
+    gray3: '#C7C7CC',
+    gray4: '#D1D1D6',
+    gray5: '#E5E5EA',
+    gray6: '#F2F2F7',
+  },
+
+  // iOS System Colors (Dark Mode)
+  systemColorsDark: {
+    blue: '#0A84FF',
+    green: '#30D158',
+    indigo: '#5E5CE6',
+    orange: '#FF9F0A',
+    pink: '#FF375F',
+    purple: '#BF5AF2',
+    red: '#FF453A',
+    teal: '#64D2FF',
+    yellow: '#FFD60A',
+    gray: '#8E8E93',
+    gray2: '#636366',
+    gray3: '#48484A',
+    gray4: '#3A3A3C',
+    gray5: '#2C2C2E',
+    gray6: '#1C1C1E',
+  },
+
   // Theme specific
   light: {
     background: '#FFFFFF',
@@ -115,37 +153,52 @@ export const Colors = {
 };
 
 export const Typography = {
-  // Font sizes
+  // iOS Dynamic Type Text Styles
   fontSize: {
-    xs: 10,
-    sm: 12,
-    base: 14,
-    lg: 16,
-    xl: 18,
-    '2xl': 20,
-    '3xl': 24,
-    '4xl': 28,
-    '5xl': 32,
-    '6xl': 36,
-    '7xl': 48,
+    // iOS Text Styles (matched to Apple's specifications)
+    caption2: 11,      // Caption 2
+    caption1: 12,      // Caption 1
+    footnote: 13,      // Footnote
+    subheadline: 15,   // Subheadline
+    callout: 16,       // Callout
+    body: 17,          // Body (iOS default)
+    headline: 17,      // Headline (semibold body)
+    title3: 20,        // Title 3
+    title2: 22,        // Title 2
+    title1: 28,        // Title 1
+    largeTitle: 34,    // Large Title
+
+    // Legacy sizes for backwards compatibility
+    xs: 11,
+    sm: 13,
+    base: 17,
+    lg: 17,
+    xl: 20,
+    '2xl': 22,
+    '3xl': 28,
+    '4xl': 34,
   },
 
-  // Font weights
+  // iOS Font Weights
   fontWeight: {
-    light: '300' as const,
-    normal: '400' as const,
-    medium: '500' as const,
-    semibold: '600' as const,
-    bold: '700' as const,
-    heavy: '800' as const,
+    ultraLight: '100' as const,  // iOS Ultra Light
+    thin: '200' as const,        // iOS Thin
+    light: '300' as const,       // iOS Light
+    regular: '400' as const,     // iOS Regular (renamed from normal)
+    medium: '500' as const,      // iOS Medium
+    semibold: '600' as const,    // iOS Semibold
+    bold: '700' as const,        // iOS Bold
+    heavy: '800' as const,       // iOS Heavy
+    black: '900' as const,       // iOS Black
   },
 
-  // Line heights
+  // iOS Line Heights (matched to system defaults)
   lineHeight: {
-    tight: 1.1,
-    normal: 1.4,
-    relaxed: 1.6,
-    loose: 1.8,
+    caption: 1.2,     // For caption text
+    body: 1.29,       // For body text (iOS default)
+    headline: 1.24,   // For headlines
+    title: 1.21,      // For titles
+    largeTitle: 1.18, // For large titles
   },
 
   // Letter spacing

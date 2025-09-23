@@ -152,7 +152,7 @@ export function Button({
         return {
           paddingHorizontal: Spacing.md,
           paddingVertical: Spacing.sm,
-          minHeight: 36,
+          minHeight: 44, // iOS HIG minimum touch target
         };
       case 'medium':
         return {
@@ -172,11 +172,11 @@ export function Button({
   const getTextSizeStyles = (): TextStyle => {
     switch (size) {
       case 'small':
-        return { fontSize: Typography.fontSize.sm };
+        return { fontSize: Typography.fontSize.footnote }; // iOS 13pt
       case 'medium':
-        return { fontSize: Typography.fontSize.base };
+        return { fontSize: Typography.fontSize.body }; // iOS 17pt (default)
       case 'large':
-        return { fontSize: Typography.fontSize.lg };
+        return { fontSize: Typography.fontSize.title3 }; // iOS 20pt
     }
   };
 
