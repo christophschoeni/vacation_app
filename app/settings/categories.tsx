@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Card, Icon, IconName, Colors } from '@/components/design';
+import { Card, Icon, IconName } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import CategoryEditor, { Category } from '@/components/ui/forms/CategoryEditor';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Default categories for expenses
 const DEFAULT_CATEGORIES: Category[] = [
@@ -22,11 +23,48 @@ const DEFAULT_CATEGORIES: Category[] = [
   { id: '5', name: 'Sonstiges', icon: 'other' as IconName },
 ];
 
+const CATEGORIES_STORAGE_KEY = '@vacation_assist_categories';
+
 export default function CategoriesScreen() {
   const colorScheme = useColorScheme();
   const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
   const [showEditor, setShowEditor] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load categories from storage on mount
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      const storedCategories = await AsyncStorage.getItem(CATEGORIES_STORAGE_KEY);
+      if (storedCategories) {
+        const parsed = JSON.parse(storedCategories) as Category[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCategories(parsed);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load categories:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveCategories = async (newCategories: Category[]) => {
+    try {
+      await AsyncStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(newCategories));
+    } catch (error) {
+      console.warn('Failed to save categories:', error);
+      Alert.alert(
+        'Speicherfehler',
+        'Die Kategorien konnten nicht gespeichert werden. Versuchen Sie es erneut.',
+        [{ text: 'OK', style: 'default' }]
+      );
+    }
+  };
 
   const handleAddCategory = () => {
     setEditingCategory(undefined);
@@ -39,15 +77,46 @@ export default function CategoriesScreen() {
   };
 
   const handleSaveCategory = (category: Category) => {
+    // Validate category name
+    const trimmedName = category.name.trim();
+    if (!trimmedName) {
+      Alert.alert(
+        'Ungültiger Name',
+        'Bitte geben Sie einen gültigen Kategorie-Namen ein.',
+        [{ text: 'OK', style: 'default' }]
+      );
+      return;
+    }
+
+    // Check for duplicate names (excluding current category when editing)
+    const isDuplicate = categories.some(cat =>
+      cat.name.toLowerCase() === trimmedName.toLowerCase() &&
+      (!editingCategory || cat.id !== editingCategory.id)
+    );
+
+    if (isDuplicate) {
+      Alert.alert(
+        'Name bereits vorhanden',
+        'Eine Kategorie mit diesem Namen existiert bereits.',
+        [{ text: 'OK', style: 'default' }]
+      );
+      return;
+    }
+
+    let newCategories: Category[];
+
     if (editingCategory) {
       // Edit existing category
-      setCategories(categories.map(cat =>
-        cat.id === category.id ? category : cat
-      ));
+      newCategories = categories.map(cat =>
+        cat.id === category.id ? { ...category, name: trimmedName } : cat
+      );
     } else {
       // Add new category
-      setCategories([...categories, category]);
+      newCategories = [...categories, { ...category, name: trimmedName }];
     }
+
+    setCategories(newCategories);
+    saveCategories(newCategories);
     setShowEditor(false);
     setEditingCategory(undefined);
   };
@@ -55,6 +124,15 @@ export default function CategoriesScreen() {
   const handleDeleteCategory = (categoryId: string) => {
     const category = categories.find(cat => cat.id === categoryId);
     if (!category) return;
+
+    if (categories.length <= 1) {
+      Alert.alert(
+        'Kategorie kann nicht gelöscht werden',
+        'Sie müssen mindestens eine Kategorie haben.',
+        [{ text: 'OK', style: 'default' }]
+      );
+      return;
+    }
 
     Alert.alert(
       'Kategorie löschen',
@@ -65,7 +143,9 @@ export default function CategoriesScreen() {
           text: 'Löschen',
           style: 'destructive',
           onPress: () => {
-            setCategories(categories.filter(cat => cat.id !== categoryId));
+            const newCategories = categories.filter(cat => cat.id !== categoryId);
+            setCategories(newCategories);
+            saveCategories(newCategories);
           },
         },
       ]
@@ -74,14 +154,62 @@ export default function CategoriesScreen() {
 
   const isDark = colorScheme === 'dark';
 
+  if (isLoading) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+            accessibilityLabel="Zurück"
+          >
+            <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            Kategorien
+          </Text>
+          <View style={styles.headerSpacer} />
+        </View>
+        <View style={styles.loadingContainer}>
+          <Text style={[styles.loadingText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            Kategorien werden geladen...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+          accessibilityLabel="Zurück"
+        >
+          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          Kategorien
+        </Text>
+        <TouchableOpacity
+          onPress={handleAddCategory}
+          style={styles.headerButton}
+          accessibilityLabel="Neue Kategorie hinzufügen"
+        >
+          <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
+          <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            Tippen Sie auf eine Kategorie, um sie zu bearbeiten
+          </Text>
           {categories.map((category) => (
             <TouchableOpacity
               key={category.id}
@@ -97,7 +225,6 @@ export default function CategoriesScreen() {
                     </Text>
                   </View>
                   <View style={styles.categoryActions}>
-                    <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
                     {categories.length > 1 && (
                       <TouchableOpacity
                         onPress={(e) => {
@@ -105,25 +232,18 @@ export default function CategoriesScreen() {
                           handleDeleteCategory(category.id);
                         }}
                         style={styles.deleteButton}
+                        accessibilityLabel={`Kategorie ${category.name} löschen`}
                       >
                         <Icon name="delete" size={18} color="#FF3B30" />
                       </TouchableOpacity>
                     )}
+                    <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
                   </View>
                 </View>
               </Card>
             </TouchableOpacity>
           ))}
 
-          <TouchableOpacity
-            style={[styles.addCategoryButton, { borderColor: isDark ? '#3A3A3C' : '#E5E5EA' }]}
-            onPress={handleAddCategory}
-          >
-            <Icon name="plus" size={20} color={isDark ? '#8E8E93' : '#6D6D70'} />
-            <Text style={[styles.addCategoryText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Neue Kategorie hinzufügen
-            </Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
 
@@ -144,12 +264,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
+  },
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+  },
+  headerButton: {
+    padding: 8,
+    marginRight: -8,
+  },
+  headerSpacer: {
+    width: 40,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    fontFamily: 'System',
+  },
   content: {
     flex: 1,
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 0,
+    paddingTop: 16,
     paddingBottom: 120,
   },
   section: {
@@ -185,25 +339,10 @@ const styles = StyleSheet.create({
   categoryActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   deleteButton: {
     padding: 8,
     marginRight: -8,
-  },
-  addCategoryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderWidth: 1,
-    borderRadius: 12,
-    borderStyle: 'dashed',
-    gap: 8,
-  },
-  addCategoryText: {
-    fontSize: 17,
-    fontWeight: '400',
-    fontFamily: 'System',
   },
 });

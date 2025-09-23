@@ -49,8 +49,14 @@ const modalSlideUp = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
-  // Initialize Expo Insights
-  insights.track('app_launched');
+  // Initialize Expo Insights safely
+  try {
+    if (insights && typeof insights.track === 'function') {
+      insights.track('app_launched');
+    }
+  } catch (error) {
+    console.warn('Failed to track app launch:', error);
+  }
 
   return (
     <ErrorBoundary>
@@ -61,11 +67,7 @@ export default function RootLayout() {
             <Stack.Screen
               name="settings/categories"
               options={{
-                headerShown: true,
-                title: 'Kategorien',
-                headerBackTitle: '',
-                headerBackVisible: true,
-                headerBackButtonMenuEnabled: false,
+                headerShown: false,
                 presentation: 'card',
                 animationDuration: 300,
                 ...slideFromRight,
@@ -74,11 +76,7 @@ export default function RootLayout() {
             <Stack.Screen
               name="settings/currency"
               options={{
-                headerShown: true,
-                title: 'Währung',
-                headerBackTitle: '',
-                headerBackVisible: true,
-                headerBackButtonMenuEnabled: false,
+                headerShown: false,
                 presentation: 'card',
                 animationDuration: 300,
                 ...slideFromRight,
@@ -87,11 +85,7 @@ export default function RootLayout() {
             <Stack.Screen
               name="settings/notifications"
               options={{
-                headerShown: true,
-                title: 'Benachrichtigungen',
-                headerBackTitle: '',
-                headerBackVisible: true,
-                headerBackButtonMenuEnabled: false,
+                headerShown: false,
                 presentation: 'card',
                 animationDuration: 300,
                 ...slideFromRight,

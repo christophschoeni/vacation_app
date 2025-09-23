@@ -1,21 +1,21 @@
+import { Card, Icon, IconName } from '@/components/design';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { router } from 'expo-router';
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
   ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
-import { Card, Icon } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface SettingsItem {
   id: string;
   title: string;
   subtitle: string;
-  icon: string;
+  icon: IconName;
   route: string;
 }
 
@@ -85,7 +85,7 @@ export default function SettingsScreen() {
               <Card variant="clean" style={styles.settingsCard}>
                 <View style={styles.settingsRow}>
                   <View style={styles.settingsInfo}>
-                    <Icon name={item.icon as any} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                    <Icon name={item.icon} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                     <View style={styles.settingsText}>
                       <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
                         {item.title}
@@ -113,7 +113,7 @@ export default function SettingsScreen() {
                 Vacation Assistant
               </Text>
               <Text style={[styles.appVersion, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Version 1.0.0
+                Version 0.6.0
               </Text>
             </View>
           </Card>

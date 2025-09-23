@@ -2,8 +2,8 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 
+import { Colors, Icon } from '@/components/design';
 import { HapticTab } from '@/components/haptic-tab';
-import { Icon, Colors } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function MainLayout() {
@@ -48,7 +48,7 @@ export default function MainLayout() {
         name="settings"
         options={{
           title: 'Einstellungen',
-          tabBarIcon: ({ color }) => <Icon size={28} name="settings" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={26} name="settings" color={color} />,
         }}
       />
     </Tabs>

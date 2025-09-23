@@ -5,17 +5,18 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Card, Icon } from '@/components/design';
+import { Card, Icon, IconName } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface NotificationSetting {
   id: string;
   title: string;
   subtitle: string;
-  icon: string;
+  icon: IconName;
   enabled: boolean;
 }
 
@@ -35,7 +36,7 @@ export default function NotificationsScreen() {
       id: 'expense_reminders',
       title: 'Ausgaben-Erinnerungen',
       subtitle: 'Erinnerung für nicht erfasste Ausgaben',
-      icon: 'budget',
+      icon: 'wallet',
       enabled: false,
     },
     {
@@ -60,18 +61,35 @@ export default function NotificationsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+          accessibilityLabel="Zurück"
+        >
+          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          Benachrichtigungen
+        </Text>
+        <View style={styles.headerSpacer} />
+      </View>
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
+          <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            Verwalten Sie Ihre Benachrichtigungen
+          </Text>
 
           {settings.map((setting) => (
             <Card key={setting.id} variant="clean" style={styles.settingCard}>
               <View style={styles.settingRow}>
                 <View style={styles.settingInfo}>
-                  <Icon name={setting.icon as any} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                  <Icon name={setting.icon} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                   <View style={styles.settingText}>
                     <Text style={[styles.settingTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
                       {setting.title}
@@ -118,12 +136,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
+  },
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+  },
+  headerSpacer: {
+    width: 40,
+  },
   content: {
     flex: 1,
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 0,
+    paddingTop: 16,
     paddingBottom: 120,
   },
   section: {
