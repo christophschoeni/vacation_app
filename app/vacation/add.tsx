@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  View,
   StyleSheet,
   Alert,
   KeyboardAvoidingView,
@@ -9,9 +10,8 @@ import {
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import AppHeader from '@/components/ui/layout/AppHeader';
+import { Header, Button } from '@/components/design';
 import { FormInput, DatePicker } from '@/components/ui/forms';
-import { Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/lib/database';
 import { Vacation } from '@/types';
@@ -67,19 +67,9 @@ export default function AddVacationScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000' : '#f5f5f5' }]}>
-      <AppHeader
+    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+      <Header
         title="Neue Ferien"
-        leftButton={{
-          title: "Abbrechen",
-          onPress: handleCancel,
-          variant: "outline"
-        }}
-        rightButton={{
-          title: "Speichern",
-          onPress: handleSave,
-          variant: "primary"
-        }}
       />
 
       <KeyboardAvoidingView
@@ -91,7 +81,7 @@ export default function AddVacationScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <Card style={styles.formCard}>
+          <View style={styles.formContainer}>
             <FormInput
               label="Reiseziel"
               value={formData.destination}
@@ -142,7 +132,17 @@ export default function AddVacationScreen() {
               onChangeText={(value) => updateField('currency', value)}
               placeholder="CHF"
             />
-          </Card>
+
+            <View style={styles.buttonContainer}>
+              <Button
+                title="Speichern"
+                variant="primary"
+                onPress={handleSave}
+                style={styles.button}
+                fullWidth
+              />
+            </View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -158,12 +158,19 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
     paddingBottom: 100,
   },
-  formCard: {
-    marginTop: 16,
+  formContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  buttonContainer: {
+    marginTop: 32,
+    gap: 12,
+  },
+  button: {
+    marginVertical: 0,
   },
 });

@@ -182,13 +182,6 @@ export default function AddExpenseScreen() {
 
             <View style={styles.buttonContainer}>
               <Button
-                title="Abbrechen"
-                variant="outline"
-                onPress={handleCancel}
-                style={styles.button}
-                fullWidth
-              />
-              <Button
                 title="Speichern"
                 variant="primary"
                 onPress={handleSave}
