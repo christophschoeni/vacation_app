@@ -3,7 +3,7 @@ import { View, ViewStyle } from 'react-native';
 import { Colors, BorderRadius, Shadow, Spacing } from '@/constants/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-type CardVariant = 'default' | 'elevated' | 'outlined';
+type CardVariant = 'default' | 'elevated' | 'outlined' | 'clean';
 
 interface CardProps {
   children: React.ReactNode;
@@ -40,6 +40,14 @@ export function Card({
           ...baseStyle,
           borderWidth: 1,
           borderColor: isDark ? Colors.dark.border : Colors.light.border,
+        };
+
+      case 'clean':
+        return {
+          ...baseStyle,
+          backgroundColor: isDark ? Colors.dark.surface : Colors.light.surface,
+          borderRadius: BorderRadius.xl, // Apple standard rounded corners
+          borderWidth: 0, // No border
         };
 
       case 'default':

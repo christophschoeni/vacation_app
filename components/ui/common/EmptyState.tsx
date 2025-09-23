@@ -21,7 +21,7 @@ export default function EmptyState({
   const colorScheme = useColorScheme();
 
   return (
-    <Card style={styles.container} accessible={true} accessibilityRole="region" accessibilityLabel={`${title}. ${subtitle}`}>
+    <Card variant="clean" style={styles.container} accessible={true} accessibilityRole="region" accessibilityLabel={`${title}. ${subtitle}`}>
       <Text style={styles.icon} accessible={false}>{icon}</Text>
       <Text
         style={[styles.title, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}

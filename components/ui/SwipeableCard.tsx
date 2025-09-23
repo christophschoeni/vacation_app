@@ -136,7 +136,6 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    marginBottom: 12,
   },
   cardContainer: {
     backgroundColor: 'transparent',

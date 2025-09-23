@@ -46,7 +46,7 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
       accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrency(totalExpenses, vacation.currency)} von ${formatCurrency(vacation.budget, vacation.currency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrency(Math.abs(remainingBudget), vacation.currency)}` : `Verbleibend: ${formatCurrency(remainingBudget, vacation.currency)}`}` : ''}`}
       accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
     >
-      <Card style={styles.card}>
+      <Card variant="clean" style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={styles.destinationContainer}>
           <Text style={[styles.destination, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
@@ -98,7 +98,9 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 16,
+    marginBottom: 16, // Clean spacing
+    paddingVertical: 20,
+    paddingHorizontal: 16, // Consistent padding for content
   },
   cardHeader: {
     flexDirection: 'row',

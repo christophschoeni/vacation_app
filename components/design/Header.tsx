@@ -1,4 +1,4 @@
-import { Colors, Shadow, Spacing, Typography } from '@/constants/design';
+import { Colors, Spacing, Typography } from '@/constants/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import React from 'react';
 import { StyleSheet, Text, View, ViewStyle, TouchableOpacity } from 'react-native';
@@ -21,6 +21,7 @@ interface HeaderProps {
   showBackButton?: boolean;
   onBackPress?: () => void;
   style?: ViewStyle;
+  compact?: boolean; // New prop for compact spacing
 }
 
 export function Header({
@@ -31,23 +32,25 @@ export function Header({
   showBackButton,
   onBackPress,
   style,
+  compact = false,
 }: HeaderProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   const headerStyles: ViewStyle = {
     backgroundColor: isDark ? Colors.dark.background : Colors.light.background,
-    borderBottomWidth: 1,
-    borderBottomColor: isDark ? Colors.dark.border : Colors.light.border,
-    ...Shadow.sm,
+    // Removed border and shadow for clean design
   };
 
   const titleColor = isDark ? Colors.dark.onBackground : Colors.light.onBackground;
   const subtitleColor = isDark ? Colors.dark.onSurfaceVariant : Colors.light.onSurfaceVariant;
 
+  const HeaderWrapper = compact ? View : SafeAreaView;
+  const wrapperProps = compact ? {} : { edges: ['top'] };
+
   return (
-    <SafeAreaView style={[headerStyles, style]} edges={['top']}>
-      <View style={styles.container}>
+    <HeaderWrapper style={[headerStyles, style]} {...wrapperProps}>
+      <View style={[styles.container, compact && styles.compactContainer]}>
         <View style={styles.topRow}>
           <View style={styles.leftSection}>
             {showBackButton && onBackPress ? (
@@ -101,7 +104,7 @@ export function Header({
           )}
         </View>
       </View>
-    </SafeAreaView>
+    </HeaderWrapper>
   );
 }
 
@@ -110,6 +113,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingTop: 0,
     paddingBottom: Spacing.sm,
+  },
+  compactContainer: {
+    paddingTop: Spacing.sm, // Minimal top padding for compact version
+    paddingBottom: Spacing.md,
   },
   topRow: {
     flexDirection: 'row',

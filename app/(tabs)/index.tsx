@@ -81,7 +81,7 @@ export default function VacationsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <Header title="Meine Ferien" />
+      <Header title="Meine Ferien" compact />
 
       <ScrollView
         style={styles.content}
