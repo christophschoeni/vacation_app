@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
-import { Icon } from '@/components/design';
+import { Icon, Colors, BorderRadius } from '@/components/design';
 
 const { width: screenWidth } = Dimensions.get('window');
 const SWIPE_THRESHOLD = screenWidth * 0.3;
@@ -34,7 +34,7 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
 
       if (translationX < -SWIPE_THRESHOLD || velocityX < -1000) {
         // Swiped left enough or fast enough - show action buttons
-        const actionWidth = onEdit ? -160 : -80; // 80px per button
+        const actionWidth = onEdit ? -148 : -74; // 74pt per button (Apple standard)
         Animated.timing(translateX, {
           toValue: actionWidth,
           duration: 250,
@@ -74,6 +74,42 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
 
   return (
     <View style={styles.container}>
+      {/* Action buttons that appear when swiped - positioned behind the card */}
+      <Animated.View
+        style={[
+          styles.actionsContainer,
+          {
+            width: onEdit ? 148 : 74,
+            opacity: translateX.interpolate({
+              inputRange: onEdit ? [-148, -74, 0] : [-74, -37, 0],
+              outputRange: [1, 0.5, 0],
+              extrapolate: 'clamp',
+            }),
+          },
+        ]}
+      >
+        {onEdit && (
+          <TouchableOpacity
+            style={[styles.actionButton, styles.editButton]}
+            onPress={() => {
+              onEdit();
+              resetPosition();
+            }}
+            activeOpacity={0.8}
+          >
+            <Icon name="edit" size={18} color={Colors.neutral[0]} />
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity
+          style={[styles.actionButton, styles.deleteButton]}
+          onPress={handleDelete}
+          activeOpacity={0.8}
+        >
+          <Icon name="delete" size={18} color={Colors.neutral[0]} />
+        </TouchableOpacity>
+      </Animated.View>
+
       <PanGestureHandler
         ref={panRef}
         onGestureEvent={handleGestureEvent}
@@ -93,42 +129,6 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
           </TouchableOpacity>
         </Animated.View>
       </PanGestureHandler>
-
-      {/* Action buttons that appear when swiped */}
-      <Animated.View
-        style={[
-          styles.actionsContainer,
-          {
-            width: onEdit ? 160 : 80,
-            opacity: translateX.interpolate({
-              inputRange: onEdit ? [-160, -80, 0] : [-80, -40, 0],
-              outputRange: [1, 0.5, 0],
-              extrapolate: 'clamp',
-            }),
-          },
-        ]}
-      >
-        {onEdit && (
-          <TouchableOpacity
-            style={[styles.actionButton, styles.editButton]}
-            onPress={() => {
-              onEdit();
-              resetPosition();
-            }}
-            activeOpacity={0.8}
-          >
-            <Icon name="edit" size={20} color="#FFFFFF" />
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          style={[styles.actionButton, styles.deleteButton]}
-          onPress={handleDelete}
-          activeOpacity={0.8}
-        >
-          <Icon name="delete" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </Animated.View>
     </View>
   );
 }
@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     backgroundColor: 'transparent',
+    zIndex: 1, // Ensure card appears above action buttons
   },
   actionsContainer: {
     position: 'absolute',
@@ -147,17 +148,25 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     flexDirection: 'row',
-    alignItems: 'stretch',
+    borderTopRightRadius: BorderRadius.xl,
+    borderBottomRightRadius: BorderRadius.xl,
+    overflow: 'hidden', // Ensure rounded corners are visible
+    zIndex: 0, // Behind the card
   },
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 80, // Fixed width for equal sizing
+    width: 74, // Apple standard 74pt width
+    flex: 1, // Take full height of container
   },
   editButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: Colors.primary[500],
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
   },
   deleteButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#FF3B30', // iOS System Red for destructive actions
+    borderTopRightRadius: BorderRadius.xl,
+    borderBottomRightRadius: BorderRadius.xl,
   },
 });
