@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "vacation_assist",
-    "slug": "vacation_assist",
-    "version": "1.0.0",
+    "slug": "vacation-assist",
+    "version": "0.6.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "vacationassist",
@@ -50,6 +50,12 @@
         "projectId": "ebfbcf49-c303-4b8c-bcfb-80a723f96d0e"
       }
     },
-    "owner": "cschoeni"
+    "owner": "cschoeni",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ebfbcf49-c303-4b8c-bcfb-80a723f96d0e"
+    }
   }
 }
