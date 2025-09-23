@@ -29,6 +29,7 @@ export interface Expense {
 
 export interface Checklist {
   id: string;
+  vacationId?: string; // Optional for templates
   title: string;
   isTemplate: boolean;
   items: ChecklistItem[];

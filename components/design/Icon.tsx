@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { Text, StyleSheet, TextStyle } from 'react-native';
 
 // Custom SVG-like icons using Unicode symbols and text
 const iconMap = {

@@ -41,8 +41,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
 
   return (
     <Card style={styles.card}>
-      <Card.Content>
-        <View style={styles.header}>
+      <View style={styles.header}>
           <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
             Budget Übersicht
           </Text>
@@ -133,7 +132,6 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
             />
           </View>
         )}
-      </Card.Content>
     </Card>
   );
 }

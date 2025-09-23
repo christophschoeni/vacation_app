@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Icon } from '@/components/design';
 
 const { width: screenWidth } = Dimensions.get('window');

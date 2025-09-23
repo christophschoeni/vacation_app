@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useExpenses } from '@/lib/database';
-import { calculateRemainingBudget } from '@/lib/budget-calculations';
 import type { Vacation } from '@/types';
 
 interface VacationCardProps {

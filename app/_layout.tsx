@@ -3,7 +3,6 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
-import { Platform } from 'react-native';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ErrorBoundary } from '@/components/ErrorBoundary';

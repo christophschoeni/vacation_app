@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 
-import { ExpenseCard } from '@/components/ui/cards';
+import ExpenseCard from '@/components/ui/cards/ExpenseCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import { Card, FloatingActionButton } from '@/components/design';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
@@ -92,16 +92,14 @@ export default function VacationBudgetScreen() {
             Ausgaben
           </Text>
           {expenses.length === 0 ? (
-            <Card style={styles.emptyExpenses}>
-              <Card.Content style={styles.emptyContent}>
-                <Text style={styles.emptyIcon}>💰</Text>
-                <Text style={[styles.emptyText, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                  Noch keine Ausgaben erfasst
-                </Text>
-                <Text style={[styles.emptySubtext, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                  Tippe auf ➕ um deine erste Ausgabe hinzuzufügen
-                </Text>
-              </Card.Content>
+            <Card style={[styles.emptyExpenses, styles.emptyContent]}>
+              <Text style={styles.emptyIcon}>💰</Text>
+              <Text style={[styles.emptyText, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
+                Noch keine Ausgaben erfasst
+              </Text>
+              <Text style={[styles.emptySubtext, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
+                Tippe auf ➕ um deine erste Ausgabe hinzuzufügen
+              </Text>
             </Card>
           ) : (
             expenses.map((expense) => (

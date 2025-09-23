@@ -112,8 +112,21 @@ export class LocalDatabase {
   static async getChecklists(vacationId?: string): Promise<Checklist[]> {
     try {
       const data = await AsyncStorage.getItem(STORAGE_KEYS.CHECKLISTS);
-      const checklists = data ? JSON.parse(data) : [];
-      return vacationId ? checklists.filter((c: Checklist) => c.vacationId === vacationId) : checklists;
+      if (!data) return [];
+
+      const checklists = JSON.parse(data);
+      // Convert date strings back to Date objects
+      const checklistsWithDates = checklists.map((checklist: any) => ({
+        ...checklist,
+        createdAt: new Date(checklist.createdAt),
+        updatedAt: new Date(checklist.updatedAt),
+        items: checklist.items.map((item: any) => ({
+          ...item,
+          dueDate: item.dueDate ? new Date(item.dueDate) : undefined,
+        })),
+      }));
+
+      return vacationId ? checklistsWithDates.filter((c: Checklist) => c.vacationId === vacationId) : checklistsWithDates;
     } catch (error) {
       console.error('Error loading checklists:', error);
       return [];

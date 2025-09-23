@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import { Colors, BorderRadius, Shadow, Spacing } from '@/constants/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
