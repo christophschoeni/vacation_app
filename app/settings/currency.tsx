@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CurrencyEditor from '@/components/ui/forms/CurrencyEditor';
 
-const CURRENCIES = [
+// Default currencies
+const DEFAULT_CURRENCIES = [
   { code: 'CHF', name: 'Schweizer Franken', symbol: 'CHF' },
   { code: 'EUR', name: 'Euro', symbol: '€' },
   { code: 'USD', name: 'US-Dollar', symbol: '$' },
@@ -21,14 +25,101 @@ const CURRENCIES = [
   { code: 'AUD', name: 'Australischer Dollar', symbol: 'A$' },
 ];
 
+const CURRENCIES_STORAGE_KEY = '@vacation_assist_currencies';
+
+interface Currency {
+  code: string;
+  name: string;
+  symbol: string;
+}
+
 export default function CurrencyScreen() {
   const colorScheme = useColorScheme();
   const [selectedCurrency, setSelectedCurrency] = useState('CHF');
+  const [currencies, setCurrencies] = useState<Currency[]>(DEFAULT_CURRENCIES);
+  const [showEditor, setShowEditor] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const isDark = colorScheme === 'dark';
+
+  // Load currencies from storage on mount
+  useEffect(() => {
+    loadCurrencies();
+  }, []);
+
+  const loadCurrencies = async () => {
+    try {
+      const storedCurrencies = await AsyncStorage.getItem(CURRENCIES_STORAGE_KEY);
+      if (storedCurrencies) {
+        const parsed = JSON.parse(storedCurrencies) as Currency[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCurrencies(parsed);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load currencies:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveCurrencies = async (newCurrencies: Currency[]) => {
+    try {
+      await AsyncStorage.setItem(CURRENCIES_STORAGE_KEY, JSON.stringify(newCurrencies));
+    } catch (error) {
+      console.warn('Failed to save currencies:', error);
+      Alert.alert(
+        'Speicherfehler',
+        'Die Währungen konnten nicht gespeichert werden. Versuchen Sie es erneut.',
+        [{ text: 'OK', style: 'default' }]
+      );
+    }
+  };
 
   const handleCurrencySelect = (currencyCode: string) => {
     setSelectedCurrency(currencyCode);
     // TODO: Save to settings/database
+  };
+
+  const handleDeleteCurrency = (currencyCode: string) => {
+    const currency = currencies.find(c => c.code === currencyCode);
+    if (!currency) return;
+
+    // Prevent deletion of default currencies
+    const isDefaultCurrency = DEFAULT_CURRENCIES.some(c => c.code === currencyCode);
+    if (isDefaultCurrency) {
+      Alert.alert(
+        'Standardwährung',
+        'Standardwährungen können nicht gelöscht werden.',
+        [{ text: 'OK', style: 'default' }]
+      );
+      return;
+    }
+
+    Alert.alert(
+      'Währung löschen',
+      `Möchten Sie die Währung "${currency.name}" wirklich löschen?`,
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Löschen',
+          style: 'destructive',
+          onPress: () => {
+            const newCurrencies = currencies.filter(c => c.code !== currencyCode);
+            setCurrencies(newCurrencies);
+            saveCurrencies(newCurrencies);
+
+            // If deleted currency was selected, switch to CHF
+            if (selectedCurrency === currencyCode) {
+              setSelectedCurrency('CHF');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const isDefaultCurrency = (currencyCode: string) => {
+    return DEFAULT_CURRENCIES.some(c => c.code === currencyCode);
   };
 
   return (
@@ -44,7 +135,13 @@ export default function CurrencyScreen() {
         <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
           Währung
         </Text>
-        <View style={styles.headerSpacer} />
+        <TouchableOpacity
+          onPress={() => setShowEditor(true)}
+          style={styles.headerButton}
+          accessibilityLabel="Neue Währung hinzufügen"
+        >
+          <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -57,7 +154,7 @@ export default function CurrencyScreen() {
             Wählen Sie Ihre bevorzugte Währung
           </Text>
 
-          {CURRENCIES.map((currency) => (
+          {currencies.map((currency) => (
             <TouchableOpacity
               key={currency.code}
               onPress={() => handleCurrencySelect(currency.code)}
@@ -80,15 +177,54 @@ export default function CurrencyScreen() {
                       </Text>
                     </View>
                   </View>
-                  {selectedCurrency === currency.code && (
-                    <Icon name="check" size={20} color="#007AFF" />
-                  )}
+                  <View style={styles.currencyActions}>
+                    {!isDefaultCurrency(currency.code) && (
+                      <TouchableOpacity
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleDeleteCurrency(currency.code);
+                        }}
+                        style={styles.deleteButton}
+                        accessibilityLabel={`Währung ${currency.name} löschen`}
+                      >
+                        <Icon name="delete" size={18} color="#FF3B30" />
+                      </TouchableOpacity>
+                    )}
+                    {selectedCurrency === currency.code && (
+                      <Icon name="check" size={20} color="#007AFF" />
+                    )}
+                  </View>
                 </View>
               </Card>
             </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
+
+      <CurrencyEditor
+        visible={showEditor}
+        onSave={(currency: Currency) => {
+          // Check for duplicate currency codes
+          const isDuplicate = currencies.some(c =>
+            c.code.toUpperCase() === currency.code.toUpperCase()
+          );
+
+          if (isDuplicate) {
+            Alert.alert(
+              'Währung bereits vorhanden',
+              'Eine Währung mit diesem Code existiert bereits.',
+              [{ text: 'OK', style: 'default' }]
+            );
+            return;
+          }
+
+          const newCurrencies = [...currencies, currency];
+          setCurrencies(newCurrencies);
+          saveCurrencies(newCurrencies);
+          setShowEditor(false);
+        }}
+        onCancel={() => setShowEditor(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -115,8 +251,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'System',
   },
-  headerSpacer: {
-    width: 40,
+  headerButton: {
+    padding: 8,
+    marginRight: -8,
   },
   content: {
     flex: 1,
@@ -177,5 +314,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
     fontFamily: 'System',
+  },
+  currencyActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  deleteButton: {
+    padding: 8,
+    marginRight: -8,
   },
 });

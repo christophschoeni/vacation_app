@@ -97,7 +97,7 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
             }}
             activeOpacity={0.8}
           >
-            <Icon name="edit" size={18} color="#FFFFFF" />
+            <Icon name="settings" size={18} color="#FFFFFF" />
           </TouchableOpacity>
         )}
 
