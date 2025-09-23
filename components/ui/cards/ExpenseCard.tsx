@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Card } from '@/components/design';
+import { Card, Icon, IconName } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Expense, ExpenseCategory } from '@/types';
 
@@ -10,13 +10,13 @@ interface ExpenseCardProps {
   onLongPress?: (id: string) => void;
 }
 
-const categoryIcons: Record<ExpenseCategory, string> = {
-  food: '🍽️',
-  transport: '🚗',
-  accommodation: '🏨',
-  entertainment: '🎭',
-  shopping: '🛍️',
-  other: '📝',
+const categoryIcons: Record<ExpenseCategory, IconName> = {
+  food: 'restaurant',
+  transport: 'car',
+  accommodation: 'hotel',
+  entertainment: 'music',
+  shopping: 'shopping',
+  other: 'other',
 };
 
 const categoryNames: Record<ExpenseCategory, string> = {
@@ -65,9 +65,11 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
       <Card style={styles.card}>
         <View style={styles.cardHeader}>
           <View style={styles.categoryContainer}>
-            <Text style={styles.categoryIcon}>
-              {categoryIcons[expense.category]}
-            </Text>
+            <Icon
+              name={categoryIcons[expense.category]}
+              size={20}
+              color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'}
+            />
             <View style={styles.descriptionContainer}>
               <Text style={[styles.description, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
                 {expense.description}
@@ -105,9 +107,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     gap: 12,
-  },
-  categoryIcon: {
-    fontSize: 20,
   },
   descriptionContainer: {
     flex: 1,

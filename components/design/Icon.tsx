@@ -1,67 +1,114 @@
 import React from 'react';
-import { Text, StyleSheet, TextStyle } from 'react-native';
+import { ViewStyle } from 'react-native';
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ArrowDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  Plus,
+  Minus,
+  X,
+  Check,
+  Edit,
+  Trash2,
+  RotateCcw,
+  Search,
+  Filter,
+  MoreHorizontal,
+  Home,
+  Plane,
+  Compass,
+  Settings,
+  Menu,
+  ArrowLeft as Back,
+  UtensilsCrossed,
+  Car,
+  Building,
+  Music,
+  ShoppingBag,
+  Package,
+  AlertTriangle,
+  AlertCircle,
+  CheckCircle,
+  Info,
+  Heart,
+  Star,
+  DollarSign,
+  Wallet,
+  Banknote,
+  Calendar,
+  Clock,
+  MapPin,
+  Camera,
+  Image,
+  LucideIcon,
+} from 'lucide-react-native';
 
-// Custom SVG-like icons using Unicode symbols and text
-const iconMap = {
+// Icon mapping to Lucide components
+const iconMap: Record<string, LucideIcon> = {
   // Navigation
-  'arrow-left': '←',
-  'arrow-right': '→',
-  'arrow-up': '↑',
-  'arrow-down': '↓',
-  'chevron-left': '‹',
-  'chevron-right': '›',
-  'chevron-up': '⌃',
-  'chevron-down': '⌄',
+  'arrow-left': ArrowLeft,
+  'arrow-right': ArrowRight,
+  'arrow-up': ArrowUp,
+  'arrow-down': ArrowDown,
+  'chevron-left': ChevronLeft,
+  'chevron-right': ChevronRight,
+  'chevron-up': ChevronUp,
+  'chevron-down': ChevronDown,
 
-  // Actions - Apple HIG compliant
-  'plus': '+',
-  'minus': '−',
-  'close': '×',
-  'check': '✓',
-  'edit': '✎',
-  'delete': '🗑',
-  'refresh': '↻',
-  'search': '🔍',
-  'filter': '⚲',
-  'more': '⋯',
+  // Actions
+  'plus': Plus,
+  'minus': Minus,
+  'close': X,
+  'check': Check,
+  'edit': Edit,
+  'delete': Trash2,
+  'refresh': RotateCcw,
+  'search': Search,
+  'filter': Filter,
+  'more': MoreHorizontal,
 
-  // Navigation & UI - Apple HIG compliant
-  'home': '⌂',
-  'airplane': '✈',
-  'compass': '⊙',
-  'settings': '⚙',
-  'menu': '☰',
-  'back': '◀',
+  // Navigation & UI
+  'home': Home,
+  'airplane': Plane,
+  'compass': Compass,
+  'settings': Settings,
+  'menu': Menu,
+  'back': Back,
 
   // Categories
-  'restaurant': '🍽️',
-  'car': '🚗',
-  'hotel': '🏨',
-  'music': '🎵',
-  'shopping': '🛍️',
-  'other': '📦',
+  'restaurant': UtensilsCrossed,
+  'car': Car,
+  'hotel': Building,
+  'music': Music,
+  'shopping': ShoppingBag,
+  'other': Package,
 
   // Status & Feedback
-  'warning': '⚠️',
-  'error': '❌',
-  'success': '✅',
-  'info': 'ℹ️',
-  'heart': '♡',
-  'heart-filled': '♥',
-  'star': '☆',
-  'star-filled': '★',
+  'warning': AlertTriangle,
+  'error': AlertCircle,
+  'success': CheckCircle,
+  'info': Info,
+  'heart': Heart,
+  'heart-filled': Heart,
+  'star': Star,
+  'star-filled': Star,
 
   // Currency & Money
-  'currency': '💱',
-  'wallet': '💳',
-  'budget': '¤',
+  'currency': DollarSign,
+  'wallet': Wallet,
+  'budget': Banknote,
 
   // Misc
-  'calendar': '📅',
-  'clock': '🕐',
-  'location': '📍',
-  'camera': '📷',
-  'image': '🖼️',
+  'calendar': Calendar,
+  'clock': Clock,
+  'location': MapPin,
+  'camera': Camera,
+  'image': Image,
 };
 
 export type IconName = keyof typeof iconMap;
@@ -70,35 +117,21 @@ interface IconProps {
   name: IconName;
   size?: number;
   color?: string;
-  style?: TextStyle;
+  style?: ViewStyle;
 }
 
 export function Icon({ name, size = 24, color = '#000000', style }: IconProps) {
-  const iconSymbol = iconMap[name] || '?';
+  const IconComponent = iconMap[name];
+
+  if (!IconComponent) {
+    return null;
+  }
 
   return (
-    <Text
-      style={[
-        styles.icon,
-        {
-          fontSize: size,
-          color: color,
-          lineHeight: size * 1.1,
-          width: size,
-          height: size,
-        },
-        style,
-      ]}
-    >
-      {iconSymbol}
-    </Text>
+    <IconComponent
+      size={size}
+      color={color}
+      style={style}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  icon: {
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    fontFamily: 'System',
-  },
-});

@@ -165,6 +165,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     margin: 16,
     right: 0,
-    bottom: 100, // Above tab bar
+    bottom: 85, // Above tab bar - adjusted for smaller tab bar
   },
 });

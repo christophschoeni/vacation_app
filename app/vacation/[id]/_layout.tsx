@@ -76,8 +76,11 @@ export default function VacationDetailTabLayout() {
             bottom: 0,
             left: 0,
             right: 0,
-            height: Platform.OS === 'ios' ? 85 : 65,
-            paddingBottom: Platform.OS === 'ios' ? 25 : 5,
+            height: Platform.OS === 'ios' ? 70 : 60,
+            paddingBottom: Platform.OS === 'ios' ? 8 : 5,
+            paddingTop: Platform.OS === 'ios' ? 8 : 5,
+            justifyContent: 'center',
+            alignItems: 'center',
           },
         }}>
         <Tabs.Screen

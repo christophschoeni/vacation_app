@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
-import { Card, Button } from '@/components/design';
+import { Card, Button, Icon, IconName } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface EmptyStateProps {
-  icon?: string;
+  icon?: IconName | string;
   title: string;
   subtitle: string;
   buttonTitle: string;
@@ -12,7 +12,7 @@ interface EmptyStateProps {
 }
 
 export default function EmptyState({
-  icon = '📝',
+  icon = 'other',
   title,
   subtitle,
   buttonTitle,
@@ -20,9 +20,19 @@ export default function EmptyState({
 }: EmptyStateProps) {
   const colorScheme = useColorScheme();
 
+  const isIconName = (icon: IconName | string): icon is IconName => {
+    // List of known icon names - simpler approach
+    const knownIcons = ['airplane', 'settings', 'compass', 'home', 'plus', 'check', 'restaurant', 'car', 'hotel', 'music', 'shopping', 'other', 'wallet', 'budget', 'calendar', 'warning', 'error', 'success', 'info'];
+    return knownIcons.includes(icon as string);
+  };
+
   return (
     <Card variant="clean" style={styles.container} accessible={true} accessibilityRole="region" accessibilityLabel={`${title}. ${subtitle}`}>
-      <Text style={styles.icon} accessible={false}>{icon}</Text>
+      {isIconName(icon) ? (
+        <Icon name={icon as IconName} size={48} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} style={styles.iconComponent} />
+      ) : (
+        <Text style={styles.icon} accessible={false}>{icon}</Text>
+      )}
       <Text
         style={[styles.title, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}
         accessible={true}
@@ -54,6 +64,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 48,
+    marginBottom: 16,
+  },
+  iconComponent: {
     marginBottom: 16,
   },
   title: {

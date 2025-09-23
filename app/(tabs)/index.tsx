@@ -123,7 +123,7 @@ export default function VacationsScreen() {
       >
         {vacations.length === 0 ? (
           <EmptyState
-            icon="✈️"
+            icon="airplane"
             title="Keine Ferien geplant"
             subtitle="Füge deine erste Reise hinzu und beginne mit der Planung!"
             buttonTitle="Erste Ferien hinzufügen"
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingTop: 8,
     paddingBottom: 16,
   },
   headerTitle: {
@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 8,
-    paddingBottom: 120, // Space for tab bar
+    paddingBottom: 80, // Reduced space for tab bar
   },
   fab: {
     position: 'absolute',
     margin: 16,
     right: 0,
-    bottom: 100, // Above tab bar
+    bottom: 85, // Above tab bar - adjusted for smaller tab bar
     elevation: 6,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,

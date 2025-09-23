@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Card, Icon, IconName } from '@/components/design';
+import { Card, Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 const CURRENCIES = [

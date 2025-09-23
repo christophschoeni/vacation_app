@@ -63,7 +63,7 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
 
       <View style={styles.cardContent}>
         <View style={styles.hotelContainer}>
-          <Text style={styles.hotelIcon}>🏨</Text>
+          <Icon name="hotel" size={16} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} />
           <Text style={[styles.hotel, { color: colorScheme === 'dark' ? '#D1D1D6' : '#48484A' }]}>
             {vacation.hotel}
           </Text>
@@ -133,9 +133,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  hotelIcon: {
-    fontSize: 16,
   },
   hotel: {
     fontSize: 15,
