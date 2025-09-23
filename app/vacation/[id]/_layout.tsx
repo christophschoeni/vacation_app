@@ -71,13 +71,6 @@ export default function VacationDetailTabLayout() {
             tabBarIcon: ({ color }) => <Icon size={26} name="check" color={color} />,
           }}
         />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: 'Einstellungen',
-            tabBarIcon: ({ color }) => <Icon size={26} name="settings" color={color} />,
-          }}
-        />
       </Tabs>
     </SafeAreaView>
   );

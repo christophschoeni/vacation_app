@@ -47,6 +47,13 @@ export interface ChecklistItem {
   dueDate?: Date;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  isDefault: boolean;
+}
+
 export type ExpenseCategory =
   | 'transport'
   | 'accommodation'

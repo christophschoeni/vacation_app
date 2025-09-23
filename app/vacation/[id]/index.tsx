@@ -11,7 +11,7 @@ import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 
 import ExpenseCard from '@/components/ui/cards/ExpenseCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
-import { Card, FloatingActionButton } from '@/components/design';
+import { Card, FloatingActionButton, Icon, Header } from '@/components/design';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations, useExpenses } from '@/lib/database';
@@ -71,6 +71,12 @@ export default function VacationBudgetScreen() {
 
   return (
     <View style={styles.container}>
+      <Header
+        title={vacation?.destination || 'Ferien'}
+        compact
+        showBackButton
+        onBackPress={() => router.back()}
+      />
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -93,7 +99,7 @@ export default function VacationBudgetScreen() {
           </Text>
           {expenses.length === 0 ? (
             <Card style={[styles.emptyExpenses, styles.emptyContent]}>
-              <Text style={styles.emptyIcon}>💰</Text>
+              <Icon name="budget" size={48} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} style={styles.emptyIconStyle} />
               <Text style={[styles.emptyText, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
                 Noch keine Ausgaben erfasst
               </Text>
@@ -136,6 +142,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   scrollContent: {
+    paddingTop: 8,
     paddingBottom: 140, // More space for FAB and tab bar
   },
   expensesSection: {
@@ -154,8 +161,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 32,
   },
-  emptyIcon: {
-    fontSize: 48,
+  emptyIconStyle: {
     marginBottom: 16,
   },
   emptyText: {

@@ -97,7 +97,7 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
             }}
             activeOpacity={0.8}
           >
-            <Icon name="edit" size={18} color={Colors.neutral[0]} />
+            <Icon name="edit" size={18} color="#FFFFFF" />
           </TouchableOpacity>
         )}
 
@@ -106,7 +106,7 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
           onPress={handleDelete}
           activeOpacity={0.8}
         >
-          <Icon name="delete" size={18} color={Colors.neutral[0]} />
+          <Icon name="delete" size={18} color="#FFFFFF" />
         </TouchableOpacity>
       </Animated.View>
 

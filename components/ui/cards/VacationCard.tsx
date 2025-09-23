@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Card } from '@/components/design';
+import { Card, Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useExpenses } from '@/lib/database';
 import type { Vacation } from '@/types';
@@ -71,7 +71,7 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
 
         {vacation.budget && (
           <View style={styles.budgetContainer}>
-            <Text style={styles.budgetIcon}>💰</Text>
+            <Icon name="budget" size={16} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} />
             <View style={styles.budgetInfo}>
               <Text style={[styles.budgetText, { color: colorScheme === 'dark' ? '#D1D1D6' : '#48484A' }]}>
                 {formatCurrency(totalExpenses, vacation.currency)} / {formatCurrency(vacation.budget, vacation.currency)}
@@ -147,9 +147,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 8,
     marginTop: 8,
-  },
-  budgetIcon: {
-    fontSize: 16,
   },
   budgetInfo: {
     flex: 1,

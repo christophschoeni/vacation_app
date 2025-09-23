@@ -5,7 +5,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Header, Card } from '@/components/design';
+import { Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function ExploreScreen() {
@@ -14,14 +14,12 @@ export default function ExploreScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#F8F8F8' }]}>
-      <Header title="Entdecken" />
-
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Card style={[styles.placeholderCard, styles.placeholderContent]}>
+        <Card variant="clean" style={[styles.placeholderCard, styles.placeholderContent]}>
           <Text style={styles.placeholderIcon}>🌍</Text>
           <Text style={[styles.placeholderTitle, { color: isDark ? '#FFFFFF' : '#000000' }]}>
             Reise-Inspiration
@@ -31,7 +29,7 @@ export default function ExploreScreen() {
           </Text>
         </Card>
 
-        <Card style={[styles.placeholderCard, styles.placeholderContent]}>
+        <Card variant="clean" style={[styles.placeholderCard, styles.placeholderContent]}>
           <Text style={styles.placeholderIcon}>💡</Text>
           <Text style={[styles.placeholderTitle, { color: isDark ? '#FFFFFF' : '#000000' }]}>
             Budget-Tipps
@@ -55,7 +53,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 16,
-    paddingBottom: 100, // Space for tab bar
+    paddingBottom: 120, // Space for tab bar
   },
   placeholderCard: {
     marginBottom: 16,

@@ -9,7 +9,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
-import { Header, FloatingActionButton, Colors } from '@/components/design';
+import { FloatingActionButton, Colors } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
@@ -81,8 +81,6 @@ export default function VacationsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <Header title="Meine Ferien" compact />
-
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -148,7 +146,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 8,
+    paddingTop: 16,
     paddingBottom: 120, // Space for tab bar
   },
   fab: {

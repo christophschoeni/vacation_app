@@ -55,6 +55,45 @@ export default function RootLayout() {
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen
+              name="settings/categories"
+              options={{
+                headerShown: true,
+                title: 'Kategorien',
+                headerBackTitle: '',
+                headerBackVisible: true,
+                headerBackButtonMenuEnabled: false,
+                presentation: 'card',
+                animationDuration: 300,
+                ...slideFromRight,
+              }}
+            />
+            <Stack.Screen
+              name="settings/currency"
+              options={{
+                headerShown: true,
+                title: 'Währung',
+                headerBackTitle: '',
+                headerBackVisible: true,
+                headerBackButtonMenuEnabled: false,
+                presentation: 'card',
+                animationDuration: 300,
+                ...slideFromRight,
+              }}
+            />
+            <Stack.Screen
+              name="settings/notifications"
+              options={{
+                headerShown: true,
+                title: 'Benachrichtigungen',
+                headerBackTitle: '',
+                headerBackVisible: true,
+                headerBackButtonMenuEnabled: false,
+                presentation: 'card',
+                animationDuration: 300,
+                ...slideFromRight,
+              }}
+            />
+            <Stack.Screen
               name="vacation/[id]"
               options={{
                 headerShown: false,

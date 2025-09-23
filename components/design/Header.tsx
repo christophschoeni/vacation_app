@@ -60,11 +60,11 @@ export function Header({
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 accessible={true}
                 accessibilityRole="button"
-                accessibilityLabel="Zurück zu Ferien"
-                accessibilityHint="Kehrt zur Ferienübersicht zurück"
+                accessibilityLabel="Zurück"
+                accessibilityHint="Kehrt zur vorherigen Seite zurück"
               >
                 <Text style={[styles.backButtonText, { color: Colors.primary[500] }]}>
-                  ‹ Ferien
+                  ‹
                 </Text>
               </TouchableOpacity>
             ) : leftButton ? (

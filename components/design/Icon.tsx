@@ -13,7 +13,7 @@ const iconMap = {
   'chevron-up': '⌃',
   'chevron-down': '⌄',
 
-  // Actions
+  // Actions - Apple HIG compliant
   'plus': '+',
   'minus': '−',
   'close': '×',
@@ -25,11 +25,11 @@ const iconMap = {
   'filter': '⚲',
   'more': '⋯',
 
-  // Navigation & UI
-  'home': '🏠',
-  'airplane': '✈️',
-  'compass': '🧭',
-  'settings': '⚙️',
+  // Navigation & UI - Apple HIG compliant
+  'home': '⌂',
+  'airplane': '✈',
+  'compass': '⊙',
+  'settings': '⚙',
   'menu': '☰',
   'back': '◀',
 
@@ -54,6 +54,7 @@ const iconMap = {
   // Currency & Money
   'currency': '💱',
   'wallet': '💳',
+  'budget': '¤',
 
   // Misc
   'calendar': '📅',

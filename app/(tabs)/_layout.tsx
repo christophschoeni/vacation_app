@@ -33,7 +33,7 @@ export default function MainLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Ferien',
+          title: 'Meine Ferien',
           tabBarIcon: ({ color }) => <Icon size={26} name="airplane" color={color} />,
         }}
       />
@@ -42,6 +42,13 @@ export default function MainLayout() {
         options={{
           title: 'Entdecken',
           tabBarIcon: ({ color }) => <Icon size={26} name="compass" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Einstellungen',
+          tabBarIcon: ({ color }) => <Icon size={28} name="settings" color={color} />,
         }}
       />
     </Tabs>
