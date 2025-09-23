@@ -19,7 +19,7 @@ export default function VacationDetailTabLayout() {
 
   if (!vacation) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => router.push('/(tabs)')}
@@ -38,7 +38,7 @@ export default function VacationDetailTabLayout() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => router.push('/(tabs)')}
@@ -77,8 +77,8 @@ export default function VacationDetailTabLayout() {
             left: 0,
             right: 0,
             height: Platform.OS === 'ios' ? 70 : 60,
-            paddingBottom: Platform.OS === 'ios' ? 8 : 5,
-            paddingTop: Platform.OS === 'ios' ? 8 : 5,
+            paddingBottom: Platform.OS === 'ios' ? 0 : 0,
+            paddingTop: Platform.OS === 'ios' ? 8 : 8,
             justifyContent: 'center',
             alignItems: 'center',
           },

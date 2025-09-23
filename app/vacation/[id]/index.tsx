@@ -87,7 +87,7 @@ export default function VacationBudgetScreen() {
         <BudgetOverview vacation={vacation} expenses={expenses} />
 
         {/* Expenses List */}
-        <View style={styles.expensesSection}>
+        <View style={[styles.expensesSection, { paddingHorizontal: 16 }]}>
           {expenses.length === 0 ? (
             <Card style={[styles.emptyExpenses, styles.emptyContent]}>
               <Icon name="budget" size={48} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} style={styles.emptyIconStyle} />
@@ -130,11 +130,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
     paddingTop: 4,
-    paddingBottom: 140, // More space for FAB and tab bar
+    paddingBottom: 85, // Reduced space for compact tab bar
   },
   expensesSection: {
     marginBottom: 24,

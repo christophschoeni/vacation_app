@@ -19,13 +19,18 @@ interface ProgressBarProps {
 
 function ProgressBar({ progress, color, style }: ProgressBarProps) {
   return (
-    <View style={[{ height: 8, backgroundColor: 'rgba(142, 142, 147, 0.3)', borderRadius: 4 }, style]}>
+    <View style={[{
+      height: 6,
+      backgroundColor: 'rgba(142, 142, 147, 0.12)',
+      borderRadius: 3,
+      overflow: 'hidden'
+    }, style]}>
       <View
         style={{
           height: '100%',
           width: `${Math.min(progress * 100, 100)}%`,
           backgroundColor: color,
-          borderRadius: 4
+          borderRadius: 3
         }}
       />
     </View>
@@ -40,20 +45,26 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
   const progressColor = getBudgetStatusColor(analysis.status);
 
   return (
-    <Card style={styles.card}>
+    <View style={[styles.container, {
+      backgroundColor: isDark ? '#000000' : '#FFFFFF',
+    }]}>
+      {/* Header with clean title and badge */}
       <View style={styles.header}>
-          <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Budget Übersicht
+        <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          Budget Übersicht
+        </Text>
+        <View style={[styles.statusBadge, {
+          backgroundColor: isDark ? 'rgba(142, 142, 147, 0.16)' : 'rgba(142, 142, 147, 0.12)',
+        }]}>
+          <Text style={[styles.statusText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {getBudgetStatusText(analysis.status)}
           </Text>
-          <View style={[styles.statusBadge, { backgroundColor: progressColor }]}>
-            <Text style={styles.statusText}>
-              {getBudgetStatusText(analysis.status)}
-            </Text>
-          </View>
         </View>
+      </View>
 
-        {/* Progress Bar */}
-        <View style={styles.progressSection}>
+      {/* Clean progress indication */}
+      <View style={styles.progressSection}>
+        <View style={styles.progressContainer}>
           <ProgressBar
             progress={Math.min(analysis.budgetPercentageUsed / 100, 1)}
             color={progressColor}
@@ -63,76 +74,42 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
             {analysis.budgetPercentageUsed.toFixed(1)}% verwendet
           </Text>
         </View>
+      </View>
 
-        {/* Budget Rows */}
-        <View style={styles.budgetSection}>
-          <BudgetRow
-            label="Gesamtbudget"
-            amount={formatCurrency(analysis.totalBudget)}
-            color={isDark ? '#FFFFFF' : '#1C1C1E'}
-          />
-          <BudgetRow
-            label="Ausgegeben"
-            amount={formatCurrency(analysis.totalExpenses)}
-            color={analysis.isOverBudget ? '#F44336' : (isDark ? '#FFFFFF' : '#1C1C1E')}
-          />
-          <BudgetRow
-            label="Verbleibt"
-            amount={formatCurrency(analysis.remainingBudget)}
-            color={analysis.remainingBudget < 0 ? '#F44336' : '#00C853'}
-          />
+      {/* Main budget numbers */}
+      <View style={styles.mainBudgetSection}>
+        <View style={styles.budgetGrid}>
+          <View style={styles.budgetGridItem}>
+            <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              Gesamtbudget
+            </Text>
+            <Text style={[styles.budgetGridAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+              {formatCurrency(analysis.totalBudget)}
+            </Text>
+          </View>
+          <View style={styles.budgetGridItem}>
+            <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              Ausgegeben
+            </Text>
+            <Text style={[styles.budgetGridAmount, {
+              color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E')
+            }]}>
+              {formatCurrency(analysis.totalExpenses)}
+            </Text>
+          </View>
+          <View style={styles.budgetGridItem}>
+            <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              Verbleibt
+            </Text>
+            <Text style={[styles.budgetGridAmount, {
+              color: analysis.remainingBudget < 0 ? '#FF3B30' : '#34C759'
+            }]}>
+              {formatCurrency(analysis.remainingBudget)}
+            </Text>
+          </View>
         </View>
-
-        {/* Daily Analysis */}
-        {analysis.status !== 'future-trip' && (
-          <View style={styles.dailySection}>
-            <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              Tägliche Analyse
-            </Text>
-
-            <BudgetRow
-              label="Budget pro Tag"
-              amount={formatCurrency(analysis.budgetPerDay)}
-              color={isDark ? '#8E8E93' : '#6D6D70'}
-            />
-
-            {analysis.elapsedDays > 0 && (
-              <BudgetRow
-                label={`Ø Ausgaben/Tag (${analysis.elapsedDays} Tage)`}
-                amount={formatCurrency(analysis.averageSpentPerDay)}
-                color={isDark ? '#8E8E93' : '#6D6D70'}
-              />
-            )}
-
-            {analysis.remainingDays > 0 && (
-              <BudgetRow
-                label={`Verfügbar/Tag (${analysis.remainingDays} Tage)`}
-                amount={formatCurrency(analysis.remainingBudgetPerDay)}
-                color={analysis.remainingBudgetPerDay > analysis.budgetPerDay ? '#00C853' : '#F44336'}
-              />
-            )}
-          </View>
-        )}
-
-        {/* Projection */}
-        {analysis.status !== 'future-trip' && analysis.elapsedDays > 0 && (
-          <View style={styles.projectionSection}>
-            <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              Prognose
-            </Text>
-            <BudgetRow
-              label="Geschätzte Gesamtausgaben"
-              amount={formatCurrency(analysis.projectedTotalSpend)}
-              color={isDark ? '#8E8E93' : '#6D6D70'}
-            />
-            <BudgetRow
-              label={analysis.projectedOverOrUnder >= 0 ? 'Voraussichtlich gespart' : 'Voraussichtlich überzogen'}
-              amount={formatCurrency(Math.abs(analysis.projectedOverOrUnder))}
-              color={analysis.projectedOverOrUnder >= 0 ? '#00C853' : '#F44336'}
-            />
-          </View>
-        )}
-    </Card>
+      </View>
+    </View>
   );
 }
 
@@ -152,74 +129,85 @@ function BudgetRow({ label, amount, color }: BudgetRowProps) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginBottom: spacing.md,
-    elevation: 2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+  container: {
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    marginHorizontal: -16, // Negative margin to extend to screen edges
+    marginBottom: 16,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: 20,
+    paddingHorizontal: 4,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 22,
+    fontWeight: '700',
     fontFamily: 'System',
     flex: 1,
   },
   statusBadge: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
   statusText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '500',
     fontFamily: 'System',
   },
   progressSection: {
-    marginBottom: spacing.lg,
+    marginBottom: 24,
+  },
+  progressContainer: {
+    gap: 8,
+    paddingHorizontal: 4,
   },
   progressBar: {
-    height: spacing.sm,
-    borderRadius: spacing.xs,
-    marginBottom: spacing.sm,
+    height: 6,
+    borderRadius: 3,
   },
   progressText: {
-    fontSize: 14,
+    fontSize: 13,
     textAlign: 'center',
     fontFamily: 'System',
+    fontWeight: '500',
   },
-  budgetSection: {
-    marginBottom: spacing.md,
+  mainBudgetSection: {
+    marginTop: 8,
   },
-  dailySection: {
-    marginBottom: spacing.md,
-    paddingTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(142, 142, 147, 0.3)',
+  budgetGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 16,
   },
-  projectionSection: {
-    paddingTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(142, 142, 147, 0.3)',
+  budgetGridItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: spacing.md,
+  budgetGridLabel: {
+    fontSize: 13,
+    fontWeight: '500',
     fontFamily: 'System',
+    marginBottom: 6,
+    textAlign: 'center',
   },
+  budgetGridAmount: {
+    fontSize: 17,
+    fontWeight: '700',
+    fontFamily: 'System',
+    textAlign: 'center',
+  },
+  // Keep old styles for compatibility
   budgetRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: 8,
   },
   budgetLabel: {
     fontSize: 16,

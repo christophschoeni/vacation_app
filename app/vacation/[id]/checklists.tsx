@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingBottom: 140, // Space for tab bar
+    paddingBottom: 85, // Reduced space for compact tab bar
   },
   placeholderCard: {
     marginTop: 16,
