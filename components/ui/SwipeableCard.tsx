@@ -1,13 +1,13 @@
+import { Colors, Icon } from '@/components/design';
 import React, { useRef } from 'react';
 import {
-  View,
-  StyleSheet,
   Animated,
   Dimensions,
+  StyleSheet,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
-import { Icon, Colors, BorderRadius } from '@/components/design';
 
 const { width: screenWidth } = Dimensions.get('window');
 const SWIPE_THRESHOLD = screenWidth * 0.3;
@@ -34,7 +34,7 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
 
       if (translationX < -SWIPE_THRESHOLD || velocityX < -1000) {
         // Swiped left enough or fast enough - show action buttons
-        const actionWidth = onEdit ? -148 : -74; // 74pt per button (Apple standard)
+        const actionWidth = onEdit ? -128 : -60;
         Animated.timing(translateX, {
           toValue: actionWidth,
           duration: 250,
@@ -79,9 +79,9 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
         style={[
           styles.actionsContainer,
           {
-            width: onEdit ? 148 : 74,
+            width: onEdit ? 128 : 60,
             opacity: translateX.interpolate({
-              inputRange: onEdit ? [-148, -74, 0] : [-74, -37, 0],
+              inputRange: onEdit ? [-128, -64, 0] : [-60, -30, 0],
               outputRange: [1, 0.5, 0],
               extrapolate: 'clamp',
             }),
@@ -145,18 +145,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 0,
-    bottom: 0,
+    bottom: 12,
     flexDirection: 'row',
-    borderTopRightRadius: BorderRadius.xl,
-    borderBottomRightRadius: BorderRadius.xl,
-    overflow: 'hidden', // Ensure rounded corners are visible
+    overflow: 'visible',
     zIndex: 0, // Behind the card
   },
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 74, // Apple standard 74pt width
-    flex: 1, // Take full height of container
+    width: 60,
+    height: '100%',
+    borderRadius: 12,
   },
   editButton: {
     backgroundColor: Colors.primary[500],
@@ -165,7 +164,6 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: '#FF3B30', // iOS System Red for destructive actions
-    borderTopRightRadius: BorderRadius.xl,
-    borderBottomRightRadius: BorderRadius.xl,
+    marginLeft: 4,
   },
 });

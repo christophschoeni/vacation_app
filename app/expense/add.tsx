@@ -11,7 +11,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Header, Card } from '@/components/design';
+import { Header, Button } from '@/components/design';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import CategorySelector from '@/components/ui/CategorySelector';
 import CurrencySelector from '@/components/ui/CurrencySelector';
@@ -116,19 +116,9 @@ export default function AddExpenseScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <Header
         title="Neue Ausgabe"
-        leftButton={{
-          title: "Abbrechen",
-          onPress: handleCancel,
-          variant: "outline"
-        }}
-        rightButton={{
-          title: "Speichern",
-          onPress: handleSave,
-          variant: "primary"
-        }}
       />
 
       <KeyboardAvoidingView
@@ -140,7 +130,7 @@ export default function AddExpenseScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <Card style={styles.formCard}>
+          <View style={styles.formContainer}>
             <View style={styles.row}>
               <View style={styles.halfWidth}>
                 <FormInput
@@ -189,7 +179,24 @@ export default function AddExpenseScreen() {
               value={formData.date}
               onChange={(date) => updateField('date', date)}
             />
-          </Card>
+
+            <View style={styles.buttonContainer}>
+              <Button
+                title="Abbrechen"
+                variant="outline"
+                onPress={handleCancel}
+                style={styles.button}
+                fullWidth
+              />
+              <Button
+                title="Speichern"
+                variant="primary"
+                onPress={handleSave}
+                style={styles.button}
+                fullWidth
+              />
+            </View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -205,19 +212,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
     paddingBottom: 100,
   },
-  formCard: {
-    marginTop: 16,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+  formContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   row: {
     flexDirection: 'row',
@@ -243,5 +244,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     fontFamily: 'System',
+  },
+  buttonContainer: {
+    marginTop: 32,
+    gap: 12,
+  },
+  button: {
+    marginVertical: 0,
   },
 });
