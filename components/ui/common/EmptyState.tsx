@@ -21,12 +21,19 @@ export default function EmptyState({
   const colorScheme = useColorScheme();
 
   return (
-    <Card style={styles.container}>
-      <Text style={styles.icon}>{icon}</Text>
-      <Text style={[styles.title, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+    <Card style={styles.container} accessible={true} accessibilityRole="region" accessibilityLabel={`${title}. ${subtitle}`}>
+      <Text style={styles.icon} accessible={false}>{icon}</Text>
+      <Text
+        style={[styles.title, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}
+        accessible={true}
+        accessibilityRole="header"
+      >
         {title}
       </Text>
-      <Text style={[styles.subtitle, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
+      <Text
+        style={[styles.subtitle, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}
+        accessible={true}
+      >
         {subtitle}
       </Text>
       <Button

@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useExpenses } from '@/lib/database';
+import { calculateRemainingBudget } from '@/lib/budget-calculations';
 import type { Vacation } from '@/types';
 
 interface VacationCardProps {
@@ -12,6 +14,7 @@ interface VacationCardProps {
 
 export default function VacationCard({ vacation, onPress, onLongPress }: VacationCardProps) {
   const colorScheme = useColorScheme();
+  const { expenses } = useExpenses(vacation.id);
 
   const formatDateRange = (startDate: Date, endDate: Date) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -21,11 +24,28 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
     return `${startDate.toLocaleDateString('de-DE', options)} - ${endDate.toLocaleDateString('de-DE', options)}`;
   };
 
+  const formatCurrency = (amount: number, currency: string) => {
+    return new Intl.NumberFormat('de-CH', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amountCHF, 0);
+  const remainingBudget = vacation.budget ? vacation.budget - totalExpenses : 0;
+  const budgetStatus = vacation.budget && remainingBudget < 0 ? 'over' : 'normal';
+
   return (
     <TouchableOpacity
       onPress={() => onPress(vacation.id)}
       onLongPress={onLongPress ? () => onLongPress(vacation.id) : undefined}
       activeOpacity={0.8}
+      accessible={true}
+      accessibilityRole="button"
+      accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrency(totalExpenses, vacation.currency)} von ${formatCurrency(vacation.budget, vacation.currency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrency(Math.abs(remainingBudget), vacation.currency)}` : `Verbleibend: ${formatCurrency(remainingBudget, vacation.currency)}`}` : ''}`}
+      accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
     >
       <Card style={styles.card}>
       <View style={styles.cardHeader}>
@@ -49,6 +69,28 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
             {vacation.hotel}
           </Text>
         </View>
+
+        {vacation.budget && (
+          <View style={styles.budgetContainer}>
+            <Text style={styles.budgetIcon}>💰</Text>
+            <View style={styles.budgetInfo}>
+              <Text style={[styles.budgetText, { color: colorScheme === 'dark' ? '#D1D1D6' : '#48484A' }]}>
+                {formatCurrency(totalExpenses, vacation.currency)} / {formatCurrency(vacation.budget, vacation.currency)}
+              </Text>
+              <Text style={[
+                styles.remainingText,
+                {
+                  color: budgetStatus === 'over'
+                    ? '#FF3B30'
+                    : colorScheme === 'dark' ? '#34C759' : '#30D158'
+                }
+              ]}>
+                {budgetStatus === 'over' ? 'Überschreitung: ' : 'Verbleibend: '}
+                {formatCurrency(Math.abs(remainingBudget), vacation.currency)}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
       </Card>
     </TouchableOpacity>
@@ -98,5 +140,26 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '400',
     flex: 1,
+  },
+  budgetContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginTop: 8,
+  },
+  budgetIcon: {
+    fontSize: 16,
+  },
+  budgetInfo: {
+    flex: 1,
+  },
+  budgetText: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  remainingText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
 });

@@ -11,6 +11,10 @@ interface FloatingActionButtonProps {
   variant?: 'primary' | 'secondary';
   style?: ViewStyle;
   disabled?: boolean;
+  accessible?: boolean;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  accessibilityRole?: 'button' | 'link' | 'none';
 }
 
 export function FloatingActionButton({
@@ -20,6 +24,10 @@ export function FloatingActionButton({
   variant = 'primary',
   style,
   disabled = false,
+  accessible = true,
+  accessibilityLabel,
+  accessibilityHint,
+  accessibilityRole = 'button',
 }: FloatingActionButtonProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -85,6 +93,10 @@ export function FloatingActionButton({
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.8}
+      accessible={accessible}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      accessibilityRole={accessibilityRole}
     >
       <Icon
         name={icon}

@@ -21,28 +21,24 @@ export default function ExploreScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Card style={styles.placeholderCard}>
-          <Card.Content style={styles.placeholderContent}>
-            <Text style={styles.placeholderIcon}>🌍</Text>
-            <Text style={[styles.placeholderTitle, { color: isDark ? '#FFFFFF' : '#000000' }]}>
-              Reise-Inspiration
-            </Text>
-            <Text style={[styles.placeholderText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Entdecke neue Reiseziele, finde Inspiration für deine nächsten Ferien und erhalte Tipps für unvergessliche Erlebnisse.
-            </Text>
-          </Card.Content>
+        <Card style={[styles.placeholderCard, styles.placeholderContent]}>
+          <Text style={styles.placeholderIcon}>🌍</Text>
+          <Text style={[styles.placeholderTitle, { color: isDark ? '#FFFFFF' : '#000000' }]}>
+            Reise-Inspiration
+          </Text>
+          <Text style={[styles.placeholderText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            Entdecke neue Reiseziele, finde Inspiration für deine nächsten Ferien und erhalte Tipps für unvergessliche Erlebnisse.
+          </Text>
         </Card>
 
-        <Card style={styles.placeholderCard}>
-          <Card.Content style={styles.placeholderContent}>
-            <Text style={styles.placeholderIcon}>💡</Text>
-            <Text style={[styles.placeholderTitle, { color: isDark ? '#FFFFFF' : '#000000' }]}>
-              Budget-Tipps
-            </Text>
-            <Text style={[styles.placeholderText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Erhalte wertvolle Tipps, wie du dein Reisebudget optimal planst und während der Reise im Blick behältst.
-            </Text>
-          </Card.Content>
+        <Card style={[styles.placeholderCard, styles.placeholderContent]}>
+          <Text style={styles.placeholderIcon}>💡</Text>
+          <Text style={[styles.placeholderTitle, { color: isDark ? '#FFFFFF' : '#000000' }]}>
+            Budget-Tipps
+          </Text>
+          <Text style={[styles.placeholderText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            Erhalte wertvolle Tipps, wie du dein Reisebudget optimal planst und während der Reise im Blick behältst.
+          </Text>
         </Card>
       </ScrollView>
     </SafeAreaView>

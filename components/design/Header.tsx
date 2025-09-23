@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors, Typography, Spacing, BorderRadius, Shadow } from '@/constants/design';
+import { Colors, Shadow, Spacing, Typography } from '@/constants/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import React from 'react';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from './Button';
 import { IconName } from './Icon';
 
@@ -101,14 +101,15 @@ export function Header({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
+    paddingTop: 0,
+    paddingBottom: Spacing.sm,
   },
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: Spacing.sm,
-    minHeight: 32,
+    marginBottom: 0,
+    minHeight: 20,
   },
   leftSection: {
     flex: 1,

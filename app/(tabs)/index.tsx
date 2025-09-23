@@ -4,15 +4,15 @@ import {
   StyleSheet,
   RefreshControl,
   Alert,
-  View,
-  Text,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
-import { Header, Card, Button, FloatingActionButton, Colors } from '@/components/design';
+import { Header, FloatingActionButton, Colors } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';
+import VacationCard from '@/components/ui/cards/VacationCard';
+import EmptyState from '@/components/ui/common/EmptyState';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/lib/database';
 
@@ -96,24 +96,18 @@ export default function VacationsScreen() {
           />
         }
         showsVerticalScrollIndicator={false}
+        accessible={true}
+        accessibilityLabel="Liste der Ferien"
+        accessibilityHint="Ziehen Sie nach unten, um zu aktualisieren"
       >
         {vacations.length === 0 ? (
-          <Card style={styles.emptyState}>
-            <View style={styles.emptyContent}>
-              <Text style={styles.emptyIcon}>✈️</Text>
-              <Text style={[styles.emptyTitle, { color: isDark ? '#FFFFFF' : '#000000' }]}>
-                Keine Ferien geplant
-              </Text>
-              <Text style={[styles.emptySubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Füge deine erste Reise hinzu und beginne mit der Planung!
-              </Text>
-              <Button
-                title="Erste Ferien hinzufügen"
-                onPress={handleAddVacation}
-                style={styles.emptyButton}
-              />
-            </View>
-          </Card>
+          <EmptyState
+            icon="✈️"
+            title="Keine Ferien geplant"
+            subtitle="Füge deine erste Reise hinzu und beginne mit der Planung!"
+            buttonTitle="Erste Ferien hinzufügen"
+            onButtonPress={handleAddVacation}
+          />
         ) : (
           vacations.map((vacation) => (
             <SwipeableCard
@@ -122,27 +116,11 @@ export default function VacationsScreen() {
               onEdit={() => handleVacationEdit(vacation.id)}
               onDelete={() => handleVacationDelete(vacation.id)}
             >
-              <Card style={styles.vacationCard}>
-                <View style={styles.cardHeader}>
-                  <View style={styles.destinationContainer}>
-                    <Text style={[styles.destination, { color: isDark ? '#FFFFFF' : '#000000' }]}>
-                      {vacation.destination}
-                    </Text>
-                    <Text style={[styles.country, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                      {vacation.country}
-                    </Text>
-                  </View>
-                  <Text style={[styles.dates, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    {vacation.startDate.toLocaleDateString('de-DE', { day: '2-digit', month: 'short' })} - {vacation.endDate.toLocaleDateString('de-DE', { day: '2-digit', month: 'short' })}
-                  </Text>
-                </View>
-                <View style={styles.hotelContainer}>
-                  <Text style={styles.hotelIcon}>🏨</Text>
-                  <Text style={[styles.hotel, { color: isDark ? '#D1D1D6' : '#48484A' }]}>
-                    {vacation.hotel}
-                  </Text>
-                </View>
-              </Card>
+              <VacationCard
+                vacation={vacation}
+                onPress={() => handleVacationPress(vacation.id)}
+                onLongPress={() => handleVacationEdit(vacation.id)}
+              />
             </SwipeableCard>
           ))
         )}
@@ -152,6 +130,10 @@ export default function VacationsScreen() {
         icon="plus"
         style={styles.fab}
         onPress={handleAddVacation}
+        accessible={true}
+        accessibilityLabel="Neue Ferien hinzufügen"
+        accessibilityHint="Doppeltippen, um neue Ferien zu erstellen"
+        accessibilityRole="button"
       />
     </SafeAreaView>
   );
@@ -167,86 +149,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 8,
-    paddingBottom: 120, // Space for new tab bar
-  },
-  emptyState: {
-    marginTop: 60,
-  },
-  emptyContent: {
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    marginBottom: 8,
-    fontFamily: 'System',
-    textAlign: 'center',
-  },
-  emptySubtitle: {
-    fontSize: 17,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginBottom: 24,
-    lineHeight: 22,
-    maxWidth: 280,
-    fontFamily: 'System',
-  },
-  emptyButton: {
-    minWidth: 200,
-  },
-  vacationCard: {
-    marginBottom: 12,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-  },
-  destinationContainer: {
-    flex: 1,
-  },
-  destination: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 2,
-    fontFamily: 'System',
-  },
-  country: {
-    fontSize: 15,
-    fontWeight: '400',
-    fontFamily: 'System',
-  },
-  dates: {
-    fontSize: 13,
-    fontWeight: '500',
-    textAlign: 'right',
-    fontFamily: 'System',
-  },
-  hotelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  hotelIcon: {
-    fontSize: 16,
-  },
-  hotel: {
-    fontSize: 15,
-    fontWeight: '400',
-    flex: 1,
-    fontFamily: 'System',
+    paddingBottom: 120, // Space for tab bar
   },
   fab: {
     position: 'absolute',
