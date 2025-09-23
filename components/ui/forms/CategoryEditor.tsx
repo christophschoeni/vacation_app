@@ -11,6 +11,103 @@ import { Button, Icon, IconName } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import IconPicker from '../common/IconPicker';
 
+// Function to get display name for icons
+const getIconDisplayName = (iconName: IconName): string => {
+  const iconNames: Record<IconName, string> = {
+    // Food & Drink
+    'restaurant': 'Restaurant',
+    'coffee': 'Kaffee',
+    'utensils': 'Besteck',
+    'wine': 'Wein',
+    'beer': 'Bier',
+    'ice-cream': 'Eis',
+    'pizza': 'Pizza',
+
+    // Transportation
+    'car': 'Auto',
+    'airplane': 'Flugzeug',
+    'bus': 'Bus',
+    'train': 'Zug',
+    'ship': 'Schiff',
+    'bike': 'Fahrrad',
+    'fuel': 'Kraftstoff',
+
+    // Accommodation & Places
+    'hotel': 'Hotel',
+    'home': 'Zuhause',
+    'location': 'Standort',
+    'mountain': 'Berg',
+    'trees': 'Bäume',
+
+    // Shopping & Items
+    'shopping': 'Einkaufen',
+    'cart': 'Warenkorb',
+    'shirt': 'Kleidung',
+    'gift': 'Geschenk',
+    'camera': 'Kamera',
+
+    // Activities & Entertainment
+    'music': 'Musik',
+    'gamepad': 'Spiele',
+    'book': 'Buch',
+    'compass': 'Kompass',
+
+    // Services & Utilities
+    'phone': 'Telefon',
+    'wifi': 'WLAN',
+    'stethoscope': 'Gesundheit',
+    'settings': 'Einstellungen',
+
+    // Money & Finance
+    'currency': 'Währung',
+    'wallet': 'Geldbörse',
+    'budget': 'Budget',
+
+    // Time & Weather
+    'calendar': 'Kalender',
+    'sun': 'Sonne',
+    'moon': 'Mond',
+    'cloud': 'Wolke',
+
+    // General
+    'heart': 'Herz',
+    'star': 'Stern',
+    'plus': 'Plus',
+    'check': 'Häkchen',
+    'other': 'Sonstiges',
+
+    // Navigation (fallbacks)
+    'arrow-left': 'Pfeil links',
+    'arrow-right': 'Pfeil rechts',
+    'chevron-right': 'Pfeil rechts',
+    'close': 'Schließen',
+    'edit': 'Bearbeiten',
+    'delete': 'Löschen',
+    'search': 'Suchen',
+    'filter': 'Filter',
+    'more': 'Mehr',
+    'menu': 'Menü',
+    'back': 'Zurück',
+    'refresh': 'Aktualisieren',
+    'warning': 'Warnung',
+    'error': 'Fehler',
+    'success': 'Erfolg',
+    'info': 'Info',
+    'image': 'Bild',
+    'clock': 'Uhr',
+    'minus': 'Minus',
+    'arrow-up': 'Pfeil hoch',
+    'arrow-down': 'Pfeil runter',
+    'chevron-left': 'Pfeil links',
+    'chevron-up': 'Pfeil hoch',
+    'chevron-down': 'Pfeil runter',
+    'heart-filled': 'Herz gefüllt',
+    'star-filled': 'Stern gefüllt',
+  };
+
+  return iconNames[iconName] || 'Icon auswählen';
+};
+
 export interface Category {
   id: string;
   name: string;
@@ -69,8 +166,21 @@ export default function CategoryEditor({
 
   return (
     <>
+      <IconPicker
+        visible={showIconPicker}
+        selectedIcon={selectedIcon}
+        onIconSelect={(icon) => {
+          console.log('Setting selected icon to:', icon);
+          setSelectedIcon(icon);
+        }}
+        onClose={() => {
+          console.log('Closing icon picker');
+          setShowIconPicker(false);
+        }}
+      />
+
       <Modal
-        visible={visible}
+        visible={visible && !showIconPicker}
         transparent
         animationType="slide"
         onRequestClose={handleCancel}
@@ -143,8 +253,9 @@ export default function CategoryEditor({
                     },
                   ]}
                   onPress={() => {
-                    console.log('Icon selector pressed');
+                    console.log('Icon selector pressed, showIconPicker:', showIconPicker);
                     setShowIconPicker(true);
+                    console.log('After setting showIconPicker to true');
                   }}
                 >
                   <View style={styles.iconPreview}>
@@ -159,7 +270,7 @@ export default function CategoryEditor({
                         { color: isDark ? '#FFFFFF' : '#1C1C1E' },
                       ]}
                     >
-                      Icon auswählen
+                      {getIconDisplayName(selectedIcon)}
                     </Text>
                   </View>
                   <Icon
@@ -189,19 +300,6 @@ export default function CategoryEditor({
           </View>
         </View>
       </Modal>
-
-      <IconPicker
-        visible={showIconPicker}
-        selectedIcon={selectedIcon}
-        onIconSelect={(icon) => {
-          console.log('Setting selected icon to:', icon);
-          setSelectedIcon(icon);
-        }}
-        onClose={() => {
-          console.log('Closing icon picker');
-          setShowIconPicker(false);
-        }}
-      />
     </>
   );
 }

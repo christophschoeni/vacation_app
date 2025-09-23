@@ -10,25 +10,72 @@ import {
 import { Icon, IconName } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-// Available icons for categories
+// Available icons for categories - organized by category
+// Default category icons are listed first for easy access
 const CATEGORY_ICONS: IconName[] = [
-  'restaurant',
-  'car',
-  'hotel',
-  'shopping',
+  // DEFAULT CATEGORIES - Used in expense categories
+  'restaurant',   // Essen
+  'car',         // Transport
+  'hotel',       // Hotel/Accommodation
+  'music',       // Entertainment
+  'shopping',    // Shopping
+  'other',       // Sonstiges
+
+  // Additional Food & Drink
+  'coffee',
+  'utensils',
+  'wine',
+  'beer',
+  'ice-cream',
+  'pizza',
+
+  // Additional Transportation
   'airplane',
-  'other',
+  'bus',
+  'train',
+  'ship',
+  'bike',
+  'fuel',
+
+  // Additional Places
+  'home',
+  'location',
+  'mountain',
+  'trees',
+
+  // Additional Shopping & Items
+  'cart',
+  'shirt',
+  'gift',
+  'camera',
+
+  // Additional Activities & Entertainment
+  'gamepad',
+  'book',
+  'compass',
+
+  // Services & Utilities
+  'phone',
+  'wifi',
+  'stethoscope',
+  'settings',
+
+  // Money & Finance
   'currency',
   'wallet',
   'budget',
+
+  // Time & Weather
   'calendar',
-  'camera',
-  'music',
+  'sun',
+  'moon',
+  'cloud',
+
+  // General
   'heart',
   'star',
-  'home',
-  'compass',
-  'settings',
+  'plus',
+  'check',
 ];
 
 interface IconPickerProps {
@@ -52,6 +99,8 @@ export default function IconPicker({
     onIconSelect(icon);
     onClose();
   };
+
+  console.log('IconPicker render - visible:', visible);
 
   return (
     <Modal
@@ -141,8 +190,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     paddingTop: 20,
-    paddingBottom: 40,
-    maxHeight: '70%',
+    paddingBottom: 20,
+    maxHeight: '80%',
   },
   header: {
     flexDirection: 'row',
@@ -162,6 +211,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   iconGrid: {
     flexDirection: 'row',

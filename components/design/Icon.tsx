@@ -45,6 +45,32 @@ import {
   MapPin,
   Camera,
   Image,
+  // Additional category icons
+  Coffee,
+  Gamepad2,
+  Shirt,
+  Fuel,
+  Bus,
+  Train,
+  Ship,
+  Bike,
+  Stethoscope,
+  ShoppingCart,
+  Gift,
+  Book,
+  Phone,
+  Wifi,
+  MapPin as Location2,
+  Mountain,
+  Trees,
+  Sun,
+  Moon,
+  Cloud,
+  Utensils,
+  Wine,
+  Beer,
+  IceCream,
+  Pizza,
   LucideIcon,
 } from 'lucide-react-native';
 
@@ -87,6 +113,42 @@ const iconMap: Record<string, LucideIcon> = {
   'music': Music,
   'shopping': ShoppingBag,
   'other': Package,
+
+  // Food & Drink
+  'coffee': Coffee,
+  'utensils': Utensils,
+  'wine': Wine,
+  'beer': Beer,
+  'ice-cream': IceCream,
+  'pizza': Pizza,
+
+  // Transportation
+  'bus': Bus,
+  'train': Train,
+  'ship': Ship,
+  'bike': Bike,
+  'fuel': Fuel,
+
+  // Activities & Entertainment
+  'gamepad': Gamepad2,
+  'mountain': Mountain,
+  'trees': Trees,
+  'book': Book,
+  'gift': Gift,
+
+  // Shopping & Items
+  'shirt': Shirt,
+  'cart': ShoppingCart,
+
+  // Services
+  'phone': Phone,
+  'wifi': Wifi,
+  'stethoscope': Stethoscope,
+
+  // Weather & Nature
+  'sun': Sun,
+  'moon': Moon,
+  'cloud': Cloud,
 
   // Status & Feedback
   'warning': AlertTriangle,
