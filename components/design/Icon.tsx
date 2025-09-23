@@ -71,6 +71,8 @@ import {
   Beer,
   IceCream,
   Pizza,
+  ClipboardList,
+  BookOpen,
   LucideIcon,
 } from 'lucide-react-native';
 
@@ -171,6 +173,8 @@ const iconMap: Record<string, LucideIcon> = {
   'location': MapPin,
   'camera': Camera,
   'image': Image,
+  'clipboard-list': ClipboardList,
+  'book-template': BookOpen,
 };
 
 export type IconName = keyof typeof iconMap;

@@ -1,223 +1,351 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
-  StatusBar,
-  RefreshControl,
   TouchableOpacity,
-  TextInput,
   Alert,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button, Card } from '@/components/design';
+import { Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-
-interface ChecklistItem {
-  id: string;
-  text: string;
-  completed: boolean;
-}
+import { useChecklists } from '@/hooks/use-checklists';
+import { ChecklistItem } from '@/types';
+import { checklistServiceSQLite } from '@/lib/checklist-service-sqlite';
 
 export default function ChecklistDetailScreen() {
   const { id } = useLocalSearchParams();
+  const checklistId = Array.isArray(id) ? id[0] : id;
+
   const colorScheme = useColorScheme();
-  const [refreshing, setRefreshing] = useState(false);
+  const isDark = colorScheme === 'dark';
+
   const [newItemText, setNewItemText] = useState('');
+  const [isAddingItem, setIsAddingItem] = useState(false);
 
-  // Sample data based on wireframes
-  const checklistTitle = id === '1' ? 'Einpacken' : 'Sonnencreme';
+  // Extract vacation ID from the checklist to initialize the hook
+  const [vacationId, setVacationId] = useState<string>('');
+  const [checklist, setChecklist] = useState<any>(null);
 
-  const [items, setItems] = useState<ChecklistItem[]>([
-    { id: '1', text: 'Socken', completed: true },
-    { id: '2', text: 'Unterwäsche', completed: true },
-    { id: '3', text: 'Hose', completed: false },
-    { id: '4', text: 'T-Shirt', completed: false },
-    { id: '5', text: 'Pullover', completed: true },
-    { id: '6', text: 'Jacke', completed: false },
-    { id: '7', text: 'Schuhe', completed: true },
-    { id: '8', text: 'Sonnenbrille', completed: false },
-    { id: '9', text: 'Handy-Ladegerät', completed: true },
-    { id: '10', text: 'Reisepass', completed: false },
-    { id: '11', text: 'Tickets', completed: false },
-    { id: '12', text: 'Medikamente', completed: false },
-    { id: '13', text: 'Kamera', completed: true },
-    { id: '14', text: 'Kopfhörer', completed: false },
-    { id: '15', text: 'Buch', completed: false },
-  ]);
+  const {
+    checklists,
+    loadChecklists,
+    addItem,
+    toggleItem,
+    deleteItem,
+    saveChecklist,
+  } = useChecklists(vacationId);
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  }, []);
-
-  const toggleItem = (itemId: string) => {
-    setItems(prevItems =>
-      prevItems.map(item =>
-        item.id === itemId ? { ...item, completed: !item.completed } : item
-      )
-    );
-  };
-
-  const addNewItem = () => {
-    if (!newItemText.trim()) {
-      Alert.alert('Fehler', 'Bitte geben Sie einen Text ein.');
-      return;
-    }
-
-    const newItem: ChecklistItem = {
-      id: Date.now().toString(),
-      text: newItemText.trim(),
-      completed: false,
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Load checklist directly from SQLite using the service
+        const currentChecklist = await checklistServiceSQLite.getChecklistById(checklistId);
+        if (currentChecklist) {
+          setVacationId(currentChecklist.vacationId || '');
+          setChecklist(currentChecklist);
+        } else {
+          console.warn('Checklist not found:', checklistId);
+        }
+      } catch (error) {
+        console.error('Failed to load checklist:', error);
+      }
     };
+    loadData();
+  }, [checklistId]);
 
-    setItems(prev => [...prev, newItem]);
-    setNewItemText('');
+  useEffect(() => {
+    if (vacationId) {
+      loadChecklists();
+    }
+  }, [vacationId, loadChecklists]);
+
+  useEffect(() => {
+    if (checklists.length > 0) {
+      const currentChecklist = checklists.find(c => c.id === checklistId);
+      if (currentChecklist) {
+        setChecklist(currentChecklist);
+      }
+    }
+  }, [checklists, checklistId]);
+
+  if (!checklist) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            Liste wird geladen...
+          </Text>
+          <View style={styles.headerSpacer} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      packing: '#007AFF',
+      shopping: '#34C759',
+      bucket: '#FF9500',
+      todo: '#FF3B30',
+      planning: '#5856D6',
+      general: '#8E8E93',
+      custom: '#6D6D70',
+    };
+    return colors[category as keyof typeof colors] || colors.general;
   };
 
-  const deleteItem = (itemId: string) => {
+  const getCategoryName = (category: string) => {
+    const names = {
+      packing: 'Packen',
+      shopping: 'Einkaufen',
+      bucket: 'Bucket List',
+      todo: 'Aufgaben',
+      planning: 'Planung',
+      general: 'Allgemein',
+      custom: 'Benutzerdefiniert',
+    };
+    return names[category as keyof typeof names] || 'Allgemein';
+  };
+
+  const handleAddItem = async () => {
+    if (!newItemText.trim()) return;
+
+    try {
+      await addItem(checklistId, newItemText.trim());
+      setNewItemText('');
+      setIsAddingItem(false);
+      // Reload checklists to update the view
+      await loadChecklists();
+    } catch {
+      Alert.alert('Fehler', 'Element konnte nicht hinzugefügt werden.');
+    }
+  };
+
+  const handleToggleItem = async (itemId: string) => {
+    try {
+      await toggleItem(checklistId, itemId);
+      // Reload checklists to update the view
+      await loadChecklists();
+    } catch {
+      Alert.alert('Fehler', 'Element konnte nicht aktualisiert werden.');
+    }
+  };
+
+  const handleDeleteItem = async (item: ChecklistItem) => {
     Alert.alert(
-      'Item löschen',
-      'Möchten Sie dieses Item wirklich löschen?',
+      'Element löschen',
+      `Möchten Sie "${item.text}" wirklich löschen?`,
       [
         { text: 'Abbrechen', style: 'cancel' },
         {
           text: 'Löschen',
           style: 'destructive',
-          onPress: () => setItems(prev => prev.filter(item => item.id !== itemId))
-        }
+          onPress: async () => {
+            try {
+              await deleteItem(checklistId, item.id);
+              // Reload checklists to update the view
+              await loadChecklists();
+            } catch {
+              Alert.alert('Fehler', 'Element konnte nicht gelöscht werden.');
+            }
+          },
+        },
       ]
     );
   };
 
-  const completedCount = items.filter(item => item.completed).length;
-  const progressPercent = Math.round((completedCount / items.length) * 100);
-
-  const renderChecklistItem = (item: ChecklistItem) => (
-    <TouchableOpacity
-      key={item.id}
-      onPress={() => toggleItem(item.id)}
-      onLongPress={() => deleteItem(item.id)}
-      activeOpacity={0.7}
-      style={styles.checklistItem}
-    >
-      <View style={styles.checkboxContainer}>
-        <View style={[
-          styles.checkbox,
-          {
-            backgroundColor: item.completed ? '#4CAF50' : 'transparent',
-            borderColor: item.completed ? '#4CAF50' : (colorScheme === 'dark' ? '#666' : '#ccc'),
-          }
-        ]}>
-          {item.completed && (
-            <Text style={styles.checkmark}>✓</Text>
-          )}
-        </View>
-      </View>
-      <Text style={[
-        styles.itemText,
+  const handleEditTitle = () => {
+    Alert.prompt(
+      'Liste umbenennen',
+      'Neuer Name:',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
         {
-          color: colorScheme === 'dark' ? '#fff' : '#000',
-          textDecorationLine: item.completed ? 'line-through' : 'none',
-          opacity: item.completed ? 0.6 : 1,
-        }
-      ]}>
-        {item.text}
-      </Text>
-    </TouchableOpacity>
-  );
+          text: 'Speichern',
+          onPress: async (newTitle) => {
+            if (newTitle?.trim() && newTitle !== checklist.title) {
+              try {
+                await saveChecklist({
+                  ...checklist,
+                  title: newTitle.trim(),
+                  updatedAt: new Date(),
+                });
+                // Reload checklists to update the view
+                await loadChecklists();
+              } catch {
+                Alert.alert('Fehler', 'Titel konnte nicht geändert werden.');
+              }
+            }
+          },
+        },
+      ],
+      'plain-text',
+      checklist.title
+    );
+  };
+
+  const completedItems = checklist.items.filter((item: ChecklistItem) => item.completed).length;
+  const totalItems = checklist.items.length;
+  const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000' : '#f5f5f5' }]}>
-      <StatusBar
-        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
-        backgroundColor="transparent"
-        translucent
-      />
-
-      <LinearGradient
-        colors={colorScheme === 'dark'
-          ? ['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.4)']
-          : ['rgba(255,255,255,0.8)', 'rgba(255,255,255,0.4)']
-        }
-        style={styles.header}
-      >
-        <Card style={styles.headerContent}>
-          <View style={styles.headerTop}>
-            <TouchableOpacity onPress={() => router.back()}>
-              <Text style={[styles.backButton, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>
-                ← Zurück
-              </Text>
-            </TouchableOpacity>
-            <Text style={[styles.progressText, { color: colorScheme === 'dark' ? '#ccc' : '#666' }]}>
-              {completedCount}/{items.length}
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
+          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+        </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <TouchableOpacity onPress={handleEditTitle}>
+            <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+              {checklist.title}
             </Text>
-          </View>
-          <Text style={[styles.title, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>
-            {checklistTitle}
+          </TouchableOpacity>
+          <Text style={[styles.headerSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            {getCategoryName(checklist.category)} • {completedItems}/{totalItems}
           </Text>
-          <View style={styles.progressContainer}>
-            <View style={[styles.progressBar, { backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)' }]}>
-              <View
-                style={[
-                  styles.progressFill,
-                  {
-                    width: `${progressPercent}%`,
-                    backgroundColor: progressPercent === 100 ? '#4CAF50' : '#2196F3'
-                  }
-                ]}
-              />
-            </View>
-            <Text style={[styles.progressPercentText, { color: colorScheme === 'dark' ? '#aaa' : '#888' }]}>
-              {progressPercent}%
-            </Text>
-          </View>
-        </Card>
-      </LinearGradient>
+        </View>
+        <TouchableOpacity
+          onPress={() => setIsAddingItem(!isAddingItem)}
+          style={[styles.addButton, { backgroundColor: getCategoryColor(checklist.category) }]}
+        >
+          <Icon name="plus" size={20} color="#FFFFFF" />
+        </TouchableOpacity>
+      </View>
 
-      <ScrollView
+      {/* Progress Bar */}
+      {totalItems > 0 && (
+        <View style={styles.progressContainer}>
+          <View style={[styles.progressBar, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
+            <View
+              style={[
+                styles.progressFill,
+                {
+                  width: `${progressPercent}%`,
+                  backgroundColor: getCategoryColor(checklist.category),
+                },
+              ]}
+            />
+          </View>
+        </View>
+      )}
+
+      <KeyboardAvoidingView
         style={styles.content}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colorScheme === 'dark' ? '#fff' : '#000'}
-          />
-        }
-        showsVerticalScrollIndicator={false}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Card style={styles.itemsCard}>
-          <View style={styles.addItemContainer}>
-            <TextInput
-              style={[styles.addItemInput, {
-                backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                color: colorScheme === 'dark' ? '#fff' : '#000',
-              }]}
-              value={newItemText}
-              onChangeText={setNewItemText}
-              placeholder="Neues Item hinzufügen..."
-              placeholderTextColor={colorScheme === 'dark' ? '#999' : '#666'}
-              onSubmitEditing={addNewItem}
-              returnKeyType="done"
-            />
-            <Button
-              title="+"
-              onPress={addNewItem}
-              size="small"
-              style={styles.addButton}
-            />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Add Item Input */}
+          {isAddingItem && (
+            <View style={[styles.addItemContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
+              <TextInput
+                style={[
+                  styles.addItemInput,
+                  {
+                    color: isDark ? '#FFFFFF' : '#1C1C1E',
+                    backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF',
+                  },
+                ]}
+                placeholder="Neues Element hinzufügen..."
+                placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
+                value={newItemText}
+                onChangeText={setNewItemText}
+                autoFocus
+                returnKeyType="done"
+                onSubmitEditing={handleAddItem}
+              />
+              <View style={styles.addItemActions}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsAddingItem(false);
+                    setNewItemText('');
+                  }}
+                  style={[styles.actionButton, { backgroundColor: isDark ? '#48484A' : '#E5E5EA' }]}
+                >
+                  <Icon name="close" size={16} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleAddItem}
+                  style={[styles.actionButton, { backgroundColor: getCategoryColor(checklist.category) }]}
+                >
+                  <Icon name="check" size={16} color="#FFFFFF" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
+          {/* Items List */}
+          <View style={styles.itemsList}>
+            {checklist.items
+              .sort((a: ChecklistItem, b: ChecklistItem) => a.order - b.order)
+              .map((item: ChecklistItem) => (
+                <View key={item.id} style={styles.itemContainer}>
+                  <TouchableOpacity
+                    onPress={() => handleToggleItem(item.id)}
+                    style={styles.itemCheckbox}
+                  >
+                    <Icon
+                      name="check"
+                      size={16}
+                      color={item.completed ? getCategoryColor(checklist.category) : (isDark ? '#3A3A3C' : '#E5E5EA')}
+                    />
+                  </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.itemText,
+                      {
+                        color: item.completed
+                          ? (isDark ? '#8E8E93' : '#6D6D70')
+                          : (isDark ? '#FFFFFF' : '#1C1C1E'),
+                        textDecorationLine: item.completed ? 'line-through' : 'none',
+                      },
+                    ]}
+                  >
+                    {item.text}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => handleDeleteItem(item)}
+                    style={styles.deleteButton}
+                  >
+                    <Icon name="close" size={14} color={isDark ? '#8E8E93' : '#6D6D70'} />
+                  </TouchableOpacity>
+                </View>
+              ))}
           </View>
 
-          <View style={styles.itemsList}>
-            {items.map(renderChecklistItem)}
-          </View>
-        </Card>
-      </ScrollView>
+          {/* Empty State */}
+          {checklist.items.length === 0 && (
+            <View style={styles.emptyState}>
+              <Icon name={checklist.icon as any} size={48} color={isDark ? '#3A3A3C' : '#E5E5EA'} />
+              <Text style={[styles.emptyTitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                Liste ist leer
+              </Text>
+              <Text style={[styles.emptyDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                Fügen Sie Ihr erstes Element hinzu, um zu beginnen.
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -227,116 +355,138 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: StatusBar.currentHeight || 44,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  headerContent: {
-    paddingVertical: 12,
-  },
-  headerTop: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
   },
   backButton: {
-    fontSize: 16,
-    fontWeight: '500',
+    padding: 8,
+    marginLeft: -8,
   },
-  progressText: {
-    fontSize: 14,
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 17,
     fontWeight: '600',
+    fontFamily: 'System',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 16,
+  headerSubtitle: {
+    fontSize: 13,
+    fontWeight: '400',
+    fontFamily: 'System',
+    marginTop: 2,
+  },
+  headerSpacer: {
+    width: 40,
+  },
+  addButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   progressBar: {
-    flex: 1,
-    height: 8,
-    borderRadius: 4,
+    height: 4,
+    borderRadius: 2,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 4,
-  },
-  progressPercentText: {
-    fontSize: 12,
-    fontWeight: '600',
-    minWidth: 35,
-    textAlign: 'right',
+    borderRadius: 2,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
-  },
-  itemsCard: {
-    marginTop: 16,
+    paddingBottom: 20,
   },
   addItemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    margin: 16,
+    padding: 16,
+    borderRadius: 12,
     gap: 12,
-    marginBottom: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
   addItemInput: {
-    flex: 1,
-    height: 44,
-    borderRadius: 8,
-    paddingHorizontal: 16,
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    fontFamily: 'System',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(60, 60, 67, 0.12)',
   },
-  addButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+  addItemActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 8,
+  },
+  actionButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   itemsList: {
-    gap: 4,
+    paddingHorizontal: 16,
+    gap: 2,
   },
-  checklistItem: {
+  itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
+    gap: 12,
   },
-  checkboxContainer: {
-    marginRight: 16,
-  },
-  checkbox: {
+  itemCheckbox: {
     width: 24,
     height: 24,
-    borderRadius: 6,
+    borderRadius: 12,
     borderWidth: 2,
-    alignItems: 'center',
+    borderColor: 'rgba(60, 60, 67, 0.12)',
     justifyContent: 'center',
-  },
-  checkmark: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
+    alignItems: 'center',
   },
   itemText: {
     flex: 1,
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: 'System',
+  },
+  deleteButton: {
+    padding: 8,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 32,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    fontFamily: 'System',
+    marginTop: 16,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptyDescription: {
+    fontSize: 16,
+    fontFamily: 'System',
+    textAlign: 'center',
+    lineHeight: 22,
   },
 });

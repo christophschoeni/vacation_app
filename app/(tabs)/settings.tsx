@@ -41,6 +41,13 @@ const SETTINGS_ITEMS: SettingsItem[] = [
     icon: 'warning',
     route: '/settings/notifications',
   },
+  {
+    id: 'debug',
+    title: 'Debug',
+    subtitle: 'Datenbank-Info und Debugging-Tools',
+    icon: 'bug',
+    route: '/debug',
+  },
 ];
 
 export default function SettingsScreen() {
@@ -56,6 +63,9 @@ export default function SettingsScreen() {
         break;
       case '/settings/notifications':
         router.push('/settings/notifications');
+        break;
+      case '/debug':
+        router.push('/debug');
         break;
       default:
         break;

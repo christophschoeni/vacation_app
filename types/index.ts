@@ -29,11 +29,14 @@ export interface Expense {
 
 export interface Checklist {
   id: string;
-  vacationId?: string; // Optional for templates
   title: string;
-  isTemplate: boolean;
+  description?: string;
+  isTemplate: boolean;          // Global template vs ferienspezifisch
+  vacationId?: string;          // null für Templates
+  templateId?: string;          // Referenz zur ursprünglichen Vorlage
+  category: ChecklistCategory;  // Art der Liste
+  icon: string;                 // Lucide Icon name
   items: ChecklistItem[];
-  category: ChecklistCategory;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,9 +45,11 @@ export interface ChecklistItem {
   id: string;
   text: string;
   completed: boolean;
-  category?: string;
+  notes?: string;              // Zusätzliche Notizen
   priority: 'low' | 'medium' | 'high';
   dueDate?: Date;
+  quantity?: number;           // Für Einkaufslisten
+  order: number;               // Für custom Sortierung
 }
 
 export interface Category {
@@ -63,12 +68,13 @@ export type ExpenseCategory =
   | 'other';
 
 export type ChecklistCategory =
-  | 'general'
-  | 'beach'
-  | 'city'
-  | 'adventure'
-  | 'business'
-  | 'custom';
+  | 'packing'      // Packliste
+  | 'shopping'     // Einkaufsliste
+  | 'bucket'       // Bucket List (Sehenswürdigkeiten)
+  | 'todo'         // To-Do Liste
+  | 'planning'     // Planungsliste
+  | 'general'      // Allgemein
+  | 'custom';      // Benutzerdefiniert
 
 export interface AppSettings {
   defaultCurrency: string;
