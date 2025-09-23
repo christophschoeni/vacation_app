@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 4,
+    paddingTop: 0,
     paddingBottom: 85, // Reduced space for compact tab bar
   },
   expensesSection: {
