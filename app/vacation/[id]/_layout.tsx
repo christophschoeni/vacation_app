@@ -1,21 +1,24 @@
-import { Tabs, useLocalSearchParams, router } from 'expo-router';
+import { Tabs, useLocalSearchParams, router, useSegments } from 'expo-router';
 import React from 'react';
 import { Platform, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { Icon, Colors } from '@/components/design';
+import { Icon, Colors, Button } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/hooks/use-vacations';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { appEvents, EVENTS } from '@/lib/events';
 
 export default function VacationDetailTabLayout() {
   const { id } = useLocalSearchParams();
   const vacationId = Array.isArray(id) ? id[0] : id;
+  const segments = useSegments();
   const colorScheme = useColorScheme();
   const { vacations } = useVacations();
 
   const vacation = vacations.find(v => v.id === vacationId);
   const isDark = colorScheme === 'dark';
+  const isEditPage = segments[segments.length - 1] === 'edit';
 
   if (!vacation) {
     return (
@@ -49,15 +52,27 @@ export default function VacationDetailTabLayout() {
         </TouchableOpacity>
         <View style={styles.titleContainer}>
           <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {vacation.destination}
+            {isEditPage ? `${vacation.destination} bearbeiten` : vacation.destination}
           </Text>
-          {vacation.hotel && (
+          {!isEditPage && vacation.hotel && (
             <Text style={[styles.headerSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               {vacation.hotel}
             </Text>
           )}
         </View>
-        <View style={styles.headerSpacer} />
+        <View style={styles.headerActions}>
+          {isEditPage && (
+            <Button
+              title="Speichern"
+              variant="ghost"
+              size="small"
+              onPress={() => {
+                appEvents.emit(EVENTS.SAVE_VACATION);
+              }}
+              style={{ minWidth: 85 }}
+            />
+          )}
+        </View>
       </View>
 
       <Tabs
@@ -104,6 +119,12 @@ export default function VacationDetailTabLayout() {
             tabBarIcon: ({ color }) => <Icon size={26} name="settings" color={color} />,
           }}
         />
+        <Tabs.Screen
+          name="edit"
+          options={{
+            href: null, // Hide from tab bar
+          }}
+        />
       </Tabs>
     </SafeAreaView>
   );
@@ -129,6 +150,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flex: 1,
     alignItems: 'center',
+    paddingHorizontal: 8,
   },
   headerTitle: {
     fontSize: 17,
@@ -141,7 +163,8 @@ const styles = StyleSheet.create({
     fontFamily: 'System',
     marginTop: 2,
   },
-  headerSpacer: {
-    width: 40,
+  headerActions: {
+    minWidth: 90,
+    alignItems: 'flex-end',
   },
 });

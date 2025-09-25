@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { useChecklists } from '@/hooks/use-checklists';
 import ChecklistCard from '@/components/ui/cards/ChecklistCard';
 import { createTestDataForVacation } from '@/lib/manual-seed';
+import { Icon } from '@/components/design';
 
 export default function VacationChecklistsScreen() {
   const { id } = useLocalSearchParams();
@@ -92,21 +93,6 @@ export default function VacationChecklistsScreen() {
     );
   };
 
-  // DEBUG: Create test data
-  const handleCreateTestData = async () => {
-    console.log('🔧 Debug button clicked - vacationId:', vacationId);
-    console.log('🔧 Debug button clicked - typeof vacationId:', typeof vacationId);
-
-    // Just create a simple test list for now
-    try {
-      console.log('🔧 Creating simple test checklist...');
-      await createChecklist('Test Liste', 'general', '📝');
-      Alert.alert('Erfolg!', 'Test-Liste wurde erstellt! 🎉');
-    } catch (error) {
-      console.error('Failed to create test list:', error);
-      Alert.alert('Fehler', `Test-Liste konnte nicht erstellt werden: ${error}`);
-    }
-  };
 
   const handleShowTemplates = () => {
     if (templates.length === 0) {
@@ -171,16 +157,10 @@ export default function VacationChecklistsScreen() {
         </Text>
         <View style={styles.buttons}>
           <TouchableOpacity
-            style={styles.debugButton}
-            onPress={handleCreateTestData}
-          >
-            <Text style={styles.debugButtonText}>🔧</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
             style={styles.templateButton}
             onPress={handleShowTemplates}
           >
-            <Text style={styles.buttonText}>📋</Text>
+            <Icon name="notepad-text" size={18} color="#6D6D70" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.addButton}
@@ -249,17 +229,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 16,
     top: 16,
-  },
-  debugButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FF3B30',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  debugButtonText: {
-    fontSize: 16,
   },
   templateButton: {
     width: 40,

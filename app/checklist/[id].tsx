@@ -301,12 +301,18 @@ export default function ChecklistDetailScreen() {
                 <View key={item.id} style={styles.itemContainer}>
                   <TouchableOpacity
                     onPress={() => handleToggleItem(item.id)}
-                    style={styles.itemCheckbox}
+                    style={[
+                      styles.itemCheckbox,
+                      {
+                        backgroundColor: item.completed ? '#34C759' : 'transparent',
+                        borderColor: item.completed ? '#34C759' : (isDark ? '#3A3A3C' : '#E5E5EA'),
+                      }
+                    ]}
                   >
                     <Icon
                       name="check"
                       size={16}
-                      color={item.completed ? getCategoryColor(checklist.category) : (isDark ? '#3A3A3C' : '#E5E5EA')}
+                      color={item.completed ? '#FFFFFF' : 'transparent'}
                     />
                   </TouchableOpacity>
                   <Text
@@ -457,7 +463,6 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: 'rgba(60, 60, 67, 0.12)',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface DatePickerProps {
   label: string;
@@ -17,6 +18,8 @@ export default function DatePicker({
   required = false,
   error,
 }: DatePickerProps) {
+  const colorScheme = useColorScheme();
+
   const handleDateChange = (event: any, selectedDate?: Date) => {
     if (selectedDate) {
       onChange(selectedDate);
@@ -25,7 +28,9 @@ export default function DatePicker({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{`${label}${required ? ' *' : ''}`}</Text>
+      <Text style={[styles.label, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+        {`${label}${required ? ' *' : ''}`}
+      </Text>
 
       <DateTimePicker
         testID="dateTimePicker"
@@ -52,7 +57,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
-    color: '#1C1C1E',
     fontFamily: 'System',
   },
   picker: {

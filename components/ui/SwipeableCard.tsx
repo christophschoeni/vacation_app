@@ -145,8 +145,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 0,
-    bottom: 12,
+    bottom: 0,
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     overflow: 'visible',
     zIndex: 0, // Behind the card
   },
@@ -154,16 +156,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 60,
-    height: '100%',
-    borderRadius: 12,
+    height: 50,
   },
   editButton: {
     backgroundColor: Colors.primary[500],
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
+    borderRadius: 8,
+    marginRight: 4,
   },
   deleteButton: {
     backgroundColor: '#FF3B30', // iOS System Red for destructive actions
-    marginLeft: 4,
+    borderRadius: 8,
   },
 });

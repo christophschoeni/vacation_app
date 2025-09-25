@@ -86,18 +86,11 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      {/* Header mit Standard-Listen */}
+      {/* Header */}
       <View style={styles.header}>
         <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
           Einstellungen
         </Text>
-        <TouchableOpacity
-          onPress={() => router.push('/settings/templates')}
-          style={styles.headerButton}
-          accessibilityLabel="Standard-Listen öffnen"
-        >
-          <Icon name="notepad-text" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -164,7 +157,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
