@@ -24,7 +24,7 @@ const SETTINGS_ITEMS: SettingsItem[] = [
     id: 'templates',
     title: 'Standard-Listen',
     subtitle: 'Checklisten-Vorlagen verwalten',
-    icon: 'check-square',
+    icon: 'notepad-text',
     route: '/settings/templates',
   },
   {
@@ -96,7 +96,7 @@ export default function SettingsScreen() {
           style={styles.headerButton}
           accessibilityLabel="Standard-Listen öffnen"
         >
-          <Icon name="check-square" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+          <Icon name="notepad-text" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
         </TouchableOpacity>
       </View>
 

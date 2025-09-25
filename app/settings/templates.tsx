@@ -241,6 +241,12 @@ export default function TemplatesScreen() {
         </View>
       ) : (
         <View style={styles.content}>
+          <View style={styles.descriptionContainer}>
+            <Text style={[styles.descriptionText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              Verwalten Sie hier Ihre Standard-Listen für Reisen. Tippen Sie auf eine Liste um sie anzusehen oder zu bearbeiten.
+            </Text>
+          </View>
+
           {templates.map((template, index) => (
             <View key={template.id} style={styles.templateItem}>
               <Card variant="clean" style={styles.templateCard}>
@@ -304,6 +310,16 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  descriptionContainer: {
+    marginBottom: 16,
+  },
+  descriptionText: {
+    fontSize: 14,
+    fontFamily: 'System',
+    lineHeight: 20,
+    textAlign: 'left',
   },
   scrollContent: {
     paddingTop: 16,
