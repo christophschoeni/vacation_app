@@ -4,12 +4,16 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { insights } from 'expo-insights';
 import 'react-native-reanimated';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { db } from '@/lib/db/database';
+import migrations from '@/lib/db/migrations/migrations';
 import { appInitialization } from '@/lib/app-initialization';
+import { ensureDefaultTemplates } from '@/lib/seed-templates';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -51,66 +55,59 @@ const modalSlideUp = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [initError, setInitError] = useState<string | null>(null);
+  const { success, error } = useMigrations(db, migrations);
 
-  // Initialize database and migration on app startup
+  // Install default data after successful migration
   useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        console.log('🚀 Starting app initialization...');
-        const result = await appInitialization.initialize();
+    if (success) {
+      const installDefaults = async () => {
+        try {
+          // Install default app data (categories, settings)
+          await appInitialization.installDefaultData();
 
-        if (result.success) {
-          console.log('✅ App initialization completed');
-          setIsInitialized(true);
-        } else {
-          console.error('❌ App initialization failed:', result.error);
-          setInitError(result.error || 'Unknown initialization error');
+          // Always ensure templates exist (independent of migration flag)
+          await ensureDefaultTemplates();
+
+          if (insights && typeof insights.track === 'function') {
+            insights.track('app_launched');
+          }
+        } catch (error) {
+          console.warn('Failed to install default data or track app launch:', error);
         }
-      } catch (error) {
-        console.error('❌ App initialization crashed:', error);
-        setInitError('App initialization crashed');
-      }
-    };
+      };
 
-    initializeApp();
-  }, []);
-
-  // Initialize Expo Insights safely
-  useEffect(() => {
-    if (isInitialized) {
-      try {
-        if (insights && typeof insights.track === 'function') {
-          insights.track('app_launched');
-        }
-      } catch (error) {
-        console.warn('Failed to track app launch:', error);
-      }
+      installDefaults();
     }
-  }, [isInitialized]);
+  }, [success]);
 
-  // Show loading screen during initialization
-  if (!isInitialized) {
+  // Show loading screen during migration
+  if (error) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }}>
-        {initError ? (
-          <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: colorScheme === 'dark' ? '#fff' : '#000', fontSize: 18, marginBottom: 10 }}>
-              Initialization Error
-            </Text>
-            <Text style={{ color: colorScheme === 'dark' ? '#ccc' : '#666', textAlign: 'center' }}>
-              {initError}
-            </Text>
-          </View>
-        ) : (
-          <View style={{ alignItems: 'center' }}>
-            <ActivityIndicator size="large" color={colorScheme === 'dark' ? '#fff' : '#007AFF'} />
-            <Text style={{ color: colorScheme === 'dark' ? '#fff' : '#000', marginTop: 16, fontSize: 16 }}>
-              Initializing Vacation Assist...
-            </Text>
-          </View>
-        )}
+        <View style={{ alignItems: 'center', padding: 20 }}>
+          <Text style={{ color: colorScheme === 'dark' ? '#fff' : '#000', fontSize: 18, marginBottom: 10 }}>
+            Migration Error
+          </Text>
+          <Text style={{ color: colorScheme === 'dark' ? '#ccc' : '#666', textAlign: 'center' }}>
+            {error.message}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (!success) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }}>
+        <View style={{ alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={colorScheme === 'dark' ? '#fff' : '#007AFF'} />
+          <Text style={{ color: colorScheme === 'dark' ? '#fff' : '#000', marginTop: 16, fontSize: 16 }}>
+            Initializing Vacation Assist...
+          </Text>
+          <Text style={{ color: colorScheme === 'dark' ? '#888' : '#666', marginTop: 8, fontSize: 14 }}>
+            Running migrations...
+          </Text>
+        </View>
       </View>
     );
   }
@@ -141,6 +138,33 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="settings/notifications"
+              options={{
+                headerShown: false,
+                presentation: 'card',
+                animationDuration: 300,
+                ...slideFromRight,
+              }}
+            />
+            <Stack.Screen
+              name="settings/templates"
+              options={{
+                headerShown: false,
+                presentation: 'card',
+                animationDuration: 300,
+                ...slideFromRight,
+              }}
+            />
+            <Stack.Screen
+              name="template/[id]/index"
+              options={{
+                headerShown: false,
+                presentation: 'card',
+                animationDuration: 300,
+                ...slideFromRight,
+              }}
+            />
+            <Stack.Screen
+              name="template/[id]/edit"
               options={{
                 headerShown: false,
                 presentation: 'card',

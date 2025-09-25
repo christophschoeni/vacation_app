@@ -14,15 +14,14 @@ import { Button, Card } from '@/components/design';
 
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useVacations } from '@/lib/database';
-import { Vacation } from '@/types';
+import { useVacations } from '@/hooks/use-vacations';
 
 export default function VacationSettingsScreen() {
   const { id } = useLocalSearchParams();
   const vacationId = Array.isArray(id) ? id[0] : id;
 
   const colorScheme = useColorScheme();
-  const { vacations, saveVacation, deleteVacation } = useVacations();
+  const { vacations, updateVacation, deleteVacation } = useVacations();
 
   const vacation = vacations.find(v => v.id === vacationId);
 
@@ -69,17 +68,13 @@ export default function VacationSettingsScreen() {
 
     try {
       setLoading(true);
-      const updatedVacation: Vacation = {
-        ...vacation,
+      await updateVacation(vacation.id, {
         destination: formData.destination,
         hotel: formData.hotel,
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: parseFloat(formData.budget),
-        updatedAt: new Date(),
-      };
-
-      await saveVacation(updatedVacation);
+      });
       Alert.alert('Erfolg', 'Ferien erfolgreich aktualisiert!');
     } catch {
       Alert.alert('Fehler', 'Ferien konnten nicht aktualisiert werden.');

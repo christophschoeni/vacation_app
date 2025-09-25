@@ -17,28 +17,28 @@ import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useVacations } from '@/lib/database';
+import { useVacations } from '@/hooks/use-vacations';
 
 export default function VacationsScreen() {
   const colorScheme = useColorScheme();
-  const { vacations, loading, refresh, deleteVacation } = useVacations();
+  const { vacations, loading, refreshVacations, deleteVacation } = useVacations();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
-      refresh();
-    }, [refresh])
+      refreshVacations();
+    }, [refreshVacations])
   );
 
   const handleRefresh = React.useCallback(async () => {
     setIsRefreshing(true);
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
-      await refresh();
+      await refreshVacations();
     } finally {
       setIsRefreshing(false);
     }
-  }, [refresh]);
+  }, [refreshVacations]);
 
   const handleAddVacation = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

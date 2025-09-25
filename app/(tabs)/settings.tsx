@@ -21,6 +21,13 @@ interface SettingsItem {
 
 const SETTINGS_ITEMS: SettingsItem[] = [
   {
+    id: 'templates',
+    title: 'Standard-Listen',
+    subtitle: 'Checklisten-Vorlagen verwalten',
+    icon: 'check-square',
+    route: '/settings/templates',
+  },
+  {
     id: 'categories',
     title: 'Kategorien',
     subtitle: 'Ausgaben-Kategorien verwalten',
@@ -58,6 +65,9 @@ export default function SettingsScreen() {
       case '/settings/categories':
         router.push('/settings/categories');
         break;
+      case '/settings/templates':
+        router.push('/settings/templates');
+        break;
       case '/settings/currency':
         router.push('/settings/currency');
         break;
@@ -76,6 +86,20 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      {/* Header mit Standard-Listen */}
+      <View style={styles.header}>
+        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          Einstellungen
+        </Text>
+        <TouchableOpacity
+          onPress={() => router.push('/settings/templates')}
+          style={styles.headerButton}
+          accessibilityLabel="Standard-Listen öffnen"
+        >
+          <Icon name="check-square" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -136,6 +160,24 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+  },
+  headerButton: {
+    padding: 8,
+    marginRight: -8,
   },
   content: {
     flex: 1,

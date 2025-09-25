@@ -14,7 +14,8 @@ import SwipeableCard from '@/components/ui/SwipeableCard';
 import { Card, FloatingActionButton, Icon } from '@/components/design';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useVacations, useExpenses } from '@/lib/database';
+import { useVacations } from '@/hooks/use-vacations';
+import { useExpenses } from '@/lib/database';
 
 export default function VacationBudgetScreen() {
   const { id } = useLocalSearchParams();

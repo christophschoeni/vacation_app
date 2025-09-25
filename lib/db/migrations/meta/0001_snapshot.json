@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "df99048c-e5fb-4989-a84e-95baf446d756",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "141dedaf-84b2-4f39-9f78-92d4ce33060f",
+  "prevId": "df99048c-e5fb-4989-a84e-95baf446d756",
   "tables": {
     "app_settings": {
       "name": "app_settings",
@@ -349,6 +349,14 @@
           "notNull": true,
           "autoincrement": false
         },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
         "created_at": {
           "name": "created_at",
           "type": "text",
@@ -383,6 +391,13 @@
           "name": "checklists_category_idx",
           "columns": [
             "category"
+          ],
+          "isUnique": false
+        },
+        "checklists_order_idx": {
+          "name": "checklists_order_idx",
+          "columns": [
+            "order"
           ],
           "isUnique": false
         }

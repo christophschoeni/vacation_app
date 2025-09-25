@@ -36,6 +36,7 @@ export interface Checklist {
   templateId?: string;          // Referenz zur ursprünglichen Vorlage
   category: ChecklistCategory;  // Art der Liste
   icon: string;                 // Lucide Icon name
+  order: number;                // Für custom Sortierung von Templates
   items: ChecklistItem[];
   createdAt: Date;
   updatedAt: Date;
@@ -57,6 +58,7 @@ export interface Category {
   name: string;
   icon: string;
   isDefault: boolean;
+  type: 'expense' | 'checklist';
 }
 
 export type ExpenseCategory =

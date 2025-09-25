@@ -1,140 +1,97 @@
-import { initializeDatabase, checkDatabaseFile, forceDatabaseSync } from './db/database';
-import { migrationService } from './migration-service';
-import { seedTestData, seedTemplates } from './seed-data';
+import { categoryRepository } from './db/repositories/category-repository';
+import { appSettingsRepository } from './db/repositories/app-settings-repository';
+import { DEFAULT_CATEGORIES, DEFAULT_APP_SETTINGS } from './data/default-categories';
+import { seedTemplates } from './seed-data';
 
 export interface InitializationResult {
   success: boolean;
-  databaseInitialized: boolean;
-  migrationCompleted: boolean;
   error?: string;
 }
 
 class AppInitialization {
   private isInitialized = false;
 
-  // Main initialization function called on app startup
-  async initialize(): Promise<InitializationResult> {
+  // Install default data after migrations are complete
+  async installDefaultData(): Promise<InitializationResult> {
     if (this.isInitialized) {
       return {
         success: true,
-        databaseInitialized: true,
-        migrationCompleted: true,
       };
     }
 
     try {
-      console.log('🚀 Initializing Vacation Assist...');
+      console.log('📦 Installing default data...');
 
-      // Step 1: Check database file before initialization
-      console.log('🔍 Checking database file status...');
-      await checkDatabaseFile();
+      // Check if data migration has already been completed
+      const migrationCompleted = await appSettingsRepository.isMigrationCompleted();
 
-      // Step 2: Initialize SQLite database and run migrations
-      console.log('🗃️ Initializing database...');
-      const databaseInitialized = await initializeDatabase();
-
-      if (!databaseInitialized) {
-        throw new Error('Database initialization failed');
+      if (migrationCompleted) {
+        console.log('ℹ️ Data migration already completed, skipping default data installation');
+        this.isInitialized = true;
+        return { success: true };
       }
 
-      // Step 3: Check database file after initialization
-      console.log('🔍 Verifying database file after initialization...');
-      await checkDatabaseFile();
+      // Install default categories
+      console.log('📁 Installing default categories...');
+      await categoryRepository.installDefaultCategories(DEFAULT_CATEGORIES);
 
-      // Step 2: Migrate data from AsyncStorage if needed
-      console.log('📦 Checking for data migration...');
-      const migrationCompleted = await migrationService.migrateAsyncStorageToSQLite();
+      // Install default app settings
+      console.log('⚙️ Installing default app settings...');
+      await appSettingsRepository.installDefaultSettings(DEFAULT_APP_SETTINGS);
 
-      if (!migrationCompleted) {
-        console.warn('⚠️ Data migration failed, but continuing...');
-      }
-
-      // Step 3: Cleanup old AsyncStorage data (optional, after successful migration)
-      if (migrationCompleted && await migrationService.isMigrationCompleted()) {
-        console.log('🧹 Cleaning up old data...');
-        await migrationService.cleanupAsyncStorage();
-      }
-
-      // Step 4: Seed test data if in development or if database is empty
-      console.log('🌱 Seeding data...');
+      // Install templates (checklist templates, etc.)
+      console.log('📋 Installing templates...');
       await seedTemplates();
-      await seedTestData();
 
-      // Step 5: Force database sync to ensure persistence
-      console.log('💾 Syncing database to disk...');
-      await forceDatabaseSync();
-
-      // Step 6: Final verification of database file
-      console.log('🔍 Final database file verification...');
-      await checkDatabaseFile();
+      // Mark migration as completed
+      await appSettingsRepository.setMigrationCompleted(true);
 
       this.isInitialized = true;
 
-      console.log('✅ App initialization completed successfully');
+      console.log('✅ Default data installation completed');
 
       return {
         success: true,
-        databaseInitialized,
-        migrationCompleted,
       };
+
     } catch (error) {
-      console.error('❌ App initialization failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('❌ Failed to install default data:', errorMessage);
 
       return {
         success: false,
-        databaseInitialized: false,
-        migrationCompleted: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: errorMessage,
       };
     }
   }
 
-  // Get initialization status
-  getInitializationStatus(): boolean {
-    return this.isInitialized;
-  }
-
-  // Force re-initialization (for development/testing)
-  async forceReinitialization(): Promise<InitializationResult> {
+  // Development helper to reset app state
+  async reset(): Promise<void> {
+    console.log('🔄 Resetting application state...');
     this.isInitialized = false;
-    return await this.initialize();
   }
 
-  // Get detailed status for debugging
-  async getDetailedStatus(): Promise<{
-    isInitialized: boolean;
-    migrationStats: any;
-    databaseHealth: boolean;
-  }> {
+  // Force re-initialization even if already completed
+  async forceReinitialization(): Promise<InitializationResult> {
+    console.log('🔄 Forcing app re-initialization...');
+
     try {
-      const [migrationStats, databaseHealth] = await Promise.all([
-        migrationService.getMigrationStats(),
-        this.checkDatabaseHealth(),
-      ]);
+      // Reset the migration completed flag
+      await appSettingsRepository.setMigrationCompleted(false);
+
+      // Reset initialization state
+      this.isInitialized = false;
+
+      // Run installation
+      return await this.installDefaultData();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('❌ Failed to force re-initialization:', errorMessage);
 
       return {
-        isInitialized: this.isInitialized,
-        migrationStats,
-        databaseHealth,
+        success: false,
+        error: errorMessage,
       };
-    } catch (error) {
-      console.error('Failed to get detailed status:', error);
-      return {
-        isInitialized: this.isInitialized,
-        migrationStats: {},
-        databaseHealth: false,
-      };
-    }
-  }
-
-  private async checkDatabaseHealth(): Promise<boolean> {
-    try {
-      // Import here to avoid circular dependencies
-      const { isDatabaseHealthy } = await import('./db/database');
-      return await isDatabaseHealthy();
-    } catch (error) {
-      console.error('Database health check failed:', error);
-      return false;
     }
   }
 }

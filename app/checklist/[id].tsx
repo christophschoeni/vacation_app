@@ -285,9 +285,9 @@ export default function ChecklistDetailScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={handleAddItem}
-                  style={[styles.actionButton, { backgroundColor: getCategoryColor(checklist.category) }]}
+                  style={[styles.actionButton, { backgroundColor: '#34C759' }]}
                 >
-                  <Icon name="check" size={16} color="#FFFFFF" />
+                  <Icon name="plus" size={16} color="#FFFFFF" />
                 </TouchableOpacity>
               </View>
             </View>

@@ -52,6 +52,7 @@ export default function MainLayout() {
         options={{
           title: 'Einstellungen',
           tabBarIcon: ({ color }) => <Icon size={26} name="settings" color={color} />,
+          headerShown: false,
         }}
       />
     </Tabs>

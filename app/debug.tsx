@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { appInitialization } from '@/lib/app-initialization';
 import { seedTestData, seedTemplates } from '@/lib/seed-data';
-import { getDatabaseStats, checkDatabaseFile, forceDatabaseSync } from '@/lib/db/database';
+import { getDatabaseStats, checkDatabaseFile, forceDatabaseSync, recreateDatabase } from '@/lib/db/database';
 import * as FileSystem from 'expo-file-system';
 
 export default function DebugScreen() {
@@ -106,19 +107,10 @@ export default function DebugScreen() {
       const sqliteDir = `${documentsDir}SQLite/`;
       const dbPath = `${sqliteDir}vacation_assist.db`;
 
-      // Check if directory exists
-      const sqliteDirInfo = await FileSystem.getInfoAsync(sqliteDir);
-      const dbFileInfo = await FileSystem.getInfoAsync(dbPath);
-
       let message = `Document Directory:\n${documentsDir}\n\n`;
-      message += `SQLite Directory:\n${sqliteDir}\n`;
-      message += `Exists: ${sqliteDirInfo.exists}\n\n`;
-      message += `Database File:\n${dbPath}\n`;
-      message += `Exists: ${dbFileInfo.exists}\n`;
-      if (dbFileInfo.exists) {
-        message += `Size: ${dbFileInfo.size} bytes\n`;
-        message += `Modified: ${new Date(dbFileInfo.modificationTime * 1000).toLocaleString()}`;
-      }
+      message += `SQLite Directory:\n${sqliteDir}\n\n`;
+      message += `Database File:\n${dbPath}\n\n`;
+      message += `Check console logs for detailed file information.`;
 
       Alert.alert('Database Path Info', message);
     } catch (error) {
@@ -127,48 +119,108 @@ export default function DebugScreen() {
     }
   };
 
-  const clearDatabase = async () => {
+  const clearAllData = async () => {
     Alert.alert(
-      'Datenbank löschen?',
-      'Alle Daten werden unwiderruflich gelöscht!',
+      'Alle Daten löschen?',
+      'SQLite-Datenbank UND AsyncStorage werden komplett geleert!',
       [
         { text: 'Abbrechen', style: 'cancel' },
         {
-          text: 'Löschen',
+          text: 'Alles löschen',
           style: 'destructive',
           onPress: async () => {
             setLoading(true);
             try {
-              // Clear all data - use direct SQL to ensure CASCADE deletes work
+              // 1. Clear SQLite database
               const { db } = await import('@/lib/db/database');
               const schema = await import('@/lib/db/schema');
 
-              console.log('🗑️ Clearing all checklist items...');
+              console.log('🗑️ Clearing SQLite database...');
               await db.delete(schema.checklistItems);
-
-              console.log('🗑️ Clearing all checklists...');
               await db.delete(schema.checklists);
-
-              console.log('🗑️ Clearing all expenses...');
               await db.delete(schema.expenses);
-
-              console.log('🗑️ Clearing all vacations...');
               await db.delete(schema.vacations);
-
-              console.log('🗑️ Clearing all categories...');
               await db.delete(schema.categories);
-
-              console.log('🗑️ Clearing all backup history...');
               await db.delete(schema.backupHistory);
 
               console.log('💾 Syncing cleared database to disk...');
               await forceDatabaseSync();
 
-              Alert.alert('Erfolg!', 'Datenbank wurde geleert!');
+              // 2. Clear ALL AsyncStorage data
+              console.log('🗑️ Clearing AsyncStorage...');
+              try {
+                await AsyncStorage.clear();
+                console.log('✅ AsyncStorage cleared successfully');
+              } catch (asyncError: any) {
+                // AsyncStorage might already be cleared or directory doesn't exist
+                if (asyncError.message?.includes('No such file or directory') ||
+                    asyncError.message?.includes('couldn\'t be removed')) {
+                  console.log('ℹ️ AsyncStorage directory already cleared or doesn\'t exist');
+                } else {
+                  console.warn('⚠️ AsyncStorage clear failed:', asyncError);
+                }
+              }
+
+              Alert.alert('Erfolg!', 'Alle Daten (SQLite + AsyncStorage) wurden gelöscht!');
               await loadDatabaseInfo();
             } catch (error) {
-              console.error('Failed to clear database:', error);
-              Alert.alert('Fehler', `Konnte Datenbank nicht löschen: ${error}`);
+              console.error('Failed to clear all data:', error);
+              Alert.alert('Fehler', `Konnte Daten nicht löschen: ${error}`);
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleRecreateDatabase = async () => {
+    Alert.alert(
+      'Datenbank neu erstellen?',
+      'Alle Daten werden gelöscht und die Datenbank wird mit dem neuen Schema neu erstellt.',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Neu erstellen',
+          style: 'destructive',
+          onPress: async () => {
+            setLoading(true);
+            try {
+              console.log('🔄 Recreating database...');
+              await recreateDatabase();
+              await loadDatabaseInfo();
+              Alert.alert('Erfolg!', 'Datenbank wurde neu erstellt!');
+            } catch (error) {
+              console.error('Failed to recreate database:', error);
+              Alert.alert('Fehler', `Konnte Datenbank nicht neu erstellen: ${error}`);
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const clearAsyncStorageOnly = async () => {
+    Alert.alert(
+      'AsyncStorage löschen?',
+      'Alle AsyncStorage-Daten werden gelöscht (SQLite bleibt bestehen)',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'AsyncStorage löschen',
+          style: 'destructive',
+          onPress: async () => {
+            setLoading(true);
+            try {
+              console.log('🗑️ Clearing AsyncStorage...');
+              await AsyncStorage.clear();
+              Alert.alert('Erfolg!', 'AsyncStorage wurde geleert!');
+            } catch (error) {
+              console.error('Failed to clear AsyncStorage:', error);
+              Alert.alert('Fehler', `Konnte AsyncStorage nicht löschen: ${error}`);
             } finally {
               setLoading(false);
             }
@@ -212,6 +264,14 @@ export default function DebugScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            style={[styles.button, { backgroundColor: '#FF6B6B' }]}
+            onPress={handleRecreateDatabase}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>🔄 Datenbank neu erstellen</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={[styles.button, styles.secondaryButton]}
             onPress={createAntalyaVacation}
             disabled={loading}
@@ -229,10 +289,18 @@ export default function DebugScreen() {
 
           <TouchableOpacity
             style={[styles.button, styles.dangerButton]}
-            onPress={clearDatabase}
+            onPress={clearAllData}
             disabled={loading}
           >
-            <Text style={styles.buttonText}>🗑️ Datenbank löschen</Text>
+            <Text style={styles.buttonText}>🗑️ Alle Daten löschen</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: '#FF9500' }]}
+            onPress={clearAsyncStorageOnly}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>📦 AsyncStorage löschen</Text>
           </TouchableOpacity>
         </View>
 

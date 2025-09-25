@@ -13,12 +13,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Header, Button } from '@/components/design';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useVacations } from '@/lib/database';
-import { Vacation } from '@/types';
+import { useVacations } from '@/hooks/use-vacations';
 
 export default function AddVacationScreen() {
   const colorScheme = useColorScheme();
-  const { saveVacation } = useVacations();
+  const { createVacation } = useVacations();
   const [formData, setFormData] = useState({
     destination: '',
     country: '',
@@ -36,24 +35,18 @@ export default function AddVacationScreen() {
     }
 
     try {
-      const vacation: Vacation = {
-        id: Date.now().toString(), // Simple ID generation
+      await createVacation({
         destination: formData.destination,
         country: formData.country,
         hotel: formData.hotel,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        budget: formData.budget ? parseFloat(formData.budget) : 0,
+        budget: formData.budget ? parseFloat(formData.budget) : undefined,
         currency: formData.currency,
-        expenses: [],
-        checklists: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      await saveVacation(vacation);
+      });
       router.back();
-    } catch {
+    } catch (error) {
+      console.error('Failed to create vacation:', error);
       Alert.alert('Fehler', 'Ferien konnten nicht gespeichert werden.');
     }
   };

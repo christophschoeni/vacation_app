@@ -1,4 +1,4 @@
-import { eq, and, isNull, desc } from 'drizzle-orm';
+import { eq, and, isNull, desc, sql } from 'drizzle-orm';
 import { BaseRepository, IRepository } from './base-repository';
 import * as schema from '../schema';
 import { Checklist, ChecklistItem, ChecklistCategory } from '@/types';
@@ -12,6 +12,7 @@ export interface CreateChecklistInput {
   templateId?: string;
   category: ChecklistCategory;
   icon: string;
+  order?: number;
 }
 
 export interface UpdateChecklistInput {
@@ -19,6 +20,7 @@ export interface UpdateChecklistInput {
   description?: string;
   category?: ChecklistCategory;
   icon?: string;
+  order?: number;
 }
 
 export interface CreateChecklistItemInput {
@@ -54,6 +56,7 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
       templateId: row.templateId,
       category: row.category as ChecklistCategory,
       icon: row.icon,
+      order: row.order || 0,
       items,
       createdAt: this.stringToDate(row.createdAt),
       updatedAt: this.stringToDate(row.updatedAt),
@@ -156,7 +159,7 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
         eq(schema.checklists.isTemplate, true),
         isNull(schema.checklists.vacationId)
       ))
-      .orderBy(schema.checklists.title);
+      .orderBy(schema.checklists.order, schema.checklists.title);
 
     const templatesWithItems = await Promise.all(
       templates.map(async (template) => {
@@ -180,6 +183,17 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
     const id = this.generateId();
     const now = this.getTimestamp();
 
+    // For templates, set order to the next highest value
+    let order = data.order || 0;
+    if (data.isTemplate && data.order === undefined) {
+      const maxOrderResult = await this.db
+        .select({ maxOrder: sql<number>`MAX(${schema.checklists.order})` })
+        .from(schema.checklists)
+        .where(eq(schema.checklists.isTemplate, true));
+
+      order = (maxOrderResult[0]?.maxOrder || -1) + 1;
+    }
+
     const checklistData = {
       id,
       title: data.title,
@@ -189,6 +203,7 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
       templateId: data.templateId,
       category: data.category,
       icon: data.icon,
+      order,
       createdAt: now,
       updatedAt: now,
     };
@@ -221,6 +236,21 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
       .where(eq(schema.checklists.id, id));
 
     return result.changes > 0;
+  }
+
+  // Update template order
+  async updateTemplateOrder(templateIds: string[]): Promise<void> {
+    await this.db.transaction(async (tx) => {
+      for (let i = 0; i < templateIds.length; i++) {
+        await tx
+          .update(schema.checklists)
+          .set({
+            order: i,
+            updatedAt: this.getTimestamp()
+          })
+          .where(eq(schema.checklists.id, templateIds[i]));
+      }
+    });
   }
 
   // Checklist Item operations
@@ -384,6 +414,126 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
     }
 
     return this.findById(newChecklist.id) as Promise<Checklist>;
+  }
+
+  // Template-specific utility methods
+  async duplicateTemplate(templateId: string): Promise<Checklist> {
+    const template = await this.findById(templateId);
+    if (!template || !template.isTemplate) {
+      throw new Error('Template not found');
+    }
+
+    // Create duplicate template
+    const duplicateTemplate = await this.create({
+      title: `${template.title} (Kopie)`,
+      description: template.description,
+      isTemplate: true,
+      category: template.category,
+      icon: template.icon,
+    });
+
+    // Copy all items from original template
+    for (const item of template.items) {
+      await this.addItem({
+        checklistId: duplicateTemplate.id,
+        text: item.text,
+        notes: item.notes,
+        priority: item.priority,
+        dueDate: item.dueDate,
+        quantity: item.quantity,
+        order: item.order,
+      });
+    }
+
+    return this.findById(duplicateTemplate.id) as Promise<Checklist>;
+  }
+
+  async getTemplatesByCategory(category: ChecklistCategory): Promise<Checklist[]> {
+    const templates = await this.db
+      .select()
+      .from(schema.checklists)
+      .where(and(
+        eq(schema.checklists.isTemplate, true),
+        eq(schema.checklists.category, category),
+        isNull(schema.checklists.vacationId)
+      ))
+      .orderBy(schema.checklists.title);
+
+    const templatesWithItems = await Promise.all(
+      templates.map(async (template) => {
+        const items = await this.db
+          .select()
+          .from(schema.checklistItems)
+          .where(eq(schema.checklistItems.checklistId, template.id))
+          .orderBy(schema.checklistItems.order);
+
+        return this.toDomainObject(
+          template,
+          items.map(item => this.itemToDomainObject(item))
+        );
+      })
+    );
+
+    return templatesWithItems;
+  }
+
+  async getTemplateStats() {
+    const templates = await this.findTemplates();
+
+    const stats = {
+      total: templates.length,
+      byCategory: {} as Record<ChecklistCategory, number>,
+      totalItems: 0,
+      averageItems: 0,
+    };
+
+    for (const template of templates) {
+      stats.byCategory[template.category] = (stats.byCategory[template.category] || 0) + 1;
+      stats.totalItems += template.items.length;
+    }
+
+    stats.averageItems = stats.total > 0 ? Math.round(stats.totalItems / stats.total) : 0;
+
+    return stats;
+  }
+
+  // Bulk operations for template management
+  async deleteMultipleTemplates(templateIds: string[]): Promise<number> {
+    let deletedCount = 0;
+
+    for (const id of templateIds) {
+      const success = await this.delete(id);
+      if (success) deletedCount++;
+    }
+
+    return deletedCount;
+  }
+
+  async updateTemplateItems(templateId: string, items: Array<{ text: string; notes?: string; priority?: 'low' | 'medium' | 'high'; quantity?: number }>): Promise<Checklist> {
+    // Delete existing items
+    await this.db
+      .delete(schema.checklistItems)
+      .where(eq(schema.checklistItems.checklistId, templateId));
+
+    // Add new items
+    for (let i = 0; i < items.length; i++) {
+      await this.addItem({
+        checklistId: templateId,
+        text: items[i].text,
+        notes: items[i].notes,
+        priority: items[i].priority || 'medium',
+        quantity: items[i].quantity,
+        order: i,
+      });
+    }
+
+    // Update template timestamp
+    await this.db
+      .update(schema.checklists)
+      .set({ updatedAt: this.getTimestamp() })
+      .where(eq(schema.checklists.id, templateId));
+
+    return this.findById(templateId) as Promise<Checklist>;
   }
 }
 

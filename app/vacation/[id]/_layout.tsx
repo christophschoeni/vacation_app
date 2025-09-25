@@ -5,7 +5,7 @@ import { Platform, View, Text, TouchableOpacity, StyleSheet } from 'react-native
 import { HapticTab } from '@/components/haptic-tab';
 import { Icon, Colors } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useVacations } from '@/lib/database';
+import { useVacations } from '@/hooks/use-vacations';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function VacationDetailTabLayout() {
