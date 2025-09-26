@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 16,
-    paddingBottom: 85,
+    paddingBottom: 20,
   },
   formContainer: {
     paddingHorizontal: 16,

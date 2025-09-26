@@ -6,11 +6,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Header, Button } from '@/components/design';
+import { Header, Icon } from '@/components/design';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/hooks/use-vacations';
@@ -61,9 +63,20 @@ export default function AddVacationScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-      <Header
-        title="Neue Ferien"
-      />
+      <View style={styles.header}>
+        <Text style={[styles.headerTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+          Neue Ferien
+        </Text>
+        <TouchableOpacity
+          onPress={handleSave}
+          style={styles.saveButton}
+          accessible={true}
+          accessibilityLabel="Ferien speichern"
+          accessibilityRole="button"
+        >
+          <Icon name="check" size={28} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
+        </TouchableOpacity>
+      </View>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -125,16 +138,6 @@ export default function AddVacationScreen() {
               onChangeText={(value) => updateField('currency', value)}
               placeholder="CHF"
             />
-
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Speichern"
-                variant="primary"
-                onPress={handleSave}
-                style={styles.button}
-                fullWidth
-              />
-            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -146,6 +149,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
+  },
+  headerTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+  },
+  saveButton: {
+    padding: 8,
+    borderRadius: 8,
+  },
   keyboardView: {
     flex: 1,
   },
@@ -153,17 +174,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
   formContainer: {
     paddingHorizontal: 20,
     paddingTop: 20,
-  },
-  buttonContainer: {
-    marginTop: 32,
-    gap: 12,
-  },
-  button: {
-    marginVertical: 0,
+    paddingBottom: 20,
   },
 });

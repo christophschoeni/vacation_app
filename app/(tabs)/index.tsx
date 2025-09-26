@@ -6,13 +6,14 @@ import {
   Alert,
   View,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { insights } from 'expo-insights';
 
-import { FloatingActionButton, Colors } from '@/components/design';
+import { Colors, Icon } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
@@ -102,6 +103,16 @@ export default function VacationsScreen() {
         <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
           Meine Ferien
         </Text>
+        <TouchableOpacity
+          onPress={handleAddVacation}
+          style={styles.addButton}
+          accessible={true}
+          accessibilityLabel="Neue Ferien hinzufügen"
+          accessibilityHint="Doppeltippen, um neue Ferien zu erstellen"
+          accessibilityRole="button"
+        >
+          <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -146,16 +157,6 @@ export default function VacationsScreen() {
           ))
         )}
       </ScrollView>
-
-      <FloatingActionButton
-        icon="plus"
-        style={styles.fab}
-        onPress={handleAddVacation}
-        accessible={true}
-        accessibilityLabel="Neue Ferien hinzufügen"
-        accessibilityHint="Doppeltippen, um neue Ferien zu erstellen"
-        accessibilityRole="button"
-      />
     </SafeAreaView>
   );
 }
@@ -165,6 +166,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 16,
@@ -173,6 +177,11 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700',
     fontFamily: 'System',
+    flex: 1,
+  },
+  addButton: {
+    padding: 8,
+    borderRadius: 8,
   },
   content: {
     flex: 1,
@@ -180,16 +189,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 8,
-    paddingBottom: 80, // Reduced space for tab bar
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 85, // Above tab bar - adjusted for smaller tab bar
-    elevation: 6,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
+    paddingBottom: 85, // Space for tab bar
   },
 });

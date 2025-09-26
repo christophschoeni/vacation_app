@@ -1,8 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Card, Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useExpenses } from '@/lib/database';
+import {
+  getVacationGradient,
+  getVacationTextColor,
+  getVacationSecondaryTextColor,
+  getVacationIconColor
+} from '@/lib/vacation-colors';
 import type { Vacation } from '@/types';
 
 interface VacationCardProps {
@@ -36,6 +43,12 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
   const remainingBudget = vacation.budget ? vacation.budget - totalExpenses : 0;
   const budgetStatus = vacation.budget && remainingBudget < 0 ? 'over' : 'normal';
 
+  // Gradient colors for this vacation
+  const gradientColors = getVacationGradient(vacation);
+  const textColor = getVacationTextColor(gradientColors);
+  const secondaryTextColor = getVacationSecondaryTextColor(gradientColors);
+  const iconColor = getVacationIconColor(gradientColors);
+
   return (
     <TouchableOpacity
       onPress={() => onPress(vacation.id)}
@@ -46,61 +59,75 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
       accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrency(totalExpenses, vacation.currency)} von ${formatCurrency(vacation.budget, vacation.currency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrency(Math.abs(remainingBudget), vacation.currency)}` : `Verbleibend: ${formatCurrency(remainingBudget, vacation.currency)}`}` : ''}`}
       accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
     >
-      <Card variant="clean" style={styles.card}>
-      <View style={styles.cardHeader}>
-        <View style={styles.destinationContainer}>
-          <Text style={[styles.destination, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-            {vacation.destination}
-          </Text>
-          <Text style={[styles.country, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-            {vacation.country}
-          </Text>
-        </View>
-        <Text style={[styles.dates, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-          {formatDateRange(vacation.startDate, vacation.endDate)}
-        </Text>
-      </View>
-
-      <View style={styles.cardContent}>
-        <View style={styles.hotelContainer}>
-          <Icon name="hotel" size={16} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} />
-          <Text style={[styles.hotel, { color: colorScheme === 'dark' ? '#D1D1D6' : '#48484A' }]}>
-            {vacation.hotel}
-          </Text>
-        </View>
-
-        {vacation.budget && (
-          <View style={styles.budgetContainer}>
-            <Icon name="budget" size={16} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} />
-            <View style={styles.budgetInfo}>
-              <Text style={[styles.budgetText, { color: colorScheme === 'dark' ? '#D1D1D6' : '#48484A' }]}>
-                {formatCurrency(totalExpenses, vacation.currency)} / {formatCurrency(vacation.budget, vacation.currency)}
-              </Text>
-              <Text style={[
-                styles.remainingText,
-                {
-                  color: budgetStatus === 'over'
-                    ? '#FF3B30'
-                    : colorScheme === 'dark' ? '#34C759' : '#30D158'
-                }
-              ]}>
-                {budgetStatus === 'over' ? 'Überschreitung: ' : 'Verbleibend: '}
-                {formatCurrency(Math.abs(remainingBudget), vacation.currency)}
-              </Text>
-            </View>
+      <LinearGradient
+        colors={gradientColors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientCard}
+      >
+        <View style={styles.cardHeader}>
+          <View style={styles.destinationContainer}>
+            <Text style={[styles.destination, { color: textColor }]}>
+              {vacation.destination}
+            </Text>
+            <Text style={[styles.country, { color: secondaryTextColor }]}>
+              {vacation.country}
+            </Text>
           </View>
-        )}
-      </View>
-      </Card>
+          <Text style={[styles.dates, { color: secondaryTextColor }]}>
+            {formatDateRange(vacation.startDate, vacation.endDate)}
+          </Text>
+        </View>
+
+        <View style={styles.cardContent}>
+          <View style={styles.hotelContainer}>
+            <Icon name="hotel" size={16} color={iconColor} />
+            <Text style={[styles.hotel, { color: textColor }]}>
+              {vacation.hotel}
+            </Text>
+          </View>
+
+          {vacation.budget && (
+            <View style={styles.budgetContainer}>
+              <Icon name="budget" size={16} color={iconColor} />
+              <View style={styles.budgetInfo}>
+                <Text style={[styles.budgetText, { color: textColor }]}>
+                  {formatCurrency(totalExpenses, vacation.currency)} / {formatCurrency(vacation.budget, vacation.currency)}
+                </Text>
+                <Text style={[
+                  styles.remainingText,
+                  {
+                    color: budgetStatus === 'over'
+                      ? '#FFB3B3' // Light red for over budget
+                      : '#B3FFB3' // Light green for remaining budget
+                  }
+                ]}>
+                  {budgetStatus === 'over' ? 'Überschreitung: ' : 'Verbleibend: '}
+                  {formatCurrency(Math.abs(remainingBudget), vacation.currency)}
+                </Text>
+              </View>
+            </View>
+          )}
+        </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16, // Clean spacing
+  gradientCard: {
+    marginBottom: 16,
     paddingVertical: 20,
-    paddingHorizontal: 16, // Consistent padding for content
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   cardHeader: {
     flexDirection: 'row',
