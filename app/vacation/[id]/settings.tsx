@@ -28,7 +28,7 @@ export default function VacationSettingsScreen() {
       title: 'Ferien Details',
       subtitle: 'Reiseziel, Hotel, Datum und Budget bearbeiten',
       icon: 'settings' as const,
-      route: `/vacation/${vacationId}/edit`,
+      route: './edit',
     },
     // Future settings items can be added here:
     // {
@@ -48,7 +48,12 @@ export default function VacationSettingsScreen() {
   ];
 
   const handleSettingsPress = (route: string) => {
-    console.log('Navigating to route:', route);
+    console.log('Settings Debug:', {
+      route,
+      vacationId,
+      id,
+      typeof_id: typeof id
+    });
     router.push(route as any);
   };
 

@@ -1,5 +1,5 @@
-import { Tabs, useLocalSearchParams, router, useSegments } from 'expo-router';
-import React from 'react';
+import { Tabs, useLocalSearchParams, router, useSegments, useFocusEffect } from 'expo-router';
+import React, { useCallback } from 'react';
 import { Platform, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
@@ -14,11 +14,22 @@ export default function VacationDetailTabLayout() {
   const vacationId = Array.isArray(id) ? id[0] : id;
   const segments = useSegments();
   const colorScheme = useColorScheme();
-  const { vacations } = useVacations();
+  const { vacations, refreshVacations } = useVacations();
 
   const vacation = vacations.find(v => v.id === vacationId);
   const isDark = colorScheme === 'dark';
   const isEditPage = segments[segments.length - 1] === 'edit';
+
+  // Refresh vacation data when returning from edit page
+  useFocusEffect(
+    useCallback(() => {
+      if (!isEditPage) {
+        // Only refresh when we're not on the edit page
+        // This ensures fresh data when returning from edit
+        refreshVacations();
+      }
+    }, [isEditPage, refreshVacations])
+  );
 
   if (!vacation) {
     return (
@@ -61,17 +72,6 @@ export default function VacationDetailTabLayout() {
           )}
         </View>
         <View style={styles.headerActions}>
-          {isEditPage && (
-            <Button
-              title="Speichern"
-              variant="ghost"
-              size="small"
-              onPress={() => {
-                appEvents.emit(EVENTS.SAVE_VACATION);
-              }}
-              style={{ minWidth: 85 }}
-            />
-          )}
         </View>
       </View>
 

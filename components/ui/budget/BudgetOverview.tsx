@@ -42,7 +42,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
   const isDark = colorScheme === 'dark';
   const analysis = calculateBudgetAnalysis(vacation, expenses);
 
-  const progressColor = getBudgetStatusColor(analysis.status);
+  const progressColor = getBudgetStatusColor(analysis.status, analysis.budgetPercentageUsed);
 
   return (
     <View style={[styles.container, {
@@ -76,36 +76,57 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
         </View>
       </View>
 
-      {/* Main budget numbers */}
+      {/* Main budget numbers in 2x2 grid */}
       <View style={styles.mainBudgetSection}>
-        <View style={styles.budgetGrid}>
-          <View style={styles.budgetGridItem}>
-            <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Gesamtbudget
-            </Text>
-            <Text style={[styles.budgetGridAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {formatCurrency(analysis.totalBudget)}
-            </Text>
+        <View style={styles.budgetGrid2x2}>
+          {/* First row */}
+          <View style={styles.budgetGridRow}>
+            <View style={styles.budgetGridItem}>
+              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                Gesamtbudget
+              </Text>
+              <Text style={[styles.budgetGridAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                {formatCurrency(analysis.totalBudget)}
+              </Text>
+            </View>
+            <View style={styles.budgetGridItem}>
+              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                Ausgegeben
+              </Text>
+              <Text style={[styles.budgetGridAmount, {
+                color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E')
+              }]}>
+                {formatCurrency(analysis.totalExpenses)}
+              </Text>
+            </View>
           </View>
-          <View style={styles.budgetGridItem}>
-            <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Ausgegeben
-            </Text>
-            <Text style={[styles.budgetGridAmount, {
-              color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E')
-            }]}>
-              {formatCurrency(analysis.totalExpenses)}
-            </Text>
-          </View>
-          <View style={styles.budgetGridItem}>
-            <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Verbleibt
-            </Text>
-            <Text style={[styles.budgetGridAmount, {
-              color: analysis.remainingBudget < 0 ? '#FF3B30' : '#34C759'
-            }]}>
-              {formatCurrency(analysis.remainingBudget)}
-            </Text>
+
+          {/* Second row */}
+          <View style={styles.budgetGridRow}>
+            <View style={styles.budgetGridItem}>
+              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                Verbleibt
+              </Text>
+              <Text style={[styles.budgetGridAmount, {
+                color: analysis.remainingBudget < 0 ? '#FF3B30' : '#34C759'
+              }]}>
+                {formatCurrency(analysis.remainingBudget)}
+              </Text>
+            </View>
+            <View style={styles.budgetGridItem}>
+              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                {analysis.remainingDays > 0 ? `Verbleibt pro Tag (${analysis.remainingDays})` : 'Ferien beendet'}
+              </Text>
+              <Text style={[styles.budgetGridAmount, {
+                color: analysis.remainingBudget < 0 ? '#FF3B30' :
+                       analysis.remainingDays <= 0 ? (isDark ? '#8E8E93' : '#6D6D70') : '#34C759'
+              }]}>
+                {analysis.remainingDays > 0 ?
+                  formatCurrency(analysis.remainingBudget / analysis.remainingDays) :
+                  '--'
+                }
+              </Text>
+            </View>
           </View>
         </View>
       </View>
@@ -179,6 +200,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   budgetGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 16,
+  },
+  budgetGrid2x2: {
+    gap: 16,
+  },
+  budgetGridRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 16,

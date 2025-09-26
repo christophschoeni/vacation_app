@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 0,
-    bottom: 0,
+    bottom: 12,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 60,
-    height: 50,
+    height: '100%',
   },
   editButton: {
     backgroundColor: Colors.primary[500],
@@ -166,5 +166,6 @@ const styles = StyleSheet.create({
   deleteButton: {
     backgroundColor: '#FF3B30', // iOS System Red for destructive actions
     borderRadius: 8,
+    marginLeft: 8,
   },
 });

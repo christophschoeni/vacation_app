@@ -31,9 +31,24 @@ export function calculateBudgetAnalysis(vacation: Vacation, expenses: Expense[])
   const endDate = new Date(vacation.endDate);
 
   // Calculate trip duration
-  const totalDays = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
-  const elapsedDays = Math.max(0, Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
-  const remainingDays = Math.max(0, Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+  const totalDays = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+
+  let elapsedDays = 0;
+  let remainingDays = totalDays;
+
+  if (today >= startDate && today <= endDate) {
+    // During vacation
+    elapsedDays = Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    remainingDays = Math.max(0, Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+  } else if (today > endDate) {
+    // After vacation
+    elapsedDays = totalDays;
+    remainingDays = 0;
+  } else {
+    // Before vacation
+    elapsedDays = 0;
+    remainingDays = totalDays;
+  }
 
   // Basic budget calculations
   const totalBudget = vacation.budget || 0;
@@ -89,18 +104,33 @@ export function formatCurrency(amount: number, currency: string = 'CHF'): string
   return `${currency} ${amount.toFixed(2)}`;
 }
 
-export function getBudgetStatusColor(status: BudgetAnalysis['status']): string {
+export function getBudgetStatusColor(status: BudgetAnalysis['status'], budgetPercentageUsed?: number): string {
+  // If we have percentage, use gradient colors
+  if (budgetPercentageUsed !== undefined) {
+    if (budgetPercentageUsed <= 50) {
+      // 0-50%: Green
+      return '#34C759'; // iOS System Green
+    } else if (budgetPercentageUsed <= 80) {
+      // 50-80%: Orange
+      return '#FF9500'; // iOS System Orange
+    } else {
+      // 80%+: Red
+      return '#FF3B30'; // iOS System Red
+    }
+  }
+
+  // Fallback to status-based colors
   switch (status) {
     case 'on-track':
-      return '#00C853'; // Green
+      return '#34C759'; // Green
     case 'under-budget':
-      return '#2196F3'; // Blue
+      return '#34C759'; // Green
     case 'over-budget':
-      return '#F44336'; // Red
+      return '#FF3B30'; // Red
     case 'future-trip':
-      return '#9E9E9E'; // Gray
+      return '#8E8E93'; // Gray
     default:
-      return '#9E9E9E';
+      return '#8E8E93';
   }
 }
 

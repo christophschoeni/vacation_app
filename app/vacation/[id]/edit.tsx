@@ -1,6 +1,6 @@
-import { Button, Card } from '@/components/design';
-import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
-import React, { useEffect, useState, useCallback, createContext, useContext } from 'react';
+import { Button } from '@/components/design';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -14,31 +14,55 @@ import {
 import { DatePicker, FormInput } from '@/components/ui/forms';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/hooks/use-vacations';
-import { appEvents, EVENTS } from '@/lib/events';
 
 export default function VacationEditScreen() {
   const { id } = useLocalSearchParams();
   const vacationId = Array.isArray(id) ? id[0] : id;
 
+  // Fallback: If no vacationId, go back to settings
+  if (!vacationId || vacationId === 'undefined') {
+    console.log('No valid vacationId, redirecting back');
+    router.back();
+    return null;
+  }
 
   const colorScheme = useColorScheme();
-  const { vacations, updateVacation, deleteVacation, loading } = useVacations();
+  const { vacations, updateVacation, loading } = useVacations();
 
   const vacation = vacations.find(v => v.id === vacationId);
   const isDark = colorScheme === 'dark';
 
-  const [formData, setFormData] = useState({
-    destination: '',
-    hotel: '',
-    startDate: new Date(),
-    endDate: new Date(),
-    budget: '',
+  console.log('Edit Screen Debug:', {
+    vacationId,
+    vacationsCount: vacations.length,
+    vacation: vacation ? `Found: ${vacation.destination}` : 'Not found',
+    loading
+  });
+
+  const [formData, setFormData] = useState(() => {
+    if (vacation) {
+      return {
+        destination: vacation.destination,
+        hotel: vacation.hotel,
+        startDate: vacation.startDate,
+        endDate: vacation.endDate,
+        budget: vacation.budget.toString(),
+      };
+    }
+    return {
+      destination: '',
+      hotel: '',
+      startDate: new Date(),
+      endDate: new Date(),
+      budget: '',
+    };
   });
 
   const [formLoading, setFormLoading] = useState(false);
 
   useEffect(() => {
     if (vacation) {
+      console.log('Loading vacation data:', vacation);
       setFormData({
         destination: vacation.destination,
         hotel: vacation.hotel,
@@ -49,20 +73,6 @@ export default function VacationEditScreen() {
     }
   }, [vacation]);
 
-  // Listen for save events from the layout header
-  useFocusEffect(
-    useCallback(() => {
-      const handleSaveFromHeader = () => {
-        handleSave();
-      };
-
-      appEvents.on(EVENTS.SAVE_VACATION, handleSaveFromHeader);
-
-      return () => {
-        appEvents.off(EVENTS.SAVE_VACATION, handleSaveFromHeader);
-      };
-    }, [formData, vacation, formLoading])
-  );
 
   // Show loading state while vacations are being loaded
   if (loading && !vacation) {
@@ -85,6 +95,11 @@ export default function VacationEditScreen() {
   };
 
   const handleSave = async () => {
+    if (!vacation) {
+      Alert.alert('Fehler', 'Ferien nicht gefunden.');
+      return;
+    }
+
     if (!formData.destination || !formData.hotel || !formData.budget) {
       Alert.alert('Fehler', 'Bitte füllen Sie alle Pflichtfelder aus.');
       return;
@@ -97,16 +112,27 @@ export default function VacationEditScreen() {
 
     try {
       setFormLoading(true);
-      await updateVacation(vacation.id, {
+      const updatedVacation = await updateVacation(vacation.id, {
         destination: formData.destination,
         hotel: formData.hotel,
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: parseFloat(formData.budget),
       });
-      Alert.alert('Erfolg', 'Ferien erfolgreich aktualisiert!', [
-        { text: 'OK', onPress: () => router.push(`/vacation/${vacation.id}/settings`) }
-      ]);
+
+      if (updatedVacation) {
+        Alert.alert('Erfolg', 'Ferien erfolgreich aktualisiert!', [
+          {
+            text: 'OK',
+            onPress: () => {
+              // Navigate back to settings tab, maintaining tab navigation state
+              router.back();
+            }
+          }
+        ]);
+      } else {
+        Alert.alert('Fehler', 'Ferien konnten nicht aktualisiert werden.');
+      }
     } catch {
       Alert.alert('Fehler', 'Ferien konnten nicht aktualisiert werden.');
     } finally {
@@ -114,27 +140,6 @@ export default function VacationEditScreen() {
     }
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      'Ferien löschen',
-      `Möchten Sie die Ferien "${vacation.destination}" wirklich löschen? Alle zugehörigen Ausgaben und Checklisten werden ebenfalls gelöscht.`,
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        {
-          text: 'Löschen',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteVacation(vacation.id);
-              router.push('/(tabs)');
-            } catch {
-              Alert.alert('Fehler', 'Ferien konnten nicht gelöscht werden.');
-            }
-          },
-        },
-      ]
-    );
-  };
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
@@ -148,8 +153,7 @@ export default function VacationEditScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-
-          <Card style={styles.formCard}>
+          <View style={styles.formContainer}>
             <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               Ändern Sie hier die Details Ihrer Ferien
             </Text>
@@ -194,13 +198,14 @@ export default function VacationEditScreen() {
             />
 
             <Button
-              title="Ferien löschen"
-              variant="destructive"
-              onPress={handleDelete}
-              style={styles.deleteButton}
+              title="Speichern"
+              variant="primary"
+              onPress={handleSave}
+              style={styles.saveButton}
               fullWidth
+              loading={formLoading}
             />
-          </Card>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -225,15 +230,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
   },
   scrollContent: {
     paddingTop: 16,
     paddingBottom: 85,
   },
-  formCard: {
-    marginTop: 8,
-    marginBottom: 24,
+  formContainer: {
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
@@ -243,7 +246,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 20,
   },
-  deleteButton: {
+  saveButton: {
     marginTop: 20,
   },
   emptyState: {
