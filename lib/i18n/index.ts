@@ -1,6 +1,5 @@
 import { I18n } from 'i18n-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getLocales } from 'expo-localization';
 import { logger } from '../utils/logger';
 
 // Import translation files
@@ -33,10 +32,9 @@ class TranslationService {
       if (savedLanguage) {
         this.currentLocale = savedLanguage;
       } else {
-        // Use device locale if no saved preference
-        const deviceLocales = getLocales();
-        const deviceLanguage = deviceLocales[0]?.languageCode || 'de';
-        this.currentLocale = ['de', 'en'].includes(deviceLanguage) ? deviceLanguage : 'de';
+        // For now, use German as default until development build is ready
+        this.currentLocale = 'de';
+        logger.debug('Using default locale (de) until expo-localization is available');
       }
 
       this.i18n.locale = this.currentLocale;
