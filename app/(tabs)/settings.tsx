@@ -1,5 +1,6 @@
 import { Card, Icon, IconName } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ThemeToggleCard } from '@/components/theme-toggle-card';
+import { useTheme } from '@/contexts/theme-context';
 import { router } from 'expo-router';
 import React from 'react';
 import {
@@ -58,7 +59,7 @@ const SETTINGS_ITEMS: SettingsItem[] = [
 ];
 
 export default function SettingsScreen() {
-  const colorScheme = useColorScheme();
+  const { isDark } = useTheme();
 
   const handleSettingsItemPress = (route: string) => {
     switch (route) {
@@ -82,7 +83,6 @@ export default function SettingsScreen() {
     }
   };
 
-  const isDark = colorScheme === 'dark';
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
@@ -98,6 +98,13 @@ export default function SettingsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            Erscheinungsbild
+          </Text>
+          <ThemeToggleCard />
+        </View>
+
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
             Allgemein

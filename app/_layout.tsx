@@ -1,4 +1,4 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ThemeProvider, useTheme } from '@/contexts/theme-context';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { db } from '@/lib/db/database';
 import migrations from '@/lib/db/migrations/migrations';
@@ -53,8 +53,8 @@ const modalSlideUp = {
   },
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function RootNavigation() {
+  const { isDark } = useTheme();
   const { success, error } = useMigrations(db, migrations);
 
   // Install default data after successful migration
@@ -83,12 +83,12 @@ export default function RootLayout() {
   // Show loading screen during migration
   if (error) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
         <View style={{ alignItems: 'center', padding: 20 }}>
-          <Text style={{ color: colorScheme === 'dark' ? '#fff' : '#000', fontSize: 18, marginBottom: 10 }}>
+          <Text style={{ color: isDark ? '#fff' : '#000', fontSize: 18, marginBottom: 10 }}>
             Migration Error
           </Text>
-          <Text style={{ color: colorScheme === 'dark' ? '#ccc' : '#666', textAlign: 'center' }}>
+          <Text style={{ color: isDark ? '#ccc' : '#666', textAlign: 'center' }}>
             {error.message}
           </Text>
         </View>
@@ -98,13 +98,13 @@ export default function RootLayout() {
 
   if (!success) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
         <View style={{ alignItems: 'center' }}>
-          <ActivityIndicator size="large" color={colorScheme === 'dark' ? '#fff' : '#007AFF'} />
-          <Text style={{ color: colorScheme === 'dark' ? '#fff' : '#000', marginTop: 16, fontSize: 16 }}>
+          <ActivityIndicator size="large" color={isDark ? '#fff' : '#007AFF'} />
+          <Text style={{ color: isDark ? '#fff' : '#000', marginTop: 16, fontSize: 16 }}>
             Initializing Vacation Assist...
           </Text>
-          <Text style={{ color: colorScheme === 'dark' ? '#888' : '#666', marginTop: 8, fontSize: 14 }}>
+          <Text style={{ color: isDark ? '#888' : '#666', marginTop: 8, fontSize: 14 }}>
             Running migrations...
           </Text>
         </View>
@@ -113,112 +113,120 @@ export default function RootLayout() {
   }
 
   return (
+    <NavigationThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="settings/categories"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/currency"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/notifications"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/templates"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="template/[id]/index"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="template/[id]/edit"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="vacation/[id]"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="vacation/add"
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+        <Stack.Screen
+          name="expense/add"
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+        <Stack.Screen
+          name="checklist/[id]"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="modal"
+          options={{
+            presentation: 'modal',
+            title: 'Modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+      </Stack>
+      <StatusBar style="auto" />
+    </NavigationThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
     <ErrorBoundary>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="settings/categories"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="settings/currency"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="settings/notifications"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="settings/templates"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="template/[id]/index"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="template/[id]/edit"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="vacation/[id]"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="vacation/add"
-              options={{
-                headerShown: false,
-                presentation: 'modal',
-                animationDuration: 350,
-                ...modalSlideUp,
-              }}
-            />
-            <Stack.Screen
-              name="expense/add"
-              options={{
-                headerShown: false,
-                presentation: 'modal',
-                animationDuration: 350,
-                ...modalSlideUp,
-              }}
-            />
-            <Stack.Screen
-              name="checklist/[id]"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="modal"
-              options={{
-                presentation: 'modal',
-                title: 'Modal',
-                animationDuration: 350,
-                ...modalSlideUp,
-              }}
-            />
-          </Stack>
-          <StatusBar style="auto" />
+        <ThemeProvider>
+          <RootNavigation />
         </ThemeProvider>
       </GestureHandlerRootView>
     </ErrorBoundary>
