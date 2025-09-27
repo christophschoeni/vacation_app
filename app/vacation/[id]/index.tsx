@@ -7,20 +7,19 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
-import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 
 import ExpenseCard from '@/components/ui/cards/ExpenseCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import { Card, FloatingActionButton, Icon } from '@/components/design';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacations } from '@/hooks/use-vacations';
 import { useExpenses } from '@/lib/database';
 
 export default function VacationBudgetScreen() {
-  const { id } = useLocalSearchParams();
-  const vacationId = Array.isArray(id) ? id[0] : id;
-
+  const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
   const { vacations } = useVacations();
   const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId);

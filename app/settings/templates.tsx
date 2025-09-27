@@ -17,17 +17,8 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
 import { Checklist, ChecklistCategory } from '@/types';
-
-// Kategorie-Konfiguration für bessere UX
-const CATEGORY_CONFIG: Record<ChecklistCategory, { label: string; icon: string; color: string }> = {
-  packing: { label: 'Packlisten', icon: '🧳', color: '#007AFF' },
-  shopping: { label: 'Einkaufslisten', icon: '🛒', color: '#FF9500' },
-  bucket: { label: 'Bucket Lists', icon: '🌟', color: '#AF52DE' },
-  todo: { label: 'To-Do Listen', icon: '✅', color: '#34C759' },
-  planning: { label: 'Planungslisten', icon: '📋', color: '#FF3B30' },
-  general: { label: 'Allgemein', icon: '📝', color: '#8E8E93' },
-  custom: { label: 'Benutzerdefiniert', icon: '⚙️', color: '#5856D6' },
-};
+import { logger } from '@/lib/utils/logger';
+import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 
 export default function TemplatesScreen() {
   const colorScheme = useColorScheme();
@@ -39,24 +30,24 @@ export default function TemplatesScreen() {
     try {
       setLoading(true);
       let templateList = await checklistRepository.findTemplates();
-      console.log(`Found ${templateList.length} templates`);
+      logger.debug(`Found ${templateList.length} templates`);
 
       // Smart auto-creation: If no templates found, try to create defaults
       if (templateList.length === 0) {
-        console.log('No templates found, attempting to create defaults...');
+        logger.info('No templates found, attempting to create defaults...');
         try {
           await ensureDefaultTemplates();
           templateList = await checklistRepository.findTemplates();
-          console.log(`After auto-creation: ${templateList.length} templates`);
+          logger.info(`After auto-creation: ${templateList.length} templates`);
         } catch (createError) {
-          console.error('Failed to auto-create templates:', createError);
+          logger.error('Failed to auto-create templates:', createError);
           // Continue with empty list, fallback button will be available
         }
       }
 
       setTemplates(templateList);
     } catch (error) {
-      console.error('Failed to load templates:', error);
+      logger.error('Failed to load templates:', error);
       Alert.alert('Fehler', 'Standard-Listen konnten nicht geladen werden.');
     } finally {
       setLoading(false);
@@ -116,7 +107,7 @@ export default function TemplatesScreen() {
   const createDefaultTemplates = async () => {
     try {
       setLoading(true);
-      console.log('Manually creating default templates...');
+      logger.info('Manually creating default templates...');
 
       await ensureDefaultTemplates();
 
@@ -124,7 +115,7 @@ export default function TemplatesScreen() {
       await loadTemplates();
 
     } catch (error) {
-      console.error('Failed to create default templates:', error);
+      logger.error('Failed to create default templates:', error);
       Alert.alert('Fehler', 'Standard-Listen konnten nicht erstellt werden.');
     } finally {
       setLoading(false);
@@ -137,7 +128,7 @@ export default function TemplatesScreen() {
       const templateIds = data.map(template => template.id);
       await checklistRepository.updateTemplateOrder(templateIds);
     } catch (error) {
-      console.error('Failed to update template order:', error);
+      logger.error('Failed to update template order:', error);
       Alert.alert('Fehler', 'Reihenfolge konnte nicht gespeichert werden.');
       // Revert the order
       loadTemplates();

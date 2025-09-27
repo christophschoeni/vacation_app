@@ -14,6 +14,7 @@ import { db } from '@/lib/db/database';
 import migrations from '@/lib/db/migrations/migrations';
 import { appInitialization } from '@/lib/app-initialization';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
+import { translationService } from '@/lib/i18n';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -62,6 +63,9 @@ function RootNavigation() {
     if (success) {
       const installDefaults = async () => {
         try {
+          // Initialize i18n system
+          await translationService.initialize();
+
           // Install default app data (categories, settings)
           await appInitialization.installDefaultData();
 

@@ -175,10 +175,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'System',
   },
-  headerButton: {
-    padding: 8,
-    marginRight: -8,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 16,

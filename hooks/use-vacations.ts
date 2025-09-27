@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Vacation } from '@/types';
 import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
+import { logger } from '@/lib/utils/logger';
 
 export interface UseVacationsReturn {
   vacations: Vacation[];
@@ -32,14 +33,14 @@ export function useVacations(): UseVacationsReturn {
       setLoading(true);
       setError(null);
 
-      console.log('🏖️ Loading vacations from SQLite...');
+      logger.debug('🏖️ Loading vacations from SQLite...');
       const loadedVacations = await vacationRepository.findAll();
 
-      console.log(`📊 Loaded ${loadedVacations.length} vacations from SQLite`);
+      logger.debug(`📊 Loaded ${loadedVacations.length} vacations from SQLite`);
       setVacations(loadedVacations);
 
     } catch (err) {
-      console.error('❌ Failed to load vacations:', err);
+      logger.error('❌ Failed to load vacations:', err);
       setError(err instanceof Error ? err.message : 'Failed to load vacations');
       setVacations([]);
     } finally {
@@ -60,17 +61,17 @@ export function useVacations(): UseVacationsReturn {
     try {
       setError(null);
 
-      console.log('🏖️ Creating vacation in SQLite...', data);
+      logger.debug('🏖️ Creating vacation in SQLite...', data);
       const newVacation = await vacationRepository.create(data);
 
       // Reload vacations to get fresh data
       await loadVacations();
 
-      console.log('✅ Vacation created successfully:', newVacation);
+      logger.debug('✅ Vacation created successfully:', newVacation);
       return newVacation;
 
     } catch (err) {
-      console.error('❌ Failed to create vacation:', err);
+      logger.error('❌ Failed to create vacation:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to create vacation';
       setError(errorMessage);
       throw new Error(errorMessage);
@@ -81,19 +82,19 @@ export function useVacations(): UseVacationsReturn {
     try {
       setError(null);
 
-      console.log('🏖️ Updating vacation in SQLite...', { id, data });
+      logger.debug('🏖️ Updating vacation in SQLite...', { id, data });
       const updatedVacation = await vacationRepository.update(id, data);
 
       if (updatedVacation) {
         // Reload vacations to get fresh data
         await loadVacations();
-        console.log('✅ Vacation updated successfully:', updatedVacation);
+        logger.debug('✅ Vacation updated successfully:', updatedVacation);
       }
 
       return updatedVacation;
 
     } catch (err) {
-      console.error('❌ Failed to update vacation:', err);
+      logger.error('❌ Failed to update vacation:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to update vacation';
       setError(errorMessage);
       return null;
@@ -104,19 +105,19 @@ export function useVacations(): UseVacationsReturn {
     try {
       setError(null);
 
-      console.log('🏖️ Deleting vacation from SQLite...', id);
+      logger.debug('🏖️ Deleting vacation from SQLite...', id);
       const success = await vacationRepository.delete(id);
 
       if (success) {
         // Reload vacations to get fresh data
         await loadVacations();
-        console.log('✅ Vacation deleted successfully');
+        logger.debug('✅ Vacation deleted successfully');
       }
 
       return success;
 
     } catch (err) {
-      console.error('❌ Failed to delete vacation:', err);
+      logger.error('❌ Failed to delete vacation:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete vacation';
       setError(errorMessage);
       return false;

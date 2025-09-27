@@ -1,4 +1,5 @@
-import { Tabs, useLocalSearchParams, router, useSegments, useFocusEffect } from 'expo-router';
+import { Tabs, router, useSegments, useFocusEffect } from 'expo-router';
+import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useCallback } from 'react';
 import { Platform, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
@@ -10,8 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { appEvents, EVENTS } from '@/lib/events';
 
 export default function VacationDetailTabLayout() {
-  const { id } = useLocalSearchParams();
-  const vacationId = Array.isArray(id) ? id[0] : id;
+  const vacationId = useRouteParam('id');
   const segments = useSegments();
   const colorScheme = useColorScheme();
   const { vacations, refreshVacations } = useVacations();

@@ -10,6 +10,7 @@ import {
   getVacationSecondaryTextColor,
   getVacationIconColor
 } from '@/lib/vacation-colors';
+import { formatDateRange, formatCurrencyCompact } from '@/lib/utils/formatters';
 import type { Vacation } from '@/types';
 
 interface VacationCardProps {
@@ -21,23 +22,6 @@ interface VacationCardProps {
 export default function VacationCard({ vacation, onPress, onLongPress }: VacationCardProps) {
   const colorScheme = useColorScheme();
   const { expenses } = useExpenses(vacation.id);
-
-  const formatDateRange = (startDate: Date, endDate: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: 'short'
-    };
-    return `${startDate.toLocaleDateString('de-DE', options)} - ${endDate.toLocaleDateString('de-DE', options)}`;
-  };
-
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('de-CH', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amountCHF, 0);
   const remainingBudget = vacation.budget ? vacation.budget - totalExpenses : 0;
@@ -56,7 +40,7 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
       activeOpacity={0.8}
       accessible={true}
       accessibilityRole="button"
-      accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrency(totalExpenses, vacation.currency)} von ${formatCurrency(vacation.budget, vacation.currency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrency(Math.abs(remainingBudget), vacation.currency)}` : `Verbleibend: ${formatCurrency(remainingBudget, vacation.currency)}`}` : ''}`}
+      accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, vacation.currency)} von ${formatCurrencyCompact(vacation.budget, vacation.currency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), vacation.currency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, vacation.currency)}`}` : ''}`}
       accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
     >
       <LinearGradient
@@ -92,7 +76,7 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
               <Icon name="budget" size={16} color={iconColor} />
               <View style={styles.budgetInfo}>
                 <Text style={[styles.budgetText, { color: textColor }]}>
-                  {formatCurrency(totalExpenses, vacation.currency)} / {formatCurrency(vacation.budget, vacation.currency)}
+                  {formatCurrencyCompact(totalExpenses, vacation.currency)} / {formatCurrencyCompact(vacation.budget, vacation.currency)}
                 </Text>
                 <Text style={[
                   styles.remainingText,
@@ -103,7 +87,7 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
                   }
                 ]}>
                   {budgetStatus === 'over' ? 'Überschreitung: ' : 'Verbleibend: '}
-                  {formatCurrency(Math.abs(remainingBudget), vacation.currency)}
+                  {formatCurrencyCompact(Math.abs(remainingBudget), vacation.currency)}
                 </Text>
               </View>
             </View>

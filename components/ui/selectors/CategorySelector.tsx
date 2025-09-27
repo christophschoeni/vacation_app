@@ -8,45 +8,7 @@ import {
 } from 'react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ChecklistCategory } from '@/types';
-
-// Category configuration
-const CATEGORY_CONFIG: Record<ChecklistCategory, { label: string; icon: string; description: string }> = {
-  packing: {
-    label: 'Packlisten',
-    icon: '🧳',
-    description: 'Was mitnehmen für die Reise'
-  },
-  shopping: {
-    label: 'Einkaufslisten',
-    icon: '🛒',
-    description: 'Was vor oder während der Reise kaufen'
-  },
-  bucket: {
-    label: 'Bucket Lists',
-    icon: '🌟',
-    description: 'Sehenswürdigkeiten und Aktivitäten'
-  },
-  todo: {
-    label: 'To-Do Listen',
-    icon: '✅',
-    description: 'Aufgaben vor und während der Reise'
-  },
-  planning: {
-    label: 'Planungslisten',
-    icon: '📋',
-    description: 'Reiseplanung und Organisation'
-  },
-  general: {
-    label: 'Allgemein',
-    icon: '📝',
-    description: 'Allgemeine Listen und Notizen'
-  },
-  custom: {
-    label: 'Benutzerdefiniert',
-    icon: '⚙️',
-    description: 'Individuelle Listen'
-  },
-};
+import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 
 interface CategorySelectorProps {
   selectedCategory: ChecklistCategory;

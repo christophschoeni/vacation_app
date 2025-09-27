@@ -1,5 +1,6 @@
 import { Card, Icon } from '@/components/design';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
+import { useRouteParam } from '@/hooks/use-route-param';
 import React from 'react';
 import {
   ScrollView,
@@ -12,8 +13,7 @@ import {
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function VacationSettingsScreen() {
-  const { id } = useLocalSearchParams();
-  const vacationId = Array.isArray(id) ? id[0] : id;
+  const vacationId = useRouteParam('id');
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';

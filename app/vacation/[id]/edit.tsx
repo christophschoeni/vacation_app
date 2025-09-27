@@ -1,5 +1,6 @@
 import { Button } from '@/components/design';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
+import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -14,14 +15,14 @@ import {
 import { DatePicker, FormInput } from '@/components/ui/forms';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/hooks/use-vacations';
+import { logger } from '@/lib/utils/logger';
 
 export default function VacationEditScreen() {
-  const { id } = useLocalSearchParams();
-  const vacationId = Array.isArray(id) ? id[0] : id;
+  const vacationId = useRouteParam('id');
 
   // Fallback: If no vacationId, go back to settings
   if (!vacationId || vacationId === 'undefined') {
-    console.log('No valid vacationId, redirecting back');
+    logger.warn('No valid vacationId, redirecting back');
     router.back();
     return null;
   }
@@ -32,7 +33,7 @@ export default function VacationEditScreen() {
   const vacation = vacations.find(v => v.id === vacationId);
   const isDark = colorScheme === 'dark';
 
-  console.log('Edit Screen Debug:', {
+  logger.debug('Edit Screen Debug:', {
     vacationId,
     vacationsCount: vacations.length,
     vacation: vacation ? `Found: ${vacation.destination}` : 'Not found',
@@ -62,7 +63,7 @@ export default function VacationEditScreen() {
 
   useEffect(() => {
     if (vacation) {
-      console.log('Loading vacation data:', vacation);
+      logger.debug('Loading vacation data:', vacation);
       setFormData({
         destination: vacation.destination,
         hotel: vacation.hotel,

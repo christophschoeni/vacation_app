@@ -1,0 +1,73 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "navigation": {
+    "home": "Home",
+    "vacations": "Vacations",
+    "settings": "Settings",
+    "profile": "Profile"
+  },
+  "settings": {
+    "title": "Settings",
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Manage your notifications",
+      "budget_alerts": "Budget Alerts",
+      "budget_alerts_subtitle": "Notification when budget is exceeded",
+      "expense_reminders": "Expense Reminders",
+      "expense_reminders_subtitle": "Reminder for unrecorded expenses",
+      "trip_updates": "Trip Updates",
+      "trip_updates_subtitle": "Important updates about your trips",
+      "system_note": "Notifications must be enabled in your device's system settings."
+    },
+    "currency": {
+      "title": "Currency",
+      "subtitle": "Choose your preferred currency",
+      "add_currency": "Add new currency",
+      "default_currency_delete": "Default currencies cannot be deleted.",
+      "currency_exists": "A currency with this code already exists.",
+      "delete_confirm_title": "Delete currency",
+      "delete_confirm_message": "Do you really want to delete the currency \"{{name}}\"?"
+    },
+    "language": {
+      "title": "Language",
+      "subtitle": "Choose your preferred language"
+    }
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "network": "Network error. Please check your internet connection.",
+    "storage": "Error saving data. Please try again.",
+    "database": "Error accessing the database. Please try again.",
+    "validation": "Invalid input for {{field}}. Please check your entries.",
+    "currency_save": "Currency setting could not be saved.",
+    "backup": {
+      "create_failed": "Backup could not be created. Please try again.",
+      "share_failed": "Backup could not be shared.",
+      "import_failed": "The backup could not be imported.",
+      "file_read_failed": "The backup file could not be read.",
+      "invalid": "The selected file is not a valid Vacation Assist backup."
+    }
+  },
+  "backup": {
+    "create": "Create backup",
+    "share": "Share backup",
+    "import": "Import backup",
+    "import_confirm_title": "Import backup",
+    "import_confirm_message": "Do you really want to import this backup?\n\n📅 Created: {{date}}\n📊 Records: {{records}}\n\n⚠️ WARNING: Your current data will be overwritten!",
+    "import_success": "{{records}} records were restored.",
+    "share_unavailable_title": "Sharing not available",
+    "share_unavailable_message": "Backup was created, but sharing is not supported on this device."
+  }
+}

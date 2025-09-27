@@ -1,8 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Card, Icon, IconName } from '@/components/design';
+import { Card, Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import type { Expense, ExpenseCategory } from '@/types';
+import { formatDate, formatCurrency } from '@/lib/utils/formatters';
+import {
+  EXPENSE_CATEGORIES,
+  getExpenseCategoryIcon,
+  getExpenseCategoryLabel,
+  getExpenseCategoryColor
+} from '@/lib/constants/expense-categories';
+import type { Expense } from '@/types';
 
 interface ExpenseCardProps {
   expense: Expense;
@@ -10,39 +17,8 @@ interface ExpenseCardProps {
   onLongPress?: (id: string) => void;
 }
 
-const categoryIcons: Record<ExpenseCategory, IconName> = {
-  food: 'restaurant',
-  transport: 'car',
-  accommodation: 'hotel',
-  entertainment: 'music',
-  shopping: 'shopping',
-  other: 'other',
-};
-
-const categoryNames: Record<ExpenseCategory, string> = {
-  food: 'Essen',
-  transport: 'Transport',
-  accommodation: 'Unterkunft',
-  entertainment: 'Unterhaltung',
-  shopping: 'Einkaufen',
-  other: 'Sonstiges',
-};
-
 export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCardProps) {
   const colorScheme = useColorScheme();
-
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    };
-    return date.toLocaleDateString('de-DE', options);
-  };
-
-  const formatAmount = (amount: number, currency: string) => {
-    return `${amount.toFixed(2)} ${currency}`;
-  };
 
   const handlePress = () => {
     if (onPress) {
@@ -66,7 +42,7 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
         <View style={styles.cardHeader}>
           <View style={styles.categoryContainer}>
             <Icon
-              name={categoryIcons[expense.category]}
+              name={getExpenseCategoryIcon(expense.category) as any}
               size={20}
               color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'}
             />
@@ -75,13 +51,13 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
                 {expense.description}
               </Text>
               <Text style={[styles.category, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                {categoryNames[expense.category]}
+                {getExpenseCategoryLabel(expense.category)}
               </Text>
             </View>
           </View>
           <View style={styles.amountContainer}>
             <Text style={[styles.amount, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-              {formatAmount(expense.amount, expense.currency)}
+              {formatCurrency(expense.amount, expense.currency)}
             </Text>
             <Text style={[styles.date, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
               {formatDate(expense.date)}

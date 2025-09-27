@@ -2,6 +2,18 @@ import { eq } from 'drizzle-orm';
 import { BaseRepository, IRepository } from './base-repository';
 import * as schema from '../schema';
 import { Category } from '@/types';
+import { logger } from '@/lib/utils/logger';
+
+// Database row interface
+interface CategoryRow {
+  id: string;
+  name: string;
+  icon: string;
+  isDefault: boolean | number; // SQLite stores booleans as integers
+  type: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // Input types for repository operations
 export interface CreateCategoryInput {
@@ -21,7 +33,7 @@ export interface UpdateCategoryInput {
 
 export class CategoryRepository extends BaseRepository implements IRepository<Category, CreateCategoryInput, UpdateCategoryInput> {
 
-  private toDomainObject(row: any): Category {
+  private toDomainObject(row: CategoryRow): Category {
     return {
       id: row.id,
       name: row.name,
@@ -123,7 +135,7 @@ export class CategoryRepository extends BaseRepository implements IRepository<Ca
 
   // Install default categories if not already present
   async installDefaultCategories(categories: CreateCategoryInput[]): Promise<Category[]> {
-    console.log('📦 Installing default categories...');
+    logger.info('📦 Installing default categories...');
 
     const installedCategories: Category[] = [];
 
@@ -137,7 +149,7 @@ export class CategoryRepository extends BaseRepository implements IRepository<Ca
         }
 
         if (category) {
-          console.log(`ℹ️ Category ${categoryData.name} already exists, skipping`);
+          logger.debug(`ℹ️ Category ${categoryData.name} already exists, skipping`);
           installedCategories.push(category);
         } else {
           category = await this.create({
@@ -145,14 +157,14 @@ export class CategoryRepository extends BaseRepository implements IRepository<Ca
             isDefault: true,
           });
           installedCategories.push(category);
-          console.log(`✅ Installed category: ${category.name}`);
+          logger.info(`✅ Installed category: ${category.name}`);
         }
       } catch (error) {
-        console.error(`❌ Failed to install category ${categoryData.name}:`, error);
+        logger.error(`❌ Failed to install category ${categoryData.name}:`, error);
       }
     }
 
-    console.log(`📦 Installed ${installedCategories.length} default categories`);
+    logger.info(`📦 Installed ${installedCategories.length} default categories`);
     return installedCategories;
   }
 }

@@ -1,22 +1,22 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { useRouteParam } from '@/hooks/use-route-param';
 import { useCallback } from 'react';
 import { useChecklists } from '@/hooks/use-checklists';
 import ChecklistCard from '@/components/ui/cards/ChecklistCard';
-import { createTestDataForVacation } from '@/lib/manual-seed';
 import { Icon } from '@/components/design';
+import { logger } from '@/lib/utils/logger';
 
 export default function VacationChecklistsScreen() {
-  const { id } = useLocalSearchParams();
-  const extractedVacationId = Array.isArray(id) ? id[0] : id;
+  const extractedVacationId = useRouteParam('id');
 
   // TEMPORARY FIX: Use a static vacation ID if none is extracted
   const vacationId = extractedVacationId || 'antalya-vacation-2024';
 
-  console.log('🔍 Debug - Raw params:', { id });
-  console.log('🔍 Debug - Extracted vacationId:', extractedVacationId);
-  console.log('🔍 Debug - Final vacationId used:', vacationId);
+  logger.debug('🔍 Debug - Raw params:', { id: extractedVacationId });
+  logger.debug('🔍 Debug - Extracted vacationId:', extractedVacationId);
+  logger.debug('🔍 Debug - Final vacationId used:', vacationId);
 
   // Force re-render when checklists change
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -34,16 +34,16 @@ export default function VacationChecklistsScreen() {
 
   useEffect(() => {
     if (vacationId) {
-      console.log(`🎯 Checklists screen: Loading checklists for vacation ID: ${vacationId}`);
+      logger.info(`🎯 Checklists screen: Loading checklists for vacation ID: ${vacationId}`);
       // Load with a delay to ensure database and app initialization is complete
       setTimeout(() => {
         loadChecklists();
         loadTemplates();
       }, 500);
     } else {
-      console.log('⚠️ No vacation ID available');
+      logger.warn('⚠️ No vacation ID available');
     }
-  }, [vacationId, loadChecklists, loadTemplates]);
+  }, [vacationId]);
 
   // Reload checklists when screen comes into focus (e.g., when returning from detail view)
   useFocusEffect(
@@ -54,16 +54,16 @@ export default function VacationChecklistsScreen() {
           loadChecklists();
         }, 300);
       }
-    }, [vacationId, loadChecklists])
+    }, [vacationId])
   );
 
   // Debug: Log checklists data
   useEffect(() => {
-    console.log(`UI State Update: ${checklists.length} checklists loaded`);
+    logger.debug(`UI State Update: ${checklists.length} checklists loaded`);
     checklists.forEach(checklist => {
       const completedItems = checklist.items?.filter(item => item.completed).length || 0;
       const totalItems = checklist.items?.length || 0;
-      console.log(`  UI: "${checklist.title}": ${completedItems}/${totalItems} items`);
+      logger.debug(`  UI: "${checklist.title}": ${completedItems}/${totalItems} items`);
     });
     // Force re-render to ensure ChecklistCard gets updated data
     forceUpdate();

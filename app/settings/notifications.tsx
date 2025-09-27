@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon, IconName } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '@/lib/utils/logger';
+import { ErrorHandler } from '@/lib/utils/error-handler';
 
 interface NotificationSetting {
   id: string;
@@ -48,15 +51,36 @@ export default function NotificationsScreen() {
     },
   ]);
 
-  const handleToggle = (settingId: string) => {
-    setSettings(prevSettings =>
-      prevSettings.map(setting =>
-        setting.id === settingId
-          ? { ...setting, enabled: !setting.enabled }
-          : setting
-      )
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const storedSettings = await AsyncStorage.getItem('@vacation_assist_notification_settings');
+        if (storedSettings) {
+          const parsed = JSON.parse(storedSettings) as NotificationSetting[];
+          setSettings(parsed);
+        }
+      } catch (error) {
+        await ErrorHandler.handleStorageError(error, 'load notification settings', false);
+      }
+    };
+
+    loadSettings();
+  }, []);
+
+  const handleToggle = async (settingId: string) => {
+    const newSettings = settings.map(setting =>
+      setting.id === settingId
+        ? { ...setting, enabled: !setting.enabled }
+        : setting
     );
-    // TODO: Save to settings/database
+
+    setSettings(newSettings);
+
+    try {
+      await AsyncStorage.setItem('@vacation_assist_notification_settings', JSON.stringify(newSettings));
+    } catch (error) {
+      await ErrorHandler.handleStorageError(error, 'save notification settings', true);
+    }
   };
 
   return (

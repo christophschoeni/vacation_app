@@ -1,5 +1,6 @@
 import { checklistRepository } from './db/repositories/checklist-repository';
 import { ChecklistCategory } from '@/types';
+import { logger } from '@/lib/utils/logger';
 
 // Template definitions
 const DEFAULT_TEMPLATES = [
@@ -60,7 +61,7 @@ const DEFAULT_TEMPLATES = [
 // Create a single template with error handling
 async function createTemplate(templateData: typeof DEFAULT_TEMPLATES[0]) {
   try {
-    console.log(`Creating template: ${templateData.title}`);
+    logger.debug(`Creating template: ${templateData.title}`);
 
     const template = await checklistRepository.create({
       title: templateData.title,
@@ -80,23 +81,23 @@ async function createTemplate(templateData: typeof DEFAULT_TEMPLATES[0]) {
       });
     }
 
-    console.log(`✅ Created template: ${templateData.title} (${templateData.items.length} items)`);
+    logger.info(`✅ Created template: ${templateData.title} (${templateData.items.length} items)`);
     return template;
   } catch (error) {
-    console.error(`❌ Failed to create template ${templateData.title}:`, error);
+    logger.error(`❌ Failed to create template ${templateData.title}:`, error);
     return null;
   }
 }
 
 // Ensure default templates exist (create missing ones)
 export async function ensureDefaultTemplates() {
-  console.log('🌱 Ensuring default templates exist...');
+  logger.info('🌱 Ensuring default templates exist...');
 
   try {
     const existingTemplates = await checklistRepository.findTemplates();
     const existingTitles = existingTemplates.map(t => t.title);
 
-    console.log(`Found ${existingTemplates.length} existing templates: ${existingTitles.join(', ')}`);
+    logger.debug(`Found ${existingTemplates.length} existing templates: ${existingTitles.join(', ')}`);
 
     let createdCount = 0;
 
@@ -106,23 +107,23 @@ export async function ensureDefaultTemplates() {
         const created = await createTemplate(templateData);
         if (created) createdCount++;
       } else {
-        console.log(`ℹ️ Template "${templateData.title}" already exists, skipping`);
+        logger.debug(`ℹ️ Template "${templateData.title}" already exists, skipping`);
       }
     }
 
     if (createdCount > 0) {
-      console.log(`✅ Created ${createdCount} new templates`);
+      logger.info(`✅ Created ${createdCount} new templates`);
     } else {
-      console.log('ℹ️ All default templates already exist');
+      logger.info('ℹ️ All default templates already exist');
     }
 
     // Return final count
     const finalTemplates = await checklistRepository.findTemplates();
-    console.log(`📊 Total templates available: ${finalTemplates.length}`);
+    logger.info(`📊 Total templates available: ${finalTemplates.length}`);
     return finalTemplates;
 
   } catch (error) {
-    console.error('❌ Failed to ensure default templates:', error);
+    logger.error('❌ Failed to ensure default templates:', error);
     throw error;
   }
 }

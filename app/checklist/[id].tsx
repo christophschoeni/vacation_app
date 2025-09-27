@@ -10,19 +10,19 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useRouteId } from '@/hooks/use-route-param';
 import { useChecklists } from '@/hooks/use-checklists';
 import { ChecklistItem } from '@/types';
 import { checklistServiceSQLite } from '@/lib/checklist-service-sqlite';
+import { logger } from '@/lib/utils/logger';
 
 export default function ChecklistDetailScreen() {
-  const { id } = useLocalSearchParams();
-  const checklistId = Array.isArray(id) ? id[0] : id;
-
+  const checklistId = useRouteId();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -51,10 +51,10 @@ export default function ChecklistDetailScreen() {
           setVacationId(currentChecklist.vacationId || '');
           setChecklist(currentChecklist);
         } else {
-          console.warn('Checklist not found:', checklistId);
+          logger.warn('Checklist not found:', checklistId);
         }
       } catch (error) {
-        console.error('Failed to load checklist:', error);
+        logger.error('Failed to load checklist:', error);
       }
     };
     loadData();
@@ -64,7 +64,7 @@ export default function ChecklistDetailScreen() {
     if (vacationId) {
       loadChecklists();
     }
-  }, [vacationId, loadChecklists]);
+  }, [vacationId]);
 
   useEffect(() => {
     if (checklists.length > 0) {

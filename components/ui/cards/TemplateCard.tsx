@@ -8,17 +8,7 @@ import {
 import { Card, Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Checklist, ChecklistCategory } from '@/types';
-
-// Category configuration - could be moved to a shared constants file
-const CATEGORY_CONFIG: Record<ChecklistCategory, { label: string; icon: string; color: string }> = {
-  packing: { label: 'Packlisten', icon: '🧳', color: '#007AFF' },
-  shopping: { label: 'Einkaufslisten', icon: '🛒', color: '#FF9500' },
-  bucket: { label: 'Bucket Lists', icon: '🌟', color: '#AF52DE' },
-  todo: { label: 'To-Do Listen', icon: '✅', color: '#34C759' },
-  planning: { label: 'Planungslisten', icon: '📋', color: '#FF3B30' },
-  general: { label: 'Allgemein', icon: '📝', color: '#8E8E93' },
-  custom: { label: 'Benutzerdefiniert', icon: '⚙️', color: '#5856D6' },
-};
+import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 
 interface TemplateCardProps {
   template: Checklist;

@@ -3,29 +3,15 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { ExpenseCategory } from '@/types';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Icon } from '@/components/design';
+import { EXPENSE_CATEGORIES } from '@/lib/constants/expense-categories';
+import { Shadow } from '@/constants/design';
 import * as Haptics from 'expo-haptics';
-
-interface CategoryOption {
-  value: ExpenseCategory;
-  label: string;
-  icon: string;
-  color: string;
-}
 
 interface CategorySelectorProps {
   selectedCategory: ExpenseCategory;
   onSelect: (category: ExpenseCategory) => void;
   style?: any;
 }
-
-const categoryOptions: CategoryOption[] = [
-  { value: 'food', label: 'Essen', icon: 'restaurant', color: '#FF6B35' },
-  { value: 'transport', label: 'Transport', icon: 'car', color: '#4285F4' },
-  { value: 'accommodation', label: 'Unterkunft', icon: 'hotel', color: '#34A853' },
-  { value: 'entertainment', label: 'Unterhaltung', icon: 'music', color: '#FF9800' },
-  { value: 'shopping', label: 'Shopping', icon: 'shopping', color: '#E91E63' },
-  { value: 'other', label: 'Sonstiges', icon: 'other', color: '#6C757D' },
-];
 
 export default function CategorySelector({ selectedCategory, onSelect, style }: CategorySelectorProps) {
   const colorScheme = useColorScheme();
@@ -48,7 +34,7 @@ export default function CategorySelector({ selectedCategory, onSelect, style }: 
         contentContainerStyle={styles.scrollContent}
         style={styles.scrollView}
       >
-        {categoryOptions.map((option) => {
+        {EXPENSE_CATEGORIES.map((option) => {
           const isSelected = selectedCategory === option.value;
 
           return (
@@ -134,11 +120,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     minWidth: 80,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    ...Shadow.sm,
   },
   iconContainer: {
     width: 32,

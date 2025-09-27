@@ -2,6 +2,36 @@ import { eq, and, isNull, desc, sql } from 'drizzle-orm';
 import { BaseRepository, IRepository } from './base-repository';
 import * as schema from '../schema';
 import { Checklist, ChecklistItem, ChecklistCategory } from '@/types';
+import { logger } from '@/lib/utils/logger';
+
+// Database row interfaces
+interface ChecklistRow {
+  id: string;
+  title: string;
+  description: string | null;
+  isTemplate: boolean;
+  vacationId: string | null;
+  templateId: string | null;
+  category: string;
+  icon: string;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ChecklistItemRow {
+  id: string;
+  checklistId: string;
+  text: string;
+  completed: boolean | number; // SQLite stores booleans as integers
+  notes: string | null;
+  priority: string;
+  dueDate: string | null;
+  quantity: number | null;
+  order: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 // Input types for repository operations
 export interface CreateChecklistInput {
@@ -46,7 +76,7 @@ export interface UpdateChecklistItemInput {
 export class ChecklistRepository extends BaseRepository implements IRepository<Checklist, CreateChecklistInput, UpdateChecklistInput> {
 
   // Convert database row to domain object
-  private toDomainObject(row: any, items: ChecklistItem[] = []): Checklist {
+  private toDomainObject(row: ChecklistRow, items: ChecklistItem[] = []): Checklist {
     return {
       id: row.id,
       title: row.title,
@@ -63,7 +93,7 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
     };
   }
 
-  private itemToDomainObject(row: any): ChecklistItem {
+  private itemToDomainObject(row: ChecklistItemRow): ChecklistItem {
     return {
       id: row.id,
       text: row.text,
@@ -129,7 +159,7 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
       .where(eq(schema.checklists.vacationId, vacationId))
       .orderBy(desc(schema.checklists.updatedAt));
 
-    console.log(`Repository: found ${checklists.length} checklists for vacation ${vacationId}`);
+    logger.debug(`Repository: found ${checklists.length} checklists for vacation ${vacationId}`);
 
     const checklistsWithItems = await Promise.all(
       checklists.map(async (checklist) => {
@@ -139,7 +169,7 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
           .where(eq(schema.checklistItems.checklistId, checklist.id))
           .orderBy(schema.checklistItems.order);
 
-        console.log(`Repository: checklist "${checklist.title}" (${checklist.id}) has ${items.length} items`);
+        logger.debug(`Repository: checklist "${checklist.title}" (${checklist.id}) has ${items.length} items`);
 
         return this.toDomainObject(
           checklist,
@@ -294,7 +324,7 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
   }
 
   async updateItem(itemId: string, data: UpdateChecklistItemInput): Promise<ChecklistItem> {
-    const updateData: any = { ...data };
+    const updateData: Record<string, unknown> = { ...data };
 
     if (data.dueDate) {
       updateData.dueDate = this.dateToString(data.dueDate);

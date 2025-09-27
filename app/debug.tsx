@@ -2,6 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Vacation, Checklist, ChecklistItem } from '@/types';
+
+// Interface for database statistics
+interface DatabaseStats {
+  vacations: number;
+  checklists: number;
+  checklistItems: number;
+  expenses: number;
+  totalRecords: number;
+}
+
+// Interface for AsyncStorage errors
+interface AsyncStorageError extends Error {
+  message: string;
+}
 
 import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
@@ -9,11 +24,12 @@ import { appInitialization } from '@/lib/app-initialization';
 import { seedTestData, seedTemplates } from '@/lib/seed-data';
 import { getDatabaseStats, checkDatabaseFile, forceDatabaseSync, recreateDatabase } from '@/lib/db/database';
 import * as FileSystem from 'expo-file-system';
+import { logger } from '@/lib/utils/logger';
 
 export default function DebugScreen() {
-  const [dbStats, setDbStats] = useState<any>(null);
-  const [vacations, setVacations] = useState<any[]>([]);
-  const [checklists, setChecklists] = useState<any[]>([]);
+  const [dbStats, setDbStats] = useState<DatabaseStats | null>(null);
+  const [vacations, setVacations] = useState<Vacation[]>([]);
+  const [checklists, setChecklists] = useState<Checklist[]>([]);
   const [loading, setLoading] = useState(false);
 
   const loadDatabaseInfo = async () => {
@@ -31,11 +47,11 @@ export default function DebugScreen() {
       const allChecklists = await checklistRepository.findAll();
       setChecklists(allChecklists);
 
-      console.log('Debug - Database stats:', stats);
-      console.log('Debug - Vacations:', allVacations);
-      console.log('Debug - Checklists:', allChecklists);
+      logger.info('Debug - Database stats:', stats);
+      logger.info('Debug - Vacations:', allVacations);
+      logger.info('Debug - Checklists:', allChecklists);
     } catch (error) {
-      console.error('Failed to load database info:', error);
+      logger.error('Failed to load database info:', error);
       Alert.alert('Fehler', `Konnte Datenbank-Info nicht laden: ${error}`);
     } finally {
       setLoading(false);
@@ -45,7 +61,7 @@ export default function DebugScreen() {
   const runFullInitialization = async () => {
     setLoading(true);
     try {
-      console.log('🔧 Running full app initialization...');
+      logger.info('🔧 Running full app initialization...');
 
       // Run app initialization
       const result = await appInitialization.forceReinitialization();
@@ -57,7 +73,7 @@ export default function DebugScreen() {
         Alert.alert('Fehler', `Initialisierung fehlgeschlagen: ${result.error}`);
       }
     } catch (error) {
-      console.error('Failed to initialize:', error);
+      logger.error('Failed to initialize:', error);
       Alert.alert('Fehler', `Initialisierung fehlgeschlagen: ${error}`);
     } finally {
       setLoading(false);
@@ -67,7 +83,7 @@ export default function DebugScreen() {
   const createAntalyaVacation = async () => {
     setLoading(true);
     try {
-      console.log('🏖️ Creating Antalya vacation with specific ID...');
+      logger.info('🏖️ Creating Antalya vacation with specific ID...');
 
       // Create vacation with the expected ID that the app uses
       const antalyaVacation = await vacationRepository.create({
@@ -81,7 +97,7 @@ export default function DebugScreen() {
         currency: 'EUR',
       });
 
-      console.log('✅ Created Antalya vacation:', antalyaVacation);
+      logger.info('✅ Created Antalya vacation:', antalyaVacation);
 
       // Force database sync to ensure persistence
       await forceDatabaseSync();
@@ -89,7 +105,7 @@ export default function DebugScreen() {
       Alert.alert('Erfolg!', `Antalya-Vacation erstellt! ID: ${antalyaVacation.id}`);
       await loadDatabaseInfo();
     } catch (error) {
-      console.error('Failed to create vacation:', error);
+      logger.error('Failed to create vacation:', error);
       Alert.alert('Fehler', `Konnte Vacation nicht erstellen: ${error}`);
     } finally {
       setLoading(false);
@@ -98,7 +114,7 @@ export default function DebugScreen() {
 
   const showDatabasePath = async () => {
     try {
-      console.log('📁 Checking database file and paths...');
+      logger.info('📁 Checking database file and paths...');
 
       // Use the new checkDatabaseFile function
       await checkDatabaseFile();
@@ -114,7 +130,7 @@ export default function DebugScreen() {
 
       Alert.alert('Database Path Info', message);
     } catch (error) {
-      console.error('Failed to get database path:', error);
+      logger.error('Failed to get database path:', error);
       Alert.alert('Fehler', `Konnte Datenbankpfad nicht ermitteln: ${error}`);
     }
   };
@@ -135,7 +151,7 @@ export default function DebugScreen() {
               const { db } = await import('@/lib/db/database');
               const schema = await import('@/lib/db/schema');
 
-              console.log('🗑️ Clearing SQLite database...');
+              logger.info('🗑️ Clearing SQLite database...');
               await db.delete(schema.checklistItems);
               await db.delete(schema.checklists);
               await db.delete(schema.expenses);
@@ -143,28 +159,29 @@ export default function DebugScreen() {
               await db.delete(schema.categories);
               await db.delete(schema.backupHistory);
 
-              console.log('💾 Syncing cleared database to disk...');
+              logger.info('💾 Syncing cleared database to disk...');
               await forceDatabaseSync();
 
               // 2. Clear ALL AsyncStorage data
-              console.log('🗑️ Clearing AsyncStorage...');
+              logger.info('🗑️ Clearing AsyncStorage...');
               try {
                 await AsyncStorage.clear();
-                console.log('✅ AsyncStorage cleared successfully');
-              } catch (asyncError: any) {
+                logger.info('✅ AsyncStorage cleared successfully');
+              } catch (asyncError: unknown) {
+                const error = asyncError as AsyncStorageError;
                 // AsyncStorage might already be cleared or directory doesn't exist
-                if (asyncError.message?.includes('No such file or directory') ||
-                    asyncError.message?.includes('couldn\'t be removed')) {
-                  console.log('ℹ️ AsyncStorage directory already cleared or doesn\'t exist');
+                if (error.message?.includes('No such file or directory') ||
+                    error.message?.includes('couldn\'t be removed')) {
+                  logger.info('ℹ️ AsyncStorage directory already cleared or doesn\'t exist');
                 } else {
-                  console.warn('⚠️ AsyncStorage clear failed:', asyncError);
+                  logger.warn('⚠️ AsyncStorage clear failed:', error);
                 }
               }
 
               Alert.alert('Erfolg!', 'Alle Daten (SQLite + AsyncStorage) wurden gelöscht!');
               await loadDatabaseInfo();
             } catch (error) {
-              console.error('Failed to clear all data:', error);
+              logger.error('Failed to clear all data:', error);
               Alert.alert('Fehler', `Konnte Daten nicht löschen: ${error}`);
             } finally {
               setLoading(false);
@@ -187,12 +204,12 @@ export default function DebugScreen() {
           onPress: async () => {
             setLoading(true);
             try {
-              console.log('🔄 Recreating database...');
+              logger.info('🔄 Recreating database...');
               await recreateDatabase();
               await loadDatabaseInfo();
               Alert.alert('Erfolg!', 'Datenbank wurde neu erstellt!');
             } catch (error) {
-              console.error('Failed to recreate database:', error);
+              logger.error('Failed to recreate database:', error);
               Alert.alert('Fehler', `Konnte Datenbank nicht neu erstellen: ${error}`);
             } finally {
               setLoading(false);
@@ -215,11 +232,11 @@ export default function DebugScreen() {
           onPress: async () => {
             setLoading(true);
             try {
-              console.log('🗑️ Clearing AsyncStorage...');
+              logger.info('🗑️ Clearing AsyncStorage...');
               await AsyncStorage.clear();
               Alert.alert('Erfolg!', 'AsyncStorage wurde geleert!');
             } catch (error) {
-              console.error('Failed to clear AsyncStorage:', error);
+              logger.error('Failed to clear AsyncStorage:', error);
               Alert.alert('Fehler', `Konnte AsyncStorage nicht löschen: ${error}`);
             } finally {
               setLoading(false);
@@ -349,7 +366,7 @@ export default function DebugScreen() {
                 <Text style={styles.itemDetail}>Vacation ID: {checklist.vacationId || 'Keine'}</Text>
                 <Text style={styles.itemDetail}>Items: {checklist.items?.length || 0}</Text>
                 <Text style={styles.itemDetail}>
-                  Completed: {checklist.items?.filter((item: any) => item.completed).length || 0}
+                  Completed: {checklist.items?.filter((item: ChecklistItem) => item.completed).length || 0}
                 </Text>
                 <Text style={styles.itemDetail}>Template: {checklist.isTemplate ? 'Ja' : 'Nein'}</Text>
               </View>

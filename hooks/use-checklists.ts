@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Checklist, ChecklistItem, ChecklistCategory } from '@/types';
 import { checklistServiceSQLite } from '@/lib/checklist-service-sqlite';
+import { logger } from '@/lib/utils/logger';
 
 export function useChecklists(vacationId: string) {
   const [checklists, setChecklists] = useState<Checklist[]>([]);
@@ -12,7 +13,7 @@ export function useChecklists(vacationId: string) {
     setLoading(true);
     try {
       const lists = await checklistServiceSQLite.getChecklists(vacationId);
-      console.log('Hook: Loaded', lists.length, 'checklists from database');
+      logger.debug('Hook: Loaded', lists.length, 'checklists from database');
 
       // Filter out duplicates by title, keeping the one with most items
       const deduplicatedLists = [];
@@ -40,17 +41,17 @@ export function useChecklists(vacationId: string) {
               titleMap.set(checklist.title, checklist);
             }
 
-            console.log(`Hook: Replaced duplicate "${checklist.title}" - kept one with ${currentItemCount} items instead of ${existingItemCount}`);
+            logger.debug(`Hook: Replaced duplicate "${checklist.title}" - kept one with ${currentItemCount} items instead of ${existingItemCount}`);
           } else {
-            console.log(`Hook: Skipped duplicate "${checklist.title}" - keeping one with ${existingItemCount} items instead of ${currentItemCount}`);
+            logger.debug(`Hook: Skipped duplicate "${checklist.title}" - keeping one with ${existingItemCount} items instead of ${currentItemCount}`);
           }
         }
       }
 
-      console.log('Hook: Setting checklists state with', deduplicatedLists.length, 'deduplicated checklists');
+      logger.debug('Hook: Setting checklists state with', deduplicatedLists.length, 'deduplicated checklists');
       setChecklists(deduplicatedLists);
     } catch (error) {
-      console.warn('Failed to load checklists:', error);
+      logger.warn('Failed to load checklists:', error);
     } finally {
       setLoading(false);
     }
@@ -61,9 +62,9 @@ export function useChecklists(vacationId: string) {
     try {
       const templateList = await checklistServiceSQLite.getTemplates();
       setTemplates(templateList);
-      console.log('Loaded templates:', templateList.length);
+      logger.debug('Loaded templates:', templateList.length);
     } catch (error) {
-      console.warn('Failed to load templates:', error);
+      logger.warn('Failed to load templates:', error);
     }
   }, []);
 
@@ -78,7 +79,7 @@ export function useChecklists(vacationId: string) {
       setChecklists(prev => [...prev, newChecklist]);
       return newChecklist;
     } catch (error) {
-      console.warn('Failed to create checklist:', error);
+      logger.warn('Failed to create checklist:', error);
       throw error;
     }
   }, [vacationId]);
@@ -90,7 +91,7 @@ export function useChecklists(vacationId: string) {
       setChecklists(prev => [...prev, newChecklist]);
       return newChecklist;
     } catch (error) {
-      console.warn('Failed to create from template:', error);
+      logger.warn('Failed to create from template:', error);
       throw error;
     }
   }, [vacationId]);
@@ -103,7 +104,7 @@ export function useChecklists(vacationId: string) {
         prev.map(c => (c.id === checklist.id ? checklist : c))
       );
     } catch (error) {
-      console.warn('Failed to save checklist:', error);
+      logger.warn('Failed to save checklist:', error);
       throw error;
     }
   }, []);
@@ -114,7 +115,7 @@ export function useChecklists(vacationId: string) {
       await checklistServiceSQLite.deleteChecklist(checklistId);
       setChecklists(prev => prev.filter(c => c.id !== checklistId));
     } catch (error) {
-      console.warn('Failed to delete checklist:', error);
+      logger.warn('Failed to delete checklist:', error);
       throw error;
     }
   }, []);
@@ -136,7 +137,7 @@ export function useChecklists(vacationId: string) {
       );
       return newItem;
     } catch (error) {
-      console.warn('Failed to add item:', error);
+      logger.warn('Failed to add item:', error);
       throw error;
     }
   }, []);
@@ -158,7 +159,7 @@ export function useChecklists(vacationId: string) {
         )
       );
     } catch (error) {
-      console.warn('Failed to toggle item:', error);
+      logger.warn('Failed to toggle item:', error);
       throw error;
     }
   }, []);
@@ -178,7 +179,7 @@ export function useChecklists(vacationId: string) {
         )
       );
     } catch (error) {
-      console.warn('Failed to delete item:', error);
+      logger.warn('Failed to delete item:', error);
       throw error;
     }
   }, []);

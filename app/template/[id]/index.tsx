@@ -8,28 +8,18 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card, Button, Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useRouteId } from '@/hooks/use-route-param';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { Checklist, ChecklistCategory } from '@/types';
-
-// Category configuration from templates.tsx
-const CATEGORY_CONFIG: Record<ChecklistCategory, { label: string; icon: string; color: string }> = {
-  packing: { label: 'Packlisten', icon: '🧳', color: '#007AFF' },
-  shopping: { label: 'Einkaufslisten', icon: '🛒', color: '#FF9500' },
-  bucket: { label: 'Bucket Lists', icon: '🌟', color: '#AF52DE' },
-  todo: { label: 'To-Do Listen', icon: '✅', color: '#34C759' },
-  planning: { label: 'Planungslisten', icon: '📋', color: '#FF3B30' },
-  general: { label: 'Allgemein', icon: '📝', color: '#8E8E93' },
-  custom: { label: 'Benutzerdefiniert', icon: '⚙️', color: '#5856D6' },
-};
+import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 
 export default function TemplateDetailScreen() {
-  const { id } = useLocalSearchParams();
-  const templateId = Array.isArray(id) ? id[0] : id;
+  const templateId = useRouteId();
   const colorScheme = useColorScheme();
 
   const [template, setTemplate] = useState<Checklist | null>(null);

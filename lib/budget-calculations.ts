@@ -1,4 +1,6 @@
 import { Vacation, Expense } from '@/types';
+import { formatCurrency as sharedFormatCurrency } from '@/lib/utils/formatters';
+import { Colors } from '@/constants/design';
 
 export interface BudgetAnalysis {
   totalBudget: number;
@@ -101,7 +103,7 @@ export function calculateBudgetAnalysis(vacation: Vacation, expenses: Expense[])
 }
 
 export function formatCurrency(amount: number, currency: string = 'CHF'): string {
-  return `${currency} ${amount.toFixed(2)}`;
+  return sharedFormatCurrency(amount, currency);
 }
 
 export function getBudgetStatusColor(status: BudgetAnalysis['status'], budgetPercentageUsed?: number): string {
@@ -109,28 +111,28 @@ export function getBudgetStatusColor(status: BudgetAnalysis['status'], budgetPer
   if (budgetPercentageUsed !== undefined) {
     if (budgetPercentageUsed <= 50) {
       // 0-50%: Green
-      return '#34C759'; // iOS System Green
+      return Colors.systemColors.green;
     } else if (budgetPercentageUsed <= 80) {
       // 50-80%: Orange
-      return '#FF9500'; // iOS System Orange
+      return Colors.systemColors.orange;
     } else {
       // 80%+: Red
-      return '#FF3B30'; // iOS System Red
+      return Colors.systemColors.red;
     }
   }
 
   // Fallback to status-based colors
   switch (status) {
     case 'on-track':
-      return '#34C759'; // Green
+      return Colors.systemColors.green;
     case 'under-budget':
-      return '#34C759'; // Green
+      return Colors.systemColors.green;
     case 'over-budget':
-      return '#FF3B30'; // Red
+      return Colors.systemColors.red;
     case 'future-trip':
-      return '#8E8E93'; // Gray
+      return Colors.systemColors.gray;
     default:
-      return '#8E8E93';
+      return Colors.systemColors.gray;
   }
 }
 

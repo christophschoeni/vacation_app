@@ -7,38 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-
-// Common emojis organized by category for templates
-const EMOJI_CATEGORIES = {
-  common: {
-    label: 'Häufig verwendet',
-    emojis: ['📝', '🧳', '🛒', '🌟', '✅', '📋', '🎯', '📱', '💡', '🎨', '🔧', '⚙️']
-  },
-  travel: {
-    label: 'Reise',
-    emojis: ['✈️', '🏖️', '🗺️', '🎒', '📷', '🚗', '🚢', '🚂', '🏨', '🏝️', '🌍', '🧭']
-  },
-  activities: {
-    label: 'Aktivitäten',
-    emojis: ['🏊', '🏄', '🚴', '🥾', '🎿', '🏂', '🎣', '🎭', '🎪', '🎨', '🎵', '🎮']
-  },
-  food: {
-    label: 'Essen & Trinken',
-    emojis: ['🍕', '🍔', '🍜', '🍣', '🥗', '🍰', '🍷', '🍺', '☕', '🧁', '🍉', '🥑']
-  },
-  objects: {
-    label: 'Gegenstände',
-    emojis: ['👕', '👖', '👟', '🕶️', '💊', '🧴', '📱', '💻', '📚', '💰', '🎁', '🛡️']
-  },
-  nature: {
-    label: 'Natur',
-    emojis: ['🌲', '🌺', '🌊', '⛰️', '🏔️', '🌅', '🌙', '⭐', '☀️', '🌈', '🍃', '🌸']
-  },
-  symbols: {
-    label: 'Symbole',
-    emojis: ['❤️', '💎', '🔥', '⚡', '🎉', '🎊', '💫', '✨', '🎈', '🏆', '🎯', '🔮']
-  }
-};
+import { EMOJI_CATEGORIES } from '@/lib/constants/emojis';
 
 interface EmojiSelectorProps {
   selectedEmoji: string;

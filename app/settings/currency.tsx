@@ -13,6 +13,8 @@ import { Card, Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CurrencyEditor from '@/components/ui/forms/CurrencyEditor';
+import { logger } from '@/lib/utils/logger';
+import { ErrorHandler } from '@/lib/utils/error-handler';
 
 // Default currencies
 const DEFAULT_CURRENCIES = [
@@ -48,6 +50,7 @@ export default function CurrencyScreen() {
 
   const loadCurrencies = async () => {
     try {
+      // Load stored currencies
       const storedCurrencies = await AsyncStorage.getItem(CURRENCIES_STORAGE_KEY);
       if (storedCurrencies) {
         const parsed = JSON.parse(storedCurrencies) as Currency[];
@@ -55,8 +58,14 @@ export default function CurrencyScreen() {
           setCurrencies(parsed);
         }
       }
+
+      // Load selected currency
+      const storedCurrency = await AsyncStorage.getItem('@vacation_assist_default_currency');
+      if (storedCurrency) {
+        setSelectedCurrency(storedCurrency);
+      }
     } catch (error) {
-      console.warn('Failed to load currencies:', error);
+      await ErrorHandler.handleStorageError(error, 'load currencies', false);
     } finally {
       setIsLoading(false);
     }
@@ -66,18 +75,17 @@ export default function CurrencyScreen() {
     try {
       await AsyncStorage.setItem(CURRENCIES_STORAGE_KEY, JSON.stringify(newCurrencies));
     } catch (error) {
-      console.warn('Failed to save currencies:', error);
-      Alert.alert(
-        'Speicherfehler',
-        'Die Währungen konnten nicht gespeichert werden. Versuchen Sie es erneut.',
-        [{ text: 'OK', style: 'default' }]
-      );
+      await ErrorHandler.handleStorageError(error, 'save currencies', true);
     }
   };
 
-  const handleCurrencySelect = (currencyCode: string) => {
+  const handleCurrencySelect = async (currencyCode: string) => {
     setSelectedCurrency(currencyCode);
-    // TODO: Save to settings/database
+    try {
+      await AsyncStorage.setItem('@vacation_assist_default_currency', currencyCode);
+    } catch (error) {
+      await ErrorHandler.handleStorageError(error, 'save currency selection', true);
+    }
   };
 
   const handleDeleteCurrency = (currencyCode: string) => {

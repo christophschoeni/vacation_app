@@ -1,5 +1,61 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Vacation, Expense, Checklist } from '@/types';
+import { Vacation, Expense, Checklist, ChecklistItem } from '@/types';
+
+// Raw data interfaces for storage (with string dates)
+interface RawVacationData {
+  id: string;
+  destination: string;
+  country: string;
+  hotel: string;
+  startDate: string;
+  endDate: string;
+  budget?: number;
+  currency: string;
+  expenses: string[];
+  checklists: string[];
+  imageUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface RawExpenseData {
+  id: string;
+  vacationId: string;
+  amount: number;
+  currency: string;
+  amountCHF: number;
+  category: string;
+  description: string;
+  date: string;
+  imageUrl?: string;
+  createdAt: string;
+}
+
+interface RawChecklistItemData {
+  id: string;
+  text: string;
+  completed: boolean;
+  notes?: string;
+  priority: string;
+  dueDate?: string;
+  quantity?: number;
+  order: number;
+}
+
+interface RawChecklistData {
+  id: string;
+  title: string;
+  description?: string;
+  isTemplate: boolean;
+  vacationId?: string;
+  templateId?: string;
+  category: string;
+  icon: string;
+  order: number;
+  items: RawChecklistItemData[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 const STORAGE_KEYS = {
   VACATIONS: '@vacation_assist:vacations',
@@ -14,9 +70,9 @@ export class LocalDatabase {
       const data = await AsyncStorage.getItem(STORAGE_KEYS.VACATIONS);
       if (!data) return [];
 
-      const vacations = JSON.parse(data);
+      const vacations = JSON.parse(data) as RawVacationData[];
       // Convert date strings back to Date objects
-      return vacations.map((vacation: any) => ({
+      return vacations.map((vacation: RawVacationData) => ({
         ...vacation,
         startDate: new Date(vacation.startDate),
         endDate: new Date(vacation.endDate),
@@ -64,9 +120,9 @@ export class LocalDatabase {
       const data = await AsyncStorage.getItem(STORAGE_KEYS.EXPENSES);
       if (!data) return [];
 
-      const expenses = JSON.parse(data);
+      const expenses = JSON.parse(data) as RawExpenseData[];
       // Convert date strings back to Date objects
-      const expensesWithDates = expenses.map((expense: any) => ({
+      const expensesWithDates = expenses.map((expense: RawExpenseData) => ({
         ...expense,
         date: new Date(expense.date),
         createdAt: new Date(expense.createdAt),
@@ -114,13 +170,13 @@ export class LocalDatabase {
       const data = await AsyncStorage.getItem(STORAGE_KEYS.CHECKLISTS);
       if (!data) return [];
 
-      const checklists = JSON.parse(data);
+      const checklists = JSON.parse(data) as RawChecklistData[];
       // Convert date strings back to Date objects
-      const checklistsWithDates = checklists.map((checklist: any) => ({
+      const checklistsWithDates = checklists.map((checklist: RawChecklistData) => ({
         ...checklist,
         createdAt: new Date(checklist.createdAt),
         updatedAt: new Date(checklist.updatedAt),
-        items: checklist.items.map((item: any) => ({
+        items: checklist.items.map((item: RawChecklistItemData) => ({
           ...item,
           dueDate: item.dueDate ? new Date(item.dueDate) : undefined,
         })),

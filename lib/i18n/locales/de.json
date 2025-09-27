@@ -1,0 +1,73 @@
+{
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "back": "Zurück",
+    "ok": "OK",
+    "yes": "Ja",
+    "no": "Nein",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolgreich"
+  },
+  "navigation": {
+    "home": "Start",
+    "vacations": "Reisen",
+    "settings": "Einstellungen",
+    "profile": "Profil"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "subtitle": "Verwalten Sie Ihre Benachrichtigungen",
+      "budget_alerts": "Budget-Warnungen",
+      "budget_alerts_subtitle": "Benachrichtigung bei Budgetüberschreitung",
+      "expense_reminders": "Ausgaben-Erinnerungen",
+      "expense_reminders_subtitle": "Erinnerung für nicht erfasste Ausgaben",
+      "trip_updates": "Reise-Updates",
+      "trip_updates_subtitle": "Wichtige Updates zu Ihren Reisen",
+      "system_note": "Benachrichtigungen müssen in den Systemeinstellungen Ihres Geräts aktiviert sein."
+    },
+    "currency": {
+      "title": "Währung",
+      "subtitle": "Wählen Sie Ihre bevorzugte Währung",
+      "add_currency": "Neue Währung hinzufügen",
+      "default_currency_delete": "Standardwährungen können nicht gelöscht werden.",
+      "currency_exists": "Eine Währung mit diesem Code existiert bereits.",
+      "delete_confirm_title": "Währung löschen",
+      "delete_confirm_message": "Möchten Sie die Währung \"{{name}}\" wirklich löschen?"
+    },
+    "language": {
+      "title": "Sprache",
+      "subtitle": "Wählen Sie Ihre bevorzugte Sprache"
+    }
+  },
+  "errors": {
+    "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.",
+    "storage": "Fehler beim Speichern der Daten. Bitte versuchen Sie es erneut.",
+    "database": "Fehler beim Zugriff auf die Datenbank. Bitte versuchen Sie es erneut.",
+    "validation": "Ungültige Eingabe für {{field}}. Bitte überprüfen Sie Ihre Angaben.",
+    "currency_save": "Währungseinstellung konnte nicht gespeichert werden.",
+    "backup": {
+      "create_failed": "Backup konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "share_failed": "Backup konnte nicht geteilt werden.",
+      "import_failed": "Das Backup konnte nicht importiert werden.",
+      "file_read_failed": "Die Backup-Datei konnte nicht gelesen werden.",
+      "invalid": "Die ausgewählte Datei ist kein gültiges Vacation Assist Backup."
+    }
+  },
+  "backup": {
+    "create": "Backup erstellen",
+    "share": "Backup teilen",
+    "import": "Backup importieren",
+    "import_confirm_title": "Backup importieren",
+    "import_confirm_message": "Möchten Sie dieses Backup wirklich importieren?\n\n📅 Erstellt: {{date}}\n📊 Datensätze: {{records}}\n\n⚠️ ACHTUNG: Ihre aktuellen Daten werden überschrieben!",
+    "import_success": "{{records}} Datensätze wurden wiederhergestellt.",
+    "share_unavailable_title": "Teilen nicht verfügbar",
+    "share_unavailable_message": "Backup wurde erstellt, aber Teilen wird auf diesem Gerät nicht unterstützt."
+  }
+}

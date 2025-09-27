@@ -9,9 +9,17 @@ export interface AppSettings {
   updatedAt: Date;
 }
 
+// Database row interface
+interface AppSettingsRow {
+  key: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export class AppSettingsRepository extends BaseRepository {
 
-  private toDomainObject(row: any): AppSettings {
+  private toDomainObject(row: AppSettingsRow): AppSettings {
     return {
       key: row.key,
       value: row.value,
