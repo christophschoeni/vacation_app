@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 8,
-    paddingBottom: 16,
+    paddingBottom: 8,
   },
   headerTitle: {
     fontSize: 32,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 8,
+    paddingTop: 4,
     paddingBottom: 85, // Space for tab bar
   },
 });

@@ -33,7 +33,7 @@ export default function SwipeableCard({ children, onDelete, onPress }: Swipeable
 
       if (translationX < -SWIPE_THRESHOLD || velocityX < -1000) {
         // Swiped left enough or fast enough - show delete button
-        const actionWidth = -60;
+        const actionWidth = -68; // 60px button + 8px gap
         Animated.timing(translateX, {
           toValue: actionWidth,
           duration: 250,
@@ -78,9 +78,9 @@ export default function SwipeableCard({ children, onDelete, onPress }: Swipeable
         style={[
           styles.actionsContainer,
           {
-            width: 60,
+            width: 68, // 60px button + 8px gap
             opacity: translateX.interpolate({
-              inputRange: [-60, -30, 0],
+              inputRange: [-68, -34, 0],
               outputRange: [1, 0.5, 0],
               extrapolate: 'clamp',
             }),
@@ -130,20 +130,21 @@ const styles = StyleSheet.create({
   actionsContainer: {
     position: 'absolute',
     right: 0,
-    top: 8,
-    bottom: 20,
+    top: 0,
+    bottom: 16, // Match the marginBottom of the VacationCard
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     overflow: 'hidden',
     zIndex: 0, // Behind the card
+    paddingLeft: 8, // 8px gap between card and button
   },
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
     width: 56,
-    flex: 1,
-    marginHorizontal: 2,
+    height: '100%',
+    marginHorizontal: 0, // Remove margin since we use paddingLeft on container
     borderRadius: 12,
   },
   deleteButton: {
