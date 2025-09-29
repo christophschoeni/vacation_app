@@ -162,6 +162,65 @@ export class AppSettingsRepository extends BaseRepository {
     await this.set('lastRateUpdate', date.toISOString());
   }
 
+  // Exchange rate cache management
+  async getCachedRates(): Promise<string | null> {
+    return await this.get('exchangeRates');
+  }
+
+  async setCachedRates(rates: string): Promise<void> {
+    await this.set('exchangeRates', rates);
+  }
+
+  async getCacheTimestamp(): Promise<number | null> {
+    const value = await this.get('exchangeRatesTimestamp');
+    return value ? parseInt(value) : null;
+  }
+
+  async setCacheTimestamp(timestamp: number): Promise<void> {
+    await this.set('exchangeRatesTimestamp', timestamp.toString());
+  }
+
+  async clearExchangeRatesCache(): Promise<void> {
+    await this.delete('exchangeRates');
+    await this.delete('exchangeRatesTimestamp');
+  }
+
+  // Currency update settings with detailed options
+  async getCurrencySettings(): Promise<{
+    updatePolicy: string;
+    allowMobileData: boolean;
+    cacheExpiryHours: number;
+    lastUpdate: Date | null;
+  }> {
+    const updatePolicy = await this.getCurrencyUpdatePolicy();
+    const allowMobileData = await this.getAllowMobileDataForRates();
+    const cacheExpiryHours = await this.getCacheExpiryHours();
+    const lastUpdate = await this.getLastRateUpdate();
+
+    return {
+      updatePolicy,
+      allowMobileData,
+      cacheExpiryHours,
+      lastUpdate,
+    };
+  }
+
+  async setCurrencySettings(settings: {
+    updatePolicy?: string;
+    allowMobileData?: boolean;
+    cacheExpiryHours?: number;
+  }): Promise<void> {
+    if (settings.updatePolicy !== undefined) {
+      await this.setCurrencyUpdatePolicy(settings.updatePolicy);
+    }
+    if (settings.allowMobileData !== undefined) {
+      await this.setAllowMobileDataForRates(settings.allowMobileData);
+    }
+    if (settings.cacheExpiryHours !== undefined) {
+      await this.setCacheExpiryHours(settings.cacheExpiryHours);
+    }
+  }
+
   async installDefaultSettings(defaults: Record<string, any>): Promise<void> {
     console.log('📦 Installing default app settings...');
 

@@ -5,6 +5,7 @@ import { Vacation, Expense } from '@/types';
 import { calculateBudgetAnalysis, formatCurrency, getBudgetStatusColor, getBudgetStatusText } from '@/lib/budget-calculations';
 import { useColorScheme } from 'react-native';
 import { spacing } from '@/constants/spacing';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface BudgetOverviewProps {
   vacation: Vacation;
@@ -40,6 +41,7 @@ function ProgressBar({ progress, color, style }: ProgressBarProps) {
 export default function BudgetOverview({ vacation, expenses }: BudgetOverviewProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { defaultCurrency } = useCurrency();
   const analysis = calculateBudgetAnalysis(vacation, expenses);
 
   const progressColor = getBudgetStatusColor(analysis.status, analysis.budgetPercentageUsed);
@@ -83,7 +85,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
                 Gesamtbudget
               </Text>
               <Text style={[styles.budgetGridAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                {formatCurrency(analysis.totalBudget)}
+                {formatCurrency(analysis.totalBudget, defaultCurrency)}
               </Text>
             </View>
             <View style={styles.budgetGridItem}>
@@ -93,7 +95,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
               <Text style={[styles.budgetGridAmount, {
                 color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E')
               }]}>
-                {formatCurrency(analysis.totalExpenses)}
+                {formatCurrency(analysis.totalExpenses, defaultCurrency)}
               </Text>
             </View>
           </View>
@@ -107,7 +109,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
               <Text style={[styles.budgetGridAmount, {
                 color: analysis.remainingBudget < 0 ? '#FF3B30' : '#34C759'
               }]}>
-                {formatCurrency(analysis.remainingBudget)}
+                {formatCurrency(analysis.remainingBudget, defaultCurrency)}
               </Text>
             </View>
             <View style={styles.budgetGridItem}>
@@ -119,7 +121,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
                        analysis.remainingDays <= 0 ? (isDark ? '#8E8E93' : '#6D6D70') : '#34C759'
               }]}>
                 {analysis.remainingDays > 0 ?
-                  formatCurrency(analysis.remainingBudget / analysis.remainingDays) :
+                  formatCurrency(analysis.remainingBudget / analysis.remainingDays, defaultCurrency) :
                   '--'
                 }
               </Text>

@@ -3,27 +3,30 @@
  */
 
 import { currencyService } from '@/lib/currency';
+import { staticDefaultCurrency } from '@/contexts/CurrencyContext';
 
 /**
  * Format currency with proper locale and symbols
  */
-export function formatCurrency(amount: number, currency: string = 'CHF'): string {
-  return currencyService.formatCurrency(amount, currency);
+export function formatCurrency(amount: number, currency?: string): string {
+  const targetCurrency = currency || staticDefaultCurrency;
+  return currencyService.formatCurrency(amount, targetCurrency);
 }
 
 /**
  * Format currency for display without decimals (for whole amounts)
  */
-export function formatCurrencyCompact(amount: number, currency: string = 'CHF'): string {
-  const currencyInfo = currencyService.getCurrencyInfo(currency);
-  const symbol = currencyInfo?.symbol || currency;
+export function formatCurrencyCompact(amount: number, currency?: string): string {
+  const targetCurrency = currency || staticDefaultCurrency;
+  const currencyInfo = currencyService.getCurrencyInfo(targetCurrency);
+  const symbol = currencyInfo?.symbol || targetCurrency;
 
   return new Intl.NumberFormat('de-CH', {
     style: 'currency',
-    currency: currency,
+    currency: targetCurrency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount).replace(currency, symbol);
+  }).format(amount).replace(targetCurrency, symbol);
 }
 
 /**

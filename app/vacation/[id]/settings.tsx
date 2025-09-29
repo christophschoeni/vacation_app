@@ -134,15 +134,16 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   titleSection: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
     paddingTop: 4,
     paddingBottom: 8,
+    marginLeft: 0,
   },
   largeTitle: {
-    fontSize: 34,
+    fontSize: 28,
     fontWeight: '700',
     fontFamily: 'System',
-    lineHeight: 41,
+    lineHeight: 34,
   },
   content: {
     flex: 1,

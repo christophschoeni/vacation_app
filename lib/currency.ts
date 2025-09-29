@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { appSettingsRepository } from '@/lib/db/repositories/app-settings-repository';
 
 export interface ExchangeRates {
   [currency: string]: number;
@@ -20,9 +20,6 @@ export interface CurrencyUpdateSettings {
   lastUpdate: Date | null;
 }
 
-const STORAGE_KEY = 'exchange_rates';
-const STORAGE_KEY_TIMESTAMP = 'exchange_rates_timestamp';
-const STORAGE_KEY_SETTINGS = 'currency_update_settings';
 const DEFAULT_CACHE_DURATION = 86400000; // 24 hours in milliseconds
 
 // Popular currencies (most commonly used)
@@ -188,6 +185,10 @@ export const CURRENCIES: CurrencyInfo[] = ALL_CURRENCIES;
 class CurrencyService {
   private apiKey = 'demo'; // Using demo mode for now
   private baseUrl = 'https://api.exchangerate-api.com/v4/latest';
+  private alternativeUrl = 'https://api.fxratesapi.com/latest'; // More accurate API
+  private ecbUrl = 'https://api.exchangerate.host/latest'; // European Central Bank data
+  private currencyApiUrl = 'https://api.currencyapi.com/v3/latest'; // High-accuracy API
+  private freeForexUrl = 'https://www.freeforexapi.com/api/live'; // Real-time forex data
   private defaultSettings: CurrencyUpdateSettings = {
     updatePolicy: 'auto',
     allowMobileData: true,
@@ -207,11 +208,12 @@ class CurrencyService {
     'SEK': 11.45,
     'NOK': 11.89,
     'DKK': 6.95,
+    'TRY': 52.18, // Turkish Lira (updated rate as of Sep 2024)
   };
 
   async getExchangeRates(baseCurrency: string = 'CHF', forceUpdate: boolean = false): Promise<ExchangeRates> {
     try {
-      const settings = await this.getUpdateSettings();
+      const settings = await appSettingsRepository.getCurrencySettings();
 
       // Check cache first unless force update is requested
       if (!forceUpdate) {
@@ -234,19 +236,12 @@ class CurrencyService {
         return this.fallbackRates;
       }
 
-      // Fetch fresh rates
-      const response = await fetch(`${this.baseUrl}/${baseCurrency}`);
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch exchange rates');
-      }
-
-      const data = await response.json();
-      const rates = data.rates as ExchangeRates;
+      // Fetch fresh rates using improved multi-source approach
+      const rates = await this.fetchRatesWithFallback(baseCurrency);
 
       // Cache the rates and update settings
       await this.cacheRates(rates);
-      await this.updateLastFetchTime();
+      await appSettingsRepository.setLastRateUpdate(new Date());
 
       return rates;
     } catch (error) {
@@ -302,15 +297,15 @@ class CurrencyService {
 
   private async getCachedRates(): Promise<ExchangeRates | null> {
     try {
-      const settings = await this.getUpdateSettings();
-      const timestamp = await AsyncStorage.getItem(STORAGE_KEY_TIMESTAMP);
+      const settings = await appSettingsRepository.getCurrencySettings();
+      const timestamp = await appSettingsRepository.getCacheTimestamp();
       if (!timestamp) return null;
 
-      const age = Date.now() - parseInt(timestamp);
+      const age = Date.now() - timestamp;
       const maxAge = settings.cacheExpiryHours * 3600000; // Convert hours to milliseconds
       if (age > maxAge) return null;
 
-      const cachedData = await AsyncStorage.getItem(STORAGE_KEY);
+      const cachedData = await appSettingsRepository.getCachedRates();
       return cachedData ? JSON.parse(cachedData) : null;
     } catch {
       return null;
@@ -319,8 +314,8 @@ class CurrencyService {
 
   private async cacheRates(rates: ExchangeRates): Promise<void> {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(rates));
-      await AsyncStorage.setItem(STORAGE_KEY_TIMESTAMP, Date.now().toString());
+      await appSettingsRepository.setCachedRates(JSON.stringify(rates));
+      await appSettingsRepository.setCacheTimestamp(Date.now());
     } catch (error) {
       console.warn('Failed to cache exchange rates:', error);
     }
@@ -358,16 +353,8 @@ class CurrencyService {
   // Settings management
   async getUpdateSettings(): Promise<CurrencyUpdateSettings> {
     try {
-      const stored = await AsyncStorage.getItem(STORAGE_KEY_SETTINGS);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        return {
-          ...this.defaultSettings,
-          ...parsed,
-          lastUpdate: parsed.lastUpdate ? new Date(parsed.lastUpdate) : null,
-        };
-      }
-      return this.defaultSettings;
+      const settings = await appSettingsRepository.getCurrencySettings();
+      return settings;
     } catch {
       return this.defaultSettings;
     }
@@ -375,9 +362,11 @@ class CurrencyService {
 
   async updateSettings(settings: Partial<CurrencyUpdateSettings>): Promise<void> {
     try {
-      const current = await this.getUpdateSettings();
-      const updated = { ...current, ...settings };
-      await AsyncStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(updated));
+      await appSettingsRepository.setCurrencySettings({
+        updatePolicy: settings.updatePolicy,
+        allowMobileData: settings.allowMobileData,
+        cacheExpiryHours: settings.cacheExpiryHours,
+      });
     } catch (error) {
       console.warn('Failed to save currency settings:', error);
     }
@@ -424,18 +413,8 @@ class CurrencyService {
     }
   }
 
-  private async updateLastFetchTime(): Promise<void> {
-    try {
-      const settings = await this.getUpdateSettings();
-      await this.updateSettings({ ...settings, lastUpdate: new Date() });
-    } catch (error) {
-      console.warn('Failed to update last fetch time:', error);
-    }
-  }
-
   async getLastUpdateTime(): Promise<Date | null> {
-    const settings = await this.getUpdateSettings();
-    return settings.lastUpdate;
+    return await appSettingsRepository.getLastRateUpdate();
   }
 
   async getCacheStatus(): Promise<{
@@ -445,8 +424,8 @@ class CurrencyService {
     lastUpdate: Date | null;
   }> {
     try {
-      const settings = await this.getUpdateSettings();
-      const timestamp = await AsyncStorage.getItem(STORAGE_KEY_TIMESTAMP);
+      const settings = await appSettingsRepository.getCurrencySettings();
+      const timestamp = await appSettingsRepository.getCacheTimestamp();
 
       if (!timestamp) {
         return {
@@ -457,7 +436,7 @@ class CurrencyService {
         };
       }
 
-      const age = Date.now() - parseInt(timestamp);
+      const age = Date.now() - timestamp;
       const maxAge = settings.cacheExpiryHours * 3600000;
 
       return {
@@ -478,10 +457,104 @@ class CurrencyService {
 
   async clearCache(): Promise<void> {
     try {
-      await AsyncStorage.removeItem(STORAGE_KEY);
-      await AsyncStorage.removeItem(STORAGE_KEY_TIMESTAMP);
+      await appSettingsRepository.clearExchangeRatesCache();
     } catch (error) {
       console.warn('Failed to clear cache:', error);
+    }
+  }
+
+  private async fetchRatesWithFallback(baseCurrency: string): Promise<ExchangeRates> {
+    // More comprehensive API list with different data sources
+    const apiConfigs = [
+      {
+        url: `https://api.exchangerate.host/latest?base=${baseCurrency}`,
+        name: 'ExchangeRate.host',
+        parser: (data: any) => data.rates
+      },
+      {
+        url: `https://open.er-api.com/v6/latest/${baseCurrency}`,
+        name: 'OpenExchangeRates',
+        parser: (data: any) => data.rates
+      },
+      {
+        url: `${this.baseUrl}/${baseCurrency}`,
+        name: 'ExchangeRate-API',
+        parser: (data: any) => data.rates
+      },
+      {
+        url: `https://api.fxratesapi.com/latest?base=${baseCurrency}`,
+        name: 'FxRatesAPI',
+        parser: (data: any) => data.rates
+      }
+    ];
+
+    const allRates: ExchangeRates[] = [];
+    let successfulApi = '';
+
+    // Try to get rates from multiple sources
+    for (const config of apiConfigs) {
+      try {
+        console.log(`Fetching from ${config.name}...`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+        const response = await fetch(config.url, {
+          signal: controller.signal,
+          headers: {
+            'User-Agent': 'VacationApp/1.0',
+          }
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const rates = config.parser(data);
+
+        if (rates && typeof rates === 'object' && Object.keys(rates).length > 0) {
+          allRates.push(rates);
+          successfulApi = config.name;
+
+          // Log the specific TRY rate for debugging
+          if (rates.TRY) {
+            const tryFor100CHF = (100 * rates.TRY).toFixed(2);
+            console.log(`${config.name}: 100 CHF = ${tryFor100CHF} TRY (rate: ${rates.TRY})`);
+          }
+
+          // Use the first successful result for now
+          // In future, we could implement averaging here
+          return rates as ExchangeRates;
+        }
+      } catch (error) {
+        console.warn(`${config.name} failed:`, error);
+      }
+    }
+
+    // If no API worked, throw error
+    throw new Error('All exchange rate APIs failed to provide valid data');
+  }
+
+  // Add method to manually override rates (for users who want more accurate rates)
+  async setManualRate(fromCurrency: string, toCurrency: string, rate: number): Promise<void> {
+    try {
+      const currentRates = await this.getExchangeRates();
+
+      // Update the specific rate
+      if (fromCurrency === 'CHF') {
+        currentRates[toCurrency] = rate;
+      } else if (toCurrency === 'CHF') {
+        currentRates[fromCurrency] = 1 / rate;
+      }
+
+      // Cache the updated rates
+      await this.cacheRates(currentRates);
+      console.log(`Manual rate set: ${fromCurrency}/${toCurrency} = ${rate}`);
+    } catch (error) {
+      console.warn('Failed to set manual rate:', error);
+      throw error;
     }
   }
 }

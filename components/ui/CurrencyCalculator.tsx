@@ -9,11 +9,13 @@ import {
   Dimensions,
   Modal,
   SafeAreaView,
+  ScrollView,
+  TextInput,
   useColorScheme,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Icon } from '@/components/design';
-import { currencyService, CURRENCIES, CurrencyInfo } from '@/lib/currency';
+import { currencyService, CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
 
 interface CurrencyCalculatorProps {
   visible: boolean;
@@ -25,7 +27,7 @@ interface CurrencyCalculatorProps {
 }
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-const BUTTON_MARGIN = 12;
+const BUTTON_MARGIN = 10;
 const HORIZONTAL_PADDING = 32;
 const buttonSize = (screenWidth - HORIZONTAL_PADDING - (BUTTON_MARGIN * 3)) / 4; // 4 buttons per row with proper margins
 
@@ -51,6 +53,7 @@ export default function CurrencyCalculator({
   const [currentToCurrency, setCurrentToCurrency] = useState(toCurrency);
   const [showFromCurrencySelector, setShowFromCurrencySelector] = useState(false);
   const [showToCurrencySelector, setShowToCurrencySelector] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     // Always try to convert, even for '0' or empty display
@@ -204,7 +207,20 @@ export default function CurrencyCalculator({
   };
 
   const getCurrencyInfo = (code: string): CurrencyInfo | undefined => {
-    return CURRENCIES.find(c => c.code === code);
+    return ALL_CURRENCIES.find(c => c.code === code);
+  };
+
+  // Filter currencies based on search query
+  const getFilteredCurrencies = () => {
+    if (searchQuery.trim() === '') {
+      return ALL_CURRENCIES;
+    } else {
+      const searchTerm = searchQuery.toLowerCase();
+      return ALL_CURRENCIES.filter(currency =>
+        currency.code.toLowerCase().includes(searchTerm) ||
+        currency.name.toLowerCase().includes(searchTerm)
+      );
+    }
   };
 
   const renderButton = (
@@ -276,9 +292,9 @@ export default function CurrencyCalculator({
               ) : null}
 
               {/* Current Operation Display */}
-              {operator && !waitingForNewNumber && (
+              {operator && (
                 <Text style={[styles.currentOperation, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                  {previousValue} {operator}
+                  {previousValue} {operator} {waitingForNewNumber ? '' : display}
                 </Text>
               )}
 
@@ -295,22 +311,25 @@ export default function CurrencyCalculator({
                   </Text>
                   <Icon name="chevron-down" size={14} color={isDark ? '#8E8E93' : '#6D6D70'} />
                 </TouchableOpacity>
-                <Text style={[styles.amountText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                <Text style={[styles.amountText, {
+                  color: isDark ? '#FFFFFF' : '#1C1C1E',
+                  backgroundColor: operator ? (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)') : 'transparent',
+                  paddingHorizontal: operator ? 8 : 0,
+                  paddingVertical: operator ? 4 : 0,
+                  borderRadius: 8,
+                }]}>
                   {display || '0'}
                 </Text>
               </View>
 
-              {/* Swap Button */}
-              <View style={styles.swapContainer}>
+              <View style={styles.convertedAmount}>
+                {/* Swap Button positioned on the divider line */}
                 <TouchableOpacity
                   onPress={handleSwapCurrencies}
-                  style={[styles.swapButton, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}
+                  style={[styles.swapButtonOnLine, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}
                 >
                   <Icon name="swap-horizontal" size={16} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                 </TouchableOpacity>
-              </View>
-
-              <View style={styles.convertedAmount}>
                 <View style={styles.convertedAmountContent}>
                   <TouchableOpacity
                     onPress={async () => {
@@ -367,8 +386,8 @@ export default function CurrencyCalculator({
               {renderButton('+', () => handleOperatorPress('+'), 'operator')}
             </View>
 
-            <View style={styles.buttonRowWithEquals}>
-              <View style={styles.leftButtons}>
+            <View style={styles.buttonRowWithTallEquals}>
+              <View style={styles.leftButtonsColumn}>
                 <View style={styles.buttonRow}>
                   {renderButton('1', () => handleNumberPress('1'))}
                   {renderButton('2', () => handleNumberPress('2'))}
@@ -379,7 +398,7 @@ export default function CurrencyCalculator({
                     style={[
                       styles.numberButton,
                       {
-                        width: buttonSize * 2 + BUTTON_MARGIN, // Span two columns with margin
+                        width: buttonSize * 2 + BUTTON_MARGIN, // Span two columns like iOS Calculator
                         backgroundColor: isDark ? '#333333' : '#E5E5EA'
                       }
                     ]}
@@ -391,8 +410,14 @@ export default function CurrencyCalculator({
                   {renderButton('.', handleDecimalPress)}
                 </View>
               </View>
-              <View style={styles.equalsColumn}>
-                {renderButton('=', handleEquals, 'equals')}
+              <View style={styles.tallEqualsColumn}>
+                <TouchableOpacity
+                  style={[styles.tallEqualsButton]}
+                  onPress={handleEquals}
+                  activeOpacity={0.6}
+                >
+                  <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>=</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -407,6 +432,7 @@ export default function CurrencyCalculator({
             onPress={() => {
               setShowFromCurrencySelector(false);
               setShowToCurrencySelector(false);
+              setSearchQuery(''); // Reset search when closing
             }}
           />
           <View style={[styles.pickerContainer, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
@@ -418,14 +444,35 @@ export default function CurrencyCalculator({
                 onPress={() => {
                   setShowFromCurrencySelector(false);
                   setShowToCurrencySelector(false);
+                  setSearchQuery(''); // Reset search when closing
                 }}
                 style={styles.pickerCloseButton}
               >
                 <Icon name="close" size={20} color={isDark ? '#8E8E93' : '#6D6D70'} />
               </TouchableOpacity>
             </View>
+
+            {/* Search Bar */}
+            <View style={[styles.searchContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
+              <Icon name="search" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+              <TextInput
+                style={[styles.searchInput, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}
+                placeholder="Währung suchen..."
+                placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                  <Icon name="close" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+                </TouchableOpacity>
+              )}
+            </View>
+
             <ScrollView style={styles.pickerList} showsVerticalScrollIndicator={false}>
-              {CURRENCIES.slice(0, 20).map((currency) => ( // Show first 20 currencies
+              {getFilteredCurrencies().map((currency) => ( // Show filtered currencies
                 <TouchableOpacity
                   key={currency.code}
                   style={[
@@ -447,6 +494,7 @@ export default function CurrencyCalculator({
                       setCurrentToCurrency(currency.code);
                       setShowToCurrencySelector(false);
                     }
+                    setSearchQuery(''); // Reset search when selecting currency
                   }}
                 >
                   <Text style={styles.pickerFlag}>{currency.flag}</Text>
@@ -499,15 +547,16 @@ const styles = StyleSheet.create({
   modalContent: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 8,
   },
   display: {
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: 6,
+    marginBottom: 6,
+    minHeight: 120, // Fixed height to prevent layout shifts
   },
   displayContent: {
-    gap: 8,
+    gap: 3,
   },
   lastOperation: {
     fontSize: 14,
@@ -518,24 +567,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'System',
     textAlign: 'right',
-    marginBottom: 4,
+    marginBottom: 6,
+    fontWeight: '500',
   },
   currentAmount: {
     alignItems: 'flex-end',
   },
   currencyLabel: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'System',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   amountText: {
-    fontSize: 32,
+    fontSize: 22,
     fontWeight: '300',
     fontFamily: 'System',
   },
   convertedAmount: {
-    marginTop: 12,
-    paddingTop: 12,
+    marginTop: 4,
+    paddingTop: 4,
     borderTopWidth: 1,
     borderTopColor: 'rgba(60, 60, 67, 0.12)',
   },
@@ -543,20 +593,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   convertedAmountText: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: '500',
     fontFamily: 'System',
   },
   actionButtons: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 16,
+    marginBottom: 6,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 6,
     paddingHorizontal: 16,
     borderRadius: 8,
     gap: 6,
@@ -605,8 +655,8 @@ const styles = StyleSheet.create({
   },
   equalsButton: {
     width: buttonSize,
-    height: buttonSize * 2 + BUTTON_MARGIN, // Span two rows with margin
-    borderRadius: buttonSize / 4, // Smaller radius for tall button
+    height: buttonSize,
+    borderRadius: buttonSize / 2,
     backgroundColor: '#FF9500',
     justifyContent: 'center',
     alignItems: 'center',
@@ -616,20 +666,29 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontFamily: 'System',
   },
-  buttonRowWithEquals: {
+  spacer: {
+    width: buttonSize,
+    height: buttonSize,
+  },
+  buttonRowWithTallEquals: {
     flexDirection: 'row',
     gap: BUTTON_MARGIN,
     marginBottom: BUTTON_MARGIN,
   },
-  leftButtons: {
+  leftButtonsColumn: {
     flex: 1,
   },
-  equalsColumn: {
+  tallEqualsColumn: {
     width: buttonSize,
     justifyContent: 'center',
   },
-  spacer: {
+  tallEqualsButton: {
     width: buttonSize,
+    height: buttonSize * 2 + BUTTON_MARGIN, // Span two rows with margin
+    borderRadius: buttonSize / 4, // Smaller radius for tall button
+    backgroundColor: '#FF9500',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   currencyLabelButton: {
     flexDirection: 'row',
@@ -639,16 +698,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 6,
   },
-  swapContainer: {
-    alignItems: 'center',
-    marginVertical: 8,
-  },
-  swapButton: {
+  swapButtonOnLine: {
+    position: 'absolute',
+    left: '50%',
+    marginLeft: -16, // Half of width to center
+    top: -16, // Position on the divider line
     width: 32,
     height: 32,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(60, 60, 67, 0.12)',
+    zIndex: 1,
   },
   pickerOverlay: {
     position: 'absolute',
@@ -690,6 +752,21 @@ const styles = StyleSheet.create({
   pickerCloseButton: {
     padding: 8,
     marginRight: -8,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginVertical: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    fontFamily: 'System',
   },
   pickerList: {
     maxHeight: 300,

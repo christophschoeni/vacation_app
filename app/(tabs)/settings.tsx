@@ -43,6 +43,13 @@ const SETTINGS_ITEMS: SettingsItem[] = [
     route: '/settings/currency',
   },
   {
+    id: 'currency-data',
+    title: 'Währungsdaten',
+    subtitle: 'Wechselkurse und Cache-Einstellungen',
+    icon: 'refresh',
+    route: '/settings/currency-data',
+  },
+  {
     id: 'notifications',
     title: 'Benachrichtigungen',
     subtitle: 'Push-Benachrichtigungen verwalten',
@@ -72,6 +79,9 @@ export default function SettingsScreen() {
         break;
       case '/settings/currency':
         router.push('/settings/currency');
+        break;
+      case '/settings/currency-data':
+        router.push('/settings/currency-data');
         break;
       case '/settings/notifications':
         router.push('/settings/notifications');

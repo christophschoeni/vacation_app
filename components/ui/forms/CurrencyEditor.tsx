@@ -14,6 +14,7 @@ export interface Currency {
   code: string;
   name: string;
   symbol: string;
+  flag: string;
 }
 
 interface CurrencyEditorProps {
@@ -33,13 +34,15 @@ export default function CurrencyEditor({
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [symbol, setSymbol] = useState('');
+  const [flag, setFlag] = useState('');
 
   const handleSave = () => {
-    if (code.trim() && name.trim() && symbol.trim()) {
+    if (code.trim() && name.trim() && symbol.trim() && flag.trim()) {
       const currency: Currency = {
         code: code.trim().toUpperCase(),
         name: name.trim(),
         symbol: symbol.trim(),
+        flag: flag.trim(),
       };
       onSave(currency);
 
@@ -47,6 +50,7 @@ export default function CurrencyEditor({
       setCode('');
       setName('');
       setSymbol('');
+      setFlag('');
     }
   };
 
@@ -54,6 +58,7 @@ export default function CurrencyEditor({
     setCode('');
     setName('');
     setSymbol('');
+    setFlag('');
     onCancel();
   };
 
@@ -63,6 +68,7 @@ export default function CurrencyEditor({
       setCode('');
       setName('');
       setSymbol('');
+      setFlag('');
     }
   }, [visible]);
 
@@ -175,6 +181,32 @@ export default function CurrencyEditor({
                 maxLength={3}
               />
             </View>
+
+            <View style={styles.formGroup}>
+              <Text
+                style={[
+                  styles.label,
+                  { color: isDark ? '#FFFFFF' : '#1C1C1E' },
+                ]}
+              >
+                Flagge (z.B. 🇺🇸, 🇩🇪, 🇨🇭)
+              </Text>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  {
+                    color: isDark ? '#FFFFFF' : '#1C1C1E',
+                    backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7',
+                    borderColor: isDark ? '#3A3A3C' : '#E5E5EA',
+                  },
+                ]}
+                placeholder="🇺🇸"
+                placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
+                value={flag}
+                onChangeText={setFlag}
+                maxLength={4}
+              />
+            </View>
           </View>
 
           <View style={styles.actions}>
@@ -188,7 +220,7 @@ export default function CurrencyEditor({
               title="Hinzufügen"
               variant="primary"
               onPress={handleSave}
-              disabled={!code.trim() || !name.trim() || !symbol.trim()}
+              disabled={!code.trim() || !name.trim() || !symbol.trim() || !flag.trim()}
               style={styles.actionButton}
             />
           </View>

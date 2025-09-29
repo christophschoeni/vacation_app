@@ -190,10 +190,10 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   largeTitle: {
-    fontSize: 34,
+    fontSize: 28,
     fontWeight: '700',
     fontFamily: 'System',
-    lineHeight: 41,
+    lineHeight: 34,
   },
   addButton: {
     padding: 8,

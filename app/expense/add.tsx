@@ -22,16 +22,18 @@ import CurrencyCalculator from '@/components/ui/CurrencyCalculator';
 import { useExpenses } from '@/lib/database';
 import { Expense, ExpenseCategory } from '@/types';
 import { currencyService } from '@/lib/currency';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import * as Haptics from 'expo-haptics';
 
 export default function AddExpenseScreen() {
   const colorScheme = useColorScheme();
   const { vacationId } = useLocalSearchParams();
   const { saveExpense } = useExpenses(vacationId as string);
+  const { defaultCurrency } = useCurrency();
 
   const [formData, setFormData] = useState({
     amount: '',
-    currency: 'CHF',
+    currency: defaultCurrency || 'CHF', // Use system default, fallback to CHF
     description: '',
     category: 'food' as ExpenseCategory,
     date: new Date(),
@@ -40,6 +42,13 @@ export default function AddExpenseScreen() {
   const [chfAmount, setChfAmount] = useState<number | null>(null);
   const [converting, setConverting] = useState(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
+
+  // Update currency when defaultCurrency is loaded
+  React.useEffect(() => {
+    if (defaultCurrency && formData.currency === 'CHF' && defaultCurrency !== 'CHF') {
+      setFormData(prev => ({ ...prev, currency: defaultCurrency }));
+    }
+  }, [defaultCurrency, formData.currency]);
 
   // Convert to CHF whenever amount or currency changes
   React.useEffect(() => {

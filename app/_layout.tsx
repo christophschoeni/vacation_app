@@ -14,6 +14,7 @@ import migrations from '@/lib/db/migrations/migrations';
 import { appInitialization } from '@/lib/app-initialization';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
 import { translationService } from '@/lib/i18n';
+import { CurrencyProvider } from '@/contexts/CurrencyContext';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -166,6 +167,15 @@ function RootNavigation() {
           }}
         />
         <Stack.Screen
+          name="settings/currency-data"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
           name="template/[id]/index"
           options={{
             headerShown: false,
@@ -246,9 +256,11 @@ function RootNavigation() {
 export default function RootLayout() {
   return (
     <ErrorBoundary>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <RootNavigation />
-      </GestureHandlerRootView>
+      <CurrencyProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <RootNavigation />
+        </GestureHandlerRootView>
+      </CurrencyProvider>
     </ErrorBoundary>
   );
 }
