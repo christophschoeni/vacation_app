@@ -1,14 +1,13 @@
-import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
+// Removed NavigationThemeProvider to avoid conflicts with DynamicColorIOS
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { insights } from 'expo-insights';
 import 'react-native-reanimated';
 import { useEffect } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, useColorScheme } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
-import { ThemeProvider, useTheme } from '@/contexts/theme-context';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { db } from '@/lib/db/database';
 import migrations from '@/lib/db/migrations/migrations';
@@ -55,7 +54,8 @@ const modalSlideUp = {
 };
 
 function RootNavigation() {
-  const { isDark } = useTheme();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const { success, error } = useMigrations(db, migrations);
 
   // Install default data after successful migration
@@ -117,7 +117,7 @@ function RootNavigation() {
   }
 
   return (
-    <NavigationThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+    <>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
@@ -149,6 +149,15 @@ function RootNavigation() {
         />
         <Stack.Screen
           name="settings/templates"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/currency-calculator"
           options={{
             headerShown: false,
             presentation: 'card',
@@ -230,7 +239,7 @@ function RootNavigation() {
         />
       </Stack>
       <StatusBar style="auto" />
-    </NavigationThemeProvider>
+    </>
   );
 }
 
@@ -238,9 +247,7 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider>
-          <RootNavigation />
-        </ThemeProvider>
+        <RootNavigation />
       </GestureHandlerRootView>
     </ErrorBoundary>
   );

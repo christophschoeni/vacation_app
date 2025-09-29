@@ -1,7 +1,5 @@
 import { Card, Icon, IconName } from '@/components/design';
-import { ThemeToggleCard } from '@/components/theme-toggle-card';
 import AppHeader from '@/components/ui/AppHeader';
-import { useTheme } from '@/contexts/theme-context';
 import { router } from 'expo-router';
 import React from 'react';
 import {
@@ -10,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -60,7 +59,8 @@ const SETTINGS_ITEMS: SettingsItem[] = [
 ];
 
 export default function SettingsScreen() {
-  const { isDark } = useTheme();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   const handleSettingsItemPress = (route: string) => {
     switch (route) {
@@ -97,12 +97,6 @@ export default function SettingsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Erscheinungsbild
-          </Text>
-          <ThemeToggleCard />
-        </View>
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>

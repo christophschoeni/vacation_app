@@ -1,13 +1,13 @@
 import { router, useSegments, useFocusEffect, Slot } from 'expo-router';
 import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Platform, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
 import { Icon } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
 
 export default function VacationDetailTabLayout() {
@@ -18,10 +18,10 @@ export default function VacationDetailTabLayout() {
 
   const segments = useSegments();
   const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const { vacations, refreshVacations } = useVacations();
 
   const vacation = vacations.find(v => v.id === vacationId);
-  const isDark = colorScheme === 'dark';
   const isEditPage = segments[segments.length - 1] === 'edit';
   const currentTab = segments[segments.length - 1];
 
@@ -132,20 +132,35 @@ export default function VacationDetailTabLayout() {
   }
 
   return (
-    <NativeTabs tabBarPosition="leading">
+    <NativeTabs
+      tabBarPosition="leading"
+      barTintColor={isDark ? '#1C1C1E' : '#F8F9FA'}
+      tintColor={isDark ? '#007AFF' : '#007AFF'}
+      unselectedTintColor={isDark ? '#8E8E93' : '#8E8E93'}
+      labelStyle={{
+        color: isDark ? '#FFFFFF' : '#000000',
+      }}
+      materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
+    >
       <NativeTabs.Trigger name="index">
         <Label>Budget</Label>
-        <TabIcon sf="creditcard.fill" />
+        <TabIcon
+          sf="creditcard.fill"
+        />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="checklists">
         <Label>Listen</Label>
-        <TabIcon sf="checklist" />
+        <TabIcon
+          sf="checklist"
+        />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
         <Label>Settings</Label>
-        <TabIcon sf="gearshape.fill" />
+        <TabIcon
+          sf="gearshape.fill"
+        />
       </NativeTabs.Trigger>
     </NativeTabs>
   );
