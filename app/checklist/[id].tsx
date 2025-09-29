@@ -9,13 +9,13 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useRouteId } from '@/hooks/use-route-param';
 import { useChecklists } from '@/hooks/use-checklists';
 import { ChecklistItem } from '@/types';

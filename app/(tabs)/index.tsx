@@ -18,7 +18,7 @@ import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
 import AppHeader from '@/components/ui/AppHeader';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
 
 export default function VacationsScreen() {
@@ -151,7 +151,7 @@ export default function VacationsScreen() {
 
       {/* Floating Action Button - iOS Style */}
       <TouchableOpacity
-        style={[styles.floatingActionButton, { backgroundColor: '#007AFF' }]}
+        style={[styles.floatingActionButton, { backgroundColor: isDark ? '#1C1C1E' : '#007AFF' }]}
         onPress={handleAddVacation}
         activeOpacity={0.8}
         accessible={true}

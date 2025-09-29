@@ -125,6 +125,43 @@ export class AppSettingsRepository extends BaseRepository {
     await this.set('theme', theme);
   }
 
+  // Currency update settings
+  async getCurrencyUpdatePolicy(): Promise<string> {
+    const value = await this.get('currencyUpdatePolicy');
+    return value || 'auto';
+  }
+
+  async setCurrencyUpdatePolicy(policy: string): Promise<void> {
+    await this.set('currencyUpdatePolicy', policy);
+  }
+
+  async getAllowMobileDataForRates(): Promise<boolean> {
+    const value = await this.get('allowMobileDataForRates');
+    return value === 'true';
+  }
+
+  async setAllowMobileDataForRates(allow: boolean): Promise<void> {
+    await this.set('allowMobileDataForRates', allow.toString());
+  }
+
+  async getCacheExpiryHours(): Promise<number> {
+    const value = await this.get('cacheExpiryHours');
+    return value ? parseInt(value) : 24;
+  }
+
+  async setCacheExpiryHours(hours: number): Promise<void> {
+    await this.set('cacheExpiryHours', hours.toString());
+  }
+
+  async getLastRateUpdate(): Promise<Date | null> {
+    const value = await this.get('lastRateUpdate');
+    return value ? new Date(value) : null;
+  }
+
+  async setLastRateUpdate(date: Date): Promise<void> {
+    await this.set('lastRateUpdate', date.toISOString());
+  }
+
   async installDefaultSettings(defaults: Record<string, any>): Promise<void> {
     console.log('📦 Installing default app settings...');
 

@@ -9,10 +9,10 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function VacationSettingsScreen() {
   const extractedVacationId = useRouteParam('id');

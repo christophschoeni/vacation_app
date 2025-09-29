@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Alert,
   TouchableOpacity,
+  useColorScheme,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,7 +17,6 @@ import SwipeableCard from '@/components/ui/SwipeableCard';
 import { Card, Icon } from '@/components/design';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
 import AppHeader from '@/components/ui/AppHeader';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacations } from '@/hooks/use-vacations';
 import { useExpenses } from '@/lib/database';
@@ -116,8 +116,8 @@ export default function VacationBudgetScreen() {
             onPress={() => router.push(`/expense/add?vacationId=${vacationId}`)}
             activeOpacity={0.8}
           >
-            <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.98)' }]}>
-              <Icon name="plus" size={18} color="#1C1C1E" />
+            <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
+              <Icon name="plus" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
             </View>
           </TouchableOpacity>
         }

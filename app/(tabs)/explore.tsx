@@ -4,11 +4,11 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function ExploreScreen() {
   const colorScheme = useColorScheme();

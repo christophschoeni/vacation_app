@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
+  useColorScheme,
 } from 'react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { router, useFocusEffect } from 'expo-router';
@@ -14,7 +15,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Icon } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import AppHeader from '@/components/ui/AppHeader';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
 import { Checklist, ChecklistCategory } from '@/types';

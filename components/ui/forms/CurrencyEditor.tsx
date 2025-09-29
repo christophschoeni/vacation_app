@@ -8,7 +8,7 @@ import {
   Modal,
 } from 'react-native';
 import { Button, Icon } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
 
 export interface Currency {
   code: string;

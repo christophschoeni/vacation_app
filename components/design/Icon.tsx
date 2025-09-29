@@ -76,6 +76,10 @@ import {
   NotebookText,
   ListChecks,
   Bug,
+  RefreshCw,
+  ArrowUpDown,
+  ArrowLeftRight,
+  Calculator,
   LucideIcon,
 } from 'lucide-react-native';
 
@@ -102,6 +106,9 @@ const iconMap: Record<string, LucideIcon> = {
   'search': Search,
   'filter': Filter,
   'more': MoreHorizontal,
+  'swap-horizontal': ArrowLeftRight,
+  'swap-vertical': ArrowUpDown,
+  'rotate': RefreshCw,
 
   // Navigation & UI
   'home': Home,
@@ -169,6 +176,7 @@ const iconMap: Record<string, LucideIcon> = {
   'currency': DollarSign,
   'wallet': Wallet,
   'budget': Banknote,
+  'calculator': Calculator,
 
   // Misc
   'calendar': Calendar,

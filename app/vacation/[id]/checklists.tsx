@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { useRouteParam } from '@/hooks/use-route-param';
@@ -12,6 +12,7 @@ import { logger } from '@/lib/utils/logger';
 
 export default function VacationChecklistsScreen() {
   const extractedVacationId = useRouteParam('id');
+  const colorScheme = useColorScheme();
 
   // TEMPORARY FIX: Use the actual vacation ID if none is extracted
   const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
@@ -147,8 +148,10 @@ export default function VacationChecklistsScreen() {
     );
   };
 
+  const isDark = colorScheme === 'dark';
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
@@ -159,8 +162,8 @@ export default function VacationChecklistsScreen() {
               onPress={handleShowTemplates}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon name="book-template" size={18} color="#1C1C1E" />
+              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
+                <Icon name="book-template" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -168,8 +171,8 @@ export default function VacationChecklistsScreen() {
               onPress={handleCreateList}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon name="plus" size={18} color="#1C1C1E" />
+              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
+                <Icon name="plus" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
               </View>
             </TouchableOpacity>
           </View>
@@ -183,10 +186,10 @@ export default function VacationChecklistsScreen() {
         >
           {/* iOS-style large title in content area */}
           <View style={styles.titleSection}>
-            <Text style={[styles.largeTitle, { color: '#1C1C1E' }]}>
+            <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
               Listen
             </Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               {checklists.length} {checklists.length === 1 ? 'Liste' : 'Listen'}
             </Text>
           </View>
@@ -204,8 +207,8 @@ export default function VacationChecklistsScreen() {
         <View style={styles.content}>
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>📋</Text>
-            <Text style={styles.emptyTitle}>Noch keine Listen</Text>
-            <Text style={styles.emptyText}>
+            <Text style={[styles.emptyTitle, { color: isDark ? '#007AFF' : '#007AFF' }]}>Noch keine Listen</Text>
+            <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               Erstellen Sie Ihre erste Liste mit dem Plus-Button.
               {'\n\n'}
               Oder wählen Sie eine Vorlage aus dem Vorlagen-Button.
@@ -221,7 +224,6 @@ export default function VacationChecklistsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   titleSection: {
     paddingHorizontal: 16,
@@ -252,10 +254,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1C1C1E',
     marginBottom: 2,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: '#6D6D70',
   },
   content: {
     flex: 1,

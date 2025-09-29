@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
 import { EMOJI_CATEGORIES } from '@/lib/constants/emojis';
 
 interface EmojiSelectorProps {

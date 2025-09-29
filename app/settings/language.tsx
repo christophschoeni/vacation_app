@@ -5,11 +5,11 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useTranslation } from '@/lib/i18n';
 
 export default function LanguageScreen() {

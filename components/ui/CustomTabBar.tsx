@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, useColorScheme } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useSegments } from 'expo-router';
 import { Icon } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useRouteParam } from '@/hooks/use-route-param';
 import * as Haptics from 'expo-haptics';
 

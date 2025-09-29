@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, SectionList, TextInput, useColorScheme } from 'react-native';
 import { currencyService, CurrencyInfo } from '@/lib/currency';
 import { Icon } from '@/components/design';
 import * as Haptics from 'expo-haptics';
@@ -19,11 +18,25 @@ export default function CurrencySelector({
   style
 }: CurrencySelectorProps) {
   const [modalVisible, setModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  const popularCurrencies = currencyService.getPopularCurrencies();
   const selectedCurrencyInfo = currencyService.getCurrencyInfo(selectedCurrency);
+
+  // Get filtered currencies based on search
+  const getFilteredCurrencies = () => {
+    if (searchQuery.trim() === '') {
+      const sections = currencyService.getCurrencySections();
+      return [
+        { title: 'Beliebte Währungen', data: sections.popular },
+        { title: 'Alle Währungen', data: sections.all },
+      ];
+    } else {
+      const filtered = currencyService.searchCurrencies(searchQuery);
+      return [{ title: 'Suchergebnisse', data: filtered }];
+    }
+  };
 
   const handleSelect = async (currency: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -34,6 +47,7 @@ export default function CurrencySelector({
   const openModal = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setModalVisible(true);
+    setSearchQuery(''); // Reset search when opening
   };
 
   const renderCurrencyItem = ({ item }: { item: CurrencyInfo }) => (
@@ -122,12 +136,39 @@ export default function CurrencySelector({
             </TouchableOpacity>
           </View>
 
-          <FlatList
-            data={popularCurrencies}
+          {/* Search Bar */}
+          <View style={[styles.searchContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
+            <Icon name="search" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+            <TextInput
+              style={[styles.searchInput, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}
+              placeholder="Währung suchen..."
+              placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <Icon name="close" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <SectionList
+            sections={getFilteredCurrencies()}
             renderItem={renderCurrencyItem}
+            renderSectionHeader={({ section }) => (
+              <View style={[styles.sectionHeader, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
+                <Text style={[styles.sectionTitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                  {section.title}
+                </Text>
+              </View>
+            )}
             keyExtractor={(item) => item.code}
             style={styles.currencyList}
             showsVerticalScrollIndicator={false}
+            stickySectionHeadersEnabled={true}
           />
         </View>
       </Modal>
@@ -225,5 +266,33 @@ const styles = StyleSheet.create({
   currencyName: {
     fontSize: 14,
     fontFamily: 'System',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginVertical: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    fontFamily: 'System',
+  },
+  sectionHeader: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: 'System',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });

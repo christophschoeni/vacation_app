@@ -11,10 +11,10 @@ import {
   StyleSheet,
   Text,
   View,
+  useColorScheme,
 } from 'react-native';
 
 import { DatePicker, FormInput } from '@/components/ui/forms';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/hooks/use-vacations';
 import { logger } from '@/lib/utils/logger';
 

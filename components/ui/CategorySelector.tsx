@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { ExpenseCategory } from '@/types';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
 import { Icon } from '@/components/design';
 import { EXPENSE_CATEGORIES } from '@/lib/constants/expense-categories';
 import { Shadow } from '@/constants/design';

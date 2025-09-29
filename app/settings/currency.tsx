@@ -6,27 +6,17 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CurrencyEditor from '@/components/ui/forms/CurrencyEditor';
 import { logger } from '@/lib/utils/logger';
 import { ErrorHandler } from '@/lib/utils/error-handler';
-
-// Default currencies
-const DEFAULT_CURRENCIES = [
-  { code: 'CHF', name: 'Schweizer Franken', symbol: 'CHF' },
-  { code: 'EUR', name: 'Euro', symbol: '€' },
-  { code: 'USD', name: 'US-Dollar', symbol: '$' },
-  { code: 'GBP', name: 'Britisches Pfund', symbol: '£' },
-  { code: 'JPY', name: 'Japanischer Yen', symbol: '¥' },
-  { code: 'CAD', name: 'Kanadischer Dollar', symbol: 'C$' },
-  { code: 'AUD', name: 'Australischer Dollar', symbol: 'A$' },
-];
+import { currencyService, POPULAR_CURRENCIES } from '@/lib/currency';
 
 const CURRENCIES_STORAGE_KEY = '@vacation_assist_currencies';
 
@@ -34,12 +24,13 @@ interface Currency {
   code: string;
   name: string;
   symbol: string;
+  flag?: string;
 }
 
 export default function CurrencyScreen() {
   const colorScheme = useColorScheme();
   const [selectedCurrency, setSelectedCurrency] = useState('CHF');
-  const [currencies, setCurrencies] = useState<Currency[]>(DEFAULT_CURRENCIES);
+  const [currencies, setCurrencies] = useState<Currency[]>(POPULAR_CURRENCIES);
   const [showEditor, setShowEditor] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const isDark = colorScheme === 'dark';
@@ -93,12 +84,12 @@ export default function CurrencyScreen() {
     const currency = currencies.find(c => c.code === currencyCode);
     if (!currency) return;
 
-    // Prevent deletion of default currencies
-    const isDefaultCurrency = DEFAULT_CURRENCIES.some(c => c.code === currencyCode);
-    if (isDefaultCurrency) {
+    // Prevent deletion of popular currencies
+    const isPopularCurrency = POPULAR_CURRENCIES.some(c => c.code === currencyCode);
+    if (isPopularCurrency) {
       Alert.alert(
-        'Standardwährung',
-        'Standardwährungen können nicht gelöscht werden.',
+        'Beliebte Währung',
+        'Beliebte Währungen können nicht gelöscht werden.',
         [{ text: 'OK', style: 'default' }]
       );
       return;
@@ -127,8 +118,8 @@ export default function CurrencyScreen() {
     );
   };
 
-  const isDefaultCurrency = (currencyCode: string) => {
-    return DEFAULT_CURRENCIES.some(c => c.code === currencyCode);
+  const isPopularCurrency = (currencyCode: string) => {
+    return POPULAR_CURRENCIES.some(c => c.code === currencyCode);
   };
 
   return (
@@ -187,7 +178,7 @@ export default function CurrencyScreen() {
                     </View>
                   </View>
                   <View style={styles.currencyActions}>
-                    {!isDefaultCurrency(currency.code) && (
+                    {!isPopularCurrency(currency.code) && (
                       <TouchableOpacity
                         onPress={(e) => {
                           e.stopPropagation();

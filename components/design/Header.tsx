@@ -1,5 +1,5 @@
 import { Colors, Spacing, Typography } from '@/constants/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
 import React from 'react';
 import { StyleSheet, Text, View, ViewStyle, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';

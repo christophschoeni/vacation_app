@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
+  useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card, Button, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useRouteId } from '@/hooks/use-route-param';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { Checklist, ChecklistCategory } from '@/types';

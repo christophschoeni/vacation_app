@@ -7,16 +7,18 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TouchableOpacity,
+  useColorScheme,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/design';
+import { Button, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import CategorySelector from '@/components/ui/CategorySelector';
 import CurrencySelector from '@/components/ui/CurrencySelector';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import CurrencyCalculator from '@/components/ui/CurrencyCalculator';
 import { useExpenses } from '@/lib/database';
 import { Expense, ExpenseCategory } from '@/types';
 import { currencyService } from '@/lib/currency';
@@ -37,6 +39,7 @@ export default function AddExpenseScreen() {
 
   const [chfAmount, setChfAmount] = useState<number | null>(null);
   const [converting, setConverting] = useState(false);
+  const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
 
   // Convert to CHF whenever amount or currency changes
   React.useEffect(() => {
@@ -114,6 +117,14 @@ export default function AddExpenseScreen() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleCalculatorAmountChange = (amount: string, currency: string) => {
+    setFormData(prev => ({
+      ...prev,
+      amount,
+      currency,
+    }));
+  };
+
   const isDark = colorScheme === 'dark';
 
   return (
@@ -171,6 +182,34 @@ export default function AddExpenseScreen() {
                 </Text>
               </View>
             )}
+
+            {/* Calculator Button */}
+            <TouchableOpacity
+              style={[styles.calculatorButton, { backgroundColor: isDark ? '#1C1C1E' : '#F2F2F7' }]}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setIsCalculatorVisible(true);
+              }}
+              activeOpacity={0.8}
+            >
+              <View style={styles.calculatorButtonContent}>
+                <Icon name="calculator" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                <Text style={[styles.calculatorButtonText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                  Währungsrechner
+                </Text>
+                <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+              </View>
+            </TouchableOpacity>
+
+            {/* Calculator Modal */}
+            <CurrencyCalculator
+              visible={isCalculatorVisible}
+              onClose={() => setIsCalculatorVisible(false)}
+              fromCurrency={formData.currency}
+              toCurrency="CHF"
+              initialAmount={formData.amount}
+              onAmountChange={handleCalculatorAmountChange}
+            />
 
             <FormInput
               label="Beschreibung"
@@ -257,5 +296,22 @@ const styles = StyleSheet.create({
   },
   button: {
     marginVertical: 0,
+  },
+  calculatorButton: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+  },
+  calculatorButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  calculatorButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    fontFamily: 'System',
+    flex: 1,
+    marginLeft: 12,
   },
 });
