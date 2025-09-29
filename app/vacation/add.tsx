@@ -12,7 +12,8 @@ import {
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Header, Icon } from '@/components/design';
+import { Icon } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/hooks/use-vacations';
@@ -62,21 +63,13 @@ export default function AddVacationScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-      <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-          Neue Ferien
-        </Text>
-        <TouchableOpacity
-          onPress={handleSave}
-          style={styles.saveButton}
-          accessible={true}
-          accessibilityLabel="Ferien speichern"
-          accessibilityRole="button"
-        >
-          <Icon name="check" size={28} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-      </View>
+    <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        variant="modal"
+        showBack={true}
+        onBackPress={handleCancel}
+        onRightPress={handleSave}
+      />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -87,6 +80,13 @@ export default function AddVacationScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* iOS-style large title in content area */}
+          <View style={styles.titleSection}>
+            <Text style={[styles.largeTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+              Neue Ferien
+            </Text>
+          </View>
+
           <View style={styles.formContainer}>
             <FormInput
               label="Reiseziel"
@@ -141,13 +141,24 @@ export default function AddVacationScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  titleSection: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 41,
   },
   header: {
     flexDirection: 'row',

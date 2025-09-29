@@ -1,18 +1,20 @@
 import React, { useEffect, useReducer } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { useRouteParam } from '@/hooks/use-route-param';
 import { useCallback } from 'react';
 import { useChecklists } from '@/hooks/use-checklists';
 import ChecklistCard from '@/components/ui/cards/ChecklistCard';
+import AppHeader from '@/components/ui/AppHeader';
 import { Icon } from '@/components/design';
 import { logger } from '@/lib/utils/logger';
 
 export default function VacationChecklistsScreen() {
   const extractedVacationId = useRouteParam('id');
 
-  // TEMPORARY FIX: Use a static vacation ID if none is extracted
-  const vacationId = extractedVacationId || 'antalya-vacation-2024';
+  // TEMPORARY FIX: Use the actual vacation ID if none is extracted
+  const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
 
   logger.debug('🔍 Debug - Raw params:', { id: extractedVacationId });
   logger.debug('🔍 Debug - Extracted vacationId:', extractedVacationId);
@@ -81,7 +83,6 @@ export default function VacationChecklistsScreen() {
             if (title?.trim()) {
               try {
                 await createChecklist(title.trim());
-                Alert.alert('Erfolg!', `Liste "${title.trim()}" wurde erstellt! 🎉`);
               } catch (error) {
                 Alert.alert('Fehler', 'Liste konnte nicht erstellt werden.');
               }
@@ -119,7 +120,6 @@ export default function VacationChecklistsScreen() {
     try {
       const template = templates.find(t => t.id === templateId);
       await createFromTemplate(templateId);
-      Alert.alert('Erfolg!', `Liste "${template?.title}" wurde aus Vorlage erstellt! 🎉`);
     } catch (error) {
       Alert.alert('Fehler', 'Liste konnte nicht aus Vorlage erstellt werden.');
     }
@@ -138,7 +138,6 @@ export default function VacationChecklistsScreen() {
           onPress: async () => {
             try {
               await deleteChecklist(checklistId);
-              Alert.alert('Erfolg!', 'Liste wurde gelöscht.');
             } catch (error) {
               Alert.alert('Fehler', 'Liste konnte nicht gelöscht werden.');
             }
@@ -150,32 +149,48 @@ export default function VacationChecklistsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Listen</Text>
-        <Text style={styles.subtitle}>
-          {checklists.length} {checklists.length === 1 ? 'Liste' : 'Listen'}
-        </Text>
-        <View style={styles.buttons}>
-          <TouchableOpacity
-            style={styles.templateButton}
-            onPress={handleShowTemplates}
-          >
-            <Icon name="notepad-text" size={18} color="#6D6D70" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={handleCreateList}
-          >
-            <Text style={styles.addButtonText}>+</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <AppHeader
+        showBack={true}
+        onBackPress={() => router.push('/(tabs)')}
+        rightAction={
+          <View style={styles.headerButtonGroup}>
+            <TouchableOpacity
+              style={styles.headerButton}
+              onPress={handleShowTemplates}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.98)' }]}>
+                <Icon name="book-template" size={18} color="#1C1C1E" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.headerButton}
+              onPress={handleCreateList}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.98)' }]}>
+                <Icon name="plus" size={18} color="#1C1C1E" />
+              </View>
+            </TouchableOpacity>
+          </View>
+        }
+      />
       {checklists.length > 0 ? (
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* iOS-style large title in content area */}
+          <View style={styles.titleSection}>
+            <Text style={[styles.largeTitle, { color: '#1C1C1E' }]}>
+              Listen
+            </Text>
+            <Text style={styles.subtitle}>
+              {checklists.length} {checklists.length === 1 ? 'Liste' : 'Listen'}
+            </Text>
+          </View>
+
           {checklists.map((checklist) => (
             <ChecklistCard
               key={checklist.id}
@@ -198,6 +213,7 @@ export default function VacationChecklistsScreen() {
           </View>
         </View>
       )}
+
     </View>
   );
 }
@@ -206,6 +222,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  titleSection: {
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 41,
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: '400',
+    fontFamily: 'System',
+    color: '#6D6D70',
+    marginTop: 4,
   },
   header: {
     paddingHorizontal: 16,
@@ -223,37 +257,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#6D6D70',
   },
-  buttons: {
-    flexDirection: 'row',
-    gap: 8,
-    position: 'absolute',
-    right: 16,
-    top: 16,
-  },
-  templateButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F2F2F7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#007AFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-  },
-  addButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
   content: {
     flex: 1,
     justifyContent: 'center',
@@ -266,7 +269,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 4,
   },
   emptyState: {
     alignItems: 'center',
@@ -287,5 +290,27 @@ const styles = StyleSheet.create({
     color: '#6D6D70',
     textAlign: 'center',
     lineHeight: 22,
+  },
+  headerButtonGroup: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  headerButton: {
+    padding: 4,
+  },
+  headerButtonInner: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });

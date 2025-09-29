@@ -211,6 +211,15 @@ function RootNavigation() {
           }}
         />
         <Stack.Screen
+          name="vacation-edit"
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+        <Stack.Screen
           name="modal"
           options={{
             presentation: 'modal',

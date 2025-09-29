@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CurrencyEditor from '@/components/ui/forms/CurrencyEditor';

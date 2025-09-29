@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon, IconName } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import CategoryEditor, { Category } from '@/components/ui/forms/CategoryEditor';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -156,50 +157,37 @@ export default function CategoriesScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-            accessibilityLabel="Zurück"
-          >
-            <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Kategorien
-          </Text>
-          <View style={styles.headerSpacer} />
-        </View>
+      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+        <AppHeader
+          title="Kategorien"
+          showBack={true}
+          onBackPress={() => router.back()}
+        />
         <View style={styles.loadingContainer}>
           <Text style={[styles.loadingText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
             Kategorien werden geladen...
           </Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-          accessibilityLabel="Zurück"
-        >
-          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          Kategorien
-        </Text>
-        <TouchableOpacity
-          onPress={handleAddCategory}
-          style={styles.headerButton}
-          accessibilityLabel="Neue Kategorie hinzufügen"
-        >
-          <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-      </View>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        title="Kategorien"
+        showBack={true}
+        onBackPress={() => router.back()}
+        rightAction={
+          <TouchableOpacity
+            onPress={handleAddCategory}
+            style={styles.headerButton}
+            accessibilityLabel="Neue Kategorie hinzufügen"
+          >
+            <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView
         style={styles.content}
@@ -256,7 +244,7 @@ export default function CategoriesScreen() {
           setEditingCategory(undefined);
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -264,30 +252,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
-  },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    fontFamily: 'System',
-  },
   headerButton: {
     padding: 8,
     marginRight: -8,
-  },
-  headerSpacer: {
-    width: 40,
   },
   loadingContainer: {
     flex: 1,

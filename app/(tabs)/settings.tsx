@@ -1,5 +1,6 @@
 import { Card, Icon, IconName } from '@/components/design';
 import { ThemeToggleCard } from '@/components/theme-toggle-card';
+import AppHeader from '@/components/ui/AppHeader';
 import { useTheme } from '@/contexts/theme-context';
 import { router } from 'expo-router';
 import React from 'react';
@@ -85,13 +86,11 @@ export default function SettingsScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          Einstellungen
-        </Text>
-      </View>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        title="Einstellungen"
+        variant="large"
+      />
 
       <ScrollView
         style={styles.content}
@@ -153,27 +152,13 @@ export default function SettingsScreen() {
           </Card>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    fontFamily: 'System',
   },
   content: {
     flex: 1,

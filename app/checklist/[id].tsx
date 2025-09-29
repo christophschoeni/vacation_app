@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useRouteId } from '@/hooks/use-route-param';
 import { useChecklists } from '@/hooks/use-checklists';
@@ -77,20 +78,13 @@ export default function ChecklistDetailScreen() {
 
   if (!checklist) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Liste wird geladen...
-          </Text>
-          <View style={styles.headerSpacer} />
-        </View>
-      </SafeAreaView>
+      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+        <AppHeader
+          title="Liste wird geladen..."
+          showBack={true}
+          onBackPress={() => router.back()}
+        />
+      </View>
     );
   }
 
@@ -202,31 +196,27 @@ export default function ChecklistDetailScreen() {
   const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-        <View style={styles.titleContainer}>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        title={checklist.title}
+        subtitle={`${getCategoryName(checklist.category)} • ${completedItems}/${totalItems}`}
+        variant="default"
+        showBack={true}
+        onBackPress={() => router.back()}
+        leftAction={
           <TouchableOpacity onPress={handleEditTitle}>
-            <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {checklist.title}
-            </Text>
+            <Icon name="edit" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
           </TouchableOpacity>
-          <Text style={[styles.headerSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {getCategoryName(checklist.category)} • {completedItems}/{totalItems}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => setIsAddingItem(!isAddingItem)}
-          style={[styles.addButton, { backgroundColor: getCategoryColor(checklist.category) }]}
-        >
-          <Icon name="plus" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+        }
+        rightAction={
+          <TouchableOpacity
+            onPress={() => setIsAddingItem(!isAddingItem)}
+            style={[styles.addButton, { backgroundColor: getCategoryColor(checklist.category) }]}
+          >
+            <Icon name="plus" size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        }
+      />
 
       {/* Progress Bar */}
       {totalItems > 0 && (
@@ -352,7 +342,7 @@ export default function ChecklistDetailScreen() {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 

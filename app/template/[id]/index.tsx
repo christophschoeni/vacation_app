@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card, Button, Icon } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useRouteId } from '@/hooks/use-route-param';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
@@ -93,76 +94,56 @@ export default function TemplateDetailScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-            accessibilityLabel="Zurück"
-          >
-            <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Standard-Liste
-          </Text>
-          <View style={styles.headerSpacer} />
-        </View>
+      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+        <AppHeader
+          title="Standard-Liste"
+          showBack={true}
+          onBackPress={() => router.back()}
+        />
         <View style={styles.emptyState}>
           <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
             Lade Standard-Liste...
           </Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (!template) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-            accessibilityLabel="Zurück"
-          >
-            <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Standard-Liste
-          </Text>
-          <View style={styles.headerSpacer} />
-        </View>
+      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+        <AppHeader
+          title="Standard-Liste"
+          showBack={true}
+          onBackPress={() => router.back()}
+        />
         <View style={styles.emptyState}>
           <Icon name="alert-circle" size={48} color={isDark ? '#8E8E93' : '#6D6D70'} />
           <Text style={[styles.emptyTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
             Standard-Liste nicht gefunden
           </Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-          accessibilityLabel="Zurück"
-        >
-          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          Standard-Liste
-        </Text>
-        <TouchableOpacity
-          onPress={handleEdit}
-          style={styles.headerButton}
-          accessibilityLabel="Bearbeiten"
-        >
-          <Icon name="edit" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-      </View>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        title={template.title}
+        subtitle={`${CATEGORY_CONFIG[template.category as ChecklistCategory]?.name || 'Allgemein'} • ${template.items.length} Einträge`}
+        showBack={true}
+        onBackPress={() => router.back()}
+        rightAction={
+          <TouchableOpacity
+            onPress={handleEdit}
+            style={styles.headerButton}
+            accessibilityLabel="Bearbeiten"
+          >
+            <Icon name="edit" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView
         style={styles.content}
@@ -290,7 +271,7 @@ export default function TemplateDetailScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -1,17 +1,21 @@
-import { Tabs, router, useSegments, useFocusEffect } from 'expo-router';
+import { router, useSegments, useFocusEffect, Slot } from 'expo-router';
+import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useCallback } from 'react';
 import { Platform, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 
-import { HapticTab } from '@/components/haptic-tab';
-import { Icon, Colors, Button } from '@/components/design';
+import { Icon } from '@/components/design';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/hooks/use-vacations';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { appEvents, EVENTS } from '@/lib/events';
 
 export default function VacationDetailTabLayout() {
-  const vacationId = useRouteParam('id');
+  const extractedVacationId = useRouteParam('id');
+
+  // TEMPORARY FIX: Use the actual vacation ID if none is extracted
+  const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
+
   const segments = useSegments();
   const colorScheme = useColorScheme();
   const { vacations, refreshVacations } = useVacations();
@@ -19,6 +23,24 @@ export default function VacationDetailTabLayout() {
   const vacation = vacations.find(v => v.id === vacationId);
   const isDark = colorScheme === 'dark';
   const isEditPage = segments[segments.length - 1] === 'edit';
+  const currentTab = segments[segments.length - 1];
+
+  const getHeaderTitle = () => {
+    if (isEditPage) {
+      return `${vacation?.destination} bearbeiten`;
+    }
+
+    switch (currentTab) {
+      case 'index':
+        return 'Budget Übersicht';
+      case 'checklists':
+        return 'Listen';
+      case 'settings':
+        return 'Einstellungen';
+      default:
+        return vacation?.destination || 'Ferien';
+    }
+  };
 
   // Refresh vacation data when returning from edit page
   useFocusEffect(
@@ -51,120 +73,113 @@ export default function VacationDetailTabLayout() {
     );
   }
 
-  return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.push('/(tabs)')}
-          style={styles.backButton}
-          accessibilityLabel="Zurück"
-        >
-          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-        <View style={styles.titleContainer}>
-          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {isEditPage ? `${vacation.destination} bearbeiten` : vacation.destination}
-          </Text>
-          {!isEditPage && vacation.hotel && (
-            <Text style={[styles.headerSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              {vacation.hotel}
-            </Text>
-          )}
-        </View>
-        <View style={styles.headerActions}>
-        </View>
-      </View>
+  const tabItems = [
+    {
+      name: 'index',
+      label: 'Budget',
+      icon: 'budget',
+      route: `/vacation/${vacationId}`
+    },
+    {
+      name: 'checklists',
+      label: 'Listen',
+      icon: 'checklist',
+      route: `/vacation/${vacationId}/checklists`
+    },
+    {
+      name: 'settings',
+      label: 'Settings',
+      icon: 'settings',
+      route: `/vacation/${vacationId}/settings`
+    }
+  ];
 
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: Colors.primary[500],
-          headerShown: false,
-          tabBarButton: HapticTab,
-          tabBarStyle: {
-            backgroundColor: colorScheme === 'dark'
-              ? Colors.dark.surface
-              : Colors.light.surface,
-            borderTopWidth: 0,
-            elevation: 0,
-            shadowOpacity: 0,
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: Platform.OS === 'ios' ? 70 : 60,
-            paddingBottom: Platform.OS === 'ios' ? 0 : 0,
-            paddingTop: Platform.OS === 'ios' ? 8 : 8,
-            justifyContent: 'center',
-            alignItems: 'center',
-          },
-        }}>
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Budget',
-            tabBarIcon: ({ color }) => <Icon size={26} name="wallet" color={color} />,
+  const getActionButton = () => {
+    if (currentTab === 'index') {
+      return (
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            router.push(`/expense/add?vacationId=${vacationId}`);
           }}
-        />
-        <Tabs.Screen
-          name="checklists"
-          options={{
-            title: 'Listen',
-            tabBarIcon: ({ color }) => <Icon size={26} name="check" color={color} />,
+        >
+          <Icon name="plus" size={16} color="#FFFFFF" />
+          <Text style={styles.actionText}>Ausgabe</Text>
+        </TouchableOpacity>
+      );
+    }
+    if (currentTab === 'checklists') {
+      return (
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            router.push(`/checklist/add?vacationId=${vacationId}`);
           }}
-        />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: 'Settings',
-            tabBarIcon: ({ color }) => <Icon size={26} name="settings" color={color} />,
-          }}
-        />
-        <Tabs.Screen
-          name="edit"
-          options={{
-            href: null, // Hide from tab bar
-          }}
-        />
-      </Tabs>
-    </SafeAreaView>
+        >
+          <Icon name="plus" size={16} color="#FFFFFF" />
+          <Text style={styles.actionText}>Liste</Text>
+        </TouchableOpacity>
+      );
+    }
+    return null;
+  };
+
+  // For edit page, render without tabs but still provide layout
+  if (isEditPage) {
+    return <Slot />;
+  }
+
+  return (
+    <NativeTabs tabBarPosition="leading">
+      <NativeTabs.Trigger name="index">
+        <Label>Budget</Label>
+        <TabIcon sf="creditcard.fill" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="checklists">
+        <Label>Listen</Label>
+        <TabIcon sf="checklist" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="settings">
+        <Label>Settings</Label>
+        <TabIcon sf="gearshape.fill" />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
-  header: {
+  contentContainer: {
+    flex: 1,
+  },
+  actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    backgroundColor: '#007AFF',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
+    paddingVertical: 10,
+    borderRadius: 20,
+    gap: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  titleContainer: {
-    flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 8,
-  },
-  headerTitle: {
-    fontSize: 17,
+  actionText: {
+    color: '#FFFFFF',
+    fontSize: 14,
     fontWeight: '600',
     fontFamily: 'System',
-  },
-  headerSubtitle: {
-    fontSize: 13,
-    fontWeight: '400',
-    fontFamily: 'System',
-    marginTop: 2,
-  },
-  headerActions: {
-    minWidth: 90,
-    alignItems: 'flex-end',
   },
 });

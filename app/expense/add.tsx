@@ -11,7 +11,8 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Header, Button } from '@/components/design';
+import { Button } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import CategorySelector from '@/components/ui/CategorySelector';
 import CurrencySelector from '@/components/ui/CurrencySelector';
@@ -116,9 +117,12 @@ export default function AddExpenseScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-      <Header
-        title="Neue Ausgabe"
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        variant="modal"
+        showBack={true}
+        onBackPress={handleCancel}
+        onRightPress={handleSave}
       />
 
       <KeyboardAvoidingView
@@ -130,6 +134,13 @@ export default function AddExpenseScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* iOS-style large title in content area */}
+          <View style={styles.titleSection}>
+            <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+              Neue Ausgabe
+            </Text>
+          </View>
+
           <View style={styles.formContainer}>
             <View style={styles.row}>
               <View style={styles.halfWidth}>
@@ -180,25 +191,27 @@ export default function AddExpenseScreen() {
               onChange={(date) => updateField('date', date)}
             />
 
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Speichern"
-                variant="primary"
-                onPress={handleSave}
-                style={styles.button}
-                fullWidth
-              />
-            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  titleSection: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 41,
   },
   keyboardView: {
     flex: 1,

@@ -48,11 +48,8 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
     <View style={[styles.container, {
       backgroundColor: isDark ? '#000000' : '#FFFFFF',
     }]}>
-      {/* Header with clean title and badge */}
+      {/* Status badge only - title is now in header */}
       <View style={styles.header}>
-        <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          Budget Übersicht
-        </Text>
         <View style={[styles.statusBadge, {
           backgroundColor: isDark ? 'rgba(142, 142, 147, 0.16)' : 'rgba(142, 142, 147, 0.12)',
         }]}>

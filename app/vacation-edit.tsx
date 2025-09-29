@@ -1,7 +1,6 @@
-import { Button } from '@/components/design';
+import { Button, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { router } from 'expo-router';
-import { useRouteParam } from '@/hooks/use-route-param';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -10,6 +9,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -21,17 +21,14 @@ import { logger } from '@/lib/utils/logger';
 export default function VacationEditScreen() {
   console.log('🎯 EDIT SCREEN COMPONENT LOADED!');
 
-  const extractedVacationId = useRouteParam('id');
+  const params = useLocalSearchParams();
+  const vacationId = params.vacationId as string;
 
-  // TEMPORARY FIX: Use the actual vacation ID if none is extracted
-  const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
+  console.log('🔍 Edit Debug - Component rendered with search params:', params);
+  console.log('🔍 Edit Debug - Using vacation ID from params:', vacationId);
 
-  console.log('🔍 Edit Debug - Component rendered with params:', { id: extractedVacationId });
-  console.log('🔍 Edit Debug - Using vacation ID:', vacationId);
-
-  logger.debug('🔍 Edit Debug - Raw params:', { id: extractedVacationId });
-  logger.debug('🔍 Edit Debug - Extracted vacationId:', extractedVacationId);
-  logger.debug('🔍 Edit Debug - Final vacationId used:', vacationId);
+  logger.debug('🔍 Edit Debug - Search params:', params);
+  logger.debug('🔍 Edit Debug - Vacation ID from params:', vacationId);
 
   const colorScheme = useColorScheme();
   const { vacations, updateVacation, loading } = useVacations();
@@ -235,8 +232,8 @@ const styles = StyleSheet.create({
   },
   titleSection: {
     paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 16,
+    paddingTop: 4,
+    paddingBottom: 8,
   },
   largeTitle: {
     fontSize: 34,
@@ -252,12 +249,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 20,
+    paddingTop: 0,
+    paddingBottom: 100,
   },
   formContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   subtitle: {
     fontSize: 14,

@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card, Icon } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';
+import AppHeader from '@/components/ui/AppHeader';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
@@ -183,26 +184,21 @@ export default function TemplatesScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-          accessibilityLabel="Zurück"
-        >
-          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          Standard-Listen
-        </Text>
-        <TouchableOpacity
-          onPress={handleAddTemplate}
-          style={styles.headerButton}
-          accessibilityLabel="Neue Standard-Liste hinzufügen"
-        >
-          <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-      </View>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        title="Standard-Listen"
+        showBack={true}
+        onBackPress={() => router.back()}
+        rightAction={
+          <TouchableOpacity
+            onPress={handleAddTemplate}
+            style={styles.headerButton}
+            accessibilityLabel="Neue Standard-Liste hinzufügen"
+          >
+            <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+          </TouchableOpacity>
+        }
+      />
 
 
       {loading ? (
@@ -268,7 +264,7 @@ export default function TemplatesScreen() {
           ))}
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -17,6 +17,7 @@ import { Colors, Icon } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
+import AppHeader from '@/components/ui/AppHeader';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useVacations } from '@/hooks/use-vacations';
 
@@ -98,23 +99,7 @@ export default function VacationsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          Meine Ferien
-        </Text>
-        <TouchableOpacity
-          onPress={handleAddVacation}
-          style={styles.addButton}
-          accessible={true}
-          accessibilityLabel="Neue Ferien hinzufügen"
-          accessibilityHint="Doppeltippen, um neue Ferien zu erstellen"
-          accessibilityRole="button"
-        >
-          <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-      </View>
-
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -132,6 +117,13 @@ export default function VacationsScreen() {
         accessibilityLabel="Liste der Ferien"
         accessibilityHint="Ziehen Sie nach unten, um zu aktualisieren"
       >
+        {/* iOS-style large title in content area */}
+        <View style={styles.titleSection}>
+          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            Meine Ferien
+          </Text>
+        </View>
+
         {vacations.length === 0 ? (
           <EmptyState
             icon="airplane"
@@ -156,6 +148,19 @@ export default function VacationsScreen() {
           ))
         )}
       </ScrollView>
+
+      {/* Floating Action Button - iOS Style */}
+      <TouchableOpacity
+        style={[styles.floatingActionButton, { backgroundColor: '#007AFF' }]}
+        onPress={handleAddVacation}
+        activeOpacity={0.8}
+        accessible={true}
+        accessibilityLabel="Neue Ferien hinzufügen"
+        accessibilityHint="Doppeltippen, um neue Ferien zu erstellen"
+        accessibilityRole="button"
+      >
+        <Icon name="plus" size={24} color="#FFFFFF" />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -164,19 +169,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
+  titleSection: {
+    paddingHorizontal: 0, // Already has padding from content
     paddingTop: 8,
-    paddingBottom: 8,
+    paddingBottom: 16,
   },
-  headerTitle: {
-    fontSize: 32,
+  largeTitle: {
+    fontSize: 34,
     fontWeight: '700',
     fontFamily: 'System',
-    flex: 1,
+    lineHeight: 41,
   },
   addButton: {
     padding: 8,
@@ -188,6 +190,24 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 4,
-    paddingBottom: 85, // Space for tab bar
+    paddingBottom: 85, // Space for native tab bar
+  },
+  floatingActionButton: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
 });

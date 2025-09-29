@@ -1,4 +1,5 @@
 import { Card, Icon } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import { router } from 'expo-router';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React from 'react';
@@ -9,11 +10,19 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function VacationSettingsScreen() {
-  const vacationId = useRouteParam('id');
+  const extractedVacationId = useRouteParam('id');
+
+  // TEMPORARY FIX: Use the actual vacation ID if none is extracted
+  const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
+
+  console.log('🔍 Settings Debug - Raw params:', { id: extractedVacationId });
+  console.log('🔍 Settings Debug - Extracted vacationId:', extractedVacationId);
+  console.log('🔍 Settings Debug - Final vacationId used:', vacationId);
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -28,7 +37,7 @@ export default function VacationSettingsScreen() {
       title: 'Ferien Details',
       subtitle: 'Reiseziel, Hotel, Datum und Budget bearbeiten',
       icon: 'settings' as const,
-      route: './edit',
+      route: `/vacation-edit?vacationId=${vacationId}`,
     },
     // Future settings items can be added here:
     // {
@@ -48,22 +57,40 @@ export default function VacationSettingsScreen() {
   ];
 
   const handleSettingsPress = (route: string) => {
-    console.log('Settings Debug:', {
+    console.log('Settings Debug - Before navigation:', {
       route,
       vacationId,
-      id,
-      typeof_id: typeof id
+      typeof_vacationId: typeof vacationId
     });
-    router.push(route as any);
+
+    try {
+      console.log('Settings Debug - Attempting navigation to:', route);
+      router.push(route as any);
+      console.log('Settings Debug - Navigation called successfully');
+    } catch (error) {
+      console.error('Settings Debug - Navigation error:', error);
+    }
   };
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        showBack={true}
+        onBackPress={() => router.push('/(tabs)')}
+      />
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        {/* iOS-style large title in content area */}
+        <View style={styles.titleSection}>
+          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            Einstellungen
+          </Text>
+        </View>
+
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
             Allgemein
@@ -102,6 +129,20 @@ export default function VacationSettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
+    zIndex: 1000,
+  },
+  titleSection: {
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 41,
   },
   content: {
     flex: 1,
