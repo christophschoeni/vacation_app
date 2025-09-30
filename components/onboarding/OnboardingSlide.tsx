@@ -12,15 +12,20 @@ export default function OnboardingSlide({ icon, title, text }: OnboardingSlidePr
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
+  // Icon color - primary blue
+  const iconColor = '#007AFF';
+  // Background color - same blue but with transparency
+  const backgroundColor = isDark ? 'rgba(0, 122, 255, 0.15)' : 'rgba(0, 122, 255, 0.1)';
+
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <View style={styles.content}>
         {/* Icon */}
-        <View style={[styles.iconContainer, { backgroundColor: isDark ? '#1C1C1E' : '#F2F2F7' }]}>
+        <View style={[styles.iconContainer, { backgroundColor }]}>
           <Icon
             name={icon}
             size={80}
-            color={isDark ? '#007AFF' : '#007AFF'}
+            color={iconColor}
           />
         </View>
 
