@@ -1,10 +1,10 @@
 // Removed NavigationThemeProvider to avoid conflicts with DynamicColorIOS
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { insights } from 'expo-insights';
 import 'react-native-reanimated';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, useColorScheme } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
@@ -15,6 +15,7 @@ import { appInitialization } from '@/lib/app-initialization';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
 import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
+import { onboardingService } from '@/lib/onboarding-service';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -57,12 +58,15 @@ const modalSlideUp = {
 function RootNavigation() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const router = useRouter();
+  const segments = useSegments();
   const { success, error } = useMigrations(db, migrations);
+  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
-  // Install default data after successful migration
+  // Check onboarding status and install default data after successful migration
   useEffect(() => {
     if (success) {
-      const installDefaults = async () => {
+      const initializeApp = async () => {
         try {
           // Initialize i18n system
           await translationService.initialize();
@@ -73,17 +77,39 @@ function RootNavigation() {
           // Always ensure templates exist (independent of migration flag)
           await ensureDefaultTemplates();
 
+          // Check onboarding status
+          const completed = await onboardingService.hasCompletedOnboarding();
+          setOnboardingCompleted(completed);
+
           if (insights && typeof insights.track === 'function') {
             insights.track('app_launched');
           }
         } catch (error) {
           console.warn('Failed to install default data or track app launch:', error);
+          // Set onboarding as completed to avoid blocking the app
+          setOnboardingCompleted(true);
         }
       };
 
-      installDefaults();
+      initializeApp();
     }
   }, [success]);
+
+  // Navigate to onboarding or tabs based on onboarding status
+  useEffect(() => {
+    if (onboardingCompleted === null || !success) return;
+
+    const inAuthGroup = segments[0] === '(tabs)';
+    const inOnboarding = segments[0] === 'onboarding';
+
+    if (!onboardingCompleted && !inOnboarding) {
+      // User hasn't completed onboarding, redirect to onboarding
+      router.replace('/onboarding');
+    } else if (onboardingCompleted && inOnboarding) {
+      // User has completed onboarding but is on onboarding screen, redirect to tabs
+      router.replace('/(tabs)');
+    }
+  }, [onboardingCompleted, segments, success]);
 
   // Show loading screen during migration
   if (error) {
@@ -101,16 +127,16 @@ function RootNavigation() {
     );
   }
 
-  if (!success) {
+  if (!success || onboardingCompleted === null) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
         <View style={{ alignItems: 'center' }}>
           <ActivityIndicator size="large" color={isDark ? '#fff' : '#007AFF'} />
           <Text style={{ color: isDark ? '#fff' : '#000', marginTop: 16, fontSize: 16 }}>
-            Initializing Vacation Assist...
+            Initializing Reise Budget...
           </Text>
           <Text style={{ color: isDark ? '#888' : '#666', marginTop: 8, fontSize: 14 }}>
-            Running migrations...
+            {!success ? 'Running migrations...' : 'Loading...'}
           </Text>
         </View>
       </View>
@@ -120,6 +146,7 @@ function RootNavigation() {
   return (
     <>
       <Stack>
+        <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="settings/categories"

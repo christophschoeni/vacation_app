@@ -69,5 +69,30 @@
     "import_success": "{{records}} Datensätze wurden wiederhergestellt.",
     "share_unavailable_title": "Teilen nicht verfügbar",
     "share_unavailable_message": "Backup wurde erstellt, aber Teilen wird auf diesem Gerät nicht unterstützt."
+  },
+  "onboarding": {
+    "skip": "Überspringen",
+    "next": "Weiter",
+    "getStarted": "Los geht's",
+    "slide1": {
+      "title": "Willkommen bei Reise Budget",
+      "text": "Dein digitaler Begleiter für stressfreie Ferienplanung und clevere Budgetverwaltung. Alles im Griff – von der ersten Idee bis zur letzten Ausgabe."
+    },
+    "slide2": {
+      "title": "Plane deine Traumreise",
+      "text": "Erstelle Reisen, sammle Ziele und Hotels, speichere Fotos und behalte alles auf der Karte im Blick."
+    },
+    "slide3": {
+      "title": "Budget immer im Griff",
+      "text": "Erfasse Ausgaben in Kategorien, nutze Multi-Währungs-Support mit Live-Wechselkursen und sieh dein Budget in Echtzeit."
+    },
+    "slide4": {
+      "title": "Nichts mehr vergessen",
+      "text": "Nutze smarte Packlisten, To-Dos und Bucket-Listen mit vorgefertigten Templates. Einfach per Drag & Drop organisieren."
+    },
+    "slide5": {
+      "title": "Für dich optimiert",
+      "text": "Dark/Light Mode, funktioniert offline, verfügbar auf Deutsch und Englisch. Deine Reisedaten bleiben sicher auf deinem Gerät."
+    }
   }
 }

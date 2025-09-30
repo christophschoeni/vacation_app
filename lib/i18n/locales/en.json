@@ -69,5 +69,30 @@
     "import_success": "{{records}} records were restored.",
     "share_unavailable_title": "Sharing not available",
     "share_unavailable_message": "Backup was created, but sharing is not supported on this device."
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get Started",
+    "slide1": {
+      "title": "Welcome to Travel Budget",
+      "text": "Your digital companion for stress-free vacation planning and smart budget management. Everything under control – from first idea to final expense."
+    },
+    "slide2": {
+      "title": "Plan Your Dream Trip",
+      "text": "Create trips, collect destinations and hotels, save photos, and keep track of everything on the map."
+    },
+    "slide3": {
+      "title": "Budget Always in Control",
+      "text": "Track expenses by category, use multi-currency support with live exchange rates, and see your budget in real-time."
+    },
+    "slide4": {
+      "title": "Never Forget Anything",
+      "text": "Use smart packing lists, to-dos, and bucket lists with pre-made templates. Organize easily with drag & drop."
+    },
+    "slide5": {
+      "title": "Optimized for You",
+      "text": "Dark/Light Mode, works offline, available in German and English. Your travel data stays secure on your device."
+    }
   }
 }
