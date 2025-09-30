@@ -147,7 +147,7 @@ export default function SettingsScreen() {
           <Card variant="clean" style={styles.settingsCard}>
             <View style={styles.appInfo}>
               <Text style={[styles.appName, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                Vacation Assistant
+                Reise Budget
               </Text>
               <Text style={[styles.appVersion, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
                 Version 0.6.0

@@ -1,1 +1,1 @@
-# Vacation Assistant App
+# Reise Budget App
