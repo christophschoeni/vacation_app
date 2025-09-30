@@ -210,13 +210,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   expensesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 12,
+    flexDirection: 'column',
+    gap: 0,
   },
   gridItem: {
-    width: '48%', // Two columns with gap
+    width: '100%', // Full width
   },
   emptyExpenses: {
     marginBottom: 8,
