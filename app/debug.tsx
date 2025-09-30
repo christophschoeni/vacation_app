@@ -25,6 +25,7 @@ import { seedTestData, seedTemplates } from '@/lib/seed-data';
 import { getDatabaseStats, checkDatabaseFile, forceDatabaseSync, recreateDatabase } from '@/lib/db/database';
 import * as FileSystem from 'expo-file-system';
 import { logger } from '@/lib/utils/logger';
+import { onboardingService } from '@/lib/onboarding-service';
 
 export default function DebugScreen() {
   const [dbStats, setDbStats] = useState<DatabaseStats | null>(null);
@@ -247,6 +248,50 @@ export default function DebugScreen() {
     );
   };
 
+  const resetOnboarding = async () => {
+    Alert.alert(
+      'Onboarding zurücksetzen?',
+      'Das Onboarding wird beim nächsten App-Start wieder angezeigt.',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Zurücksetzen',
+          style: 'default',
+          onPress: async () => {
+            setLoading(true);
+            try {
+              logger.info('🔄 Resetting onboarding...');
+              await onboardingService.resetOnboarding();
+              Alert.alert('Erfolg!', 'Onboarding wurde zurückgesetzt! Starte die App neu, um es zu sehen.');
+            } catch (error) {
+              logger.error('Failed to reset onboarding:', error);
+              Alert.alert('Fehler', `Konnte Onboarding nicht zurücksetzen: ${error}`);
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const viewOnboarding = () => {
+    router.push('/onboarding');
+  };
+
+  const checkOnboardingStatus = async () => {
+    try {
+      const completed = await onboardingService.hasCompletedOnboarding();
+      Alert.alert(
+        'Onboarding Status',
+        `Onboarding abgeschlossen: ${completed ? 'Ja ✅' : 'Nein ❌'}`
+      );
+    } catch (error) {
+      logger.error('Failed to check onboarding status:', error);
+      Alert.alert('Fehler', `Konnte Status nicht prüfen: ${error}`);
+    }
+  };
+
   useEffect(() => {
     loadDatabaseInfo();
   }, []);
@@ -318,6 +363,34 @@ export default function DebugScreen() {
             disabled={loading}
           >
             <Text style={styles.buttonText}>📦 AsyncStorage löschen</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Onboarding Controls */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Onboarding</Text>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: '#5856D6' }]}
+            onPress={checkOnboardingStatus}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>ℹ️ Onboarding-Status prüfen</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.primaryButton]}
+            onPress={viewOnboarding}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>👁️ Onboarding ansehen</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: '#FF9500' }]}
+            onPress={resetOnboarding}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>🔄 Onboarding zurücksetzen</Text>
           </TouchableOpacity>
         </View>
 
