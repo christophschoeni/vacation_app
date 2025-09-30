@@ -95,6 +95,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         bounces={false}
+        scrollEnabled={currentIndex < slides.length - 1}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         scrollEventThrottle={16}
