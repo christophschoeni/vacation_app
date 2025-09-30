@@ -9,7 +9,6 @@ import {
   Dimensions,
   ViewToken,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import OnboardingSlide from './OnboardingSlide';
 import { IconName } from '@/components/design/Icon';
@@ -83,9 +82,8 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   );
 
   return (
-    <SafeAreaView
+    <View
       style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}
-      edges={['top', 'bottom']}
     >
       {/* Slides */}
       <FlatList
@@ -156,13 +154,14 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
           )}
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 0,
   },
   bottomContainer: {
     paddingHorizontal: 32,
