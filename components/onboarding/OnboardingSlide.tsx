@@ -6,16 +6,25 @@ interface OnboardingSlideProps {
   icon: IconName;
   title: string;
   text: string;
+  color: string;
 }
 
-export default function OnboardingSlide({ icon, title, text }: OnboardingSlideProps) {
+export default function OnboardingSlide({ icon, title, text, color }: OnboardingSlideProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
-  // Icon color - primary blue
-  const iconColor = '#007AFF';
-  // Background color - same blue but with transparency
-  const backgroundColor = isDark ? 'rgba(0, 122, 255, 0.15)' : 'rgba(0, 122, 255, 0.1)';
+  // Convert hex color to rgba with transparency for background
+  const hexToRgba = (hex: string, alpha: number): string => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  // Icon color - use provided color
+  const iconColor = color;
+  // Background color - same color but with transparency
+  const backgroundColor = isDark ? hexToRgba(color, 0.15) : hexToRgba(color, 0.1);
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>

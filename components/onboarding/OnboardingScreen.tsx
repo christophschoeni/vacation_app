@@ -22,14 +22,15 @@ interface SlideData {
   icon: IconName;
   titleKey: string;
   textKey: string;
+  color: string;
 }
 
 const slides: SlideData[] = [
-  { id: '1', icon: 'airplane', titleKey: 'onboarding.slide1.title', textKey: 'onboarding.slide1.text' },
-  { id: '2', icon: 'compass', titleKey: 'onboarding.slide2.title', textKey: 'onboarding.slide2.text' },
-  { id: '3', icon: 'wallet', titleKey: 'onboarding.slide3.title', textKey: 'onboarding.slide3.text' },
-  { id: '4', icon: 'clipboard-list', titleKey: 'onboarding.slide4.title', textKey: 'onboarding.slide4.text' },
-  { id: '5', icon: 'settings', titleKey: 'onboarding.slide5.title', textKey: 'onboarding.slide5.text' },
+  { id: '1', icon: 'airplane', titleKey: 'onboarding.slide1.title', textKey: 'onboarding.slide1.text', color: '#007AFF' }, // Blue
+  { id: '2', icon: 'compass', titleKey: 'onboarding.slide2.title', textKey: 'onboarding.slide2.text', color: '#FF9500' }, // Orange
+  { id: '3', icon: 'wallet', titleKey: 'onboarding.slide3.title', textKey: 'onboarding.slide3.text', color: '#34C759' }, // Green
+  { id: '4', icon: 'clipboard-list', titleKey: 'onboarding.slide4.title', textKey: 'onboarding.slide4.text', color: '#FF2D55' }, // Pink/Red
+  { id: '5', icon: 'settings', titleKey: 'onboarding.slide5.title', textKey: 'onboarding.slide5.text', color: '#5856D6' }, // Purple
 ];
 
 interface OnboardingScreenProps {
@@ -76,6 +77,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         icon={item.icon}
         title={t(item.titleKey)}
         text={t(item.textKey)}
+        color={item.color}
       />
     </View>
   );
