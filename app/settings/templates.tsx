@@ -187,6 +187,7 @@ export default function TemplatesScreen() {
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
         title="Standard-Listen"
+        variant="large"
         showBack={true}
         onBackPress={() => router.back()}
         rightAction={

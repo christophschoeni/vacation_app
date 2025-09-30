@@ -214,6 +214,7 @@ export default function CurrencyDataScreen() {
       <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
         <AppHeader
           title="Währungsdaten"
+          variant="large"
           showBack={true}
           onBackPress={() => router.back()}
         />
@@ -231,6 +232,7 @@ export default function CurrencyDataScreen() {
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
         title="Währungsdaten"
+        variant="large"
         showBack={true}
         onBackPress={() => router.back()}
       />
@@ -536,10 +538,9 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   sectionTitle: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: 22,
+    fontWeight: '600',
     fontFamily: 'System',
-    lineHeight: 34,
     marginBottom: 16,
   },
   card: {

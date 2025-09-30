@@ -4,15 +4,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@/components/design';
 
 interface AppHeaderProps {
+  title?: string;
   showBack?: boolean;
   onBackPress?: () => void;
   rightAction?: React.ReactNode;
   leftAction?: React.ReactNode;
-  variant?: 'default' | 'modal';
+  variant?: 'default' | 'modal' | 'large';
   onRightPress?: () => void;
 }
 
 export default function AppHeader({
+  title,
   showBack = false,
   onBackPress,
   rightAction,
@@ -77,6 +79,15 @@ export default function AppHeader({
           )}
         </View>
       </View>
+
+      {/* Large Title */}
+      {variant === 'large' && title && (
+        <View style={styles.largeTitleContainer}>
+          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {title}
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -157,5 +168,15 @@ const styles = StyleSheet.create({
   },
   spacer: {
     width: 40,
+  },
+  largeTitleContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+  },
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 41,
   },
 });

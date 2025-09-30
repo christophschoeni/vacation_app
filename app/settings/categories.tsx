@@ -176,6 +176,7 @@ export default function CategoriesScreen() {
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
         title="Kategorien"
+        variant="large"
         showBack={true}
         onBackPress={() => router.back()}
         rightAction={

@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   useColorScheme,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon, IconName } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '@/lib/utils/logger';
 import { ErrorHandler } from '@/lib/utils/error-handler';
@@ -84,20 +84,13 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-          accessibilityLabel="Zurück"
-        >
-          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          Benachrichtigungen
-        </Text>
-        <View style={styles.headerSpacer} />
-      </View>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        title="Benachrichtigungen"
+        variant="large"
+        showBack={true}
+        onBackPress={() => router.back()}
+      />
 
       <ScrollView
         style={styles.content}
@@ -152,34 +145,13 @@ export default function NotificationsScreen() {
           </Card>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
-  },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    fontFamily: 'System',
-  },
-  headerSpacer: {
-    width: 40,
   },
   content: {
     flex: 1,

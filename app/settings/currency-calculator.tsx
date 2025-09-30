@@ -137,7 +137,12 @@ export default function CurrencyCalculatorScreen() {
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-        <AppHeader showBack={true} onBackPress={() => router.back()} />
+        <AppHeader
+          title="Währungsrechner"
+          variant="large"
+          showBack={true}
+          onBackPress={() => router.back()}
+        />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#007AFF'} />
           <Text style={[styles.loadingText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
@@ -150,22 +155,18 @@ export default function CurrencyCalculatorScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <AppHeader showBack={true} onBackPress={() => router.back()} />
+      <AppHeader
+        title="Währungsrechner"
+        variant="large"
+        showBack={true}
+        onBackPress={() => router.back()}
+      />
 
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* iOS-style large title in content area */}
-        <View style={styles.titleSection}>
-          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Währungsrechner
-          </Text>
-          <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            Einstellungen für Wechselkurs-Updates
-          </Text>
-        </View>
 
         {/* Update Policy Section */}
         <View style={styles.section}>
@@ -335,23 +336,6 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     fontFamily: 'System',
-  },
-  titleSection: {
-    paddingHorizontal: 16,
-    paddingTop: 4,
-    paddingBottom: 8,
-  },
-  largeTitle: {
-    fontSize: 34,
-    fontWeight: '700',
-    fontFamily: 'System',
-    lineHeight: 41,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontWeight: '400',
-    fontFamily: 'System',
-    marginTop: 4,
   },
   content: {
     flex: 1,
