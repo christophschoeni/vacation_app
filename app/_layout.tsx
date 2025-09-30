@@ -58,8 +58,6 @@ const modalSlideUp = {
 function RootNavigation() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const router = useRouter();
-  const segments = useSegments();
   const { success, error } = useMigrations(db, migrations);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
@@ -95,22 +93,6 @@ function RootNavigation() {
     }
   }, [success]);
 
-  // Navigate to onboarding or tabs based on onboarding status
-  useEffect(() => {
-    if (onboardingCompleted === null || !success) return;
-
-    const inAuthGroup = segments[0] === '(tabs)';
-    const inOnboarding = segments[0] === 'onboarding';
-
-    if (!onboardingCompleted && !inOnboarding) {
-      // User hasn't completed onboarding, redirect to onboarding
-      router.replace('/onboarding');
-    } else if (onboardingCompleted && inOnboarding) {
-      // User has completed onboarding but is on onboarding screen, redirect to tabs
-      router.replace('/(tabs)');
-    }
-  }, [onboardingCompleted, segments, success]);
-
   // Show loading screen during migration
   if (error) {
     return (
@@ -143,10 +125,21 @@ function RootNavigation() {
     );
   }
 
+  // Show onboarding or main app based on completion status
+  if (!onboardingCompleted) {
+    return (
+      <>
+        <Stack>
+          <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </>
+    );
+  }
+
   return (
     <>
       <Stack>
-        <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="settings/categories"
