@@ -28,7 +28,6 @@ export default function LanguageScreen() {
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
-        title={t('settings.language.title')}
         showBack={true}
         onBackPress={() => router.back()}
       />
@@ -38,6 +37,13 @@ export default function LanguageScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        {/* iOS-style large title in content area */}
+        <View style={styles.titleSection}>
+          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('settings.language.title')}
+          </Text>
+        </View>
+
         <View style={styles.section}>
           <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
             {t('settings.language.subtitle')}
@@ -94,16 +100,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  titleSection: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 41,
+  },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 16,
     paddingBottom: 120,
   },
   section: {
     marginBottom: 24,
+    paddingHorizontal: 16,
   },
   sectionTitle: {
     fontSize: 22,
