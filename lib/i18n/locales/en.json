@@ -1,98 +1,21 @@
 {
-  "common": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "back": "Back",
-    "ok": "OK",
-    "yes": "Yes",
-    "no": "No",
-    "loading": "Loading...",
-    "error": "Error",
-    "success": "Success"
-  },
-  "navigation": {
-    "home": "Home",
-    "vacations": "Vacations",
-    "settings": "Settings",
-    "profile": "Profile"
-  },
-  "settings": {
-    "title": "Settings",
-    "notifications": {
-      "title": "Notifications",
-      "subtitle": "Manage your notifications",
-      "budget_alerts": "Budget Alerts",
-      "budget_alerts_subtitle": "Notification when budget is exceeded",
-      "expense_reminders": "Expense Reminders",
-      "expense_reminders_subtitle": "Reminder for unrecorded expenses",
-      "trip_updates": "Trip Updates",
-      "trip_updates_subtitle": "Important updates about your trips",
-      "system_note": "Notifications must be enabled in your device's system settings."
-    },
-    "currency": {
-      "title": "Currency",
-      "subtitle": "Choose your preferred currency",
-      "add_currency": "Add new currency",
-      "default_currency_delete": "Default currencies cannot be deleted.",
-      "currency_exists": "A currency with this code already exists.",
-      "delete_confirm_title": "Delete currency",
-      "delete_confirm_message": "Do you really want to delete the currency \"{{name}}\"?"
-    },
-    "language": {
-      "title": "Language",
-      "subtitle": "Choose your preferred language"
-    }
-  },
-  "errors": {
-    "generic": "An error occurred. Please try again.",
-    "network": "Network error. Please check your internet connection.",
-    "storage": "Error saving data. Please try again.",
-    "database": "Error accessing the database. Please try again.",
-    "validation": "Invalid input for {{field}}. Please check your entries.",
-    "currency_save": "Currency setting could not be saved.",
-    "backup": {
-      "create_failed": "Backup could not be created. Please try again.",
-      "share_failed": "Backup could not be shared.",
-      "import_failed": "The backup could not be imported.",
-      "file_read_failed": "The backup file could not be read.",
-      "invalid": "The selected file is not a valid Vacation Assist backup."
-    }
-  },
-  "backup": {
-    "create": "Create backup",
-    "share": "Share backup",
-    "import": "Import backup",
-    "import_confirm_title": "Import backup",
-    "import_confirm_message": "Do you really want to import this backup?\n\n📅 Created: {{date}}\n📊 Records: {{records}}\n\n⚠️ WARNING: Your current data will be overwritten!",
-    "import_success": "{{records}} records were restored.",
-    "share_unavailable_title": "Sharing not available",
-    "share_unavailable_message": "Backup was created, but sharing is not supported on this device."
-  },
-  "onboarding": {
-    "skip": "Skip",
-    "next": "Next",
-    "getStarted": "Get Started",
-    "slide1": {
-      "title": "Welcome to Travel Budget",
-      "text": "Your digital companion for stress-free vacation planning and smart budget management. Everything under control – from first idea to final expense."
-    },
-    "slide2": {
-      "title": "Plan Your Dream Trip",
-      "text": "Create trips, collect destinations and hotels, save photos, and keep track of everything on the map."
-    },
-    "slide3": {
-      "title": "Budget Always in Control",
-      "text": "Track expenses by category, use multi-currency support with live exchange rates, and see your budget in real-time."
-    },
-    "slide4": {
-      "title": "Never Forget Anything",
-      "text": "Use smart packing lists, to-dos, and bucket lists with pre-made templates. Organize easily with drag & drop."
-    },
-    "slide5": {
-      "title": "Optimized for You",
-      "text": "Dark/Light Mode, works offline, available in German and English. Your travel data stays secure on your device."
-    }
-  }
+  "common": {"save": "Save", "cancel": "Cancel", "delete": "Delete", "edit": "Edit", "back": "Back", "ok": "OK", "yes": "Yes", "no": "No", "loading": "Loading...", "error": "Error", "success": "Success", "add": "Add", "create": "Create", "update": "Update", "close": "Close", "done": "Done", "next": "Next", "previous": "Previous", "skip": "Skip", "search": "Search", "filter": "Filter", "sort": "Sort", "required": "Required"},
+  "navigation": {"home": "Home", "vacations": "Vacations", "settings": "Settings", "profile": "Profile", "explore": "Explore", "budget": "Budget", "checklists": "Checklists", "overview": "Overview"},
+  "tabs": {"home": "Home", "explore": "Explore", "settings": "Settings"},
+  "vacation": {"title": "Vacation", "add": {"title": "New Vacation", "button": "Create Vacation", "success": "Vacation created successfully"}, "edit": {"title": "Edit Vacation", "success": "Vacation updated successfully"}, "delete": {"title": "Delete Vacation", "message": "Do you really want to delete the vacation \"{{destination}}\"? All associated data (expenses, checklists) will also be deleted.", "success": "Vacation deleted successfully", "error": "Vacation could not be deleted"}, "detail": {"title": "Vacation Details", "loading": "Loading vacation data..."}, "form": {"destination": "Destination", "destination_placeholder": "e.g., Antalya", "country": "Country", "country_placeholder": "e.g., Turkey", "hotel": "Hotel", "hotel_placeholder": "e.g., Club Hotel Sera", "start_date": "Start Date", "end_date": "End Date", "budget": "Budget", "budget_placeholder": "e.g., 2000", "currency": "Currency", "notes": "Notes", "notes_placeholder": "Additional information"}, "empty": {"title": "No Vacations Found", "subtitle": "Create your first trip", "button": "Create New Vacation"}, "settings": {"title": "Vacation Settings", "edit_vacation": "Edit Vacation", "delete_vacation": "Delete Vacation", "export_data": "Export Data", "import_data": "Import Data"}},
+  "expense": {"title": "Expense", "title_plural": "Expenses", "add": {"title": "New Expense", "button": "Add Expense", "success": "Expense added successfully"}, "edit": {"title": "Edit Expense", "success": "Expense updated successfully"}, "delete": {"title": "Delete Expense", "message": "Do you really want to delete the expense \"{{description}}\"?", "success": "Expense deleted successfully", "error": "Expense could not be deleted"}, "form": {"amount": "Amount", "amount_placeholder": "52.50", "currency": "Currency", "description": "Description", "description_placeholder": "e.g., Airport Kiosk", "category": "Category", "date": "Date", "converted_amount": "Converted to CHF", "converting": "Converting...", "currency_calculator": "Currency Calculator"}, "empty": {"title": "No Expenses Recorded Yet", "subtitle": "Tap ➕ to add your first expense"}},
+  "categories": {"food": "Food", "transport": "Transport", "accommodation": "Accommodation", "entertainment": "Entertainment", "shopping": "Shopping", "other": "Other", "unknown": "Unknown"},
+  "budget": {"title": "Budget", "overview": {"title": "Budget Overview", "available": "Available", "spent": "Spent", "remaining": "Remaining", "exceeded": "Exceeded", "total": "Total", "percentage": "{{percent}}% spent"}, "stats": {"daily_average": "Daily Average", "days_remaining": "Days Remaining", "per_day_available": "Available per Day", "largest_expense": "Largest Expense", "by_category": "By Category"}, "alerts": {"exceeded_title": "Budget Exceeded", "exceeded_message": "You have exceeded your budget by {{amount}}.", "warning_title": "Budget Warning", "warning_message": "You have spent {{percent}}% of your budget."}, "empty": {"title": "No Budget Set", "subtitle": "Set a budget to track your expenses"}},
+  "checklist": {"title": "Checklist", "title_plural": "Checklists", "add": {"title": "New Checklist", "button": "Create Checklist", "success": "Checklist created successfully"}, "edit": {"title": "Edit Checklist", "success": "Checklist updated successfully"}, "delete": {"title": "Delete Checklist", "message": "Do you really want to delete the checklist \"{{title}}\"?", "success": "Checklist deleted successfully"}, "form": {"title": "Title", "title_placeholder": "e.g., Packing List", "add_item": "Add Item", "item_placeholder": "New Item"}, "item": {"add": "Add Item", "edit": "Edit Item", "delete": "Delete Item", "completed": "Completed", "pending": "Pending"}, "empty": {"title": "No Checklists Yet", "subtitle": "Create your first checklist", "no_items": "No items available"}, "progress": {"completed": "{{completed}} of {{total}} completed", "percentage": "{{percent}}% completed"}},
+  "template": {"title": "Template", "title_plural": "Templates", "add": {"title": "New Template", "button": "Create Template", "success": "Template created successfully"}, "edit": {"title": "Edit Template", "success": "Template updated successfully"}, "delete": {"title": "Delete Template", "message": "Do you really want to delete the template \"{{title}}\"?", "success": "Template deleted successfully"}, "use": {"button": "Use Template", "success": "Template applied successfully"}, "empty": {"title": "No Templates Available", "subtitle": "Create your first template"}, "default": {"beach_vacation": "Beach Vacation", "city_trip": "City Trip", "ski_vacation": "Ski Vacation", "camping": "Camping", "backpacking": "Backpacking"}},
+  "settings": {"title": "Settings", "account": {"title": "Account", "subtitle": "Manage your account"}, "notifications": {"title": "Notifications", "subtitle": "Manage your notifications", "budget_alerts": "Budget Alerts", "budget_alerts_subtitle": "Notification when budget is exceeded", "expense_reminders": "Expense Reminders", "expense_reminders_subtitle": "Reminder for unrecorded expenses", "trip_updates": "Trip Updates", "trip_updates_subtitle": "Important updates about your trips", "system_note": "Notifications must be enabled in your device's system settings."}, "currency": {"title": "Currency", "subtitle": "Choose your preferred currency", "default": "Default Currency", "add_currency": "Add New Currency", "default_currency_delete": "Default currencies cannot be deleted.", "currency_exists": "A currency with this code already exists.", "delete_confirm_title": "Delete Currency", "delete_confirm_message": "Do you really want to delete the currency \"{{name}}\"?", "exchange_rates": "Exchange Rates", "last_updated": "Last updated: {{date}}", "update_rates": "Update Rates"}, "language": {"title": "Language", "subtitle": "Choose your preferred language", "restart_required": "The app must be restarted for all changes to take effect."}, "data": {"title": "Data & Storage", "subtitle": "Manage your data", "backup": "Backup & Restore", "export": "Export Data", "import": "Import Data", "clear_cache": "Clear Cache", "storage_used": "Storage Used"}, "about": {"title": "About", "subtitle": "App Information", "version": "Version", "privacy_policy": "Privacy Policy", "terms": "Terms of Service", "support": "Support", "rate_app": "Rate App"}, "categories": {"title": "Categories", "subtitle": "Manage expense categories", "custom": "Custom Categories", "add": "Add Category"}, "templates": {"title": "Templates", "subtitle": "Manage checklist templates"}},
+  "errors": {"generic": "An error occurred. Please try again.", "network": "Network error. Please check your internet connection.", "storage": "Error saving data. Please try again.", "database": "Error accessing the database. Please try again.", "validation": "Invalid input for {{field}}. Please check your entries.", "currency_save": "Currency setting could not be saved.", "required_field": "Please fill in all required fields.", "invalid_amount": "Invalid amount", "invalid_date": "Invalid date", "invalid_email": "Invalid email address", "not_found": "{{item}} not found", "permission_denied": "Permission denied", "backup": {"create_failed": "Backup could not be created. Please try again.", "share_failed": "Backup could not be shared.", "import_failed": "The backup could not be imported.", "file_read_failed": "The backup file could not be read.", "invalid": "The selected file is not a valid Vacation Assist backup."}},
+  "validation": {"required": "{{field}} is required", "min_length": "{{field}} must be at least {{min}} characters long", "max_length": "{{field}} must not exceed {{max}} characters", "min_value": "{{field}} must be at least {{min}}", "max_value": "{{field}} must not exceed {{max}}", "invalid_format": "Invalid format for {{field}}", "email": "Please enter a valid email address", "numeric": "{{field}} must be a number", "positive": "{{field}} must be positive", "date_range": "End date must be after start date"},
+  "alerts": {"confirm": "Confirm", "are_you_sure": "Are you sure?", "unsaved_changes": "Unsaved Changes", "unsaved_changes_message": "You have unsaved changes. Do you want to continue?", "success": "Success", "warning": "Warning", "info": "Information"},
+  "backup": {"create": "Create Backup", "share": "Share Backup", "import": "Import Backup", "export": "Export Data", "import_confirm_title": "Import Backup", "import_confirm_message": "Do you really want to import this backup?\n\n📅 Created: {{date}}\n📊 Records: {{records}}\n\n⚠️ WARNING: Your current data will be overwritten!", "import_success": "{{records}} records were restored.", "export_success": "Data exported successfully.", "share_unavailable_title": "Sharing Not Available", "share_unavailable_message": "Backup was created, but sharing is not supported on this device.", "creating": "Creating backup...", "importing": "Importing backup..."},
+  "date": {"today": "Today", "yesterday": "Yesterday", "tomorrow": "Tomorrow", "days_ago": "{{count}} day ago", "days_ago_plural": "{{count}} days ago", "in_days": "in {{count}} day", "in_days_plural": "in {{count}} days", "weeks_ago": "{{count}} week ago", "weeks_ago_plural": "{{count}} weeks ago", "months_ago": "{{count}} month ago", "months_ago_plural": "{{count}} months ago", "select_date": "Select Date", "start_date": "Start Date", "end_date": "End Date", "duration": "Duration", "days": "Day", "days_plural": "Days"},
+  "currency": {"chf": "Swiss Franc", "eur": "Euro", "usd": "US Dollar", "gbp": "British Pound", "jpy": "Japanese Yen", "exchange_rate": "Exchange Rate", "converted": "Converted"},
+  "onboarding": {"skip": "Skip", "next": "Next", "getStarted": "Get Started", "slide1": {"title": "Welcome to Travel Budget", "text": "Your digital companion for stress-free vacation planning and smart budget management. Everything under control – from first idea to final expense."}, "slide2": {"title": "Plan Your Dream Trip", "text": "Create trips, collect destinations and hotels, save photos, and keep track of everything on the map."}, "slide3": {"title": "Budget Always in Control", "text": "Track expenses by category, use multi-currency support with live exchange rates, and see your budget in real-time."}, "slide4": {"title": "Never Forget Anything", "text": "Use smart packing lists, to-dos, and bucket lists with pre-made templates. Organize easily with drag & drop."}, "slide5": {"title": "Optimized for You", "text": "Dark/Light Mode, works offline, available in multiple languages. Your travel data stays secure on your device."}},
+  "empty_states": {"no_data": "No data available", "no_results": "No results found", "no_internet": "No internet connection", "try_again": "Try again", "refresh": "Refresh"},
+  "help": {"title": "Help", "faq": "Frequently Asked Questions", "contact_support": "Contact Support", "tutorial": "Tutorial", "tips": "Tips & Tricks"}
 }

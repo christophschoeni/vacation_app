@@ -10,16 +10,236 @@
     "no": "Nein",
     "loading": "Wird geladen...",
     "error": "Fehler",
-    "success": "Erfolgreich"
+    "success": "Erfolgreich",
+    "add": "Hinzufügen",
+    "create": "Erstellen",
+    "update": "Aktualisieren",
+    "close": "Schließen",
+    "done": "Fertig",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "skip": "Überspringen",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "required": "Erforderlich"
   },
   "navigation": {
     "home": "Start",
     "vacations": "Reisen",
     "settings": "Einstellungen",
-    "profile": "Profil"
+    "profile": "Profil",
+    "explore": "Entdecken",
+    "budget": "Budget",
+    "checklists": "Checklisten",
+    "overview": "Übersicht"
+  },
+  "tabs": {
+    "home": "Start",
+    "explore": "Entdecken",
+    "settings": "Einstellungen"
+  },
+  "vacation": {
+    "title": "Ferien",
+    "add": {
+      "title": "Neue Ferien",
+      "button": "Ferien erstellen",
+      "success": "Ferien erfolgreich erstellt"
+    },
+    "edit": {
+      "title": "Ferien bearbeiten",
+      "success": "Ferien erfolgreich aktualisiert"
+    },
+    "delete": {
+      "title": "Ferien löschen",
+      "message": "Möchten Sie die Ferien \"{{destination}}\" wirklich löschen? Alle zugehörigen Daten (Ausgaben, Checklisten) werden ebenfalls gelöscht.",
+      "success": "Ferien erfolgreich gelöscht",
+      "error": "Ferien konnten nicht gelöscht werden"
+    },
+    "detail": {
+      "title": "Ferien-Details",
+      "loading": "Lade Ferien-Daten..."
+    },
+    "form": {
+      "destination": "Reiseziel",
+      "destination_placeholder": "z.B. Antalya",
+      "country": "Land",
+      "country_placeholder": "z.B. Türkei",
+      "hotel": "Hotel",
+      "hotel_placeholder": "z.B. Club Hotel Sera",
+      "start_date": "Startdatum",
+      "end_date": "Enddatum",
+      "budget": "Budget",
+      "budget_placeholder": "z.B. 2000",
+      "currency": "Währung",
+      "notes": "Notizen",
+      "notes_placeholder": "Zusätzliche Informationen"
+    },
+    "empty": {
+      "title": "Keine Ferien gefunden",
+      "subtitle": "Erstellen Sie Ihre erste Reise",
+      "button": "Neue Ferien erstellen"
+    },
+    "settings": {
+      "title": "Ferien-Einstellungen",
+      "edit_vacation": "Ferien bearbeiten",
+      "delete_vacation": "Ferien löschen",
+      "export_data": "Daten exportieren",
+      "import_data": "Daten importieren"
+    }
+  },
+  "expense": {
+    "title": "Ausgabe",
+    "title_plural": "Ausgaben",
+    "add": {
+      "title": "Neue Ausgabe",
+      "button": "Ausgabe erfassen",
+      "success": "Ausgabe erfolgreich erfasst"
+    },
+    "edit": {
+      "title": "Ausgabe bearbeiten",
+      "success": "Ausgabe erfolgreich aktualisiert"
+    },
+    "delete": {
+      "title": "Ausgabe löschen",
+      "message": "Möchten Sie die Ausgabe \"{{description}}\" wirklich löschen?",
+      "success": "Ausgabe erfolgreich gelöscht",
+      "error": "Ausgabe konnte nicht gelöscht werden"
+    },
+    "form": {
+      "amount": "Betrag",
+      "amount_placeholder": "52.50",
+      "currency": "Währung",
+      "description": "Beschreibung",
+      "description_placeholder": "z.B. Flughafen Kiosk",
+      "category": "Kategorie",
+      "date": "Datum",
+      "converted_amount": "Umgerechnet in CHF",
+      "converting": "Umrechnung...",
+      "currency_calculator": "Währungsrechner"
+    },
+    "empty": {
+      "title": "Noch keine Ausgaben erfasst",
+      "subtitle": "Tippe auf ➕ um deine erste Ausgabe hinzuzufügen"
+    }
+  },
+  "categories": {
+    "food": "Essen",
+    "transport": "Transport",
+    "accommodation": "Unterkunft",
+    "entertainment": "Unterhaltung",
+    "shopping": "Shopping",
+    "other": "Sonstiges",
+    "unknown": "Unbekannt"
+  },
+  "budget": {
+    "title": "Budget",
+    "overview": {
+      "title": "Budget Übersicht",
+      "available": "Verfügbar",
+      "spent": "Ausgegeben",
+      "remaining": "Verbleibend",
+      "exceeded": "Überschreitung",
+      "total": "Gesamt",
+      "percentage": "{{percent}}% ausgegeben"
+    },
+    "stats": {
+      "daily_average": "Tagesschnitt",
+      "days_remaining": "Verbleibende Tage",
+      "per_day_available": "Pro Tag verfügbar",
+      "largest_expense": "Größte Ausgabe",
+      "by_category": "Nach Kategorie"
+    },
+    "alerts": {
+      "exceeded_title": "Budget überschritten",
+      "exceeded_message": "Sie haben Ihr Budget um {{amount}} überschritten.",
+      "warning_title": "Budget-Warnung",
+      "warning_message": "Sie haben {{percent}}% Ihres Budgets ausgegeben."
+    },
+    "empty": {
+      "title": "Kein Budget festgelegt",
+      "subtitle": "Legen Sie ein Budget fest, um Ihre Ausgaben zu verfolgen"
+    }
+  },
+  "checklist": {
+    "title": "Checkliste",
+    "title_plural": "Checklisten",
+    "add": {
+      "title": "Neue Checkliste",
+      "button": "Checkliste erstellen",
+      "success": "Checkliste erfolgreich erstellt"
+    },
+    "edit": {
+      "title": "Checkliste bearbeiten",
+      "success": "Checkliste erfolgreich aktualisiert"
+    },
+    "delete": {
+      "title": "Checkliste löschen",
+      "message": "Möchten Sie die Checkliste \"{{title}}\" wirklich löschen?",
+      "success": "Checkliste erfolgreich gelöscht"
+    },
+    "form": {
+      "title": "Titel",
+      "title_placeholder": "z.B. Packliste",
+      "add_item": "Element hinzufügen",
+      "item_placeholder": "Neues Element"
+    },
+    "item": {
+      "add": "Element hinzufügen",
+      "edit": "Element bearbeiten",
+      "delete": "Element löschen",
+      "completed": "Erledigt",
+      "pending": "Offen"
+    },
+    "empty": {
+      "title": "Noch keine Checklisten",
+      "subtitle": "Erstellen Sie Ihre erste Checkliste",
+      "no_items": "Keine Elemente vorhanden"
+    },
+    "progress": {
+      "completed": "{{completed}} von {{total}} erledigt",
+      "percentage": "{{percent}}% erledigt"
+    }
+  },
+  "template": {
+    "title": "Template",
+    "title_plural": "Templates",
+    "add": {
+      "title": "Neues Template",
+      "button": "Template erstellen",
+      "success": "Template erfolgreich erstellt"
+    },
+    "edit": {
+      "title": "Template bearbeiten",
+      "success": "Template erfolgreich aktualisiert"
+    },
+    "delete": {
+      "title": "Template löschen",
+      "message": "Möchten Sie das Template \"{{title}}\" wirklich löschen?",
+      "success": "Template erfolgreich gelöscht"
+    },
+    "use": {
+      "button": "Template verwenden",
+      "success": "Template erfolgreich angewendet"
+    },
+    "empty": {
+      "title": "Keine Templates verfügbar",
+      "subtitle": "Erstellen Sie Ihr erstes Template"
+    },
+    "default": {
+      "beach_vacation": "Strandurlaub",
+      "city_trip": "Städtereise",
+      "ski_vacation": "Skiurlaub",
+      "camping": "Camping",
+      "backpacking": "Backpacking"
+    }
   },
   "settings": {
     "title": "Einstellungen",
+    "account": {
+      "title": "Account",
+      "subtitle": "Verwalten Sie Ihren Account"
+    },
     "notifications": {
       "title": "Benachrichtigungen",
       "subtitle": "Verwalten Sie Ihre Benachrichtigungen",
@@ -34,15 +254,48 @@
     "currency": {
       "title": "Währung",
       "subtitle": "Wählen Sie Ihre bevorzugte Währung",
+      "default": "Standardwährung",
       "add_currency": "Neue Währung hinzufügen",
       "default_currency_delete": "Standardwährungen können nicht gelöscht werden.",
       "currency_exists": "Eine Währung mit diesem Code existiert bereits.",
       "delete_confirm_title": "Währung löschen",
-      "delete_confirm_message": "Möchten Sie die Währung \"{{name}}\" wirklich löschen?"
+      "delete_confirm_message": "Möchten Sie die Währung \"{{name}}\" wirklich löschen?",
+      "exchange_rates": "Wechselkurse",
+      "last_updated": "Zuletzt aktualisiert: {{date}}",
+      "update_rates": "Kurse aktualisieren"
     },
     "language": {
       "title": "Sprache",
-      "subtitle": "Wählen Sie Ihre bevorzugte Sprache"
+      "subtitle": "Wählen Sie Ihre bevorzugte Sprache",
+      "restart_required": "Die App muss neu gestartet werden, damit alle Änderungen wirksam werden."
+    },
+    "data": {
+      "title": "Daten & Speicher",
+      "subtitle": "Verwalten Sie Ihre Daten",
+      "backup": "Backup & Wiederherstellung",
+      "export": "Daten exportieren",
+      "import": "Daten importieren",
+      "clear_cache": "Cache leeren",
+      "storage_used": "Verwendeter Speicher"
+    },
+    "about": {
+      "title": "Über",
+      "subtitle": "App-Informationen",
+      "version": "Version",
+      "privacy_policy": "Datenschutzerklärung",
+      "terms": "Nutzungsbedingungen",
+      "support": "Support",
+      "rate_app": "App bewerten"
+    },
+    "categories": {
+      "title": "Kategorien",
+      "subtitle": "Verwalten Sie Ausgabenkategorien",
+      "custom": "Benutzerdefinierte Kategorien",
+      "add": "Kategorie hinzufügen"
+    },
+    "templates": {
+      "title": "Templates",
+      "subtitle": "Verwalten Sie Checklisten-Templates"
     }
   },
   "errors": {
@@ -52,6 +305,12 @@
     "database": "Fehler beim Zugriff auf die Datenbank. Bitte versuchen Sie es erneut.",
     "validation": "Ungültige Eingabe für {{field}}. Bitte überprüfen Sie Ihre Angaben.",
     "currency_save": "Währungseinstellung konnte nicht gespeichert werden.",
+    "required_field": "Bitte füllen Sie alle Pflichtfelder aus.",
+    "invalid_amount": "Ungültiger Betrag",
+    "invalid_date": "Ungültiges Datum",
+    "invalid_email": "Ungültige E-Mail-Adresse",
+    "not_found": "{{item}} nicht gefunden",
+    "permission_denied": "Zugriff verweigert",
     "backup": {
       "create_failed": "Backup konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
       "share_failed": "Backup konnte nicht geteilt werden.",
@@ -60,15 +319,68 @@
       "invalid": "Die ausgewählte Datei ist kein gültiges Vacation Assist Backup."
     }
   },
+  "validation": {
+    "required": "{{field}} ist erforderlich",
+    "min_length": "{{field}} muss mindestens {{min}} Zeichen lang sein",
+    "max_length": "{{field}} darf maximal {{max}} Zeichen lang sein",
+    "min_value": "{{field}} muss mindestens {{min}} sein",
+    "max_value": "{{field}} darf maximal {{max}} sein",
+    "invalid_format": "Ungültiges Format für {{field}}",
+    "email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "numeric": "{{field}} muss eine Zahl sein",
+    "positive": "{{field}} muss positiv sein",
+    "date_range": "Enddatum muss nach dem Startdatum liegen"
+  },
+  "alerts": {
+    "confirm": "Bestätigen",
+    "are_you_sure": "Sind Sie sicher?",
+    "unsaved_changes": "Nicht gespeicherte Änderungen",
+    "unsaved_changes_message": "Sie haben nicht gespeicherte Änderungen. Möchten Sie fortfahren?",
+    "success": "Erfolgreich",
+    "warning": "Warnung",
+    "info": "Information"
+  },
   "backup": {
     "create": "Backup erstellen",
     "share": "Backup teilen",
     "import": "Backup importieren",
+    "export": "Daten exportieren",
     "import_confirm_title": "Backup importieren",
     "import_confirm_message": "Möchten Sie dieses Backup wirklich importieren?\n\n📅 Erstellt: {{date}}\n📊 Datensätze: {{records}}\n\n⚠️ ACHTUNG: Ihre aktuellen Daten werden überschrieben!",
     "import_success": "{{records}} Datensätze wurden wiederhergestellt.",
+    "export_success": "Daten erfolgreich exportiert.",
     "share_unavailable_title": "Teilen nicht verfügbar",
-    "share_unavailable_message": "Backup wurde erstellt, aber Teilen wird auf diesem Gerät nicht unterstützt."
+    "share_unavailable_message": "Backup wurde erstellt, aber Teilen wird auf diesem Gerät nicht unterstützt.",
+    "creating": "Erstelle Backup...",
+    "importing": "Importiere Backup..."
+  },
+  "date": {
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "tomorrow": "Morgen",
+    "days_ago": "vor {{count}} Tag",
+    "days_ago_plural": "vor {{count}} Tagen",
+    "in_days": "in {{count}} Tag",
+    "in_days_plural": "in {{count}} Tagen",
+    "weeks_ago": "vor {{count}} Woche",
+    "weeks_ago_plural": "vor {{count}} Wochen",
+    "months_ago": "vor {{count}} Monat",
+    "months_ago_plural": "vor {{count}} Monaten",
+    "select_date": "Datum auswählen",
+    "start_date": "Startdatum",
+    "end_date": "Enddatum",
+    "duration": "Dauer",
+    "days": "Tag",
+    "days_plural": "Tage"
+  },
+  "currency": {
+    "chf": "Schweizer Franken",
+    "eur": "Euro",
+    "usd": "US-Dollar",
+    "gbp": "Britisches Pfund",
+    "jpy": "Japanischer Yen",
+    "exchange_rate": "Wechselkurs",
+    "converted": "Umgerechnet"
   },
   "onboarding": {
     "skip": "Überspringen",
@@ -92,7 +404,21 @@
     },
     "slide5": {
       "title": "Für dich optimiert",
-      "text": "Dark/Light Mode, funktioniert offline, verfügbar auf Deutsch und Englisch. Deine Reisedaten bleiben sicher auf deinem Gerät."
+      "text": "Dark/Light Mode, funktioniert offline, verfügbar in mehreren Sprachen. Deine Reisedaten bleiben sicher auf deinem Gerät."
     }
+  },
+  "empty_states": {
+    "no_data": "Keine Daten verfügbar",
+    "no_results": "Keine Ergebnisse gefunden",
+    "no_internet": "Keine Internetverbindung",
+    "try_again": "Erneut versuchen",
+    "refresh": "Aktualisieren"
+  },
+  "help": {
+    "title": "Hilfe",
+    "faq": "Häufig gestellte Fragen",
+    "contact_support": "Support kontaktieren",
+    "tutorial": "Tutorial",
+    "tips": "Tipps & Tricks"
   }
 }

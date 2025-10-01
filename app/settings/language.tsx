@@ -61,7 +61,7 @@ export default function LanguageScreen() {
                   <View style={styles.languageInfo}>
                     <View style={styles.languageFlag}>
                       <Text style={[styles.flagText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                        {language.code === 'de' ? '🇩🇪' : '🇺🇸'}
+                        {language.flag || '🌐'}
                       </Text>
                     </View>
                     <View style={styles.languageText}>
@@ -83,14 +83,11 @@ export default function LanguageScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Hinweis
-          </Text>
           <Card variant="clean" style={styles.infoCard}>
             <View style={styles.infoContent}>
               <Icon name="info" size={20} color={isDark ? '#8E8E93' : '#6D6D70'} />
               <Text style={[styles.infoText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Die App muss neu gestartet werden, damit alle Änderungen wirksam werden.
+                {t('settings.language.restart_required')}
               </Text>
             </View>
           </Card>

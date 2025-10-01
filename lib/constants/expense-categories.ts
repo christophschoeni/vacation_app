@@ -5,10 +5,11 @@
 
 import { ExpenseCategory } from '@/types';
 import { Colors } from '@/constants/design';
+import { translationService } from '@/lib/i18n';
 
 interface ExpenseCategoryConfig {
   value: ExpenseCategory;
-  label: string;
+  labelKey: string; // Translation key instead of hardcoded label
   icon: string;
   color: string;
 }
@@ -16,41 +17,42 @@ interface ExpenseCategoryConfig {
 /**
  * Complete expense category configuration
  * Using design system colors where possible
+ * Labels are now translation keys that will be translated at runtime
  */
 export const EXPENSE_CATEGORIES: ExpenseCategoryConfig[] = [
   {
     value: 'food',
-    label: 'Essen',
+    labelKey: 'categories.food',
     icon: 'restaurant',
     color: Colors.systemColors.orange, // #FF9500
   },
   {
     value: 'transport',
-    label: 'Transport',
+    labelKey: 'categories.transport',
     icon: 'car',
     color: Colors.primary[500], // #007AFF
   },
   {
     value: 'accommodation',
-    label: 'Unterkunft',
+    labelKey: 'categories.accommodation',
     icon: 'hotel',
     color: Colors.systemColors.green, // #34C759
   },
   {
     value: 'entertainment',
-    label: 'Unterhaltung',
+    labelKey: 'categories.entertainment',
     icon: 'music',
     color: Colors.systemColors.purple, // #AF52DE
   },
   {
     value: 'shopping',
-    label: 'Shopping',
+    labelKey: 'categories.shopping',
     icon: 'shopping',
     color: Colors.systemColors.pink, // #FF2D92
   },
   {
     value: 'other',
-    label: 'Sonstiges',
+    labelKey: 'categories.other',
     icon: 'other',
     color: Colors.systemColors.gray, // #8E8E93
   },
@@ -64,10 +66,14 @@ export function getExpenseCategoryConfig(category: ExpenseCategory): ExpenseCate
 }
 
 /**
- * Get expense category label
+ * Get expense category label (translated)
  */
 export function getExpenseCategoryLabel(category: ExpenseCategory): string {
-  return getExpenseCategoryConfig(category)?.label || 'Unbekannt';
+  const config = getExpenseCategoryConfig(category);
+  if (!config) {
+    return translationService.t('categories.unknown');
+  }
+  return translationService.t(config.labelKey);
 }
 
 /**
