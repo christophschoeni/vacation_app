@@ -1,5 +1,6 @@
 {
   "common": {
+    "app_name": "Vacation Budget",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -629,7 +630,7 @@
     "next": "Next",
     "getStarted": "Get Started",
     "slide1": {
-      "title": "Welcome to Vacation Assist",
+      "title": "Welcome to Vacation Budget",
       "text": "Your digital companion for stress-free vacation planning and smart budget management. Everything under control – from the first idea to the last expense."
     },
     "slide2": {

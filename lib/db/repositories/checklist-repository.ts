@@ -80,10 +80,10 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
     return {
       id: row.id,
       title: row.title,
-      description: row.description,
+      description: row.description ?? undefined,
       isTemplate: row.isTemplate,
-      vacationId: row.vacationId,
-      templateId: row.templateId,
+      vacationId: row.vacationId ?? undefined,
+      templateId: row.templateId ?? undefined,
       category: row.category as ChecklistCategory,
       icon: row.icon,
       order: row.order || 0,
@@ -98,10 +98,10 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
       id: row.id,
       text: row.text,
       completed: Boolean(row.completed), // Ensure boolean conversion
-      notes: row.notes,
-      priority: row.priority,
+      notes: row.notes ?? undefined,
+      priority: row.priority as 'low' | 'medium' | 'high',
       dueDate: row.dueDate ? this.stringToDate(row.dueDate) : undefined,
-      quantity: row.quantity,
+      quantity: row.quantity ?? undefined,
       order: row.order,
     };
   }
@@ -238,9 +238,16 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
       updatedAt: now,
     };
 
-    await this.db.insert(schema.checklists).values(checklistData);
+    const insertData = {
+      ...checklistData,
+      description: checklistData.description ?? null,
+      vacationId: checklistData.vacationId ?? null,
+      templateId: checklistData.templateId ?? null,
+    };
 
-    return this.toDomainObject(checklistData, []);
+    await this.db.insert(schema.checklists).values(insertData);
+
+    return this.toDomainObject(insertData, []);
   }
 
   async update(id: string, data: UpdateChecklistInput): Promise<Checklist> {
@@ -305,10 +312,10 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
       checklistId: data.checklistId,
       text: data.text,
       completed: false,
-      notes: data.notes,
+      notes: data.notes ?? null,
       priority: data.priority || 'medium',
       dueDate: data.dueDate ? this.dateToString(data.dueDate) : null,
-      quantity: data.quantity,
+      quantity: data.quantity ?? null,
       order,
     };
 

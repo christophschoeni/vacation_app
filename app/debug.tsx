@@ -23,7 +23,7 @@ import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { appInitialization } from '@/lib/app-initialization';
 import { seedTestData, seedTemplates } from '@/lib/seed-data';
-import { getDatabaseStats, checkDatabaseFile, forceDatabaseSync, recreateDatabase } from '@/lib/db/database';
+import { getDatabaseStats } from '@/lib/db/database';
 import * as FileSystem from 'expo-file-system';
 import { logger } from '@/lib/utils/logger';
 import { onboardingService } from '@/lib/onboarding-service';
@@ -119,9 +119,6 @@ export default function DebugScreen() {
 
       logger.info('✅ Created Antalya vacation:', antalyaVacation);
 
-      // Force database sync to ensure persistence
-      await forceDatabaseSync();
-
       Alert.alert('Erfolg!', `Antalya-Vacation erstellt! ID: ${antalyaVacation.id}`);
       await loadDatabaseInfo();
     } catch (error) {
@@ -136,10 +133,7 @@ export default function DebugScreen() {
     try {
       logger.info('📁 Checking database file and paths...');
 
-      // Use the new checkDatabaseFile function
-      await checkDatabaseFile();
-
-      const documentsDir = FileSystem.documentDirectory;
+      const documentsDir = FileSystem.DocumentDirectoryPath || '';
       const sqliteDir = `${documentsDir}SQLite/`;
       const dbPath = `${sqliteDir}vacation_assist.db`;
 
@@ -179,8 +173,7 @@ export default function DebugScreen() {
               await db.delete(schema.categories);
               await db.delete(schema.backupHistory);
 
-              logger.info('💾 Syncing cleared database to disk...');
-              await forceDatabaseSync();
+              logger.info('💾 Database cleared');
 
               // 2. Clear ALL AsyncStorage data
               logger.info('🗑️ Clearing AsyncStorage...');
@@ -225,9 +218,9 @@ export default function DebugScreen() {
             setLoading(true);
             try {
               logger.info('🔄 Recreating database...');
-              await recreateDatabase();
+              // Database recreation functionality removed
               await loadDatabaseInfo();
-              Alert.alert('Erfolg!', 'Datenbank wurde neu erstellt!');
+              Alert.alert('Erfolg!', 'Datenbank wurde neu geladen!');
             } catch (error) {
               logger.error('Failed to recreate database:', error);
               Alert.alert('Fehler', `Konnte Datenbank nicht neu erstellen: ${error}`);

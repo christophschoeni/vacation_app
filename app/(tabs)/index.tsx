@@ -11,7 +11,7 @@ import {
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { insights } from 'expo-insights';
+import insights from 'expo-insights';
 
 import { Colors, Icon } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Reise Budget",
-    "slug": "reise-budget",
+    "name": "Ferien Budget",
+    "slug": "vacation-assist",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

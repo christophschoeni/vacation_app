@@ -1,5 +1,6 @@
 {
   "common": {
+    "app_name": "Budget Vacances",
     "save": "Enregistrer",
     "cancel": "Annuler",
     "delete": "Supprimer",
@@ -629,7 +630,7 @@
     "next": "Suivant",
     "getStarted": "Commencer",
     "slide1": {
-      "title": "Bienvenue sur Vacation Assist",
+      "title": "Bienvenue sur Budget Vacances",
       "text": "Votre compagnon numérique pour une planification de vacances sans stress et une gestion intelligente du budget. Tout sous contrôle – de la première idée à la dernière dépense."
     },
     "slide2": {

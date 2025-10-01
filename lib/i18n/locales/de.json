@@ -1,5 +1,6 @@
 {
   "common": {
+    "app_name": "Ferien Budget",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "delete": "Löschen",
@@ -629,7 +630,7 @@
     "next": "Weiter",
     "getStarted": "Los geht's",
     "slide1": {
-      "title": "Willkommen bei Reise Budget",
+      "title": "Willkommen bei Ferien Budget",
       "text": "Dein digitaler Begleiter für stressfreie Ferienplanung und clevere Budgetverwaltung. Alles im Griff – von der ersten Idee bis zur letzten Ausgabe."
     },
     "slide2": {

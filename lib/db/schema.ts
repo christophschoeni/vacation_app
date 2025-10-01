@@ -102,6 +102,7 @@ export const categories = sqliteTable('categories', {
   isDefault: integer('is_default', { mode: 'boolean' }).notNull().default(false),
   type: text('type').notNull(), // 'expense' | 'checklist'
   createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
 }, (table) => ({
   typeIdx: index('categories_type_idx').on(table.type),
   isDefaultIdx: index('categories_is_default_idx').on(table.isDefault),

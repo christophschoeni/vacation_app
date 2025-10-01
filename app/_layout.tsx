@@ -2,7 +2,7 @@
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { insights } from 'expo-insights';
+import insights from 'expo-insights';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, useColorScheme } from 'react-native';
