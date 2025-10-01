@@ -80,6 +80,7 @@ import {
   ArrowUpDown,
   ArrowLeftRight,
   Calculator,
+  Globe,
   LucideIcon,
 } from 'lucide-react-native';
 
@@ -117,6 +118,7 @@ const iconMap: Record<string, LucideIcon> = {
   'settings': Settings,
   'menu': Menu,
   'back': Back,
+  'globe': Globe,
 
   // Categories
   'restaurant': UtensilsCrossed,
