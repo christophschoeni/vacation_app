@@ -9,12 +9,14 @@ import * as Haptics from 'expo-haptics';
 import { Icon } from '@/components/design';
 import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
+import { useTranslation } from '@/lib/i18n';
 
 export default function VacationDetailTabLayout() {
   const vacationId = useRouteParam('id');
   const segments = useSegments();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
   const { vacations, refreshVacations } = useVacations();
 
   const vacation = vacations.find(v => v.id === vacationId);
@@ -139,21 +141,21 @@ export default function VacationDetailTabLayout() {
       materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
     >
       <NativeTabs.Trigger name="index">
-        <Label>Budget</Label>
+        <Label>{t('vacation.tabs.budget')}</Label>
         <TabIcon
           sf="creditcard.fill"
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="checklists">
-        <Label>Listen</Label>
+        <Label>{t('vacation.tabs.lists')}</Label>
         <TabIcon
           sf="checklist"
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
-        <Label>Settings</Label>
+        <Label>{t('vacation.tabs.settings')}</Label>
         <TabIcon
           sf="gearshape.fill"
         />

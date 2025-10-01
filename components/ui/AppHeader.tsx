@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@/components/design';
+import { useTranslation } from '@/lib/i18n';
 
 interface AppHeaderProps {
   title?: string;
@@ -24,6 +25,7 @@ export default function AppHeader({
 }: AppHeaderProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView
@@ -37,7 +39,7 @@ export default function AppHeader({
             <TouchableOpacity
               onPress={onBackPress}
               style={variant === 'modal' ? styles.modalButton : styles.backButton}
-              accessibilityLabel="Zurück"
+              accessibilityLabel={t('common.back')}
             >
               {variant === 'modal' ? (
                 <View style={[styles.modalButtonInner, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.98)' }]}>
@@ -63,12 +65,12 @@ export default function AppHeader({
             <TouchableOpacity
               onPress={onRightPress}
               style={styles.modalButton}
-              accessibilityLabel="Speichern"
+              accessibilityLabel={t('common.save')}
             >
               <View style={[styles.modalSaveButton, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.98)' }]}>
                 <Icon name="check" size={18} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                 <Text style={[styles.modalButtonText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  Speichern
+                  {t('common.save')}
                 </Text>
               </View>
             </TouchableOpacity>

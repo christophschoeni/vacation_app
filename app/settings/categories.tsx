@@ -14,6 +14,7 @@ import { Card, Icon, IconName } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import CategoryEditor, { Category } from '@/components/ui/forms/CategoryEditor';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from '@/lib/i18n';
 
 // Default categories for expenses
 const DEFAULT_CATEGORIES: Category[] = [
@@ -28,6 +29,7 @@ const CATEGORIES_STORAGE_KEY = '@vacation_assist_categories';
 
 export default function CategoriesScreen() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
   const [showEditor, setShowEditor] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | undefined>();
@@ -60,9 +62,9 @@ export default function CategoriesScreen() {
     } catch (error) {
       console.warn('Failed to save categories:', error);
       Alert.alert(
-        'Speicherfehler',
-        'Die Kategorien konnten nicht gespeichert werden. Versuchen Sie es erneut.',
-        [{ text: 'OK', style: 'default' }]
+        t('settings.categories.errors.save_title'),
+        t('settings.categories.errors.save_message'),
+        [{ text: t('common.ok'), style: 'default' }]
       );
     }
   };
@@ -82,9 +84,9 @@ export default function CategoriesScreen() {
     const trimmedName = category.name.trim();
     if (!trimmedName) {
       Alert.alert(
-        'Ungültiger Name',
-        'Bitte geben Sie einen gültigen Kategorie-Namen ein.',
-        [{ text: 'OK', style: 'default' }]
+        t('settings.categories.errors.invalid_name_title'),
+        t('settings.categories.errors.invalid_name_message'),
+        [{ text: t('common.ok'), style: 'default' }]
       );
       return;
     }
@@ -97,9 +99,9 @@ export default function CategoriesScreen() {
 
     if (isDuplicate) {
       Alert.alert(
-        'Name bereits vorhanden',
-        'Eine Kategorie mit diesem Namen existiert bereits.',
-        [{ text: 'OK', style: 'default' }]
+        t('settings.categories.errors.duplicate_title'),
+        t('settings.categories.errors.duplicate_message'),
+        [{ text: t('common.ok'), style: 'default' }]
       );
       return;
     }
@@ -128,20 +130,20 @@ export default function CategoriesScreen() {
 
     if (categories.length <= 1) {
       Alert.alert(
-        'Kategorie kann nicht gelöscht werden',
-        'Sie müssen mindestens eine Kategorie haben.',
-        [{ text: 'OK', style: 'default' }]
+        t('settings.categories.errors.cannot_delete_title'),
+        t('settings.categories.errors.cannot_delete_message'),
+        [{ text: t('common.ok'), style: 'default' }]
       );
       return;
     }
 
     Alert.alert(
-      'Kategorie löschen',
-      `Möchten Sie die Kategorie "${category.name}" wirklich löschen?`,
+      t('settings.categories.delete.title'),
+      t('settings.categories.delete.message', { name: category.name }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => {
             const newCategories = categories.filter(cat => cat.id !== categoryId);
@@ -159,13 +161,13 @@ export default function CategoriesScreen() {
     return (
       <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
         <AppHeader
-          title="Kategorien"
+          title={t('settings.categories.title')}
           showBack={true}
           onBackPress={() => router.back()}
         />
         <View style={styles.loadingContainer}>
           <Text style={[styles.loadingText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            Kategorien werden geladen...
+            {t('settings.categories.loading')}
           </Text>
         </View>
       </View>
@@ -175,7 +177,7 @@ export default function CategoriesScreen() {
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
-        title="Kategorien"
+        title={t('settings.categories.title')}
         variant="large"
         showBack={true}
         onBackPress={() => router.back()}
@@ -183,7 +185,7 @@ export default function CategoriesScreen() {
           <TouchableOpacity
             onPress={handleAddCategory}
             style={styles.headerButton}
-            accessibilityLabel="Neue Kategorie hinzufügen"
+            accessibilityLabel={t('settings.categories.add_aria')}
           >
             <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
           </TouchableOpacity>
@@ -197,7 +199,7 @@ export default function CategoriesScreen() {
       >
         <View style={styles.section}>
           <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            Tippen Sie auf eine Kategorie, um sie zu bearbeiten
+            {t('settings.categories.subtitle')}
           </Text>
           {categories.map((category) => (
             <TouchableOpacity
@@ -221,7 +223,7 @@ export default function CategoriesScreen() {
                           handleDeleteCategory(category.id);
                         }}
                         style={styles.deleteButton}
-                        accessibilityLabel={`Kategorie ${category.name} löschen`}
+                        accessibilityLabel={t('settings.categories.delete_aria', { name: category.name })}
                       >
                         <Icon name="delete" size={18} color="#FF3B30" />
                       </TouchableOpacity>

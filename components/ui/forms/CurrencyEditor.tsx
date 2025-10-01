@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Button, Icon } from '@/components/design';
 import { useColorScheme } from 'react-native';
+import { useTranslation } from '@/lib/i18n';
 
 export interface Currency {
   code: string;
@@ -30,6 +31,7 @@ export default function CurrencyEditor({
 }: CurrencyEditorProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
 
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
@@ -95,7 +97,7 @@ export default function CurrencyEditor({
                 { color: isDark ? '#FFFFFF' : '#1C1C1E' },
               ]}
             >
-              Neue Währung
+              {t('components.currency_editor.title')}
             </Text>
             <TouchableOpacity onPress={handleCancel} style={styles.closeButton}>
               <Icon name="close" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
@@ -110,7 +112,7 @@ export default function CurrencyEditor({
                   { color: isDark ? '#FFFFFF' : '#1C1C1E' },
                 ]}
               >
-                Währungscode (z.B. USD, TRY)
+                {t('components.currency_editor.code_label')}
               </Text>
               <TextInput
                 style={[
@@ -121,7 +123,7 @@ export default function CurrencyEditor({
                     borderColor: isDark ? '#3A3A3C' : '#E5E5EA',
                   },
                 ]}
-                placeholder="USD"
+                placeholder={t('components.currency_editor.code_placeholder')}
                 placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
                 value={code}
                 onChangeText={setCode}
@@ -138,7 +140,7 @@ export default function CurrencyEditor({
                   { color: isDark ? '#FFFFFF' : '#1C1C1E' },
                 ]}
               >
-                Vollständiger Name
+                {t('components.currency_editor.name_label')}
               </Text>
               <TextInput
                 style={[
@@ -149,7 +151,7 @@ export default function CurrencyEditor({
                     borderColor: isDark ? '#3A3A3C' : '#E5E5EA',
                   },
                 ]}
-                placeholder="US-Dollar"
+                placeholder={t('components.currency_editor.name_placeholder')}
                 placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
                 value={name}
                 onChangeText={setName}
@@ -163,7 +165,7 @@ export default function CurrencyEditor({
                   { color: isDark ? '#FFFFFF' : '#1C1C1E' },
                 ]}
               >
-                Symbol (z.B. $, €, ¥)
+                {t('components.currency_editor.symbol_label')}
               </Text>
               <TextInput
                 style={[
@@ -174,7 +176,7 @@ export default function CurrencyEditor({
                     borderColor: isDark ? '#3A3A3C' : '#E5E5EA',
                   },
                 ]}
-                placeholder="$"
+                placeholder={t('components.currency_editor.symbol_placeholder')}
                 placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
                 value={symbol}
                 onChangeText={setSymbol}
@@ -189,7 +191,7 @@ export default function CurrencyEditor({
                   { color: isDark ? '#FFFFFF' : '#1C1C1E' },
                 ]}
               >
-                Flagge (z.B. 🇺🇸, 🇩🇪, 🇨🇭)
+                {t('components.currency_editor.flag_label')}
               </Text>
               <TextInput
                 style={[
@@ -200,7 +202,7 @@ export default function CurrencyEditor({
                     borderColor: isDark ? '#3A3A3C' : '#E5E5EA',
                   },
                 ]}
-                placeholder="🇺🇸"
+                placeholder={t('components.currency_editor.flag_placeholder')}
                 placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
                 value={flag}
                 onChangeText={setFlag}
@@ -211,13 +213,13 @@ export default function CurrencyEditor({
 
           <View style={styles.actions}>
             <Button
-              title="Abbrechen"
+              title={t('common.cancel')}
               variant="outline"
               onPress={handleCancel}
               style={styles.actionButton}
             />
             <Button
-              title="Hinzufügen"
+              title={t('common.add')}
               variant="primary"
               onPress={handleSave}
               disabled={!code.trim() || !name.trim() || !symbol.trim() || !flag.trim()}

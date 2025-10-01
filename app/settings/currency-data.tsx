@@ -19,6 +19,7 @@ import AppHeader from '@/components/ui/AppHeader';
 import { currencyService } from '@/lib/currency';
 import { formatRelativeTime } from '@/lib/utils/formatters';
 import { ErrorHandler } from '@/lib/utils/error-handler';
+import { useTranslation } from '@/lib/i18n';
 
 interface CacheStatus {
   hasCache: boolean;
@@ -34,24 +35,25 @@ interface CurrencySettings {
   lastUpdate: Date | null;
 }
 
-const UPDATE_POLICIES = [
-  { value: 'auto', label: 'Automatisch', description: 'Aktualisiert Wechselkurse automatisch wenn verfügbar' },
-  { value: 'wifi-only', label: 'Nur WLAN', description: 'Aktualisiert nur über WLAN-Verbindungen' },
-  { value: 'manual', label: 'Manuell', description: 'Nur auf Anfrage aktualisieren' },
-];
-
-const CACHE_EXPIRY_OPTIONS = [
-  { value: 1, label: '1 Stunde' },
-  { value: 6, label: '6 Stunden' },
-  { value: 12, label: '12 Stunden' },
-  { value: 24, label: '1 Tag' },
-  { value: 48, label: '2 Tage' },
-  { value: 168, label: '1 Woche' },
-];
-
 export default function CurrencyDataScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
+
+  const UPDATE_POLICIES = [
+    { value: 'auto', label: t('settings.currency.data.update_policy.auto'), description: t('settings.currency.data.update_policy.auto_description') },
+    { value: 'wifi-only', label: t('settings.currency.data.update_policy.wifi_only'), description: t('settings.currency.data.update_policy.wifi_only_description') },
+    { value: 'manual', label: t('settings.currency.data.update_policy.manual'), description: t('settings.currency.data.update_policy.manual_description') },
+  ];
+
+  const CACHE_EXPIRY_OPTIONS = [
+    { value: 1, label: t('settings.currency.data.cache_expiry.1_hour') },
+    { value: 6, label: t('settings.currency.data.cache_expiry.6_hours') },
+    { value: 12, label: t('settings.currency.data.cache_expiry.12_hours') },
+    { value: 24, label: t('settings.currency.data.cache_expiry.1_day') },
+    { value: 48, label: t('settings.currency.data.cache_expiry.2_days') },
+    { value: 168, label: t('settings.currency.data.cache_expiry.1_week') },
+  ];
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [showManualRateEditor, setShowManualRateEditor] = useState(false);
@@ -111,18 +113,18 @@ export default function CurrencyDataScreen() {
       const result = await currencyService.manualUpdate();
       if (result.success) {
         Alert.alert(
-          'Erfolgreich aktualisiert',
-          'Wechselkurse wurden erfolgreich aktualisiert.',
-          [{ text: 'OK', style: 'default' }]
+          t('settings.currency.data.update.success_title'),
+          t('settings.currency.data.update.success_message'),
+          [{ text: t('common.ok'), style: 'default' }]
         );
         // Reload status to show updated information
         await loadCacheStatus();
         await loadSettings();
       } else {
         Alert.alert(
-          'Aktualisierung fehlgeschlagen',
-          result.error || 'Unbekannter Fehler beim Aktualisieren der Wechselkurse.',
-          [{ text: 'OK', style: 'default' }]
+          t('settings.currency.data.update.failed_title'),
+          result.error || t('settings.currency.data.update.failed_message'),
+          [{ text: t('common.ok'), style: 'default' }]
         );
       }
     } catch (error) {
@@ -134,21 +136,21 @@ export default function CurrencyDataScreen() {
 
   const handleClearCache = async () => {
     Alert.alert(
-      'Cache leeren',
-      'Möchten Sie den Cache für Wechselkurse wirklich leeren? Dies wird alle gespeicherten Kursdaten löschen.',
+      t('settings.currency.data.clear_cache.title'),
+      t('settings.currency.data.clear_cache.message'),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Leeren',
+          text: t('settings.currency.data.clear_cache.button'),
           style: 'destructive',
           onPress: async () => {
             try {
               await currencyService.clearCache();
               await loadCacheStatus();
               Alert.alert(
-                'Cache geleert',
-                'Der Wechselkurs-Cache wurde erfolgreich geleert.',
-                [{ text: 'OK', style: 'default' }]
+                t('settings.currency.data.clear_cache.success_title'),
+                t('settings.currency.data.clear_cache.success_message'),
+                [{ text: t('common.ok'), style: 'default' }]
               );
             } catch (error) {
               await ErrorHandler.handleError(error, 'clear cache', true);
@@ -162,9 +164,9 @@ export default function CurrencyDataScreen() {
   const handleSetManualRate = async () => {
     if (!manualRate || isNaN(parseFloat(manualRate))) {
       Alert.alert(
-        'Ungültiger Wert',
-        'Bitte geben Sie einen gültigen Wechselkurs ein.',
-        [{ text: 'OK', style: 'default' }]
+        t('settings.currency.data.manual_rate.invalid_title'),
+        t('settings.currency.data.manual_rate.invalid_message'),
+        [{ text: t('common.ok'), style: 'default' }]
       );
       return;
     }
@@ -174,9 +176,9 @@ export default function CurrencyDataScreen() {
       await currencyService.setManualRate(manualFromCurrency, manualToCurrency, rate);
 
       Alert.alert(
-        'Kurs gesetzt',
-        `Manueller Wechselkurs ${manualFromCurrency}/${manualToCurrency} = ${rate} wurde gespeichert.`,
-        [{ text: 'OK', style: 'default' }]
+        t('settings.currency.data.manual_rate.success_title'),
+        t('settings.currency.data.manual_rate.success_message', { from: manualFromCurrency, to: manualToCurrency, rate }),
+        [{ text: t('common.ok'), style: 'default' }]
       );
 
       setShowManualRateEditor(false);
@@ -204,16 +206,16 @@ export default function CurrencyDataScreen() {
   };
 
   const getCacheStatusText = (): string => {
-    if (!cacheStatus.hasCache) return 'Kein Cache vorhanden';
-    if (cacheStatus.isExpired) return 'Abgelaufen';
-    return 'Aktuell';
+    if (!cacheStatus.hasCache) return t('settings.currency.data.cache_status.no_cache');
+    if (cacheStatus.isExpired) return t('settings.currency.data.cache_status.expired');
+    return t('settings.currency.data.cache_status.current');
   };
 
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
         <AppHeader
-          title="Währungsdaten"
+          title={t('settings.currency.data.title')}
           variant="large"
           showBack={true}
           onBackPress={() => router.back()}
@@ -221,7 +223,7 @@ export default function CurrencyDataScreen() {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#007AFF'} />
           <Text style={[styles.loadingText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            Einstellungen laden...
+            {t('settings.currency.data.loading')}
           </Text>
         </View>
       </View>
@@ -231,7 +233,7 @@ export default function CurrencyDataScreen() {
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
-        title="Währungsdaten"
+        title={t('settings.currency.data.title')}
         variant="large"
         showBack={true}
         onBackPress={() => router.back()}
@@ -245,14 +247,14 @@ export default function CurrencyDataScreen() {
         {/* Cache Status */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Cache Status
+            {t('settings.currency.data.sections.cache_status')}
           </Text>
           <Card variant="clean" style={styles.card}>
             <View style={styles.statusRow}>
               <View style={styles.statusInfo}>
                 <View style={styles.statusHeader}>
                   <Text style={[styles.statusLabel, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                    Status
+                    {t('settings.currency.data.cache_status.label')}
                   </Text>
                   <View style={[styles.statusIndicator, { backgroundColor: getCacheStatusColor() }]} />
                   <Text style={[styles.statusValue, { color: getCacheStatusColor() }]}>
@@ -261,12 +263,12 @@ export default function CurrencyDataScreen() {
                 </View>
                 {cacheStatus.hasCache && (
                   <Text style={[styles.statusDetail, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    Alter: {formatCacheAge(cacheStatus.age)}
+                    {t('settings.currency.data.cache_status.age', { age: formatCacheAge(cacheStatus.age) })}
                   </Text>
                 )}
                 {cacheStatus.lastUpdate && (
                   <Text style={[styles.statusDetail, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    Letzte Aktualisierung: {formatRelativeTime(cacheStatus.lastUpdate)}
+                    {t('settings.currency.data.cache_status.last_update', { time: formatRelativeTime(cacheStatus.lastUpdate) })}
                   </Text>
                 )}
               </View>
@@ -275,7 +277,7 @@ export default function CurrencyDataScreen() {
                   onPress={handleManualUpdate}
                   disabled={isUpdating}
                   style={[styles.actionButton, { backgroundColor: '#007AFF' }]}
-                  accessibilityLabel="Wechselkurse aktualisieren"
+                  accessibilityLabel={t('settings.currency.data.actions.update_rates')}
                 >
                   {isUpdating ? (
                     <ActivityIndicator size="small" color="#FFFFFF" />
@@ -286,14 +288,14 @@ export default function CurrencyDataScreen() {
                 <TouchableOpacity
                   onPress={handleClearCache}
                   style={[styles.actionButton, { backgroundColor: '#FF3B30' }]}
-                  accessibilityLabel="Cache leeren"
+                  accessibilityLabel={t('settings.currency.data.actions.clear_cache')}
                 >
                   <Icon name="delete" size={16} color="#FFFFFF" />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => setShowManualRateEditor(true)}
                   style={[styles.actionButton, { backgroundColor: '#FF9500' }]}
-                  accessibilityLabel="Manuellen Kurs setzen"
+                  accessibilityLabel={t('settings.currency.data.actions.set_manual_rate')}
                 >
                   <Icon name="edit" size={16} color="#FFFFFF" />
                 </TouchableOpacity>
@@ -305,16 +307,15 @@ export default function CurrencyDataScreen() {
         {/* Manual Rate Info */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Manuelle Kurskorrektur
+            {t('settings.currency.data.sections.manual_correction')}
           </Text>
           <Card variant="clean" style={styles.card}>
             <View style={styles.optionInfo}>
               <Text style={[styles.optionLabel, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                Kurse manuell korrigieren
+                {t('settings.currency.data.manual_correction.title')}
               </Text>
               <Text style={[styles.optionDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Falls die automatischen Kurse ungenau sind, können Sie diese manuell überschreiben.
-                {'\n'}Beispiel: Google zeigt 100 CHF = 5'218.40 TRY, aber die App zeigt einen anderen Wert.
+                {t('settings.currency.data.manual_correction.description')}
               </Text>
             </View>
           </Card>
@@ -323,7 +324,7 @@ export default function CurrencyDataScreen() {
         {/* Update Policy */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Update-Richtlinie
+            {t('settings.currency.data.sections.update_policy')}
           </Text>
           {UPDATE_POLICIES.map((policy) => (
             <TouchableOpacity
@@ -353,16 +354,16 @@ export default function CurrencyDataScreen() {
         {/* Mobile Data Usage */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Datennutzung
+            {t('settings.currency.data.sections.data_usage')}
           </Text>
           <Card variant="clean" style={styles.card}>
             <View style={styles.switchRow}>
               <View style={styles.switchInfo}>
                 <Text style={[styles.switchLabel, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  Mobile Daten verwenden
+                  {t('settings.currency.data.mobile_data.title')}
                 </Text>
                 <Text style={[styles.switchDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                  Wechselkurse auch über mobile Datenverbindung aktualisieren
+                  {t('settings.currency.data.mobile_data.description')}
                 </Text>
               </View>
               <Switch
@@ -378,7 +379,7 @@ export default function CurrencyDataScreen() {
         {/* Cache Expiry */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Cache-Gültigkeitsdauer
+            {t('settings.currency.data.sections.cache_expiry')}
           </Text>
           {CACHE_EXPIRY_OPTIONS.map((option) => (
             <TouchableOpacity
@@ -413,36 +414,35 @@ export default function CurrencyDataScreen() {
             <TouchableOpacity
               onPress={() => setShowManualRateEditor(false)}
               style={styles.backButton}
-              accessibilityLabel="Abbrechen"
+              accessibilityLabel={t('common.cancel')}
             >
-              <Text style={[styles.headerButton, { color: '#007AFF' }]}>Abbrechen</Text>
+              <Text style={[styles.headerButton, { color: '#007AFF' }]}>{t('common.cancel')}</Text>
             </TouchableOpacity>
             <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              Manueller Kurs
+              {t('settings.currency.data.manual_rate_editor.title')}
             </Text>
             <TouchableOpacity
               onPress={handleSetManualRate}
               style={styles.backButton}
-              accessibilityLabel="Speichern"
+              accessibilityLabel={t('common.save')}
             >
-              <Text style={[styles.headerButton, { color: '#007AFF' }]}>Speichern</Text>
+              <Text style={[styles.headerButton, { color: '#007AFF' }]}>{t('common.save')}</Text>
             </TouchableOpacity>
           </View>
 
           <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
             <View style={styles.section}>
               <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                Wechselkurs korrigieren
+                {t('settings.currency.data.manual_rate_editor.section_title')}
               </Text>
 
               <Card variant="clean" style={styles.card}>
                 <View style={styles.optionInfo}>
                   <Text style={[styles.optionLabel, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                    Beispiel für TRY (Türkische Lira)
+                    {t('settings.currency.data.manual_rate_editor.example_title')}
                   </Text>
                   <Text style={[styles.optionDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    Google: 100 CHF = 5'218.40 TRY{'\n'}
-                    Geben Sie 52.184 ein (für 1 CHF = 52.184 TRY)
+                    {t('settings.currency.data.manual_rate_editor.example_description')}
                   </Text>
                 </View>
               </Card>
@@ -450,7 +450,7 @@ export default function CurrencyDataScreen() {
               <Card variant="clean" style={styles.card}>
                 <View style={styles.currencyPairRow}>
                   <View style={styles.currencyInput}>
-                    <Text style={[styles.inputLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>Von</Text>
+                    <Text style={[styles.inputLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>{t('settings.currency.data.manual_rate_editor.from_label')}</Text>
                     <TextInput
                       style={[styles.currencyCode, {
                         color: isDark ? '#FFFFFF' : '#1C1C1E',
@@ -468,7 +468,7 @@ export default function CurrencyDataScreen() {
                   <Icon name="arrow-right" size={20} color={isDark ? '#8E8E93' : '#6D6D70'} />
 
                   <View style={styles.currencyInput}>
-                    <Text style={[styles.inputLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>Zu</Text>
+                    <Text style={[styles.inputLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>{t('settings.currency.data.manual_rate_editor.to_label')}</Text>
                     <TextInput
                       style={[styles.currencyCode, {
                         color: isDark ? '#FFFFFF' : '#1C1C1E',
@@ -488,7 +488,7 @@ export default function CurrencyDataScreen() {
               <Card variant="clean" style={styles.card}>
                 <View style={styles.optionInfo}>
                   <Text style={[styles.inputLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    Wechselkurs (1 {manualFromCurrency} = ? {manualToCurrency})
+                    {t('settings.currency.data.manual_rate_editor.rate_label', { from: manualFromCurrency, to: manualToCurrency })}
                   </Text>
                   <TextInput
                     style={[styles.rateInput, {
@@ -497,7 +497,7 @@ export default function CurrencyDataScreen() {
                     }]}
                     value={manualRate}
                     onChangeText={setManualRate}
-                    placeholder="z.B. 52.184"
+                    placeholder={t('settings.currency.data.manual_rate_editor.rate_placeholder')}
                     placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
                     keyboardType="decimal-pad"
                     autoFocus

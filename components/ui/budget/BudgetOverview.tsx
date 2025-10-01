@@ -2,10 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Card } from '@/components/design';
 import { Vacation, Expense } from '@/types';
-import { calculateBudgetAnalysis, formatCurrency, getBudgetStatusColor, getBudgetStatusText } from '@/lib/budget-calculations';
+import { calculateBudgetAnalysis, formatCurrency, getBudgetStatusColor } from '@/lib/budget-calculations';
 import { useColorScheme } from 'react-native';
 import { spacing } from '@/constants/spacing';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useTranslation } from '@/lib/i18n';
 
 interface BudgetOverviewProps {
   vacation: Vacation;
@@ -41,10 +42,24 @@ function ProgressBar({ progress, color, style }: ProgressBarProps) {
 export default function BudgetOverview({ vacation, expenses }: BudgetOverviewProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
   const { defaultCurrency } = useCurrency();
   const analysis = calculateBudgetAnalysis(vacation, expenses);
 
   const progressColor = getBudgetStatusColor(analysis.status, analysis.budgetPercentageUsed);
+
+  const getBudgetStatusText = (status: typeof analysis.status): string => {
+    switch (status) {
+      case 'upcoming':
+        return t('components.budget_overview.status.upcoming');
+      case 'active':
+        return t('components.budget_overview.status.active');
+      case 'completed':
+        return t('components.budget_overview.status.completed');
+      default:
+        return '';
+    }
+  };
 
   return (
     <View style={[styles.container, {
@@ -70,7 +85,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
             style={styles.progressBar}
           />
           <Text style={[styles.progressText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {analysis.budgetPercentageUsed.toFixed(1)}% verwendet
+            {t('components.budget_overview.progress', { percentage: analysis.budgetPercentageUsed.toFixed(1) })}
           </Text>
         </View>
       </View>
@@ -82,7 +97,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
           <View style={styles.budgetGridRow}>
             <View style={styles.budgetGridItem}>
               <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Gesamtbudget
+                {t('components.budget_overview.total_budget')}
               </Text>
               <Text style={[styles.budgetGridAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
                 {formatCurrency(analysis.totalBudget, defaultCurrency)}
@@ -90,7 +105,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
             </View>
             <View style={styles.budgetGridItem}>
               <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Ausgegeben
+                {t('components.budget_overview.spent')}
               </Text>
               <Text style={[styles.budgetGridAmount, {
                 color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E')
@@ -104,7 +119,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
           <View style={styles.budgetGridRow}>
             <View style={styles.budgetGridItem}>
               <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Verbleibt
+                {t('components.budget_overview.remaining')}
               </Text>
               <Text style={[styles.budgetGridAmount, {
                 color: analysis.remainingBudget < 0 ? '#FF3B30' : '#34C759'
@@ -114,7 +129,9 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
             </View>
             <View style={styles.budgetGridItem}>
               <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                {analysis.remainingDays > 0 ? `Verbleibt pro Tag (${analysis.remainingDays})` : 'Ferien beendet'}
+                {analysis.remainingDays > 0
+                  ? t('components.budget_overview.per_day', { days: analysis.remainingDays })
+                  : t('components.budget_overview.vacation_ended')}
               </Text>
               <Text style={[styles.budgetGridAmount, {
                 color: analysis.remainingBudget < 0 ? '#FF3B30' :

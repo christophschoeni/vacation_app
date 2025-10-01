@@ -12,6 +12,7 @@ import {
 } from '@/lib/vacation-colors';
 import { formatDateRange, formatCurrencyCompact } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useTranslation } from '@/lib/i18n';
 import type { Vacation } from '@/types';
 
 interface VacationCardProps {
@@ -22,6 +23,7 @@ interface VacationCardProps {
 
 export default function VacationCard({ vacation, onPress, onLongPress }: VacationCardProps) {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const { expenses } = useExpenses(vacation.id);
   const { defaultCurrency } = useCurrency();
 
@@ -88,7 +90,7 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
                       : '#B3FFB3' // Light green for remaining budget
                   }
                 ]}>
-                  {budgetStatus === 'over' ? 'Überschreitung: ' : 'Verbleibend: '}
+                  {budgetStatus === 'over' ? t('components.vacation_card.over_budget') : t('components.vacation_card.remaining')}{' '}
                   {formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}
                 </Text>
               </View>

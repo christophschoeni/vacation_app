@@ -17,10 +17,12 @@ import {
 import { DatePicker, FormInput } from '@/components/ui/forms';
 import { useVacations } from '@/hooks/use-vacations';
 import { logger } from '@/lib/utils/logger';
+import { useTranslation } from '@/lib/i18n';
 
 export default function VacationEditScreen() {
   const params = useLocalSearchParams();
   const vacationId = params.vacationId as string;
+  const { t } = useTranslation();
 
   const colorScheme = useColorScheme();
   const { vacations, updateVacation, loading } = useVacations();
@@ -76,7 +78,7 @@ export default function VacationEditScreen() {
       <View style={[styles.container, { backgroundColor: isDark ? '#000' : '#FFFFFF' }]}>
         <View style={styles.loadingContainer}>
           <Text style={[styles.loadingText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Lade Ferien...
+            {t('vacation.edit_screen.loading')}
           </Text>
         </View>
       </View>
@@ -96,17 +98,17 @@ export default function VacationEditScreen() {
 
   const handleSave = async () => {
     if (!vacation) {
-      Alert.alert('Fehler', 'Ferien nicht gefunden.');
+      Alert.alert(t('common.error'), t('vacation.edit_screen.errors.not_found'));
       return;
     }
 
     if (!formData.destination || !formData.hotel || !formData.budget) {
-      Alert.alert('Fehler', 'Bitte füllen Sie alle Pflichtfelder aus.');
+      Alert.alert(t('common.error'), t('vacation.edit_screen.errors.required_fields'));
       return;
     }
 
     if (formData.startDate >= formData.endDate) {
-      Alert.alert('Fehler', 'Das Enddatum muss nach dem Startdatum liegen.');
+      Alert.alert(t('common.error'), t('vacation.edit_screen.errors.invalid_dates'));
       return;
     }
 
@@ -123,10 +125,10 @@ export default function VacationEditScreen() {
       if (updatedVacation) {
         router.back();
       } else {
-        Alert.alert('Fehler', 'Ferien konnten nicht aktualisiert werden.');
+        Alert.alert(t('common.error'), t('vacation.edit_screen.errors.update_failed'));
       }
     } catch {
-      Alert.alert('Fehler', 'Ferien konnten nicht aktualisiert werden.');
+      Alert.alert(t('common.error'), t('vacation.edit_screen.errors.update_failed'));
     } finally {
       setFormLoading(false);
     }
@@ -154,50 +156,50 @@ export default function VacationEditScreen() {
           {/* iOS-style large title in content area */}
           <View style={styles.titleSection}>
             <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              Ferien bearbeiten
+              {t('vacation.edit_screen.title')}
             </Text>
           </View>
 
           <View style={styles.formContainer}>
             <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Ändern Sie hier die Details Ihrer Ferien
+              {t('vacation.edit_screen.subtitle')}
             </Text>
 
             <FormInput
-              label="Reiseziel"
+              label={t('vacation.form.destination')}
               value={formData.destination}
               onChangeText={(value) => updateField('destination', value)}
-              placeholder="z.B. Spanien"
+              placeholder={t('vacation.form.destination_placeholder')}
               required
             />
 
             <FormInput
-              label="Hotel"
+              label={t('vacation.form.hotel')}
               value={formData.hotel}
               onChangeText={(value) => updateField('hotel', value)}
-              placeholder="z.B. Hotel Paradiso"
+              placeholder={t('vacation.form.hotel_placeholder')}
               required
             />
 
             <DatePicker
-              label="Startdatum"
+              label={t('vacation.form.start_date')}
               value={formData.startDate}
               onChange={(date) => updateField('startDate', date)}
               required
             />
 
             <DatePicker
-              label="Enddatum"
+              label={t('vacation.form.end_date')}
               value={formData.endDate}
               onChange={(date) => updateField('endDate', date)}
               required
             />
 
             <FormInput
-              label="Budget (CHF)"
+              label={t('vacation.form.budget')}
               value={formData.budget}
               onChangeText={(value) => updateField('budget', value)}
-              placeholder="z.B. 2500"
+              placeholder={t('vacation.form.budget_placeholder')}
               keyboardType="numeric"
               required
             />

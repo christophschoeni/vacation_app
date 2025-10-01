@@ -21,11 +21,13 @@ import { useChecklists } from '@/hooks/use-checklists';
 import { ChecklistItem } from '@/types';
 import { checklistServiceSQLite } from '@/lib/checklist-service-sqlite';
 import { logger } from '@/lib/utils/logger';
+import { useTranslation } from '@/lib/i18n';
 
 export default function ChecklistDetailScreen() {
   const checklistId = useRouteId();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
 
   const [newItemText, setNewItemText] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
@@ -80,7 +82,7 @@ export default function ChecklistDetailScreen() {
     return (
       <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
         <AppHeader
-          title="Liste wird geladen..."
+          title={t('checklist.loading')}
           showBack={true}
           onBackPress={() => router.back()}
         />
@@ -102,16 +104,16 @@ export default function ChecklistDetailScreen() {
   };
 
   const getCategoryName = (category: string) => {
-    const names = {
-      packing: 'Packen',
-      shopping: 'Einkaufen',
-      bucket: 'Bucket List',
-      todo: 'Aufgaben',
-      planning: 'Planung',
-      general: 'Allgemein',
-      custom: 'Benutzerdefiniert',
+    const names: Record<string, string> = {
+      packing: t('checklist.categories.packing'),
+      shopping: t('checklist.categories.shopping'),
+      bucket: t('checklist.categories.bucket'),
+      todo: t('checklist.categories.todo'),
+      planning: t('checklist.categories.planning'),
+      general: t('checklist.categories.general'),
+      custom: t('checklist.categories.custom'),
     };
-    return names[category as keyof typeof names] || 'Allgemein';
+    return names[category] || t('checklist.categories.general');
   };
 
   const handleAddItem = async () => {
@@ -124,7 +126,7 @@ export default function ChecklistDetailScreen() {
       // Reload checklists to update the view
       await loadChecklists();
     } catch {
-      Alert.alert('Fehler', 'Element konnte nicht hinzugefügt werden.');
+      Alert.alert(t('common.error'), t('checklist.errors.add_item'));
     }
   };
 
@@ -134,18 +136,18 @@ export default function ChecklistDetailScreen() {
       // Reload checklists to update the view
       await loadChecklists();
     } catch {
-      Alert.alert('Fehler', 'Element konnte nicht aktualisiert werden.');
+      Alert.alert(t('common.error'), t('checklist.errors.update_item'));
     }
   };
 
   const handleDeleteItem = async (item: ChecklistItem) => {
     Alert.alert(
-      'Element löschen',
-      `Möchten Sie "${item.text}" wirklich löschen?`,
+      t('checklist.delete_item.title'),
+      t('checklist.delete_item.message', { text: item.text }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -153,7 +155,7 @@ export default function ChecklistDetailScreen() {
               // Reload checklists to update the view
               await loadChecklists();
             } catch {
-              Alert.alert('Fehler', 'Element konnte nicht gelöscht werden.');
+              Alert.alert(t('common.error'), t('checklist.errors.delete_item'));
             }
           },
         },
@@ -163,12 +165,12 @@ export default function ChecklistDetailScreen() {
 
   const handleEditTitle = () => {
     Alert.prompt(
-      'Liste umbenennen',
-      'Neuer Name:',
+      t('checklist.rename.title'),
+      t('checklist.rename.prompt'),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Speichern',
+          text: t('common.save'),
           onPress: async (newTitle) => {
             if (newTitle?.trim() && newTitle !== checklist.title) {
               try {
@@ -180,7 +182,7 @@ export default function ChecklistDetailScreen() {
                 // Reload checklists to update the view
                 await loadChecklists();
               } catch {
-                Alert.alert('Fehler', 'Titel konnte nicht geändert werden.');
+                Alert.alert(t('common.error'), t('checklist.errors.update_title'));
               }
             }
           },
@@ -255,7 +257,7 @@ export default function ChecklistDetailScreen() {
                     backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF',
                   },
                 ]}
-                placeholder="Neues Element hinzufügen..."
+                placeholder={t('checklist.add_item_placeholder')}
                 placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
                 value={newItemText}
                 onChangeText={setNewItemText}
@@ -333,10 +335,10 @@ export default function ChecklistDetailScreen() {
             <View style={styles.emptyState}>
               <Icon name={checklist.icon as any} size={48} color={isDark ? '#3A3A3C' : '#E5E5EA'} />
               <Text style={[styles.emptyTitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Liste ist leer
+                {t('checklist.empty.title')}
               </Text>
               <Text style={[styles.emptyDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Fügen Sie Ihr erstes Element hinzu, um zu beginnen.
+                {t('checklist.empty.description')}
               </Text>
             </View>
           )}

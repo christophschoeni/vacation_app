@@ -86,6 +86,58 @@
       "delete_vacation": "Ferien löschen",
       "export_data": "Daten exportieren",
       "import_data": "Daten importieren"
+    },
+    "checklists": {
+      "title": "Listen",
+      "count": "{{count}} Liste",
+      "count_plural": "{{count}} Listen",
+      "create": {
+        "title": "Neue Liste erstellen",
+        "prompt": "Name der Liste:"
+      },
+      "delete": {
+        "title": "Liste löschen",
+        "message": "Möchten Sie die Liste \"{{title}}\" wirklich löschen?"
+      },
+      "templates": {
+        "title": "Vorlagen",
+        "empty": "Keine Vorlagen verfügbar.",
+        "select_title": "Vorlage auswählen",
+        "select_prompt": "Wählen Sie eine Vorlage aus:"
+      },
+      "empty": {
+        "title": "Noch keine Listen",
+        "description": "Erstellen Sie Ihre erste Liste mit dem Plus-Button.\n\nOder wählen Sie eine Vorlage aus dem Vorlagen-Button."
+      },
+      "errors": {
+        "create": "Liste konnte nicht erstellt werden.",
+        "create_from_template": "Liste konnte nicht aus Vorlage erstellt werden.",
+        "delete": "Liste konnte nicht gelöscht werden."
+      }
+    },
+    "settings_screen": {
+      "title": "Einstellungen",
+      "general": "Allgemein",
+      "vacation_details": {
+        "title": "Ferien Details",
+        "subtitle": "Reiseziel, Hotel, Datum und Budget bearbeiten"
+      }
+    },
+    "edit_screen": {
+      "title": "Ferien bearbeiten",
+      "subtitle": "Ändern Sie hier die Details Ihrer Ferien",
+      "loading": "Lade Ferien...",
+      "errors": {
+        "not_found": "Ferien nicht gefunden.",
+        "required_fields": "Bitte füllen Sie alle Pflichtfelder aus.",
+        "invalid_dates": "Das Enddatum muss nach dem Startdatum liegen.",
+        "update_failed": "Ferien konnten nicht aktualisiert werden."
+      }
+    },
+    "tabs": {
+      "budget": "Budget",
+      "lists": "Listen",
+      "settings": "Einstellungen"
     }
   },
   "expense": {
@@ -164,6 +216,17 @@
   "checklist": {
     "title": "Checkliste",
     "title_plural": "Checklisten",
+    "loading": "Liste wird geladen...",
+    "add_item_placeholder": "Neues Element hinzufügen...",
+    "categories": {
+      "packing": "Packen",
+      "shopping": "Einkaufen",
+      "bucket": "Bucket List",
+      "todo": "Aufgaben",
+      "planning": "Planung",
+      "general": "Allgemein",
+      "custom": "Benutzerdefiniert"
+    },
     "add": {
       "title": "Neue Checkliste",
       "button": "Checkliste erstellen",
@@ -177,6 +240,14 @@
       "title": "Checkliste löschen",
       "message": "Möchten Sie die Checkliste \"{{title}}\" wirklich löschen?",
       "success": "Checkliste erfolgreich gelöscht"
+    },
+    "delete_item": {
+      "title": "Element löschen",
+      "message": "Möchten Sie \"{{text}}\" wirklich löschen?"
+    },
+    "rename": {
+      "title": "Liste umbenennen",
+      "prompt": "Neuer Name:"
     },
     "form": {
       "title": "Titel",
@@ -192,9 +263,16 @@
       "pending": "Offen"
     },
     "empty": {
-      "title": "Noch keine Checklisten",
+      "title": "Liste ist leer",
+      "description": "Fügen Sie Ihr erstes Element hinzu, um zu beginnen.",
       "subtitle": "Erstellen Sie Ihre erste Checkliste",
       "no_items": "Keine Elemente vorhanden"
+    },
+    "errors": {
+      "add_item": "Element konnte nicht hinzugefügt werden.",
+      "update_item": "Element konnte nicht aktualisiert werden.",
+      "delete_item": "Element konnte nicht gelöscht werden.",
+      "update_title": "Titel konnte nicht geändert werden."
     },
     "progress": {
       "completed": "{{completed}} von {{total}} erledigt",
@@ -247,26 +325,164 @@
     "notifications": {
       "title": "Benachrichtigungen",
       "subtitle": "Verwalten Sie Ihre Benachrichtigungen",
+      "note_title": "Hinweis",
+      "note_message": "Benachrichtigungen müssen in den Systemeinstellungen Ihres Geräts aktiviert sein.",
       "budget_alerts": "Budget-Warnungen",
       "budget_alerts_subtitle": "Benachrichtigung bei Budgetüberschreitung",
       "expense_reminders": "Ausgaben-Erinnerungen",
       "expense_reminders_subtitle": "Erinnerung für nicht erfasste Ausgaben",
       "trip_updates": "Reise-Updates",
-      "trip_updates_subtitle": "Wichtige Updates zu Ihren Reisen",
-      "system_note": "Benachrichtigungen müssen in den Systemeinstellungen Ihres Geräts aktiviert sein."
+      "trip_updates_subtitle": "Wichtige Updates zu Ihren Reisen"
     },
     "currency": {
       "title": "Währung",
       "subtitle": "Wählen Sie Ihre bevorzugte Währung",
       "default": "Standardwährung",
       "add_currency": "Neue Währung hinzufügen",
+      "add_aria": "Neue Währung hinzufügen",
+      "delete_aria": "Währung {{name}} löschen",
+      "search_placeholder": "Währung suchen...",
+      "search_results": "Suchergebnisse ({{count}})",
+      "all_currencies": "Alle Währungen ({{count}})",
       "default_currency_delete": "Standardwährungen können nicht gelöscht werden.",
       "currency_exists": "Eine Währung mit diesem Code existiert bereits.",
-      "delete_confirm_title": "Währung löschen",
-      "delete_confirm_message": "Möchten Sie die Währung \"{{name}}\" wirklich löschen?",
+      "delete": {
+        "title": "Währung löschen",
+        "message": "Möchten Sie die Währung \"{{name}}\" wirklich löschen?"
+      },
+      "errors": {
+        "popular_title": "Beliebte Währung",
+        "popular_message": "Beliebte Währungen können nicht gelöscht werden.",
+        "duplicate_title": "Währung bereits vorhanden",
+        "duplicate_message": "Eine Währung mit diesem Code existiert bereits."
+      },
       "exchange_rates": "Wechselkurse",
       "last_updated": "Zuletzt aktualisiert: {{date}}",
-      "update_rates": "Kurse aktualisieren"
+      "update_rates": "Kurse aktualisieren",
+      "calculator": {
+        "title": "Währungsrechner",
+        "loading": "Lade Einstellungen...",
+        "sections": {
+          "update_policy": "Aktualisierung",
+          "cache": "Cache"
+        },
+        "update_policy": {
+          "title": "Update-Richtlinie",
+          "message": "Wählen Sie, wie Wechselkurse aktualisiert werden sollen:",
+          "auto": "Automatisch",
+          "wifi_only": "Nur WiFi",
+          "manual": "Manuell"
+        },
+        "mobile_data": {
+          "title": "Mobile Daten verwenden",
+          "subtitle": "Wechselkurse über Mobilfunk aktualisieren"
+        },
+        "cache_status": {
+          "title": "Cache-Status",
+          "expired": "Abgelaufen",
+          "current": "Aktuell",
+          "no_cache": "Kein Cache vorhanden"
+        },
+        "cache_age_hours": "vor {{hours}}h {{minutes}}m",
+        "cache_age_minutes": "vor {{minutes}}m",
+        "last_update": "Letzte Aktualisierung: {{date}} um {{time}}",
+        "update_now": {
+          "title": "Jetzt aktualisieren",
+          "subtitle": "Wechselkurse manuell laden"
+        },
+        "clear_cache_button": {
+          "title": "Cache löschen",
+          "subtitle": "Gespeicherte Wechselkurse entfernen"
+        },
+        "clear_cache": {
+          "title": "Cache löschen",
+          "message": "Möchten Sie den Wechselkurs-Cache wirklich löschen?",
+          "success": "Cache wurde geleert."
+        },
+        "update_success": "Wechselkurse wurden aktualisiert.",
+        "errors": {
+          "save_failed": "Einstellungen konnten nicht gespeichert werden.",
+          "update_failed": "Aktualisierung fehlgeschlagen.",
+          "clear_cache_failed": "Cache konnte nicht geleert werden."
+        }
+      },
+      "data": {
+        "title": "Währungsdaten",
+        "loading": "Einstellungen laden...",
+        "sections": {
+          "cache_status": "Cache Status",
+          "manual_correction": "Manuelle Kurskorrektur",
+          "update_policy": "Update-Richtlinie",
+          "data_usage": "Datennutzung",
+          "cache_expiry": "Cache-Gültigkeitsdauer"
+        },
+        "cache_status": {
+          "label": "Status",
+          "no_cache": "Kein Cache vorhanden",
+          "expired": "Abgelaufen",
+          "current": "Aktuell",
+          "age": "Alter: {{age}}",
+          "last_update": "Letzte Aktualisierung: {{time}}"
+        },
+        "actions": {
+          "update_rates": "Wechselkurse aktualisieren",
+          "clear_cache": "Cache leeren",
+          "set_manual_rate": "Manuellen Kurs setzen"
+        },
+        "manual_correction": {
+          "title": "Kurse manuell korrigieren",
+          "description": "Falls die automatischen Kurse ungenau sind, können Sie diese manuell überschreiben.\nBeispiel: Google zeigt 100 CHF = 5'218.40 TRY, aber die App zeigt einen anderen Wert."
+        },
+        "update_policy": {
+          "auto": "Automatisch",
+          "auto_description": "Aktualisiert Wechselkurse automatisch wenn verfügbar",
+          "wifi_only": "Nur WLAN",
+          "wifi_only_description": "Aktualisiert nur über WLAN-Verbindungen",
+          "manual": "Manuell",
+          "manual_description": "Nur auf Anfrage aktualisieren"
+        },
+        "mobile_data": {
+          "title": "Mobile Daten verwenden",
+          "description": "Wechselkurse auch über mobile Datenverbindung aktualisieren"
+        },
+        "cache_expiry": {
+          "1_hour": "1 Stunde",
+          "6_hours": "6 Stunden",
+          "12_hours": "12 Stunden",
+          "1_day": "1 Tag",
+          "2_days": "2 Tage",
+          "1_week": "1 Woche"
+        },
+        "update": {
+          "success_title": "Erfolgreich aktualisiert",
+          "success_message": "Wechselkurse wurden erfolgreich aktualisiert.",
+          "failed_title": "Aktualisierung fehlgeschlagen",
+          "failed_message": "Unbekannter Fehler beim Aktualisieren der Wechselkurse."
+        },
+        "clear_cache": {
+          "title": "Cache leeren",
+          "message": "Möchten Sie den Cache für Wechselkurse wirklich leeren? Dies wird alle gespeicherten Kursdaten löschen.",
+          "button": "Leeren",
+          "success_title": "Cache geleert",
+          "success_message": "Der Wechselkurs-Cache wurde erfolgreich geleert."
+        },
+        "manual_rate": {
+          "invalid_title": "Ungültiger Wert",
+          "invalid_message": "Bitte geben Sie einen gültigen Wechselkurs ein.",
+          "success_title": "Kurs gesetzt",
+          "success_message": "Manueller Wechselkurs {{from}}/{{to}} = {{rate}} wurde gespeichert."
+        },
+        "manual_rate_editor": {
+          "title": "Manueller Kurs",
+          "section_title": "Wechselkurs korrigieren",
+          "example_title": "Beispiel für TRY (Türkische Lira)",
+          "example_description": "Google: 100 CHF = 5'218.40 TRY\nGeben Sie 52.184 ein (für 1 CHF = 52.184 TRY)",
+          "from_label": "Von",
+          "to_label": "Zu",
+          "rate_label": "Wechselkurs (1 {{from}} = ? {{to}})",
+          "rate_placeholder": "z.B. 52.184"
+        }
+      }
     },
     "language": {
       "title": "Sprache",
@@ -293,9 +509,26 @@
     },
     "categories": {
       "title": "Kategorien",
-      "subtitle": "Verwalten Sie Ausgabenkategorien",
+      "subtitle": "Tippen Sie auf eine Kategorie, um sie zu bearbeiten",
+      "loading": "Kategorien werden geladen...",
       "custom": "Benutzerdefinierte Kategorien",
-      "add": "Kategorie hinzufügen"
+      "add": "Kategorie hinzufügen",
+      "add_aria": "Neue Kategorie hinzufügen",
+      "delete_aria": "Kategorie {{name}} löschen",
+      "delete": {
+        "title": "Kategorie löschen",
+        "message": "Möchten Sie die Kategorie \"{{name}}\" wirklich löschen?"
+      },
+      "errors": {
+        "save_title": "Speicherfehler",
+        "save_message": "Die Kategorien konnten nicht gespeichert werden. Versuchen Sie es erneut.",
+        "invalid_name_title": "Ungültiger Name",
+        "invalid_name_message": "Bitte geben Sie einen gültigen Kategorie-Namen ein.",
+        "duplicate_title": "Name bereits vorhanden",
+        "duplicate_message": "Eine Kategorie mit diesem Namen existiert bereits.",
+        "cannot_delete_title": "Kategorie kann nicht gelöscht werden",
+        "cannot_delete_message": "Sie müssen mindestens eine Kategorie haben."
+      }
     },
     "templates": {
       "title": "Standard-Listen",
@@ -305,10 +538,6 @@
       "created_success": "4 Standard-Listen wurden erstellt!",
       "created_error": "Standard-Listen konnten nicht erstellt werden.",
       "order_error": "Reihenfolge konnte nicht gespeichert werden."
-    },
-    "notifications": {
-      "note_title": "Hinweis",
-      "note_message": "Benachrichtigungen müssen in den Systemeinstellungen Ihres Geräts aktiviert sein."
     }
   },
   "errors": {
@@ -433,5 +662,35 @@
     "contact_support": "Support kontaktieren",
     "tutorial": "Tutorial",
     "tips": "Tipps & Tricks"
+  },
+  "components": {
+    "currency_editor": {
+      "title": "Neue Währung",
+      "code_label": "Währungscode (z.B. USD, TRY)",
+      "code_placeholder": "USD",
+      "name_label": "Vollständiger Name",
+      "name_placeholder": "US-Dollar",
+      "symbol_label": "Symbol (z.B. $, €, ¥)",
+      "symbol_placeholder": "$",
+      "flag_label": "Flagge (z.B. 🇺🇸, 🇩🇪, 🇨🇭)",
+      "flag_placeholder": "🇺🇸"
+    },
+    "vacation_card": {
+      "over_budget": "Überschreitung:",
+      "remaining": "Verbleibend:"
+    },
+    "budget_overview": {
+      "status": {
+        "upcoming": "Zukünftige Reise",
+        "active": "Aktive Reise",
+        "completed": "Abgeschlossene Reise"
+      },
+      "progress": "{{percentage}}% verwendet",
+      "total_budget": "Gesamtbudget",
+      "spent": "Ausgegeben",
+      "remaining": "Verbleibt",
+      "per_day": "Verbleibt pro Tag ({{days}})",
+      "vacation_ended": "Ferien beendet"
+    }
   }
 }

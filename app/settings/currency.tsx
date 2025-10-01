@@ -18,6 +18,7 @@ import { logger } from '@/lib/utils/logger';
 import { ErrorHandler } from '@/lib/utils/error-handler';
 import { currencyService, POPULAR_CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useTranslation } from '@/lib/i18n';
 
 const CURRENCIES_STORAGE_KEY = '@vacation_assist_currencies';
 
@@ -25,6 +26,7 @@ const CURRENCIES_STORAGE_KEY = '@vacation_assist_currencies';
 
 export default function CurrencyScreen() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const { defaultCurrency, setDefaultCurrency, isLoading: currencyLoading } = useCurrency();
   const [currencies, setCurrencies] = useState<CurrencyInfo[]>(ALL_CURRENCIES);
   const [showEditor, setShowEditor] = useState(false);
@@ -88,20 +90,20 @@ export default function CurrencyScreen() {
     const isPopularCurrency = POPULAR_CURRENCIES.some(c => c.code === currencyCode);
     if (isPopularCurrency) {
       Alert.alert(
-        'Beliebte Währung',
-        'Beliebte Währungen können nicht gelöscht werden.',
-        [{ text: 'OK', style: 'default' }]
+        t('settings.currency.errors.popular_title'),
+        t('settings.currency.errors.popular_message'),
+        [{ text: t('common.ok'), style: 'default' }]
       );
       return;
     }
 
     Alert.alert(
-      'Währung löschen',
-      `Möchten Sie die Währung "${currency.name}" wirklich löschen?`,
+      t('settings.currency.delete.title'),
+      t('settings.currency.delete.message', { name: currency.name }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => {
             const newCurrencies = currencies.filter(c => c.code !== currencyCode);
@@ -140,7 +142,7 @@ export default function CurrencyScreen() {
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
-        title="Währung"
+        title={t('settings.currency.title')}
         variant="large"
         showBack={true}
         onBackPress={() => router.back()}
@@ -148,7 +150,7 @@ export default function CurrencyScreen() {
           <TouchableOpacity
             onPress={() => setShowEditor(true)}
             style={styles.headerButton}
-            accessibilityLabel="Neue Währung hinzufügen"
+            accessibilityLabel={t('settings.currency.add_aria')}
           >
             <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
           </TouchableOpacity>
@@ -165,7 +167,7 @@ export default function CurrencyScreen() {
           <Icon name="search" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
           <TextInput
             style={[styles.searchInput, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}
-            placeholder="Währung suchen..."
+            placeholder={t('settings.currency.search_placeholder')}
             placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -181,7 +183,7 @@ export default function CurrencyScreen() {
 
         <View style={styles.section}>
           <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {searchQuery.trim() ? `Suchergebnisse (${getFilteredCurrencies().length})` : `Alle Währungen (${getFilteredCurrencies().length})`}
+            {searchQuery.trim() ? t('settings.currency.search_results', { count: getFilteredCurrencies().length }) : t('settings.currency.all_currencies', { count: getFilteredCurrencies().length })}
           </Text>
 
           {getFilteredCurrencies().map((currency) => (
@@ -211,7 +213,7 @@ export default function CurrencyScreen() {
                           handleDeleteCurrency(currency.code);
                         }}
                         style={styles.deleteButton}
-                        accessibilityLabel={`Währung ${currency.name} löschen`}
+                        accessibilityLabel={t('settings.currency.delete_aria', { name: currency.name })}
                       >
                         <Icon name="delete" size={18} color="#FF3B30" />
                       </TouchableOpacity>
@@ -237,9 +239,9 @@ export default function CurrencyScreen() {
 
           if (isDuplicate) {
             Alert.alert(
-              'Währung bereits vorhanden',
-              'Eine Währung mit diesem Code existiert bereits.',
-              [{ text: 'OK', style: 'default' }]
+              t('settings.currency.errors.duplicate_title'),
+              t('settings.currency.errors.duplicate_message'),
+              [{ text: t('common.ok'), style: 'default' }]
             );
             return;
           }

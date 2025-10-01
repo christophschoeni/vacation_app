@@ -16,10 +16,12 @@ import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { currencyService, UpdatePolicy } from '@/lib/currency';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from '@/lib/i18n';
 
 export default function CurrencyCalculatorScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
 
   const [settings, setSettings] = useState({
     updatePolicy: 'auto' as UpdatePolicy,
@@ -72,7 +74,7 @@ export default function CurrencyCalculatorScreen() {
     try {
       await currencyService.updateSettings(newSettings);
     } catch (error) {
-      Alert.alert('Fehler', 'Einstellungen konnten nicht gespeichert werden.');
+      Alert.alert(t('common.error'), t('settings.currency.calculator.errors.save_failed'));
     }
   };
 
@@ -85,15 +87,15 @@ export default function CurrencyCalculatorScreen() {
 
       if (result.success) {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert('Erfolg', 'Wechselkurse wurden aktualisiert.');
+        Alert.alert(t('common.success'), t('settings.currency.calculator.update_success'));
         await loadCacheStatus();
       } else {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        Alert.alert('Fehler', result.error || 'Aktualisierung fehlgeschlagen.');
+        Alert.alert(t('common.error'), result.error || t('settings.currency.calculator.errors.update_failed'));
       }
     } catch (error) {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Fehler', 'Aktualisierung fehlgeschlagen.');
+      Alert.alert(t('common.error'), t('settings.currency.calculator.errors.update_failed'));
     } finally {
       setIsUpdating(false);
     }
@@ -101,21 +103,21 @@ export default function CurrencyCalculatorScreen() {
 
   const handleClearCache = async () => {
     Alert.alert(
-      'Cache löschen',
-      'Möchten Sie den Wechselkurs-Cache wirklich löschen?',
+      t('settings.currency.calculator.clear_cache.title'),
+      t('settings.currency.calculator.clear_cache.message'),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             try {
               await currencyService.clearCache();
               await loadCacheStatus();
-              Alert.alert('Erfolg', 'Cache wurde geleert.');
+              Alert.alert(t('common.success'), t('settings.currency.calculator.clear_cache.success'));
             } catch (error) {
-              Alert.alert('Fehler', 'Cache konnte nicht geleert werden.');
+              Alert.alert(t('common.error'), t('settings.currency.calculator.errors.clear_cache_failed'));
             }
           },
         },
@@ -128,9 +130,9 @@ export default function CurrencyCalculatorScreen() {
     const minutes = Math.floor((ageMs % (1000 * 60 * 60)) / (1000 * 60));
 
     if (hours > 0) {
-      return `vor ${hours}h ${minutes}m`;
+      return t('settings.currency.calculator.cache_age_hours', { hours, minutes });
     } else {
-      return `vor ${minutes}m`;
+      return t('settings.currency.calculator.cache_age_minutes', { minutes });
     }
   };
 
@@ -138,7 +140,7 @@ export default function CurrencyCalculatorScreen() {
     return (
       <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
         <AppHeader
-          title="Währungsrechner"
+          title={t('settings.currency.calculator.title')}
           variant="large"
           showBack={true}
           onBackPress={() => router.back()}
@@ -146,7 +148,7 @@ export default function CurrencyCalculatorScreen() {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#007AFF'} />
           <Text style={[styles.loadingText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Lade Einstellungen...
+            {t('settings.currency.calculator.loading')}
           </Text>
         </View>
       </View>
@@ -156,7 +158,7 @@ export default function CurrencyCalculatorScreen() {
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
-        title="Währungsrechner"
+        title={t('settings.currency.calculator.title')}
         variant="large"
         showBack={true}
         onBackPress={() => router.back()}
@@ -171,19 +173,19 @@ export default function CurrencyCalculatorScreen() {
         {/* Update Policy Section */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Aktualisierung
+            {t('settings.currency.calculator.sections.update_policy')}
           </Text>
 
           <TouchableOpacity
             onPress={() => {
               Alert.alert(
-                'Update-Richtlinie',
-                'Wählen Sie, wie Wechselkurse aktualisiert werden sollen:',
+                t('settings.currency.calculator.update_policy.title'),
+                t('settings.currency.calculator.update_policy.message'),
                 [
-                  { text: 'Abbrechen', style: 'cancel' },
-                  { text: 'Automatisch', onPress: () => updateSetting('updatePolicy', 'auto') },
-                  { text: 'Nur WiFi', onPress: () => updateSetting('updatePolicy', 'wifi-only') },
-                  { text: 'Manuell', onPress: () => updateSetting('updatePolicy', 'manual') },
+                  { text: t('common.cancel'), style: 'cancel' },
+                  { text: t('settings.currency.calculator.update_policy.auto'), onPress: () => updateSetting('updatePolicy', 'auto') },
+                  { text: t('settings.currency.calculator.update_policy.wifi_only'), onPress: () => updateSetting('updatePolicy', 'wifi-only') },
+                  { text: t('settings.currency.calculator.update_policy.manual'), onPress: () => updateSetting('updatePolicy', 'manual') },
                 ]
               );
             }}
@@ -195,12 +197,12 @@ export default function CurrencyCalculatorScreen() {
                   <Icon name="refresh" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                   <View style={styles.settingsText}>
                     <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                      Update-Richtlinie
+                      {t('settings.currency.calculator.update_policy.title')}
                     </Text>
                     <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                      {settings.updatePolicy === 'auto' && 'Automatisch'}
-                      {settings.updatePolicy === 'wifi-only' && 'Nur WiFi'}
-                      {settings.updatePolicy === 'manual' && 'Manuell'}
+                      {settings.updatePolicy === 'auto' && t('settings.currency.calculator.update_policy.auto')}
+                      {settings.updatePolicy === 'wifi-only' && t('settings.currency.calculator.update_policy.wifi_only')}
+                      {settings.updatePolicy === 'manual' && t('settings.currency.calculator.update_policy.manual')}
                     </Text>
                   </View>
                 </View>
@@ -215,10 +217,10 @@ export default function CurrencyCalculatorScreen() {
                 <Icon name="signal" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                 <View style={styles.settingsText}>
                   <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                    Mobile Daten verwenden
+                    {t('settings.currency.calculator.mobile_data.title')}
                   </Text>
                   <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    Wechselkurse über Mobilfunk aktualisieren
+                    {t('settings.currency.calculator.mobile_data.subtitle')}
                   </Text>
                 </View>
               </View>
@@ -235,7 +237,7 @@ export default function CurrencyCalculatorScreen() {
         {/* Cache Section */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Cache
+            {t('settings.currency.calculator.sections.cache')}
           </Text>
 
           <Card variant="clean" style={styles.settingsCard}>
@@ -245,12 +247,12 @@ export default function CurrencyCalculatorScreen() {
                   <Icon name="clock" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                   <View style={styles.settingsText}>
                     <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                      Cache-Status
+                      {t('settings.currency.calculator.cache_status.title')}
                     </Text>
                     <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
                       {cacheStatus.hasCache
-                        ? `${formatAge(cacheStatus.age)} • ${cacheStatus.isExpired ? 'Abgelaufen' : 'Aktuell'}`
-                        : 'Kein Cache vorhanden'
+                        ? `${formatAge(cacheStatus.age)} • ${cacheStatus.isExpired ? t('settings.currency.calculator.cache_status.expired') : t('settings.currency.calculator.cache_status.current')}`
+                        : t('settings.currency.calculator.cache_status.no_cache')
                       }
                     </Text>
                   </View>
@@ -263,7 +265,10 @@ export default function CurrencyCalculatorScreen() {
 
               {cacheStatus.lastUpdate && (
                 <Text style={[styles.lastUpdateText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                  Letzte Aktualisierung: {cacheStatus.lastUpdate.toLocaleDateString('de-CH')} um {cacheStatus.lastUpdate.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' })}
+                  {t('settings.currency.calculator.last_update', {
+                    date: cacheStatus.lastUpdate.toLocaleDateString('de-CH'),
+                    time: cacheStatus.lastUpdate.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' })
+                  })}
                 </Text>
               )}
             </View>
@@ -280,10 +285,10 @@ export default function CurrencyCalculatorScreen() {
                   <Icon name="download" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                   <View style={styles.settingsText}>
                     <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                      Jetzt aktualisieren
+                      {t('settings.currency.calculator.update_now.title')}
                     </Text>
                     <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                      Wechselkurse manuell laden
+                      {t('settings.currency.calculator.update_now.subtitle')}
                     </Text>
                   </View>
                 </View>
@@ -306,10 +311,10 @@ export default function CurrencyCalculatorScreen() {
                   <Icon name="delete" size={24} color="#FF3B30" />
                   <View style={styles.settingsText}>
                     <Text style={[styles.settingsTitle, { color: '#FF3B30' }]}>
-                      Cache löschen
+                      {t('settings.currency.calculator.clear_cache_button.title')}
                     </Text>
                     <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                      Gespeicherte Wechselkurse entfernen
+                      {t('settings.currency.calculator.clear_cache_button.subtitle')}
                     </Text>
                   </View>
                 </View>

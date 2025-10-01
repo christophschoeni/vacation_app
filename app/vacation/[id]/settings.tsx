@@ -2,6 +2,7 @@ import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { router } from 'expo-router';
 import { useRouteParam } from '@/hooks/use-route-param';
+import { useTranslation } from '@/lib/i18n';
 import React from 'react';
 import {
   ScrollView,
@@ -16,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function VacationSettingsScreen() {
   const vacationId = useRouteParam('id');
+  const { t } = useTranslation();
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -27,8 +29,8 @@ export default function VacationSettingsScreen() {
   const settingsItems = [
     {
       id: 'vacation-details',
-      title: 'Ferien Details',
-      subtitle: 'Reiseziel, Hotel, Datum und Budget bearbeiten',
+      title: t('vacation.settings_screen.vacation_details.title'),
+      subtitle: t('vacation.settings_screen.vacation_details.subtitle'),
       icon: 'settings' as const,
       route: `/vacation-edit?vacationId=${vacationId}`,
     },
@@ -68,13 +70,13 @@ export default function VacationSettingsScreen() {
         {/* iOS-style large title in content area */}
         <View style={styles.titleSection}>
           <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Einstellungen
+            {t('vacation.settings_screen.title')}
           </Text>
         </View>
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Allgemein
+            {t('vacation.settings_screen.general')}
           </Text>
 
           {settingsItems.map((item) => (

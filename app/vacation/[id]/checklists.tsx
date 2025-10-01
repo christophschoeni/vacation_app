@@ -9,10 +9,12 @@ import ChecklistCard from '@/components/ui/cards/ChecklistCard';
 import AppHeader from '@/components/ui/AppHeader';
 import { Icon } from '@/components/design';
 import { logger } from '@/lib/utils/logger';
+import { useTranslation } from '@/lib/i18n';
 
 export default function VacationChecklistsScreen() {
   const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
 
   // Force re-render when checklists change
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -67,18 +69,18 @@ export default function VacationChecklistsScreen() {
 
   const handleCreateList = () => {
     Alert.prompt(
-      'Neue Liste erstellen',
-      'Name der Liste:',
+      t('vacation.checklists.create.title'),
+      t('vacation.checklists.create.prompt'),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Erstellen',
+          text: t('common.create'),
           onPress: async (title) => {
             if (title?.trim()) {
               try {
                 await createChecklist(title.trim());
               } catch (error) {
-                Alert.alert('Fehler', 'Liste konnte nicht erstellt werden.');
+                Alert.alert(t('common.error'), t('vacation.checklists.errors.create'));
               }
             }
           },
@@ -91,7 +93,7 @@ export default function VacationChecklistsScreen() {
 
   const handleShowTemplates = () => {
     if (templates.length === 0) {
-      Alert.alert('Vorlagen', 'Keine Vorlagen verfügbar.');
+      Alert.alert(t('vacation.checklists.templates.title'), t('vacation.checklists.templates.empty'));
       return;
     }
 
@@ -101,10 +103,10 @@ export default function VacationChecklistsScreen() {
     }));
 
     Alert.alert(
-      'Vorlage auswählen',
-      'Wählen Sie eine Vorlage aus:',
+      t('vacation.checklists.templates.select_title'),
+      t('vacation.checklists.templates.select_prompt'),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         ...templateButtons,
       ]
     );
@@ -115,25 +117,25 @@ export default function VacationChecklistsScreen() {
       const template = templates.find(t => t.id === templateId);
       await createFromTemplate(templateId);
     } catch (error) {
-      Alert.alert('Fehler', 'Liste konnte nicht aus Vorlage erstellt werden.');
+      Alert.alert(t('common.error'), t('vacation.checklists.errors.create_from_template'));
     }
   };
 
   const handleDeleteChecklist = (checklistId: string) => {
     const checklist = checklists.find(c => c.id === checklistId);
     Alert.alert(
-      'Liste löschen',
-      `Möchten Sie die Liste "${checklist?.title}" wirklich löschen?`,
+      t('vacation.checklists.delete.title'),
+      t('vacation.checklists.delete.message', { title: checklist?.title }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteChecklist(checklistId);
             } catch (error) {
-              Alert.alert('Fehler', 'Liste konnte nicht gelöscht werden.');
+              Alert.alert(t('common.error'), t('vacation.checklists.errors.delete'));
             }
           },
         },
@@ -180,10 +182,10 @@ export default function VacationChecklistsScreen() {
           {/* iOS-style large title in content area */}
           <View style={styles.titleSection}>
             <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              Listen
+              {t('vacation.checklists.title')}
             </Text>
             <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              {checklists.length} {checklists.length === 1 ? 'Liste' : 'Listen'}
+              {t('vacation.checklists.count', { count: checklists.length })}
             </Text>
           </View>
 
@@ -200,11 +202,9 @@ export default function VacationChecklistsScreen() {
         <View style={styles.content}>
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>📋</Text>
-            <Text style={[styles.emptyTitle, { color: isDark ? '#007AFF' : '#007AFF' }]}>Noch keine Listen</Text>
+            <Text style={[styles.emptyTitle, { color: isDark ? '#007AFF' : '#007AFF' }]}>{t('vacation.checklists.empty.title')}</Text>
             <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Erstellen Sie Ihre erste Liste mit dem Plus-Button.
-              {'\n\n'}
-              Oder wählen Sie eine Vorlage aus dem Vorlagen-Button.
+              {t('vacation.checklists.empty.description')}
             </Text>
           </View>
         </View>
