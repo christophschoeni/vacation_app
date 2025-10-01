@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   useColorScheme,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import { useTranslation } from '@/lib/i18n';
 
 export default function LanguageScreen() {
@@ -21,24 +21,15 @@ export default function LanguageScreen() {
 
   const handleLanguageSelect = async (languageCode: string) => {
     await setLanguage(languageCode);
-    // The app would need to be restarted for full effect, but immediate UI will update
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-          accessibilityLabel={t('common.back')}
-        >
-          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          {t('settings.language.title')}
-        </Text>
-        <View style={styles.headerSpacer} />
-      </View>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        title={t('settings.language.title')}
+        showBack={true}
+        onBackPress={() => router.back()}
+      />
 
       <ScrollView
         style={styles.content}
@@ -93,34 +84,13 @@ export default function LanguageScreen() {
           </Card>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
-  },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    fontFamily: 'System',
-  },
-  headerSpacer: {
-    width: 40,
   },
   content: {
     flex: 1,

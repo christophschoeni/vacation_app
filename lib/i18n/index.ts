@@ -1,6 +1,7 @@
 import { I18n } from 'i18n-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
+import { useState, useEffect } from 'react';
 import { logger } from '../utils/logger';
 
 // Import translation files
@@ -18,6 +19,7 @@ export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
 class TranslationService {
   private i18n: I18n;
   private currentLocale: string = 'de';
+  private listeners: Set<() => void> = new Set();
 
   constructor() {
     this.i18n = new I18n({
@@ -31,6 +33,15 @@ class TranslationService {
     this.i18n.defaultLocale = 'de';
     this.i18n.locale = 'de';
     this.i18n.enableFallback = true;
+  }
+
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  private notifyListeners(): void {
+    this.listeners.forEach(listener => listener());
   }
 
   /**
@@ -91,6 +102,7 @@ class TranslationService {
         this.i18n.locale = locale;
         await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, locale);
         logger.debug(`Language changed to: ${locale}`);
+        this.notifyListeners();
       } else {
         logger.warn(`Unsupported locale: ${locale}`);
       }
@@ -122,6 +134,15 @@ export const t = (key: string, options?: object): string => {
 
 // Hook for React components
 export const useTranslation = () => {
+  const [, forceUpdate] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = translationService.subscribe(() => {
+      forceUpdate(prev => prev + 1);
+    });
+    return unsubscribe;
+  }, []);
+
   return {
     t: translationService.t.bind(translationService),
     setLanguage: translationService.setLanguage.bind(translationService),
