@@ -11,55 +11,56 @@ import {
   useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from '@/lib/i18n';
 
 interface SettingsItem {
   id: string;
-  title: string;
-  subtitle: string;
+  titleKey: string;
+  subtitleKey: string;
   icon: IconName;
   route: string;
 }
 
 const SETTINGS_ITEMS: SettingsItem[] = [
   {
+    id: 'language',
+    titleKey: 'settings.language.title',
+    subtitleKey: 'settings.language.subtitle',
+    icon: 'globe',
+    route: '/settings/language',
+  },
+  {
     id: 'templates',
-    title: 'Standard-Listen',
-    subtitle: 'Checklisten-Vorlagen verwalten',
+    titleKey: 'settings.templates.title',
+    subtitleKey: 'settings.templates.subtitle',
     icon: 'notepad-text',
     route: '/settings/templates',
   },
   {
     id: 'categories',
-    title: 'Kategorien',
-    subtitle: 'Ausgaben-Kategorien verwalten',
+    titleKey: 'settings.categories.title',
+    subtitleKey: 'settings.categories.subtitle',
     icon: 'settings',
     route: '/settings/categories',
   },
   {
     id: 'currency',
-    title: 'Währung',
-    subtitle: 'Standard-Währung festlegen',
+    titleKey: 'settings.currency.title',
+    subtitleKey: 'settings.currency.subtitle',
     icon: 'currency',
     route: '/settings/currency',
   },
   {
-    id: 'currency-data',
-    title: 'Währungsdaten',
-    subtitle: 'Wechselkurse und Cache-Einstellungen',
-    icon: 'refresh',
-    route: '/settings/currency-data',
-  },
-  {
     id: 'notifications',
-    title: 'Benachrichtigungen',
-    subtitle: 'Push-Benachrichtigungen verwalten',
+    titleKey: 'settings.notifications.title',
+    subtitleKey: 'settings.notifications.subtitle',
     icon: 'warning',
     route: '/settings/notifications',
   },
   {
     id: 'debug',
-    title: 'Debug',
-    subtitle: 'Datenbank-Info und Debugging-Tools',
+    titleKey: 'Debug',
+    subtitleKey: 'Datenbank-Info und Debugging-Tools',
     icon: 'bug',
     route: '/debug',
   },
@@ -67,10 +68,14 @@ const SETTINGS_ITEMS: SettingsItem[] = [
 
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const isDark = colorScheme === 'dark';
 
   const handleSettingsItemPress = (route: string) => {
     switch (route) {
+      case '/settings/language':
+        router.push('/settings/language');
+        break;
       case '/settings/categories':
         router.push('/settings/categories');
         break;
@@ -79,9 +84,6 @@ export default function SettingsScreen() {
         break;
       case '/settings/currency':
         router.push('/settings/currency');
-        break;
-      case '/settings/currency-data':
-        router.push('/settings/currency-data');
         break;
       case '/settings/notifications':
         router.push('/settings/notifications');
@@ -98,7 +100,7 @@ export default function SettingsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
-        title="Einstellungen"
+        title={t('settings.title')}
         variant="large"
       />
 
@@ -109,10 +111,6 @@ export default function SettingsScreen() {
       >
 
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Allgemein
-          </Text>
-
           {SETTINGS_ITEMS.map((item) => (
             <TouchableOpacity
               key={item.id}
@@ -125,10 +123,10 @@ export default function SettingsScreen() {
                     <Icon name={item.icon} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                     <View style={styles.settingsText}>
                       <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                        {item.title}
+                        {t(item.titleKey)}
                       </Text>
                       <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                        {item.subtitle}
+                        {t(item.subtitleKey)}
                       </Text>
                     </View>
                   </View>
@@ -141,7 +139,7 @@ export default function SettingsScreen() {
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Über die App
+            {t('settings.about.title')}
           </Text>
 
           <Card variant="clean" style={styles.settingsCard}>
@@ -150,7 +148,7 @@ export default function SettingsScreen() {
                 Reise Budget
               </Text>
               <Text style={[styles.appVersion, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Version 0.6.0
+                {t('settings.about.version')} 1.0.0
               </Text>
             </View>
           </Card>

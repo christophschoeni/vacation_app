@@ -17,9 +17,11 @@ import { Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import { useVacations } from '@/hooks/use-vacations';
+import { useTranslation } from '@/lib/i18n';
 
 export default function AddVacationScreen() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const { createVacation } = useVacations();
   const [formData, setFormData] = useState({
     destination: '',
@@ -33,7 +35,7 @@ export default function AddVacationScreen() {
 
   const handleSave = async () => {
     if (!formData.destination || !formData.country || !formData.hotel) {
-      Alert.alert('Fehler', 'Bitte füllen Sie alle Pflichtfelder aus.');
+      Alert.alert(t('common.error'), t('errors.required_field'));
       return;
     }
 
@@ -50,7 +52,7 @@ export default function AddVacationScreen() {
       router.back();
     } catch (error) {
       console.error('Failed to create vacation:', error);
-      Alert.alert('Fehler', 'Ferien konnten nicht gespeichert werden.');
+      Alert.alert(t('common.error'), t('errors.generic'));
     }
   };
 
@@ -83,57 +85,57 @@ export default function AddVacationScreen() {
           {/* iOS-style large title in content area */}
           <View style={styles.titleSection}>
             <Text style={[styles.largeTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-              Neue Ferien
+              {t('vacation.add.title')}
             </Text>
           </View>
 
           <View style={styles.formContainer}>
             <FormInput
-              label="Reiseziel"
+              label={t('vacation.form.destination')}
               value={formData.destination}
               onChangeText={(value) => updateField('destination', value)}
-              placeholder="z.B. Antalya"
+              placeholder={t('vacation.form.destination_placeholder')}
               required
             />
 
             <FormInput
-              label="Land"
+              label={t('vacation.form.country')}
               value={formData.country}
               onChangeText={(value) => updateField('country', value)}
-              placeholder="z.B. Türkei"
+              placeholder={t('vacation.form.country_placeholder')}
               required
             />
 
             <FormInput
-              label="Hotel"
+              label={t('vacation.form.hotel')}
               value={formData.hotel}
               onChangeText={(value) => updateField('hotel', value)}
-              placeholder="z.B. Akka Beach Resort"
+              placeholder={t('vacation.form.hotel_placeholder')}
               required
             />
 
             <DatePicker
-              label="Startdatum"
+              label={t('vacation.form.start_date')}
               value={formData.startDate}
               onChange={(date) => updateField('startDate', date)}
             />
 
             <DatePicker
-              label="Enddatum"
+              label={t('vacation.form.end_date')}
               value={formData.endDate}
               onChange={(date) => updateField('endDate', date)}
             />
 
             <FormInput
-              label="Budget"
+              label={t('vacation.form.budget')}
               value={formData.budget}
               onChangeText={(value) => updateField('budget', value)}
-              placeholder="2500"
+              placeholder={t('vacation.form.budget_placeholder')}
               keyboardType="numeric"
             />
 
             <FormInput
-              label="Währung"
+              label={t('vacation.form.currency')}
               value={formData.currency}
               onChangeText={(value) => updateField('currency', value)}
               placeholder="CHF"

@@ -20,9 +20,11 @@ import EmptyState from '@/components/ui/common/EmptyState';
 import AppHeader from '@/components/ui/AppHeader';
 import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
+import { useTranslation } from '@/lib/i18n';
 
 export default function VacationsScreen() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const { vacations, loading, refreshVacations, deleteVacation } = useVacations();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
@@ -77,18 +79,18 @@ export default function VacationsScreen() {
     if (!vacation) return;
 
     Alert.alert(
-      'Ferien löschen',
-      `Möchten Sie die Ferien "${vacation.destination}" wirklich löschen?`,
+      t('vacation.delete.title'),
+      t('vacation.delete.message', { destination: vacation.destination }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteVacation(id);
             } catch {
-              Alert.alert('Fehler', 'Ferien konnten nicht gelöscht werden.');
+              Alert.alert(t('common.error'), t('vacation.delete.error'));
             }
           },
         },
@@ -114,22 +116,22 @@ export default function VacationsScreen() {
         }
         showsVerticalScrollIndicator={false}
         accessible={true}
-        accessibilityLabel="Liste der Ferien"
-        accessibilityHint="Ziehen Sie nach unten, um zu aktualisieren"
+        accessibilityLabel={t('navigation.vacations')}
+        accessibilityHint={t('empty_states.refresh')}
       >
         {/* iOS-style large title in content area */}
         <View style={styles.titleSection}>
           <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Meine Ferien
+            {t('navigation.vacations')}
           </Text>
         </View>
 
         {vacations.length === 0 ? (
           <EmptyState
             icon="airplane"
-            title="Keine Ferien geplant"
-            subtitle="Füge deine erste Reise hinzu und beginne mit der Planung!"
-            buttonTitle="Erste Ferien hinzufügen"
+            title={t('vacation.empty.title')}
+            subtitle={t('vacation.empty.subtitle')}
+            buttonTitle={t('vacation.empty.button')}
             onButtonPress={handleAddVacation}
           />
         ) : (
@@ -155,8 +157,8 @@ export default function VacationsScreen() {
         onPress={handleAddVacation}
         activeOpacity={0.8}
         accessible={true}
-        accessibilityLabel="Neue Ferien hinzufügen"
-        accessibilityHint="Doppeltippen, um neue Ferien zu erstellen"
+        accessibilityLabel={t('vacation.add.button')}
+        accessibilityHint={t('vacation.add.button')}
         accessibilityRole="button"
       >
         <Icon name="plus" size={24} color="#FFFFFF" />

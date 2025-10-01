@@ -20,10 +20,12 @@ import AppHeader from '@/components/ui/AppHeader';
 import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacations } from '@/hooks/use-vacations';
 import { useExpenses } from '@/lib/database';
+import { useTranslation } from '@/lib/i18n';
 
 export default function VacationBudgetScreen() {
   const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const { vacations, refreshVacations } = useVacations();
   const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId || '');
 
@@ -41,14 +43,14 @@ export default function VacationBudgetScreen() {
       <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
         <SafeAreaView style={styles.headerContainer} edges={['top']}>
           <AppHeader
-            title="Budget wird geladen..."
+            title={t('common.loading')}
             showBack={true}
             onBackPress={() => router.push('/(tabs)')}
           />
         </SafeAreaView>
         <View style={styles.content}>
           <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#000000', textAlign: 'center', marginTop: 50 }}>
-            Lade Budget-Daten...
+            {t('vacation.detail.loading')}
           </Text>
         </View>
       </View>
@@ -65,18 +67,18 @@ export default function VacationBudgetScreen() {
     if (!expense) return;
 
     Alert.alert(
-      'Ausgabe löschen',
-      `Möchten Sie die Ausgabe "${expense.description}" wirklich löschen?`,
+      t('expense.delete.title'),
+      t('expense.delete.message', { description: expense.description }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteExpense(expenseId);
             } catch {
-              Alert.alert('Fehler', 'Ausgabe konnte nicht gelöscht werden.');
+              Alert.alert(t('common.error'), t('expense.delete.error'));
             }
           },
         },
@@ -118,7 +120,7 @@ export default function VacationBudgetScreen() {
         {/* iOS-style large title in content area */}
         <View style={styles.titleSection}>
           <Text style={[styles.largeTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-            Budget Übersicht
+            {t('budget.overview.title')}
           </Text>
         </View>
 
@@ -131,10 +133,10 @@ export default function VacationBudgetScreen() {
             <Card style={[styles.emptyExpenses, styles.emptyContent]}>
               <Icon name="budget" size={48} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} style={styles.emptyIconStyle} />
               <Text style={[styles.emptyText, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                Noch keine Ausgaben erfasst
+                {t('expense.empty.title')}
               </Text>
               <Text style={[styles.emptySubtext, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                Tippe auf ➕ um deine erste Ausgabe hinzuzufügen
+                {t('expense.empty.subtitle')}
               </Text>
             </Card>
           ) : (

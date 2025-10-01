@@ -23,10 +23,12 @@ import { useExpenses } from '@/lib/database';
 import { Expense, ExpenseCategory } from '@/types';
 import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useTranslation } from '@/lib/i18n';
 import * as Haptics from 'expo-haptics';
 
 export default function AddExpenseScreen() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const { vacationId } = useLocalSearchParams();
   const { saveExpense } = useExpenses(vacationId as string);
   const { defaultCurrency } = useCurrency();
@@ -85,13 +87,13 @@ export default function AddExpenseScreen() {
   const handleSave = async () => {
     if (!formData.amount || !formData.description) {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Fehler', 'Bitte füllen Sie alle Pflichtfelder aus.');
+      Alert.alert(t('common.error'), t('errors.required_field'));
       return;
     }
 
     if (!vacationId || Array.isArray(vacationId)) {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Fehler', 'Keine gültige Ferien-ID gefunden.');
+      Alert.alert(t('common.error'), t('errors.not_found', { item: 'Vacation ID' }));
       return;
     }
 
@@ -113,7 +115,7 @@ export default function AddExpenseScreen() {
       router.back();
     } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Fehler', 'Ausgabe konnte nicht gespeichert werden.');
+      Alert.alert(t('common.error'), t('errors.generic'));
     }
   };
 
@@ -157,7 +159,7 @@ export default function AddExpenseScreen() {
           {/* iOS-style large title in content area */}
           <View style={styles.titleSection}>
             <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              Neue Ausgabe
+              {t('expense.add.title')}
             </Text>
           </View>
 
@@ -165,10 +167,10 @@ export default function AddExpenseScreen() {
             <View style={styles.row}>
               <View style={styles.halfWidth}>
                 <FormInput
-                  label="Betrag"
+                  label={t('expense.form.amount')}
                   value={formData.amount}
                   onChangeText={(value) => updateField('amount', value)}
-                  placeholder="52.50"
+                  placeholder={t('expense.form.amount_placeholder')}
                   keyboardType="numeric"
                   required
                 />
@@ -184,10 +186,10 @@ export default function AddExpenseScreen() {
             {chfAmount !== null && formData.currency !== 'CHF' && (
               <View style={styles.conversionDisplay}>
                 <Text style={[styles.conversionLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                  Umgerechnet in CHF:
+                  {t('expense.form.converted_amount')}:
                 </Text>
                 <Text style={[styles.conversionAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  {converting ? 'Umrechnung...' : `CHF ${chfAmount.toFixed(2)}`}
+                  {converting ? t('expense.form.converting') : `CHF ${chfAmount.toFixed(2)}`}
                 </Text>
               </View>
             )}
@@ -204,7 +206,7 @@ export default function AddExpenseScreen() {
               <View style={styles.calculatorButtonContent}>
                 <Icon name="calculator" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                 <Text style={[styles.calculatorButtonText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  Währungsrechner
+                  {t('expense.form.currency_calculator')}
                 </Text>
                 <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
               </View>
@@ -221,10 +223,10 @@ export default function AddExpenseScreen() {
             />
 
             <FormInput
-              label="Beschreibung"
+              label={t('expense.form.description')}
               value={formData.description}
               onChangeText={(value) => updateField('description', value)}
-              placeholder="z.B. Flughafen Kiosk"
+              placeholder={t('expense.form.description_placeholder')}
               required
             />
 
@@ -234,7 +236,7 @@ export default function AddExpenseScreen() {
             />
 
             <DatePicker
-              label="Datum"
+              label={t('expense.form.date')}
               value={formData.date}
               onChange={(date) => updateField('date', date)}
             />
