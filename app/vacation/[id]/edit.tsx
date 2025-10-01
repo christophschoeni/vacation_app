@@ -19,19 +19,7 @@ import { useVacations } from '@/hooks/use-vacations';
 import { logger } from '@/lib/utils/logger';
 
 export default function VacationEditScreen() {
-  console.log('🎯 EDIT SCREEN COMPONENT LOADED!');
-
-  const extractedVacationId = useRouteParam('id');
-
-  // TEMPORARY FIX: Use the actual vacation ID if none is extracted
-  const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
-
-  console.log('🔍 Edit Debug - Component rendered with params:', { id: extractedVacationId });
-  console.log('🔍 Edit Debug - Using vacation ID:', vacationId);
-
-  logger.debug('🔍 Edit Debug - Raw params:', { id: extractedVacationId });
-  logger.debug('🔍 Edit Debug - Extracted vacationId:', extractedVacationId);
-  logger.debug('🔍 Edit Debug - Final vacationId used:', vacationId);
+  const vacationId = useRouteParam('id');
 
   const colorScheme = useColorScheme();
   const { vacations, updateVacation, loading } = useVacations();

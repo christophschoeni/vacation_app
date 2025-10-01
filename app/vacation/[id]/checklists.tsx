@@ -11,15 +11,8 @@ import { Icon } from '@/components/design';
 import { logger } from '@/lib/utils/logger';
 
 export default function VacationChecklistsScreen() {
-  const extractedVacationId = useRouteParam('id');
+  const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
-
-  // TEMPORARY FIX: Use the actual vacation ID if none is extracted
-  const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
-
-  logger.debug('🔍 Debug - Raw params:', { id: extractedVacationId });
-  logger.debug('🔍 Debug - Extracted vacationId:', extractedVacationId);
-  logger.debug('🔍 Debug - Final vacationId used:', vacationId);
 
   // Force re-render when checklists change
   const [, forceUpdate] = useReducer(x => x + 1, 0);

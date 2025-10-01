@@ -19,16 +19,8 @@ import { useVacations } from '@/hooks/use-vacations';
 import { logger } from '@/lib/utils/logger';
 
 export default function VacationEditScreen() {
-  console.log('🎯 EDIT SCREEN COMPONENT LOADED!');
-
   const params = useLocalSearchParams();
   const vacationId = params.vacationId as string;
-
-  console.log('🔍 Edit Debug - Component rendered with search params:', params);
-  console.log('🔍 Edit Debug - Using vacation ID from params:', vacationId);
-
-  logger.debug('🔍 Edit Debug - Search params:', params);
-  logger.debug('🔍 Edit Debug - Vacation ID from params:', vacationId);
 
   const colorScheme = useColorScheme();
   const { vacations, updateVacation, loading } = useVacations();

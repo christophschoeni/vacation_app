@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'rea
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Vacation, Checklist, ChecklistItem } from '@/types';
+import Constants from 'expo-constants';
 
 // Interface for database statistics
 interface DatabaseStats {
@@ -28,6 +29,24 @@ import { logger } from '@/lib/utils/logger';
 import { onboardingService } from '@/lib/onboarding-service';
 
 export default function DebugScreen() {
+  // Only allow debug screen in development mode
+  if (!__DEV__) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Text style={styles.backButtonText}>← Zurück</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>Debug nicht verfügbar</Text>
+        </View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+          <Text style={{ fontSize: 18, textAlign: 'center', color: '#1C1C1E' }}>
+            Der Debug-Screen ist nur in der Entwicklungsumgebung verfügbar.
+          </Text>
+        </View>
+      </View>
+    );
+  }
   const [dbStats, setDbStats] = useState<DatabaseStats | null>(null);
   const [vacations, setVacations] = useState<Vacation[]>([]);
   const [checklists, setChecklists] = useState<Checklist[]>([]);

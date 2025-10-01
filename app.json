@@ -2,17 +2,25 @@
   "expo": {
     "name": "Reise Budget",
     "slug": "reise-budget",
-    "version": "0.6.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "vacationassist",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "description": "Verwalten Sie Ihr Reisebudget einfach und effizient. Erfassen Sie Ausgaben, planen Sie Ihr Budget und behalten Sie den Überblick über Ihre Reisekosten.",
+    "primaryColor": "#007AFF",
+    "privacy": "public",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.vomschoeni.vacation-assist",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationCategoryType": "public.app-category.travel"
       }
     },
     "android": {
@@ -44,7 +52,8 @@
           }
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

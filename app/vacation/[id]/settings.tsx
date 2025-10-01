@@ -15,14 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function VacationSettingsScreen() {
-  const extractedVacationId = useRouteParam('id');
-
-  // TEMPORARY FIX: Use the actual vacation ID if none is extracted
-  const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
-
-  console.log('🔍 Settings Debug - Raw params:', { id: extractedVacationId });
-  console.log('🔍 Settings Debug - Extracted vacationId:', extractedVacationId);
-  console.log('🔍 Settings Debug - Final vacationId used:', vacationId);
+  const vacationId = useRouteParam('id');
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -57,19 +50,7 @@ export default function VacationSettingsScreen() {
   ];
 
   const handleSettingsPress = (route: string) => {
-    console.log('Settings Debug - Before navigation:', {
-      route,
-      vacationId,
-      typeof_vacationId: typeof vacationId
-    });
-
-    try {
-      console.log('Settings Debug - Attempting navigation to:', route);
-      router.push(route as any);
-      console.log('Settings Debug - Navigation called successfully');
-    } catch (error) {
-      console.error('Settings Debug - Navigation error:', error);
-    }
+    router.push(route as any);
   };
 
   return (

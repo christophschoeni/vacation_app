@@ -11,11 +11,7 @@ import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
 
 export default function VacationDetailTabLayout() {
-  const extractedVacationId = useRouteParam('id');
-
-  // TEMPORARY FIX: Use the actual vacation ID if none is extracted
-  const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
-
+  const vacationId = useRouteParam('id');
   const segments = useSegments();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';

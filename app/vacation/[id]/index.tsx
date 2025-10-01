@@ -22,41 +22,21 @@ import { useVacations } from '@/hooks/use-vacations';
 import { useExpenses } from '@/lib/database';
 
 export default function VacationBudgetScreen() {
-  const extractedVacationId = useRouteParam('id');
-
-  // TEMPORARY FIX: Use the actual vacation ID if none is extracted
-  const vacationId = extractedVacationId || '17590895805177pt0zpcf5';
-
-  console.log('🔍 Budget Debug - Raw params:', { id: extractedVacationId });
-  console.log('🔍 Budget Debug - Extracted vacationId:', extractedVacationId);
-  console.log('🔍 Budget Debug - Final vacationId used:', vacationId);
-
+  const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
   const { vacations, refreshVacations } = useVacations();
-  const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId);
+  const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId || '');
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log('Budget tab focused, refreshing data...');
       refreshVacations();
       refreshExpenses();
     }, [refreshVacations, refreshExpenses])
   );
 
-  let vacation = vacations.find(v => v.id === vacationId);
-
-  console.log('🔍 Budget Debug - Looking for vacation with ID:', vacationId);
-  console.log('🔍 Budget Debug - Available vacations:', vacations.map(v => ({ id: v.id, destination: v.destination })));
-  console.log('🔍 Budget Debug - Vacation found:', !!vacation);
-
-  // TEMPORARY FIX: If vacation not found by ID, use the first available vacation
-  if (!vacation && vacations.length > 0) {
-    vacation = vacations[0];
-    console.log('🔍 Budget Debug - Using first available vacation:', vacation.id, vacation.destination);
-  }
+  const vacation = vacations.find(v => v.id === vacationId);
 
   if (!vacation) {
-    console.log('No vacation found for ID:', vacationId, 'Available vacations:', vacations.length);
     return (
       <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
         <SafeAreaView style={styles.headerContainer} edges={['top']}>
@@ -77,7 +57,7 @@ export default function VacationBudgetScreen() {
 
 
   const handleExpensePress = (expenseId: string) => {
-    console.log('Expense pressed:', expenseId);
+    // Handle expense press (future: navigate to expense detail)
   };
 
   const handleExpenseDelete = (expenseId: string) => {
