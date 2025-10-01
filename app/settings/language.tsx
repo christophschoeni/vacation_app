@@ -16,6 +16,8 @@ export default function LanguageScreen() {
   const colorScheme = useColorScheme();
   const { t, getCurrentLanguage, setLanguage, getSupportedLanguages } = useTranslation();
   const isDark = colorScheme === 'dark';
+
+  // Call these inside the render to ensure they update when language changes
   const currentLanguage = getCurrentLanguage();
   const supportedLanguages = getSupportedLanguages();
 

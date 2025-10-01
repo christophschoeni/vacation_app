@@ -134,11 +134,11 @@ export const t = (key: string, options?: object): string => {
 
 // Hook for React components
 export const useTranslation = () => {
-  const [, forceUpdate] = useState(0);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
 
   useEffect(() => {
     const unsubscribe = translationService.subscribe(() => {
-      forceUpdate(prev => prev + 1);
+      setUpdateTrigger(prev => prev + 1);
     });
     return unsubscribe;
   }, []);
