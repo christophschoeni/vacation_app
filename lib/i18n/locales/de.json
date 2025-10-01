@@ -228,6 +228,8 @@
       "subtitle": "Erstellen Sie Standard-Listen für Ihre Reisen",
       "create_defaults": "4 Standard-Listen erstellen"
     },
+    "items_count": "{{count}} Eintrag",
+    "items_count_plural": "{{count}} Einträge",
     "default": {
       "beach_vacation": "Strandurlaub",
       "city_trip": "Städtereise",

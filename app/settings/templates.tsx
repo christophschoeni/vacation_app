@@ -173,7 +173,7 @@ export default function TemplatesScreen() {
                     </Text>
                   )}
                   <Text style={[styles.templateItems, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    {item.items.length} Einträge
+                    {t('template.items_count', { count: item.items.length })}
                   </Text>
                 </View>
               </View>
