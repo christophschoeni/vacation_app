@@ -1,9 +1,11 @@
 import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import React from 'react';
 import { useColorScheme } from 'react-native';
+import { useTranslation } from '@/lib/i18n';
 
 export default function MainLayout() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const isDark = colorScheme === 'dark';
 
   return (
@@ -17,14 +19,14 @@ export default function MainLayout() {
       materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
     >
       <NativeTabs.Trigger name="index">
-        <Label>Ferien</Label>
+        <Label>{t('navigation.vacations')}</Label>
         <Icon
           sf="house.fill"
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
-        <Label>Einstellungen</Label>
+        <Label>{t('navigation.settings')}</Label>
         <Icon
           sf="gearshape.fill"
         />
