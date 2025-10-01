@@ -14,38 +14,40 @@ import AppHeader from '@/components/ui/AppHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '@/lib/utils/logger';
 import { ErrorHandler } from '@/lib/utils/error-handler';
+import { useTranslation } from '@/lib/i18n';
 
 interface NotificationSetting {
   id: string;
-  title: string;
-  subtitle: string;
+  titleKey: string;
+  subtitleKey: string;
   icon: IconName;
   enabled: boolean;
 }
 
 export default function NotificationsScreen() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const isDark = colorScheme === 'dark';
 
   const [settings, setSettings] = useState<NotificationSetting[]>([
     {
       id: 'budget_alerts',
-      title: 'Budget-Warnungen',
-      subtitle: 'Benachrichtigung bei Budgetüberschreitung',
+      titleKey: 'settings.notifications.budget_alerts',
+      subtitleKey: 'settings.notifications.budget_alerts_subtitle',
       icon: 'warning',
       enabled: true,
     },
     {
       id: 'expense_reminders',
-      title: 'Ausgaben-Erinnerungen',
-      subtitle: 'Erinnerung für nicht erfasste Ausgaben',
+      titleKey: 'settings.notifications.expense_reminders',
+      subtitleKey: 'settings.notifications.expense_reminders_subtitle',
       icon: 'wallet',
       enabled: false,
     },
     {
       id: 'trip_updates',
-      title: 'Reise-Updates',
-      subtitle: 'Wichtige Updates zu Ihren Reisen',
+      titleKey: 'settings.notifications.trip_updates',
+      subtitleKey: 'settings.notifications.trip_updates_subtitle',
       icon: 'airplane',
       enabled: true,
     },
@@ -86,7 +88,7 @@ export default function NotificationsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
-        title="Benachrichtigungen"
+        title={t('settings.notifications.title')}
         variant="large"
         showBack={true}
         onBackPress={() => router.back()}
@@ -99,7 +101,7 @@ export default function NotificationsScreen() {
       >
         <View style={styles.section}>
           <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            Verwalten Sie Ihre Benachrichtigungen
+            {t('settings.notifications.subtitle')}
           </Text>
 
           {settings.map((setting) => (
@@ -109,10 +111,10 @@ export default function NotificationsScreen() {
                   <Icon name={setting.icon} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
                   <View style={styles.settingText}>
                     <Text style={[styles.settingTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                      {setting.title}
+                      {t(setting.titleKey)}
                     </Text>
                     <Text style={[styles.settingSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                      {setting.subtitle}
+                      {t(setting.subtitleKey)}
                     </Text>
                   </View>
                 </View>
@@ -133,13 +135,13 @@ export default function NotificationsScreen() {
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Hinweis
+            {t('settings.notifications.note_title')}
           </Text>
           <Card variant="clean" style={styles.infoCard}>
             <View style={styles.infoContent}>
               <Icon name="info" size={20} color={isDark ? '#8E8E93' : '#6D6D70'} />
               <Text style={[styles.infoText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Benachrichtigungen müssen in den Systemeinstellungen Ihres Geräts aktiviert sein.
+                {t('settings.notifications.note_message')}
               </Text>
             </View>
           </Card>

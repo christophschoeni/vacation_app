@@ -214,17 +214,19 @@
       "success": "Template erfolgreich aktualisiert"
     },
     "delete": {
-      "title": "Template löschen",
-      "message": "Möchten Sie das Template \"{{title}}\" wirklich löschen?",
-      "success": "Template erfolgreich gelöscht"
+      "title": "Standard-Liste löschen",
+      "message": "Möchten Sie die Standard-Liste \"{{title}}\" wirklich löschen?",
+      "success": "Standard-Liste erfolgreich gelöscht",
+      "error": "Standard-Liste konnte nicht gelöscht werden."
     },
     "use": {
       "button": "Template verwenden",
       "success": "Template erfolgreich angewendet"
     },
     "empty": {
-      "title": "Keine Templates verfügbar",
-      "subtitle": "Erstellen Sie Ihr erstes Template"
+      "title": "Keine Standard-Listen",
+      "subtitle": "Erstellen Sie Standard-Listen für Ihre Reisen",
+      "create_defaults": "4 Standard-Listen erstellen"
     },
     "default": {
       "beach_vacation": "Strandurlaub",
@@ -294,8 +296,17 @@
       "add": "Kategorie hinzufügen"
     },
     "templates": {
-      "title": "Templates",
-      "subtitle": "Verwalten Sie Checklisten-Templates"
+      "title": "Standard-Listen",
+      "subtitle": "Verwalten Sie Checklisten-Vorlagen",
+      "description": "Verwalten Sie hier Ihre Standard-Listen für Reisen. Tippen Sie auf eine Liste um sie anzusehen oder zu bearbeiten.",
+      "error_load": "Standard-Listen konnten nicht geladen werden.",
+      "created_success": "4 Standard-Listen wurden erstellt!",
+      "created_error": "Standard-Listen konnten nicht erstellt werden.",
+      "order_error": "Reihenfolge konnte nicht gespeichert werden."
+    },
+    "notifications": {
+      "note_title": "Hinweis",
+      "note_message": "Benachrichtigungen müssen in den Systemeinstellungen Ihres Geräts aktiviert sein."
     }
   },
   "errors": {

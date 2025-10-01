@@ -20,9 +20,11 @@ import { ensureDefaultTemplates } from '@/lib/seed-templates';
 import { Checklist, ChecklistCategory } from '@/types';
 import { logger } from '@/lib/utils/logger';
 import { CATEGORY_CONFIG } from '@/lib/constants/categories';
+import { useTranslation } from '@/lib/i18n';
 
 export default function TemplatesScreen() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const [templates, setTemplates] = useState<Checklist[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -49,7 +51,7 @@ export default function TemplatesScreen() {
       setTemplates(templateList);
     } catch (error) {
       logger.error('Failed to load templates:', error);
-      Alert.alert('Fehler', 'Standard-Listen konnten nicht geladen werden.');
+      Alert.alert(t('common.error'), t('settings.templates.error_load'));
     } finally {
       setLoading(false);
     }
@@ -81,19 +83,19 @@ export default function TemplatesScreen() {
 
   const handleTemplateDelete = async (template: Checklist) => {
     Alert.alert(
-      'Standard-Liste löschen',
-      `Möchten Sie die Standard-Liste "${template.title}" wirklich löschen?`,
+      t('template.delete.title'),
+      t('template.delete.message', { title: template.title }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await checklistRepository.delete(template.id);
               await loadTemplates();
             } catch {
-              Alert.alert('Fehler', 'Standard-Liste konnte nicht gelöscht werden.');
+              Alert.alert(t('common.error'), t('template.delete.error'));
             }
           },
         },
@@ -112,12 +114,12 @@ export default function TemplatesScreen() {
 
       await ensureDefaultTemplates();
 
-      Alert.alert('Erfolg!', '4 Standard-Listen wurden erstellt!');
+      Alert.alert(t('common.success'), t('settings.templates.created_success'));
       await loadTemplates();
 
     } catch (error) {
       logger.error('Failed to create default templates:', error);
-      Alert.alert('Fehler', 'Standard-Listen konnten nicht erstellt werden.');
+      Alert.alert(t('common.error'), t('settings.templates.created_error'));
     } finally {
       setLoading(false);
     }
@@ -130,7 +132,7 @@ export default function TemplatesScreen() {
       await checklistRepository.updateTemplateOrder(templateIds);
     } catch (error) {
       logger.error('Failed to update template order:', error);
-      Alert.alert('Fehler', 'Reihenfolge konnte nicht gespeichert werden.');
+      Alert.alert(t('common.error'), t('settings.templates.order_error'));
       // Revert the order
       loadTemplates();
     }
@@ -186,7 +188,7 @@ export default function TemplatesScreen() {
   return (
     <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <AppHeader
-        title="Standard-Listen"
+        title={t('settings.templates.title')}
         variant="large"
         showBack={true}
         onBackPress={() => router.back()}
@@ -194,7 +196,7 @@ export default function TemplatesScreen() {
           <TouchableOpacity
             onPress={handleAddTemplate}
             style={styles.headerButton}
-            accessibilityLabel="Neue Standard-Liste hinzufügen"
+            accessibilityLabel={t('template.add.button')}
           >
             <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
           </TouchableOpacity>
@@ -205,17 +207,17 @@ export default function TemplatesScreen() {
       {loading ? (
         <View style={styles.emptyState}>
           <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            Lade Standard-Listen...
+            {t('common.loading')}
           </Text>
         </View>
       ) : templates.length === 0 ? (
         <View style={styles.emptyState}>
           <Icon name="check-square" size={48} color={isDark ? '#8E8E93' : '#6D6D70'} />
           <Text style={[styles.emptyTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Keine Standard-Listen
+            {t('template.empty.title')}
           </Text>
           <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            Erstellen Sie Standard-Listen für Ihre Reisen
+            {t('template.empty.subtitle')}
           </Text>
           <TouchableOpacity
             style={[styles.createButton, { backgroundColor: '#007AFF' }]}
@@ -223,7 +225,7 @@ export default function TemplatesScreen() {
             disabled={loading}
           >
             <Text style={styles.createButtonText}>
-              4 Standard-Listen erstellen
+              {t('template.empty.create_defaults')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -231,7 +233,7 @@ export default function TemplatesScreen() {
         <View style={styles.content}>
           <View style={styles.descriptionContainer}>
             <Text style={[styles.descriptionText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Verwalten Sie hier Ihre Standard-Listen für Reisen. Tippen Sie auf eine Liste um sie anzusehen oder zu bearbeiten.
+              {t('settings.templates.description')}
             </Text>
           </View>
 
