@@ -12,7 +12,7 @@
     "primaryColor": "#007AFF",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.vomschoeni.vacation-assist",
+      "bundleIdentifier": "com.vomschoeni.ferien-budget",
       "buildNumber": "1",
       "config": {
         "usesNonExemptEncryption": false
@@ -31,7 +31,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.vomschoeni.vacationassist"
+      "package": "com.vomschoeni.ferienbudget"
     },
     "web": {
       "output": "static",
