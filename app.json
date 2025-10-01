@@ -10,7 +10,6 @@
     "newArchEnabled": true,
     "description": "Verwalten Sie Ihr Reisebudget einfach und effizient. Erfassen Sie Ausgaben, planen Sie Ihr Budget und behalten Sie den Überblick über Ihre Reisekosten.",
     "primaryColor": "#007AFF",
-    "privacy": "public",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.vomschoeni.vacation-assist",
