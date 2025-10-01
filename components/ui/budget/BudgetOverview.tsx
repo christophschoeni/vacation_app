@@ -2,9 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Card } from '@/components/design';
 import { Vacation, Expense } from '@/types';
-import { calculateBudgetAnalysis, formatCurrency, getBudgetStatusColor, getBudgetStatusText } from '@/lib/budget-calculations';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { calculateBudgetAnalysis, formatCurrency, getBudgetStatusColor } from '@/lib/budget-calculations';
+import { useColorScheme } from 'react-native';
 import { spacing } from '@/constants/spacing';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { useTranslation } from '@/lib/i18n';
 
 interface BudgetOverviewProps {
   vacation: Vacation;
@@ -40,19 +42,31 @@ function ProgressBar({ progress, color, style }: ProgressBarProps) {
 export default function BudgetOverview({ vacation, expenses }: BudgetOverviewProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
+  const { defaultCurrency } = useCurrency();
   const analysis = calculateBudgetAnalysis(vacation, expenses);
 
-  const progressColor = getBudgetStatusColor(analysis.status);
+  const progressColor = getBudgetStatusColor(analysis.status, analysis.budgetPercentageUsed);
+
+  const getBudgetStatusText = (status: typeof analysis.status): string => {
+    switch (status) {
+      case 'upcoming':
+        return t('components.budget_overview.status.upcoming');
+      case 'active':
+        return t('components.budget_overview.status.active');
+      case 'completed':
+        return t('components.budget_overview.status.completed');
+      default:
+        return '';
+    }
+  };
 
   return (
     <View style={[styles.container, {
       backgroundColor: isDark ? '#000000' : '#FFFFFF',
     }]}>
-      {/* Header with clean title and badge */}
+      {/* Status badge only - title is now in header */}
       <View style={styles.header}>
-        <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          Budget Übersicht
-        </Text>
         <View style={[styles.statusBadge, {
           backgroundColor: isDark ? 'rgba(142, 142, 147, 0.16)' : 'rgba(142, 142, 147, 0.12)',
         }]}>
@@ -71,41 +85,64 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
             style={styles.progressBar}
           />
           <Text style={[styles.progressText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {analysis.budgetPercentageUsed.toFixed(1)}% verwendet
+            {t('components.budget_overview.progress', { percentage: analysis.budgetPercentageUsed.toFixed(1) })}
           </Text>
         </View>
       </View>
 
-      {/* Main budget numbers */}
+      {/* Main budget numbers in 2x2 grid */}
       <View style={styles.mainBudgetSection}>
-        <View style={styles.budgetGrid}>
-          <View style={styles.budgetGridItem}>
-            <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Gesamtbudget
-            </Text>
-            <Text style={[styles.budgetGridAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {formatCurrency(analysis.totalBudget)}
-            </Text>
+        <View style={styles.budgetGrid2x2}>
+          {/* First row */}
+          <View style={styles.budgetGridRow}>
+            <View style={styles.budgetGridItem}>
+              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                {t('components.budget_overview.total_budget')}
+              </Text>
+              <Text style={[styles.budgetGridAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                {formatCurrency(analysis.totalBudget, defaultCurrency)}
+              </Text>
+            </View>
+            <View style={styles.budgetGridItem}>
+              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                {t('components.budget_overview.spent')}
+              </Text>
+              <Text style={[styles.budgetGridAmount, {
+                color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E')
+              }]}>
+                {formatCurrency(analysis.totalExpenses, defaultCurrency)}
+              </Text>
+            </View>
           </View>
-          <View style={styles.budgetGridItem}>
-            <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Ausgegeben
-            </Text>
-            <Text style={[styles.budgetGridAmount, {
-              color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E')
-            }]}>
-              {formatCurrency(analysis.totalExpenses)}
-            </Text>
-          </View>
-          <View style={styles.budgetGridItem}>
-            <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              Verbleibt
-            </Text>
-            <Text style={[styles.budgetGridAmount, {
-              color: analysis.remainingBudget < 0 ? '#FF3B30' : '#34C759'
-            }]}>
-              {formatCurrency(analysis.remainingBudget)}
-            </Text>
+
+          {/* Second row */}
+          <View style={styles.budgetGridRow}>
+            <View style={styles.budgetGridItem}>
+              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                {t('components.budget_overview.remaining')}
+              </Text>
+              <Text style={[styles.budgetGridAmount, {
+                color: analysis.remainingBudget < 0 ? '#FF3B30' : '#34C759'
+              }]}>
+                {formatCurrency(analysis.remainingBudget, defaultCurrency)}
+              </Text>
+            </View>
+            <View style={styles.budgetGridItem}>
+              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                {analysis.remainingDays > 0
+                  ? t('components.budget_overview.per_day', { days: analysis.remainingDays })
+                  : t('components.budget_overview.vacation_ended')}
+              </Text>
+              <Text style={[styles.budgetGridAmount, {
+                color: analysis.remainingBudget < 0 ? '#FF3B30' :
+                       analysis.remainingDays <= 0 ? (isDark ? '#8E8E93' : '#6D6D70') : '#34C759'
+              }]}>
+                {analysis.remainingDays > 0 ?
+                  formatCurrency(analysis.remainingBudget / analysis.remainingDays, defaultCurrency) :
+                  '--'
+                }
+              </Text>
+            </View>
           </View>
         </View>
       </View>
@@ -179,6 +216,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   budgetGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 16,
+  },
+  budgetGrid2x2: {
+    gap: 16,
+  },
+  budgetGridRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 16,

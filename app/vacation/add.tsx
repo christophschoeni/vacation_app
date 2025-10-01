@@ -6,19 +6,23 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Header, Button } from '@/components/design';
+import { Icon } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useVacations } from '@/lib/database';
-import { Vacation } from '@/types';
+import { useVacations } from '@/hooks/use-vacations';
+import { useTranslation } from '@/lib/i18n';
 
 export default function AddVacationScreen() {
   const colorScheme = useColorScheme();
-  const { saveVacation } = useVacations();
+  const { t } = useTranslation();
+  const { createVacation } = useVacations();
   const [formData, setFormData] = useState({
     destination: '',
     country: '',
@@ -31,30 +35,24 @@ export default function AddVacationScreen() {
 
   const handleSave = async () => {
     if (!formData.destination || !formData.country || !formData.hotel) {
-      Alert.alert('Fehler', 'Bitte füllen Sie alle Pflichtfelder aus.');
+      Alert.alert(t('common.error'), t('errors.required_field'));
       return;
     }
 
     try {
-      const vacation: Vacation = {
-        id: Date.now().toString(), // Simple ID generation
+      await createVacation({
         destination: formData.destination,
         country: formData.country,
         hotel: formData.hotel,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        budget: formData.budget ? parseFloat(formData.budget) : 0,
+        budget: formData.budget ? parseFloat(formData.budget) : undefined,
         currency: formData.currency,
-        expenses: [],
-        checklists: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      await saveVacation(vacation);
+      });
       router.back();
-    } catch {
-      Alert.alert('Fehler', 'Ferien konnten nicht gespeichert werden.');
+    } catch (error) {
+      console.error('Failed to create vacation:', error);
+      Alert.alert(t('common.error'), t('errors.generic'));
     }
   };
 
@@ -67,9 +65,12 @@ export default function AddVacationScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-      <Header
-        title="Neue Ferien"
+    <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        variant="modal"
+        showBack={true}
+        onBackPress={handleCancel}
+        onRightPress={handleSave}
       />
 
       <KeyboardAvoidingView
@@ -81,77 +82,103 @@ export default function AddVacationScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* iOS-style large title in content area */}
+          <View style={styles.titleSection}>
+            <Text style={[styles.largeTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+              {t('vacation.add.title')}
+            </Text>
+          </View>
+
           <View style={styles.formContainer}>
             <FormInput
-              label="Reiseziel"
+              label={t('vacation.form.destination')}
               value={formData.destination}
               onChangeText={(value) => updateField('destination', value)}
-              placeholder="z.B. Antalya"
+              placeholder={t('vacation.form.destination_placeholder')}
               required
             />
 
             <FormInput
-              label="Land"
+              label={t('vacation.form.country')}
               value={formData.country}
               onChangeText={(value) => updateField('country', value)}
-              placeholder="z.B. Türkei"
+              placeholder={t('vacation.form.country_placeholder')}
               required
             />
 
             <FormInput
-              label="Hotel"
+              label={t('vacation.form.hotel')}
               value={formData.hotel}
               onChangeText={(value) => updateField('hotel', value)}
-              placeholder="z.B. Akka Beach Resort"
+              placeholder={t('vacation.form.hotel_placeholder')}
               required
             />
 
             <DatePicker
-              label="Startdatum"
+              label={t('vacation.form.start_date')}
               value={formData.startDate}
               onChange={(date) => updateField('startDate', date)}
             />
 
             <DatePicker
-              label="Enddatum"
+              label={t('vacation.form.end_date')}
               value={formData.endDate}
               onChange={(date) => updateField('endDate', date)}
             />
 
             <FormInput
-              label="Budget"
+              label={t('vacation.form.budget')}
               value={formData.budget}
               onChangeText={(value) => updateField('budget', value)}
-              placeholder="2500"
+              placeholder={t('vacation.form.budget_placeholder')}
               keyboardType="numeric"
             />
 
             <FormInput
-              label="Währung"
+              label={t('vacation.form.currency')}
               value={formData.currency}
               onChangeText={(value) => updateField('currency', value)}
               placeholder="CHF"
             />
-
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Speichern"
-                variant="primary"
-                onPress={handleSave}
-                style={styles.button}
-                fullWidth
-              />
-            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  titleSection: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 41,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
+  },
+  headerTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+  },
+  saveButton: {
+    padding: 8,
+    borderRadius: 8,
   },
   keyboardView: {
     flex: 1,
@@ -160,17 +187,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
   formContainer: {
     paddingHorizontal: 20,
     paddingTop: 20,
-  },
-  buttonContainer: {
-    marginTop: 32,
-    gap: 12,
-  },
-  button: {
-    marginVertical: 0,
+    paddingBottom: 20,
   },
 });

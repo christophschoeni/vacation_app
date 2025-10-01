@@ -1,195 +1,111 @@
-import React, { useState, useEffect } from 'react';
+import { Card, Icon } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
+import { router } from 'expo-router';
+import { useRouteParam } from '@/hooks/use-route-param';
+import { useTranslation } from '@/lib/i18n';
+import React from 'react';
 import {
-  View,
-  Text,
   ScrollView,
   StyleSheet,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+  useColorScheme,
 } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Card } from '@/components/design';
 
-import { FormInput, DatePicker } from '@/components/ui/forms';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useVacations } from '@/lib/database';
-import { Vacation } from '@/types';
 
 export default function VacationSettingsScreen() {
-  const { id } = useLocalSearchParams();
-  const vacationId = Array.isArray(id) ? id[0] : id;
+  const vacationId = useRouteParam('id');
+  const { t } = useTranslation();
 
   const colorScheme = useColorScheme();
-  const { vacations, saveVacation, deleteVacation } = useVacations();
+  const isDark = colorScheme === 'dark';
 
-  const vacation = vacations.find(v => v.id === vacationId);
+  // Always show the settings menu, even if vacation is loading
+  // The navigation already handles vacation not found cases
 
-  const [formData, setFormData] = useState({
-    destination: '',
-    hotel: '',
-    startDate: new Date(),
-    endDate: new Date(),
-    budget: '',
-  });
+  // Settings items configuration - modular and expandable
+  const settingsItems = [
+    {
+      id: 'vacation-details',
+      title: t('vacation.settings_screen.vacation_details.title'),
+      subtitle: t('vacation.settings_screen.vacation_details.subtitle'),
+      icon: 'settings' as const,
+      route: `/vacation-edit?vacationId=${vacationId}`,
+    },
+    // Future settings items can be added here:
+    // {
+    //   id: 'notifications',
+    //   title: 'Benachrichtigungen',
+    //   subtitle: 'Erinnerungen für diese Ferien',
+    //   icon: 'bell',
+    //   route: `/vacation/${vacationId}/notifications`,
+    // },
+    // {
+    //   id: 'sharing',
+    //   title: 'Teilen',
+    //   subtitle: 'Ferien mit anderen teilen',
+    //   icon: 'share',
+    //   route: `/vacation/${vacationId}/sharing`,
+    // },
+  ];
 
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (vacation) {
-      setFormData({
-        destination: vacation.destination,
-        hotel: vacation.hotel,
-        startDate: vacation.startDate,
-        endDate: vacation.endDate,
-        budget: vacation.budget.toString(),
-      });
-    }
-  }, [vacation]);
-
-  if (!vacation) {
-    return null;
-  }
-
-  const updateField = (field: string, value: string | Date) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSave = async () => {
-    if (!formData.destination || !formData.hotel || !formData.budget) {
-      Alert.alert('Fehler', 'Bitte füllen Sie alle Pflichtfelder aus.');
-      return;
-    }
-
-    if (formData.startDate >= formData.endDate) {
-      Alert.alert('Fehler', 'Das Enddatum muss nach dem Startdatum liegen.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const updatedVacation: Vacation = {
-        ...vacation,
-        destination: formData.destination,
-        hotel: formData.hotel,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        budget: parseFloat(formData.budget),
-        updatedAt: new Date(),
-      };
-
-      await saveVacation(updatedVacation);
-      Alert.alert('Erfolg', 'Ferien erfolgreich aktualisiert!');
-    } catch {
-      Alert.alert('Fehler', 'Ferien konnten nicht aktualisiert werden.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = () => {
-    Alert.alert(
-      'Ferien löschen',
-      `Möchten Sie die Ferien "${vacation.destination}" wirklich löschen? Alle zugehörigen Ausgaben und Checklisten werden ebenfalls gelöscht.`,
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        {
-          text: 'Löschen',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteVacation(vacation.id);
-              router.push('/(tabs)');
-            } catch {
-              Alert.alert('Fehler', 'Ferien konnten nicht gelöscht werden.');
-            }
-          },
-        },
-      ]
-    );
+  const handleSettingsPress = (route: string) => {
+    router.push(route as any);
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000' : '#f5f5f5' }]}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        showBack={true}
+        onBackPress={() => router.push('/(tabs)')}
+      />
+
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          style={styles.content}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <Card style={styles.formCard}>
-            <Card.Content>
-              <Text style={[styles.title, { color: colorScheme === 'dark' ? '#fff' : '#000' }]}>
-                Ferien bearbeiten
-              </Text>
+        {/* iOS-style large title in content area */}
+        <View style={styles.titleSection}>
+          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('vacation.settings_screen.title')}
+          </Text>
+        </View>
 
-              <FormInput
-                label="Reiseziel"
-                value={formData.destination}
-                onChangeText={(value) => updateField('destination', value)}
-                placeholder="z.B. Spanien"
-                required
-              />
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('vacation.settings_screen.general')}
+          </Text>
 
-              <FormInput
-                label="Hotel"
-                value={formData.hotel}
-                onChangeText={(value) => updateField('hotel', value)}
-                placeholder="z.B. Hotel Paradiso"
-                required
-              />
-
-              <DatePicker
-                label="Startdatum"
-                value={formData.startDate}
-                onChange={(date) => updateField('startDate', date)}
-                required
-              />
-
-              <DatePicker
-                label="Enddatum"
-                value={formData.endDate}
-                onChange={(date) => updateField('endDate', date)}
-                required
-              />
-
-              <FormInput
-                label="Budget (CHF)"
-                value={formData.budget}
-                onChangeText={(value) => updateField('budget', value)}
-                placeholder="z.B. 2500"
-                keyboardType="numeric"
-                required
-              />
-
-              <View style={styles.buttonContainer}>
-                <Button
-                  title="Speichern"
-                  variant="primary"
-                  onPress={handleSave}
-                  loading={loading}
-                  disabled={loading}
-                  style={styles.saveButton}
-                  fullWidth
-                />
-
-                <Button
-                  title="Ferien löschen"
-                  variant="destructive"
-                  onPress={handleDelete}
-                  style={styles.deleteButton}
-                  fullWidth
-                />
-              </View>
-            </Card.Content>
-          </Card>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          {settingsItems.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => handleSettingsPress(item.route)}
+              activeOpacity={0.7}
+            >
+              <Card variant="clean" style={styles.settingsCard}>
+                <View style={styles.settingsRow}>
+                  <View style={styles.settingsInfo}>
+                    <Icon name={item.icon} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                    <View style={styles.settingsText}>
+                      <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                        {item.title}
+                      </Text>
+                      <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                        {item.subtitle}
+                      </Text>
+                    </View>
+                  </View>
+                  <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+                </View>
+              </Card>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -197,34 +113,77 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  keyboardView: {
-    flex: 1,
+  headerContainer: {
+    zIndex: 1000,
+  },
+  titleSection: {
+    paddingHorizontal: 0,
+    paddingTop: 4,
+    paddingBottom: 8,
+    marginLeft: 0,
+  },
+  largeTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 34,
   },
   content: {
     flex: 1,
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingBottom: 85, // Reduced space for compact tab bar
+    paddingTop: 16,
+    paddingBottom: 120,
   },
-  formCard: {
-    marginTop: 16,
+  section: {
     marginBottom: 24,
   },
-  title: {
-    fontSize: 20,
+  sectionTitle: {
+    fontSize: 22,
     fontWeight: '600',
+    marginBottom: 16,
     fontFamily: 'System',
-    marginBottom: 20,
   },
-  buttonContainer: {
-    marginTop: 20,
-    gap: 12,
+  settingsCard: {
+    marginBottom: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
-  saveButton: {
-    marginBottom: 8,
+  settingsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  deleteButton: {
-    marginTop: 8,
+  settingsInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 16,
+  },
+  settingsText: {
+    flex: 1,
+  },
+  settingsTitle: {
+    fontSize: 17,
+    fontWeight: '400',
+    fontFamily: 'System',
+    marginBottom: 2,
+  },
+  settingsSubtitle: {
+    fontSize: 13,
+    fontWeight: '400',
+    fontFamily: 'System',
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 16,
+    fontFamily: 'System',
+    textAlign: 'center',
   },
 });

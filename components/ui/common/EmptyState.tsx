@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { Card, Button, Icon, IconName } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
 
 interface EmptyStateProps {
   icon?: IconName | string;

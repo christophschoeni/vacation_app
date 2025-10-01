@@ -9,22 +9,25 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  useColorScheme,
 } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import AppHeader from '@/components/ui/AppHeader';
+import { useRouteId } from '@/hooks/use-route-param';
 import { useChecklists } from '@/hooks/use-checklists';
 import { ChecklistItem } from '@/types';
 import { checklistServiceSQLite } from '@/lib/checklist-service-sqlite';
+import { logger } from '@/lib/utils/logger';
+import { useTranslation } from '@/lib/i18n';
 
 export default function ChecklistDetailScreen() {
-  const { id } = useLocalSearchParams();
-  const checklistId = Array.isArray(id) ? id[0] : id;
-
+  const checklistId = useRouteId();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
 
   const [newItemText, setNewItemText] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
@@ -51,10 +54,10 @@ export default function ChecklistDetailScreen() {
           setVacationId(currentChecklist.vacationId || '');
           setChecklist(currentChecklist);
         } else {
-          console.warn('Checklist not found:', checklistId);
+          logger.warn('Checklist not found:', checklistId);
         }
       } catch (error) {
-        console.error('Failed to load checklist:', error);
+        logger.error('Failed to load checklist:', error);
       }
     };
     loadData();
@@ -64,7 +67,7 @@ export default function ChecklistDetailScreen() {
     if (vacationId) {
       loadChecklists();
     }
-  }, [vacationId, loadChecklists]);
+  }, [vacationId]);
 
   useEffect(() => {
     if (checklists.length > 0) {
@@ -77,20 +80,13 @@ export default function ChecklistDetailScreen() {
 
   if (!checklist) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Liste wird geladen...
-          </Text>
-          <View style={styles.headerSpacer} />
-        </View>
-      </SafeAreaView>
+      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+        <AppHeader
+          title={t('checklist.loading')}
+          showBack={true}
+          onBackPress={() => router.back()}
+        />
+      </View>
     );
   }
 
@@ -108,16 +104,16 @@ export default function ChecklistDetailScreen() {
   };
 
   const getCategoryName = (category: string) => {
-    const names = {
-      packing: 'Packen',
-      shopping: 'Einkaufen',
-      bucket: 'Bucket List',
-      todo: 'Aufgaben',
-      planning: 'Planung',
-      general: 'Allgemein',
-      custom: 'Benutzerdefiniert',
+    const names: Record<string, string> = {
+      packing: t('checklist.categories.packing'),
+      shopping: t('checklist.categories.shopping'),
+      bucket: t('checklist.categories.bucket'),
+      todo: t('checklist.categories.todo'),
+      planning: t('checklist.categories.planning'),
+      general: t('checklist.categories.general'),
+      custom: t('checklist.categories.custom'),
     };
-    return names[category as keyof typeof names] || 'Allgemein';
+    return names[category] || t('checklist.categories.general');
   };
 
   const handleAddItem = async () => {
@@ -130,7 +126,7 @@ export default function ChecklistDetailScreen() {
       // Reload checklists to update the view
       await loadChecklists();
     } catch {
-      Alert.alert('Fehler', 'Element konnte nicht hinzugefügt werden.');
+      Alert.alert(t('common.error'), t('checklist.errors.add_item'));
     }
   };
 
@@ -140,18 +136,18 @@ export default function ChecklistDetailScreen() {
       // Reload checklists to update the view
       await loadChecklists();
     } catch {
-      Alert.alert('Fehler', 'Element konnte nicht aktualisiert werden.');
+      Alert.alert(t('common.error'), t('checklist.errors.update_item'));
     }
   };
 
   const handleDeleteItem = async (item: ChecklistItem) => {
     Alert.alert(
-      'Element löschen',
-      `Möchten Sie "${item.text}" wirklich löschen?`,
+      t('checklist.delete_item.title'),
+      t('checklist.delete_item.message', { text: item.text }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -159,7 +155,7 @@ export default function ChecklistDetailScreen() {
               // Reload checklists to update the view
               await loadChecklists();
             } catch {
-              Alert.alert('Fehler', 'Element konnte nicht gelöscht werden.');
+              Alert.alert(t('common.error'), t('checklist.errors.delete_item'));
             }
           },
         },
@@ -169,12 +165,12 @@ export default function ChecklistDetailScreen() {
 
   const handleEditTitle = () => {
     Alert.prompt(
-      'Liste umbenennen',
-      'Neuer Name:',
+      t('checklist.rename.title'),
+      t('checklist.rename.prompt'),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Speichern',
+          text: t('common.save'),
           onPress: async (newTitle) => {
             if (newTitle?.trim() && newTitle !== checklist.title) {
               try {
@@ -186,7 +182,7 @@ export default function ChecklistDetailScreen() {
                 // Reload checklists to update the view
                 await loadChecklists();
               } catch {
-                Alert.alert('Fehler', 'Titel konnte nicht geändert werden.');
+                Alert.alert(t('common.error'), t('checklist.errors.update_title'));
               }
             }
           },
@@ -202,31 +198,27 @@ export default function ChecklistDetailScreen() {
   const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-        <View style={styles.titleContainer}>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        title={checklist.title}
+        subtitle={`${getCategoryName(checklist.category)} • ${completedItems}/${totalItems}`}
+        variant="default"
+        showBack={true}
+        onBackPress={() => router.back()}
+        leftAction={
           <TouchableOpacity onPress={handleEditTitle}>
-            <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {checklist.title}
-            </Text>
+            <Icon name="edit" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
           </TouchableOpacity>
-          <Text style={[styles.headerSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {getCategoryName(checklist.category)} • {completedItems}/{totalItems}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => setIsAddingItem(!isAddingItem)}
-          style={[styles.addButton, { backgroundColor: getCategoryColor(checklist.category) }]}
-        >
-          <Icon name="plus" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+        }
+        rightAction={
+          <TouchableOpacity
+            onPress={() => setIsAddingItem(!isAddingItem)}
+            style={[styles.addButton, { backgroundColor: getCategoryColor(checklist.category) }]}
+          >
+            <Icon name="plus" size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        }
+      />
 
       {/* Progress Bar */}
       {totalItems > 0 && (
@@ -265,7 +257,7 @@ export default function ChecklistDetailScreen() {
                     backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF',
                   },
                 ]}
-                placeholder="Neues Element hinzufügen..."
+                placeholder={t('checklist.add_item_placeholder')}
                 placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
                 value={newItemText}
                 onChangeText={setNewItemText}
@@ -285,9 +277,9 @@ export default function ChecklistDetailScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={handleAddItem}
-                  style={[styles.actionButton, { backgroundColor: getCategoryColor(checklist.category) }]}
+                  style={[styles.actionButton, { backgroundColor: '#34C759' }]}
                 >
-                  <Icon name="check" size={16} color="#FFFFFF" />
+                  <Icon name="plus" size={16} color="#FFFFFF" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -301,12 +293,18 @@ export default function ChecklistDetailScreen() {
                 <View key={item.id} style={styles.itemContainer}>
                   <TouchableOpacity
                     onPress={() => handleToggleItem(item.id)}
-                    style={styles.itemCheckbox}
+                    style={[
+                      styles.itemCheckbox,
+                      {
+                        backgroundColor: item.completed ? '#34C759' : 'transparent',
+                        borderColor: item.completed ? '#34C759' : (isDark ? '#3A3A3C' : '#E5E5EA'),
+                      }
+                    ]}
                   >
                     <Icon
                       name="check"
                       size={16}
-                      color={item.completed ? getCategoryColor(checklist.category) : (isDark ? '#3A3A3C' : '#E5E5EA')}
+                      color={item.completed ? '#FFFFFF' : 'transparent'}
                     />
                   </TouchableOpacity>
                   <Text
@@ -337,16 +335,16 @@ export default function ChecklistDetailScreen() {
             <View style={styles.emptyState}>
               <Icon name={checklist.icon as any} size={48} color={isDark ? '#3A3A3C' : '#E5E5EA'} />
               <Text style={[styles.emptyTitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Liste ist leer
+                {t('checklist.empty.title')}
               </Text>
               <Text style={[styles.emptyDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                Fügen Sie Ihr erstes Element hinzu, um zu beginnen.
+                {t('checklist.empty.description')}
               </Text>
             </View>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -457,7 +455,6 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: 'rgba(60, 60, 67, 0.12)',
     justifyContent: 'center',
     alignItems: 'center',
   },

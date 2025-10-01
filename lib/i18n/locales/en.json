@@ -1,0 +1,697 @@
+{
+  "common": {
+    "app_name": "Vacation Budget",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "add": "Add",
+    "create": "Create",
+    "update": "Update",
+    "close": "Close",
+    "done": "Done",
+    "next": "Next",
+    "previous": "Previous",
+    "skip": "Skip",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "required": "Required"
+  },
+  "navigation": {
+    "home": "Home",
+    "vacations": "Vacations",
+    "settings": "Settings",
+    "profile": "Profile",
+    "explore": "Explore",
+    "budget": "Budget",
+    "checklists": "Checklists",
+    "overview": "Overview"
+  },
+  "tabs": {
+    "home": "Home",
+    "explore": "Explore",
+    "settings": "Settings"
+  },
+  "vacation": {
+    "title": "Vacation",
+    "add": {
+      "title": "New Vacation",
+      "button": "Create Vacation",
+      "success": "Vacation created successfully"
+    },
+    "edit": {
+      "title": "Edit Vacation",
+      "success": "Vacation updated successfully"
+    },
+    "delete": {
+      "title": "Delete Vacation",
+      "message": "Are you sure you want to delete the vacation \"{{destination}}\"? All associated data (expenses, checklists) will also be deleted.",
+      "success": "Vacation deleted successfully",
+      "error": "Failed to delete vacation"
+    },
+    "detail": {
+      "title": "Vacation Details",
+      "loading": "Loading vacation data..."
+    },
+    "form": {
+      "destination": "Destination",
+      "destination_placeholder": "e.g. Antalya",
+      "country": "Country",
+      "country_placeholder": "e.g. Turkey",
+      "hotel": "Hotel",
+      "hotel_placeholder": "e.g. Club Hotel Sera",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "budget": "Budget",
+      "budget_placeholder": "e.g. 2000",
+      "currency": "Currency",
+      "notes": "Notes",
+      "notes_placeholder": "Additional information"
+    },
+    "empty": {
+      "title": "No Vacations Found",
+      "subtitle": "Create your first trip",
+      "button": "Create New Vacation"
+    },
+    "settings": {
+      "title": "Vacation Settings",
+      "edit_vacation": "Edit Vacation",
+      "delete_vacation": "Delete Vacation",
+      "export_data": "Export Data",
+      "import_data": "Import Data"
+    },
+    "checklists": {
+      "title": "Lists",
+      "count": "{{count}} List",
+      "count_plural": "{{count}} Lists",
+      "create": {
+        "title": "Create New List",
+        "prompt": "List name:"
+      },
+      "delete": {
+        "title": "Delete List",
+        "message": "Are you sure you want to delete the list \"{{title}}\"?"
+      },
+      "templates": {
+        "title": "Templates",
+        "empty": "No templates available.",
+        "select_title": "Select Template",
+        "select_prompt": "Choose a template:"
+      },
+      "empty": {
+        "title": "No Lists Yet",
+        "description": "Create your first list using the plus button.\n\nOr choose a template from the templates button."
+      },
+      "errors": {
+        "create": "Failed to create list.",
+        "create_from_template": "Failed to create list from template.",
+        "delete": "Failed to delete list."
+      }
+    },
+    "settings_screen": {
+      "title": "Settings",
+      "general": "General",
+      "vacation_details": {
+        "title": "Vacation Details",
+        "subtitle": "Edit destination, hotel, dates and budget"
+      }
+    },
+    "edit_screen": {
+      "title": "Edit Vacation",
+      "subtitle": "Modify your vacation details here",
+      "loading": "Loading vacation...",
+      "errors": {
+        "not_found": "Vacation not found.",
+        "required_fields": "Please fill in all required fields.",
+        "invalid_dates": "End date must be after start date.",
+        "update_failed": "Failed to update vacation."
+      }
+    },
+    "tabs": {
+      "budget": "Budget",
+      "lists": "Lists",
+      "settings": "Settings"
+    }
+  },
+  "expense": {
+    "title": "Expense",
+    "title_plural": "Expenses",
+    "add": {
+      "title": "New Expense",
+      "button": "Add Expense",
+      "success": "Expense added successfully"
+    },
+    "edit": {
+      "title": "Edit Expense",
+      "success": "Expense updated successfully"
+    },
+    "delete": {
+      "title": "Delete Expense",
+      "message": "Are you sure you want to delete the expense \"{{description}}\"?",
+      "success": "Expense deleted successfully",
+      "error": "Failed to delete expense"
+    },
+    "form": {
+      "amount": "Amount",
+      "amount_placeholder": "52.50",
+      "currency": "Currency",
+      "description": "Description",
+      "description_placeholder": "e.g. Airport Shop",
+      "category": "Category",
+      "date": "Date",
+      "converted_amount": "Converted to CHF",
+      "converting": "Converting...",
+      "currency_calculator": "Currency Calculator"
+    },
+    "empty": {
+      "title": "No Expenses Yet",
+      "subtitle": "Tap ➕ to add your first expense"
+    }
+  },
+  "categories": {
+    "food": "Food",
+    "transport": "Transport",
+    "accommodation": "Accommodation",
+    "entertainment": "Entertainment",
+    "shopping": "Shopping",
+    "other": "Other",
+    "unknown": "Unknown"
+  },
+  "budget": {
+    "title": "Budget",
+    "overview": {
+      "title": "Budget Overview",
+      "available": "Available",
+      "spent": "Spent",
+      "remaining": "Remaining",
+      "exceeded": "Exceeded",
+      "total": "Total",
+      "percentage": "{{percent}}% spent"
+    },
+    "stats": {
+      "daily_average": "Daily Average",
+      "days_remaining": "Days Remaining",
+      "per_day_available": "Available Per Day",
+      "largest_expense": "Largest Expense",
+      "by_category": "By Category"
+    },
+    "alerts": {
+      "exceeded_title": "Budget Exceeded",
+      "exceeded_message": "You have exceeded your budget by {{amount}}.",
+      "warning_title": "Budget Warning",
+      "warning_message": "You have spent {{percent}}% of your budget."
+    },
+    "empty": {
+      "title": "No Budget Set",
+      "subtitle": "Set a budget to track your expenses"
+    }
+  },
+  "checklist": {
+    "title": "Checklist",
+    "title_plural": "Checklists",
+    "loading": "Loading list...",
+    "add_item_placeholder": "Add new item...",
+    "categories": {
+      "packing": "Packing",
+      "shopping": "Shopping",
+      "bucket": "Bucket List",
+      "todo": "To-Do",
+      "planning": "Planning",
+      "general": "General",
+      "custom": "Custom"
+    },
+    "add": {
+      "title": "New Checklist",
+      "button": "Create Checklist",
+      "success": "Checklist created successfully"
+    },
+    "edit": {
+      "title": "Edit Checklist",
+      "success": "Checklist updated successfully"
+    },
+    "delete": {
+      "title": "Delete Checklist",
+      "message": "Are you sure you want to delete the checklist \"{{title}}\"?",
+      "success": "Checklist deleted successfully"
+    },
+    "delete_item": {
+      "title": "Delete Item",
+      "message": "Are you sure you want to delete \"{{text}}\"?"
+    },
+    "rename": {
+      "title": "Rename List",
+      "prompt": "New name:"
+    },
+    "form": {
+      "title": "Title",
+      "title_placeholder": "e.g. Packing List",
+      "add_item": "Add Item",
+      "item_placeholder": "New item"
+    },
+    "item": {
+      "add": "Add Item",
+      "edit": "Edit Item",
+      "delete": "Delete Item",
+      "completed": "Completed",
+      "pending": "Pending"
+    },
+    "empty": {
+      "title": "List is Empty",
+      "description": "Add your first item to get started.",
+      "subtitle": "Create your first checklist",
+      "no_items": "No items available"
+    },
+    "errors": {
+      "add_item": "Failed to add item.",
+      "update_item": "Failed to update item.",
+      "delete_item": "Failed to delete item.",
+      "update_title": "Failed to update title."
+    },
+    "progress": {
+      "completed": "{{completed}} of {{total}} completed",
+      "percentage": "{{percent}}% completed"
+    }
+  },
+  "template": {
+    "title": "Template",
+    "title_plural": "Templates",
+    "add": {
+      "title": "New Template",
+      "button": "Create Template",
+      "success": "Template created successfully"
+    },
+    "edit": {
+      "title": "Edit Template",
+      "success": "Template updated successfully"
+    },
+    "delete": {
+      "title": "Delete Template",
+      "message": "Are you sure you want to delete the template \"{{title}}\"?",
+      "success": "Template deleted successfully",
+      "error": "Failed to delete template."
+    },
+    "use": {
+      "button": "Use Template",
+      "success": "Template applied successfully"
+    },
+    "empty": {
+      "title": "No Templates",
+      "subtitle": "Create templates for your trips",
+      "create_defaults": "Create 4 Default Templates"
+    },
+    "items_count": "{{count}} Item",
+    "items_count_plural": "{{count}} Items",
+    "default": {
+      "beach_vacation": "Beach Vacation",
+      "city_trip": "City Trip",
+      "ski_vacation": "Ski Vacation",
+      "camping": "Camping",
+      "backpacking": "Backpacking"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "account": {
+      "title": "Account",
+      "subtitle": "Manage your account"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Manage your notifications",
+      "note_title": "Note",
+      "note_message": "Notifications must be enabled in your device's system settings.",
+      "budget_alerts": "Budget Alerts",
+      "budget_alerts_subtitle": "Notification when budget is exceeded",
+      "expense_reminders": "Expense Reminders",
+      "expense_reminders_subtitle": "Reminder for unrecorded expenses",
+      "trip_updates": "Trip Updates",
+      "trip_updates_subtitle": "Important updates about your trips"
+    },
+    "currency": {
+      "title": "Currency",
+      "subtitle": "Select your preferred currency",
+      "default": "Default Currency",
+      "add_currency": "Add New Currency",
+      "add_aria": "Add new currency",
+      "delete_aria": "Delete currency {{name}}",
+      "search_placeholder": "Search currency...",
+      "search_results": "Search Results ({{count}})",
+      "all_currencies": "All Currencies ({{count}})",
+      "default_currency_delete": "Default currencies cannot be deleted.",
+      "currency_exists": "A currency with this code already exists.",
+      "delete": {
+        "title": "Delete Currency",
+        "message": "Are you sure you want to delete the currency \"{{name}}\"?"
+      },
+      "errors": {
+        "popular_title": "Popular Currency",
+        "popular_message": "Popular currencies cannot be deleted.",
+        "duplicate_title": "Currency Already Exists",
+        "duplicate_message": "A currency with this code already exists."
+      },
+      "exchange_rates": "Exchange Rates",
+      "last_updated": "Last updated: {{date}}",
+      "update_rates": "Update Rates",
+      "calculator": {
+        "title": "Currency Calculator",
+        "loading": "Loading settings...",
+        "sections": {
+          "update_policy": "Update",
+          "cache": "Cache"
+        },
+        "update_policy": {
+          "title": "Update Policy",
+          "message": "Choose how exchange rates should be updated:",
+          "auto": "Automatic",
+          "wifi_only": "WiFi Only",
+          "manual": "Manual"
+        },
+        "mobile_data": {
+          "title": "Use Mobile Data",
+          "subtitle": "Update exchange rates over cellular"
+        },
+        "cache_status": {
+          "title": "Cache Status",
+          "expired": "Expired",
+          "current": "Current",
+          "no_cache": "No cache available"
+        },
+        "cache_age_hours": "{{hours}}h {{minutes}}m ago",
+        "cache_age_minutes": "{{minutes}}m ago",
+        "last_update": "Last update: {{date}} at {{time}}",
+        "update_now": {
+          "title": "Update Now",
+          "subtitle": "Manually load exchange rates"
+        },
+        "clear_cache_button": {
+          "title": "Clear Cache",
+          "subtitle": "Remove stored exchange rates"
+        },
+        "clear_cache": {
+          "title": "Clear Cache",
+          "message": "Are you sure you want to clear the exchange rate cache?",
+          "success": "Cache has been cleared."
+        },
+        "update_success": "Exchange rates have been updated.",
+        "errors": {
+          "save_failed": "Failed to save settings.",
+          "update_failed": "Update failed.",
+          "clear_cache_failed": "Failed to clear cache."
+        }
+      },
+      "data": {
+        "title": "Currency Data",
+        "loading": "Loading settings...",
+        "sections": {
+          "cache_status": "Cache Status",
+          "manual_correction": "Manual Rate Correction",
+          "update_policy": "Update Policy",
+          "data_usage": "Data Usage",
+          "cache_expiry": "Cache Expiry"
+        },
+        "cache_status": {
+          "label": "Status",
+          "no_cache": "No cache available",
+          "expired": "Expired",
+          "current": "Current",
+          "age": "Age: {{age}}",
+          "last_update": "Last update: {{time}}"
+        },
+        "actions": {
+          "update_rates": "Update Exchange Rates",
+          "clear_cache": "Clear Cache",
+          "set_manual_rate": "Set Manual Rate"
+        },
+        "manual_correction": {
+          "title": "Manually Correct Rates",
+          "description": "If automatic rates are inaccurate, you can manually override them.\nExample: Google shows 100 CHF = 5,218.40 TRY, but the app shows a different value."
+        },
+        "update_policy": {
+          "auto": "Automatic",
+          "auto_description": "Updates exchange rates automatically when available",
+          "wifi_only": "WiFi Only",
+          "wifi_only_description": "Updates only over WiFi connections",
+          "manual": "Manual",
+          "manual_description": "Update only on request"
+        },
+        "mobile_data": {
+          "title": "Use Mobile Data",
+          "description": "Update exchange rates over mobile data connection"
+        },
+        "cache_expiry": {
+          "1_hour": "1 Hour",
+          "6_hours": "6 Hours",
+          "12_hours": "12 Hours",
+          "1_day": "1 Day",
+          "2_days": "2 Days",
+          "1_week": "1 Week"
+        },
+        "update": {
+          "success_title": "Successfully Updated",
+          "success_message": "Exchange rates have been updated successfully.",
+          "failed_title": "Update Failed",
+          "failed_message": "Unknown error while updating exchange rates."
+        },
+        "clear_cache": {
+          "title": "Clear Cache",
+          "message": "Are you sure you want to clear the exchange rate cache? This will delete all stored rate data.",
+          "button": "Clear",
+          "success_title": "Cache Cleared",
+          "success_message": "Exchange rate cache has been cleared successfully."
+        },
+        "manual_rate": {
+          "invalid_title": "Invalid Value",
+          "invalid_message": "Please enter a valid exchange rate.",
+          "success_title": "Rate Set",
+          "success_message": "Manual exchange rate {{from}}/{{to}} = {{rate}} has been saved."
+        },
+        "manual_rate_editor": {
+          "title": "Manual Rate",
+          "section_title": "Correct Exchange Rate",
+          "example_title": "Example for TRY (Turkish Lira)",
+          "example_description": "Google: 100 CHF = 5,218.40 TRY\nEnter 52.184 (for 1 CHF = 52.184 TRY)",
+          "from_label": "From",
+          "to_label": "To",
+          "rate_label": "Exchange Rate (1 {{from}} = ? {{to}})",
+          "rate_placeholder": "e.g. 52.184"
+        }
+      }
+    },
+    "language": {
+      "title": "Language",
+      "subtitle": "Select your preferred language",
+      "restart_required": "The app must be restarted for all changes to take effect."
+    },
+    "data": {
+      "title": "Data & Storage",
+      "subtitle": "Manage your data",
+      "backup": "Backup & Restore",
+      "export": "Export Data",
+      "import": "Import Data",
+      "clear_cache": "Clear Cache",
+      "storage_used": "Storage Used"
+    },
+    "about": {
+      "title": "About",
+      "subtitle": "App information",
+      "version": "Version",
+      "privacy_policy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "support": "Support",
+      "rate_app": "Rate App"
+    },
+    "categories": {
+      "title": "Categories",
+      "subtitle": "Tap a category to edit it",
+      "loading": "Loading categories...",
+      "custom": "Custom Categories",
+      "add": "Add Category",
+      "add_aria": "Add new category",
+      "delete_aria": "Delete category {{name}}",
+      "delete": {
+        "title": "Delete Category",
+        "message": "Are you sure you want to delete the category \"{{name}}\"?"
+      },
+      "errors": {
+        "save_title": "Save Error",
+        "save_message": "Failed to save categories. Please try again.",
+        "invalid_name_title": "Invalid Name",
+        "invalid_name_message": "Please enter a valid category name.",
+        "duplicate_title": "Name Already Exists",
+        "duplicate_message": "A category with this name already exists.",
+        "cannot_delete_title": "Cannot Delete Category",
+        "cannot_delete_message": "You must have at least one category."
+      }
+    },
+    "templates": {
+      "title": "Templates",
+      "subtitle": "Manage checklist templates",
+      "description": "Manage your default lists for trips here. Tap a list to view or edit it.",
+      "error_load": "Failed to load templates.",
+      "created_success": "4 default templates have been created!",
+      "created_error": "Failed to create default templates.",
+      "order_error": "Failed to save order."
+    }
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "network": "Network error. Please check your internet connection.",
+    "storage": "Error saving data. Please try again.",
+    "database": "Error accessing the database. Please try again.",
+    "validation": "Invalid input for {{field}}. Please check your information.",
+    "currency_save": "Failed to save currency setting.",
+    "required_field": "Please fill in all required fields.",
+    "invalid_amount": "Invalid amount",
+    "invalid_date": "Invalid date",
+    "invalid_email": "Invalid email address",
+    "not_found": "{{item}} not found",
+    "permission_denied": "Access denied",
+    "backup": {
+      "create_failed": "Failed to create backup. Please try again.",
+      "share_failed": "Failed to share backup.",
+      "import_failed": "Failed to import backup.",
+      "file_read_failed": "Failed to read backup file.",
+      "invalid": "The selected file is not a valid Vacation Assist backup."
+    }
+  },
+  "validation": {
+    "required": "{{field}} is required",
+    "min_length": "{{field}} must be at least {{min}} characters long",
+    "max_length": "{{field}} must not exceed {{max}} characters",
+    "min_value": "{{field}} must be at least {{min}}",
+    "max_value": "{{field}} must not exceed {{max}}",
+    "invalid_format": "Invalid format for {{field}}",
+    "email": "Please enter a valid email address",
+    "numeric": "{{field}} must be a number",
+    "positive": "{{field}} must be positive",
+    "date_range": "End date must be after start date"
+  },
+  "alerts": {
+    "confirm": "Confirm",
+    "are_you_sure": "Are you sure?",
+    "unsaved_changes": "Unsaved Changes",
+    "unsaved_changes_message": "You have unsaved changes. Do you want to continue?",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information"
+  },
+  "backup": {
+    "create": "Create Backup",
+    "share": "Share Backup",
+    "import": "Import Backup",
+    "export": "Export Data",
+    "import_confirm_title": "Import Backup",
+    "import_confirm_message": "Are you sure you want to import this backup?\n\n📅 Created: {{date}}\n📊 Records: {{records}}\n\n⚠️ WARNING: Your current data will be overwritten!",
+    "import_success": "{{records}} records have been restored.",
+    "export_success": "Data exported successfully.",
+    "share_unavailable_title": "Sharing Unavailable",
+    "share_unavailable_message": "Backup was created, but sharing is not supported on this device.",
+    "creating": "Creating backup...",
+    "importing": "Importing backup..."
+  },
+  "date": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "days_ago": "{{count}} day ago",
+    "days_ago_plural": "{{count}} days ago",
+    "in_days": "in {{count}} day",
+    "in_days_plural": "in {{count}} days",
+    "weeks_ago": "{{count}} week ago",
+    "weeks_ago_plural": "{{count}} weeks ago",
+    "months_ago": "{{count}} month ago",
+    "months_ago_plural": "{{count}} months ago",
+    "select_date": "Select Date",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "duration": "Duration",
+    "days": "Day",
+    "days_plural": "Days"
+  },
+  "currency": {
+    "chf": "Swiss Franc",
+    "eur": "Euro",
+    "usd": "US Dollar",
+    "gbp": "British Pound",
+    "jpy": "Japanese Yen",
+    "exchange_rate": "Exchange Rate",
+    "converted": "Converted"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get Started",
+    "slide1": {
+      "title": "Welcome to Vacation Budget",
+      "text": "Your digital companion for stress-free vacation planning and smart budget management. Everything under control – from the first idea to the last expense."
+    },
+    "slide2": {
+      "title": "Plan Your Dream Trip",
+      "text": "Create trips, collect destinations and hotels, save photos and keep everything in view on the map."
+    },
+    "slide3": {
+      "title": "Budget Always Under Control",
+      "text": "Track expenses by category, use multi-currency support with live exchange rates and see your budget in real time."
+    },
+    "slide4": {
+      "title": "Never Forget Anything",
+      "text": "Use smart packing lists, to-dos and bucket lists with pre-made templates. Organize easily with drag & drop."
+    },
+    "slide5": {
+      "title": "Optimized for You",
+      "text": "Dark/Light Mode, works offline, available in multiple languages. Your travel data stays secure on your device."
+    }
+  },
+  "empty_states": {
+    "no_data": "No data available",
+    "no_results": "No results found",
+    "no_internet": "No internet connection",
+    "try_again": "Try again",
+    "refresh": "Refresh"
+  },
+  "help": {
+    "title": "Help",
+    "faq": "Frequently Asked Questions",
+    "contact_support": "Contact Support",
+    "tutorial": "Tutorial",
+    "tips": "Tips & Tricks"
+  },
+  "components": {
+    "currency_editor": {
+      "title": "New Currency",
+      "code_label": "Currency Code (e.g. USD, TRY)",
+      "code_placeholder": "USD",
+      "name_label": "Full Name",
+      "name_placeholder": "US Dollar",
+      "symbol_label": "Symbol (e.g. $, €, ¥)",
+      "symbol_placeholder": "$",
+      "flag_label": "Flag (e.g. 🇺🇸, 🇩🇪, 🇨🇭)",
+      "flag_placeholder": "🇺🇸"
+    },
+    "vacation_card": {
+      "over_budget": "Over Budget:",
+      "remaining": "Remaining:"
+    },
+    "budget_overview": {
+      "status": {
+        "upcoming": "Upcoming Trip",
+        "active": "Active Trip",
+        "completed": "Completed Trip"
+      },
+      "progress": "{{percentage}}% used",
+      "total_budget": "Total Budget",
+      "spent": "Spent",
+      "remaining": "Remaining",
+      "per_day": "Remaining per Day ({{days}})",
+      "vacation_ended": "Vacation Ended"
+    }
+  }
+}

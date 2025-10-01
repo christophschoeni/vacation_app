@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
 import { Colors, BorderRadius, Shadow, Spacing } from '@/constants/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
 
 type CardVariant = 'default' | 'elevated' | 'outlined' | 'clean';
 

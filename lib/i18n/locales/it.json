@@ -1,0 +1,697 @@
+{
+  "common": {
+    "app_name": "Budget Vacanze",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "back": "Indietro",
+    "ok": "OK",
+    "yes": "Sì",
+    "no": "No",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "add": "Aggiungi",
+    "create": "Crea",
+    "update": "Aggiorna",
+    "close": "Chiudi",
+    "done": "Fatto",
+    "next": "Avanti",
+    "previous": "Indietro",
+    "skip": "Salta",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "sort": "Ordina",
+    "required": "Obbligatorio"
+  },
+  "navigation": {
+    "home": "Home",
+    "vacations": "Vacanze",
+    "settings": "Impostazioni",
+    "profile": "Profilo",
+    "explore": "Esplora",
+    "budget": "Budget",
+    "checklists": "Liste",
+    "overview": "Panoramica"
+  },
+  "tabs": {
+    "home": "Home",
+    "explore": "Esplora",
+    "settings": "Impostazioni"
+  },
+  "vacation": {
+    "title": "Vacanza",
+    "add": {
+      "title": "Nuova vacanza",
+      "button": "Crea vacanza",
+      "success": "Vacanza creata con successo"
+    },
+    "edit": {
+      "title": "Modifica vacanza",
+      "success": "Vacanza aggiornata con successo"
+    },
+    "delete": {
+      "title": "Elimina vacanza",
+      "message": "Sei sicuro di voler eliminare la vacanza \"{{destination}}\"? Tutti i dati associati (spese, liste) verranno eliminati anch'essi.",
+      "success": "Vacanza eliminata con successo",
+      "error": "Impossibile eliminare la vacanza"
+    },
+    "detail": {
+      "title": "Dettagli vacanza",
+      "loading": "Caricamento dati vacanza..."
+    },
+    "form": {
+      "destination": "Destinazione",
+      "destination_placeholder": "ad es. Antalya",
+      "country": "Paese",
+      "country_placeholder": "ad es. Turchia",
+      "hotel": "Hotel",
+      "hotel_placeholder": "ad es. Club Hotel Sera",
+      "start_date": "Data di inizio",
+      "end_date": "Data di fine",
+      "budget": "Budget",
+      "budget_placeholder": "ad es. 2000",
+      "currency": "Valuta",
+      "notes": "Note",
+      "notes_placeholder": "Informazioni aggiuntive"
+    },
+    "empty": {
+      "title": "Nessuna vacanza trovata",
+      "subtitle": "Crea il tuo primo viaggio",
+      "button": "Crea nuova vacanza"
+    },
+    "settings": {
+      "title": "Impostazioni vacanza",
+      "edit_vacation": "Modifica vacanza",
+      "delete_vacation": "Elimina vacanza",
+      "export_data": "Esporta dati",
+      "import_data": "Importa dati"
+    },
+    "checklists": {
+      "title": "Liste",
+      "count": "{{count}} lista",
+      "count_plural": "{{count}} liste",
+      "create": {
+        "title": "Crea nuova lista",
+        "prompt": "Nome della lista:"
+      },
+      "delete": {
+        "title": "Elimina lista",
+        "message": "Sei sicuro di voler eliminare la lista \"{{title}}\"?"
+      },
+      "templates": {
+        "title": "Modelli",
+        "empty": "Nessun modello disponibile.",
+        "select_title": "Seleziona modello",
+        "select_prompt": "Scegli un modello:"
+      },
+      "empty": {
+        "title": "Nessuna lista ancora",
+        "description": "Crea la tua prima lista con il pulsante più.\n\nOppure scegli un modello dal pulsante modelli."
+      },
+      "errors": {
+        "create": "Impossibile creare la lista.",
+        "create_from_template": "Impossibile creare la lista dal modello.",
+        "delete": "Impossibile eliminare la lista."
+      }
+    },
+    "settings_screen": {
+      "title": "Impostazioni",
+      "general": "Generale",
+      "vacation_details": {
+        "title": "Dettagli vacanza",
+        "subtitle": "Modifica destinazione, hotel, date e budget"
+      }
+    },
+    "edit_screen": {
+      "title": "Modifica vacanza",
+      "subtitle": "Modifica qui i dettagli della tua vacanza",
+      "loading": "Caricamento vacanza...",
+      "errors": {
+        "not_found": "Vacanza non trovata.",
+        "required_fields": "Si prega di compilare tutti i campi obbligatori.",
+        "invalid_dates": "La data di fine deve essere successiva alla data di inizio.",
+        "update_failed": "Impossibile aggiornare la vacanza."
+      }
+    },
+    "tabs": {
+      "budget": "Budget",
+      "lists": "Liste",
+      "settings": "Impostazioni"
+    }
+  },
+  "expense": {
+    "title": "Spesa",
+    "title_plural": "Spese",
+    "add": {
+      "title": "Nuova spesa",
+      "button": "Registra spesa",
+      "success": "Spesa registrata con successo"
+    },
+    "edit": {
+      "title": "Modifica spesa",
+      "success": "Spesa aggiornata con successo"
+    },
+    "delete": {
+      "title": "Elimina spesa",
+      "message": "Sei sicuro di voler eliminare la spesa \"{{description}}\"?",
+      "success": "Spesa eliminata con successo",
+      "error": "Impossibile eliminare la spesa"
+    },
+    "form": {
+      "amount": "Importo",
+      "amount_placeholder": "52.50",
+      "currency": "Valuta",
+      "description": "Descrizione",
+      "description_placeholder": "ad es. Negozio aeroporto",
+      "category": "Categoria",
+      "date": "Data",
+      "converted_amount": "Convertito in CHF",
+      "converting": "Conversione...",
+      "currency_calculator": "Convertitore di valuta"
+    },
+    "empty": {
+      "title": "Nessuna spesa registrata",
+      "subtitle": "Tocca ➕ per aggiungere la tua prima spesa"
+    }
+  },
+  "categories": {
+    "food": "Cibo",
+    "transport": "Trasporto",
+    "accommodation": "Alloggio",
+    "entertainment": "Intrattenimento",
+    "shopping": "Shopping",
+    "other": "Altro",
+    "unknown": "Sconosciuto"
+  },
+  "budget": {
+    "title": "Budget",
+    "overview": {
+      "title": "Panoramica budget",
+      "available": "Disponibile",
+      "spent": "Speso",
+      "remaining": "Rimanente",
+      "exceeded": "Superamento",
+      "total": "Totale",
+      "percentage": "{{percent}}% speso"
+    },
+    "stats": {
+      "daily_average": "Media giornaliera",
+      "days_remaining": "Giorni rimanenti",
+      "per_day_available": "Disponibile al giorno",
+      "largest_expense": "Spesa maggiore",
+      "by_category": "Per categoria"
+    },
+    "alerts": {
+      "exceeded_title": "Budget superato",
+      "exceeded_message": "Hai superato il tuo budget di {{amount}}.",
+      "warning_title": "Avviso budget",
+      "warning_message": "Hai speso il {{percent}}% del tuo budget."
+    },
+    "empty": {
+      "title": "Nessun budget impostato",
+      "subtitle": "Imposta un budget per monitorare le tue spese"
+    }
+  },
+  "checklist": {
+    "title": "Lista di controllo",
+    "title_plural": "Liste di controllo",
+    "loading": "Caricamento lista...",
+    "add_item_placeholder": "Aggiungi nuovo elemento...",
+    "categories": {
+      "packing": "Bagagli",
+      "shopping": "Acquisti",
+      "bucket": "Lista dei desideri",
+      "todo": "Da fare",
+      "planning": "Pianificazione",
+      "general": "Generale",
+      "custom": "Personalizzato"
+    },
+    "add": {
+      "title": "Nuova lista",
+      "button": "Crea lista",
+      "success": "Lista creata con successo"
+    },
+    "edit": {
+      "title": "Modifica lista",
+      "success": "Lista aggiornata con successo"
+    },
+    "delete": {
+      "title": "Elimina lista",
+      "message": "Sei sicuro di voler eliminare la lista \"{{title}}\"?",
+      "success": "Lista eliminata con successo"
+    },
+    "delete_item": {
+      "title": "Elimina elemento",
+      "message": "Sei sicuro di voler eliminare \"{{text}}\"?"
+    },
+    "rename": {
+      "title": "Rinomina lista",
+      "prompt": "Nuovo nome:"
+    },
+    "form": {
+      "title": "Titolo",
+      "title_placeholder": "ad es. Lista dei bagagli",
+      "add_item": "Aggiungi elemento",
+      "item_placeholder": "Nuovo elemento"
+    },
+    "item": {
+      "add": "Aggiungi elemento",
+      "edit": "Modifica elemento",
+      "delete": "Elimina elemento",
+      "completed": "Completato",
+      "pending": "In sospeso"
+    },
+    "empty": {
+      "title": "La lista è vuota",
+      "description": "Aggiungi il tuo primo elemento per iniziare.",
+      "subtitle": "Crea la tua prima lista",
+      "no_items": "Nessun elemento disponibile"
+    },
+    "errors": {
+      "add_item": "Impossibile aggiungere l'elemento.",
+      "update_item": "Impossibile aggiornare l'elemento.",
+      "delete_item": "Impossibile eliminare l'elemento.",
+      "update_title": "Impossibile modificare il titolo."
+    },
+    "progress": {
+      "completed": "{{completed}} di {{total}} completati",
+      "percentage": "{{percent}}% completato"
+    }
+  },
+  "template": {
+    "title": "Modello",
+    "title_plural": "Modelli",
+    "add": {
+      "title": "Nuovo modello",
+      "button": "Crea modello",
+      "success": "Modello creato con successo"
+    },
+    "edit": {
+      "title": "Modifica modello",
+      "success": "Modello aggiornato con successo"
+    },
+    "delete": {
+      "title": "Elimina modello",
+      "message": "Sei sicuro di voler eliminare il modello \"{{title}}\"?",
+      "success": "Modello eliminato con successo",
+      "error": "Impossibile eliminare il modello."
+    },
+    "use": {
+      "button": "Usa modello",
+      "success": "Modello applicato con successo"
+    },
+    "empty": {
+      "title": "Nessun modello",
+      "subtitle": "Crea modelli per i tuoi viaggi",
+      "create_defaults": "Crea 4 modelli predefiniti"
+    },
+    "items_count": "{{count}} elemento",
+    "items_count_plural": "{{count}} elementi",
+    "default": {
+      "beach_vacation": "Vacanza al mare",
+      "city_trip": "Viaggio in città",
+      "ski_vacation": "Vacanza sulla neve",
+      "camping": "Campeggio",
+      "backpacking": "Zaino in spalla"
+    }
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "account": {
+      "title": "Account",
+      "subtitle": "Gestisci il tuo account"
+    },
+    "notifications": {
+      "title": "Notifiche",
+      "subtitle": "Gestisci le tue notifiche",
+      "note_title": "Nota",
+      "note_message": "Le notifiche devono essere abilitate nelle impostazioni di sistema del dispositivo.",
+      "budget_alerts": "Avvisi Budget",
+      "budget_alerts_subtitle": "Notifica quando il budget viene superato",
+      "expense_reminders": "Promemoria Spese",
+      "expense_reminders_subtitle": "Promemoria per spese non registrate",
+      "trip_updates": "Aggiornamenti Viaggio",
+      "trip_updates_subtitle": "Aggiornamenti importanti sui tuoi viaggi"
+    },
+    "currency": {
+      "title": "Valuta",
+      "subtitle": "Seleziona la tua valuta preferita",
+      "default": "Valuta predefinita",
+      "add_currency": "Aggiungi nuova valuta",
+      "add_aria": "Aggiungi nuova valuta",
+      "delete_aria": "Elimina valuta {{name}}",
+      "search_placeholder": "Cerca valuta...",
+      "search_results": "Risultati ricerca ({{count}})",
+      "all_currencies": "Tutte le valute ({{count}})",
+      "default_currency_delete": "Le valute predefinite non possono essere eliminate.",
+      "currency_exists": "Una valuta con questo codice esiste già.",
+      "delete": {
+        "title": "Elimina valuta",
+        "message": "Sei sicuro di voler eliminare la valuta \"{{name}}\"?"
+      },
+      "errors": {
+        "popular_title": "Valuta popolare",
+        "popular_message": "Le valute popolari non possono essere eliminate.",
+        "duplicate_title": "Valuta già esistente",
+        "duplicate_message": "Una valuta con questo codice esiste già."
+      },
+      "exchange_rates": "Tassi di cambio",
+      "last_updated": "Ultimo aggiornamento: {{date}}",
+      "update_rates": "Aggiorna tassi",
+      "calculator": {
+        "title": "Convertitore di valuta",
+        "loading": "Caricamento impostazioni...",
+        "sections": {
+          "update_policy": "Aggiornamento",
+          "cache": "Cache"
+        },
+        "update_policy": {
+          "title": "Politica di aggiornamento",
+          "message": "Scegli come devono essere aggiornati i tassi di cambio:",
+          "auto": "Automatico",
+          "wifi_only": "Solo WiFi",
+          "manual": "Manuale"
+        },
+        "mobile_data": {
+          "title": "Usa dati mobili",
+          "subtitle": "Aggiorna i tassi di cambio tramite rete mobile"
+        },
+        "cache_status": {
+          "title": "Stato cache",
+          "expired": "Scaduto",
+          "current": "Attuale",
+          "no_cache": "Nessuna cache disponibile"
+        },
+        "cache_age_hours": "{{hours}}h {{minutes}}m fa",
+        "cache_age_minutes": "{{minutes}}m fa",
+        "last_update": "Ultimo aggiornamento: {{date}} alle {{time}}",
+        "update_now": {
+          "title": "Aggiorna ora",
+          "subtitle": "Carica manualmente i tassi di cambio"
+        },
+        "clear_cache_button": {
+          "title": "Svuota cache",
+          "subtitle": "Rimuovi i tassi di cambio memorizzati"
+        },
+        "clear_cache": {
+          "title": "Svuota cache",
+          "message": "Sei sicuro di voler svuotare la cache dei tassi di cambio?",
+          "success": "La cache è stata svuotata."
+        },
+        "update_success": "I tassi di cambio sono stati aggiornati.",
+        "errors": {
+          "save_failed": "Impossibile salvare le impostazioni.",
+          "update_failed": "Aggiornamento fallito.",
+          "clear_cache_failed": "Impossibile svuotare la cache."
+        }
+      },
+      "data": {
+        "title": "Dati valuta",
+        "loading": "Caricamento impostazioni...",
+        "sections": {
+          "cache_status": "Stato cache",
+          "manual_correction": "Correzione manuale tasso",
+          "update_policy": "Politica di aggiornamento",
+          "data_usage": "Utilizzo dati",
+          "cache_expiry": "Scadenza cache"
+        },
+        "cache_status": {
+          "label": "Stato",
+          "no_cache": "Nessuna cache disponibile",
+          "expired": "Scaduto",
+          "current": "Attuale",
+          "age": "Età: {{age}}",
+          "last_update": "Ultimo aggiornamento: {{time}}"
+        },
+        "actions": {
+          "update_rates": "Aggiorna tassi di cambio",
+          "clear_cache": "Svuota cache",
+          "set_manual_rate": "Imposta tasso manuale"
+        },
+        "manual_correction": {
+          "title": "Correggi manualmente i tassi",
+          "description": "Se i tassi automatici sono imprecisi, puoi sostituirli manualmente.\nEsempio: Google mostra 100 CHF = 5.218,40 TRY, ma l'app mostra un valore diverso."
+        },
+        "update_policy": {
+          "auto": "Automatico",
+          "auto_description": "Aggiorna i tassi di cambio automaticamente quando disponibili",
+          "wifi_only": "Solo WiFi",
+          "wifi_only_description": "Aggiorna solo tramite connessioni WiFi",
+          "manual": "Manuale",
+          "manual_description": "Aggiorna solo su richiesta"
+        },
+        "mobile_data": {
+          "title": "Usa dati mobili",
+          "description": "Aggiorna i tassi di cambio tramite connessione dati mobili"
+        },
+        "cache_expiry": {
+          "1_hour": "1 ora",
+          "6_hours": "6 ore",
+          "12_hours": "12 ore",
+          "1_day": "1 giorno",
+          "2_days": "2 giorni",
+          "1_week": "1 settimana"
+        },
+        "update": {
+          "success_title": "Aggiornamento riuscito",
+          "success_message": "I tassi di cambio sono stati aggiornati con successo.",
+          "failed_title": "Aggiornamento fallito",
+          "failed_message": "Errore sconosciuto durante l'aggiornamento dei tassi di cambio."
+        },
+        "clear_cache": {
+          "title": "Svuota cache",
+          "message": "Sei sicuro di voler svuotare la cache dei tassi di cambio? Questo eliminerà tutti i dati dei tassi memorizzati.",
+          "button": "Svuota",
+          "success_title": "Cache svuotata",
+          "success_message": "La cache dei tassi di cambio è stata svuotata con successo."
+        },
+        "manual_rate": {
+          "invalid_title": "Valore non valido",
+          "invalid_message": "Si prega di inserire un tasso di cambio valido.",
+          "success_title": "Tasso impostato",
+          "success_message": "Tasso di cambio manuale {{from}}/{{to}} = {{rate}} è stato salvato."
+        },
+        "manual_rate_editor": {
+          "title": "Tasso manuale",
+          "section_title": "Correggi tasso di cambio",
+          "example_title": "Esempio per TRY (Lira turca)",
+          "example_description": "Google: 100 CHF = 5.218,40 TRY\nInserisci 52.184 (per 1 CHF = 52.184 TRY)",
+          "from_label": "Da",
+          "to_label": "A",
+          "rate_label": "Tasso di cambio (1 {{from}} = ? {{to}})",
+          "rate_placeholder": "ad es. 52.184"
+        }
+      }
+    },
+    "language": {
+      "title": "Lingua",
+      "subtitle": "Seleziona la tua lingua preferita",
+      "restart_required": "L'app deve essere riavviata affinché tutte le modifiche abbiano effetto."
+    },
+    "data": {
+      "title": "Dati e archiviazione",
+      "subtitle": "Gestisci i tuoi dati",
+      "backup": "Backup e ripristino",
+      "export": "Esporta dati",
+      "import": "Importa dati",
+      "clear_cache": "Svuota cache",
+      "storage_used": "Archiviazione utilizzata"
+    },
+    "about": {
+      "title": "Informazioni",
+      "subtitle": "Informazioni sull'app",
+      "version": "Versione",
+      "privacy_policy": "Informativa sulla privacy",
+      "terms": "Termini di servizio",
+      "support": "Supporto",
+      "rate_app": "Valuta l'app"
+    },
+    "categories": {
+      "title": "Categorie",
+      "subtitle": "Tocca una categoria per modificarla",
+      "loading": "Caricamento categorie...",
+      "custom": "Categorie personalizzate",
+      "add": "Aggiungi categoria",
+      "add_aria": "Aggiungi nuova categoria",
+      "delete_aria": "Elimina categoria {{name}}",
+      "delete": {
+        "title": "Elimina categoria",
+        "message": "Sei sicuro di voler eliminare la categoria \"{{name}}\"?"
+      },
+      "errors": {
+        "save_title": "Errore di salvataggio",
+        "save_message": "Impossibile salvare le categorie. Riprova.",
+        "invalid_name_title": "Nome non valido",
+        "invalid_name_message": "Si prega di inserire un nome di categoria valido.",
+        "duplicate_title": "Nome già esistente",
+        "duplicate_message": "Una categoria con questo nome esiste già.",
+        "cannot_delete_title": "Impossibile eliminare la categoria",
+        "cannot_delete_message": "Devi avere almeno una categoria."
+      }
+    },
+    "templates": {
+      "title": "Modelli",
+      "subtitle": "Gestisci i modelli di liste",
+      "description": "Gestisci qui le tue liste predefinite per i viaggi. Tocca una lista per visualizzarla o modificarla.",
+      "error_load": "Impossibile caricare i modelli.",
+      "created_success": "4 modelli predefiniti sono stati creati!",
+      "created_error": "Impossibile creare i modelli predefiniti.",
+      "order_error": "Impossibile salvare l'ordine."
+    }
+  },
+  "errors": {
+    "generic": "Si è verificato un errore. Riprova.",
+    "network": "Errore di rete. Controlla la tua connessione Internet.",
+    "storage": "Errore durante il salvataggio dei dati. Riprova.",
+    "database": "Errore durante l'accesso al database. Riprova.",
+    "validation": "Input non valido per {{field}}. Controlla le tue informazioni.",
+    "currency_save": "Impossibile salvare l'impostazione della valuta.",
+    "required_field": "Si prega di compilare tutti i campi obbligatori.",
+    "invalid_amount": "Importo non valido",
+    "invalid_date": "Data non valida",
+    "invalid_email": "Indirizzo email non valido",
+    "not_found": "{{item}} non trovato",
+    "permission_denied": "Accesso negato",
+    "backup": {
+      "create_failed": "Impossibile creare il backup. Riprova.",
+      "share_failed": "Impossibile condividere il backup.",
+      "import_failed": "Impossibile importare il backup.",
+      "file_read_failed": "Impossibile leggere il file di backup.",
+      "invalid": "Il file selezionato non è un backup Vacation Assist valido."
+    }
+  },
+  "validation": {
+    "required": "{{field}} è obbligatorio",
+    "min_length": "{{field}} deve contenere almeno {{min}} caratteri",
+    "max_length": "{{field}} non deve superare {{max}} caratteri",
+    "min_value": "{{field}} deve essere almeno {{min}}",
+    "max_value": "{{field}} non deve superare {{max}}",
+    "invalid_format": "Formato non valido per {{field}}",
+    "email": "Si prega di inserire un indirizzo email valido",
+    "numeric": "{{field}} deve essere un numero",
+    "positive": "{{field}} deve essere positivo",
+    "date_range": "La data di fine deve essere successiva alla data di inizio"
+  },
+  "alerts": {
+    "confirm": "Conferma",
+    "are_you_sure": "Sei sicuro?",
+    "unsaved_changes": "Modifiche non salvate",
+    "unsaved_changes_message": "Hai modifiche non salvate. Vuoi continuare?",
+    "success": "Successo",
+    "warning": "Avviso",
+    "info": "Informazione"
+  },
+  "backup": {
+    "create": "Crea backup",
+    "share": "Condividi backup",
+    "import": "Importa backup",
+    "export": "Esporta dati",
+    "import_confirm_title": "Importa backup",
+    "import_confirm_message": "Sei sicuro di voler importare questo backup?\n\n📅 Creato: {{date}}\n📊 Record: {{records}}\n\n⚠️ ATTENZIONE: I tuoi dati attuali verranno sovrascritti!",
+    "import_success": "{{records}} record sono stati ripristinati.",
+    "export_success": "Dati esportati con successo.",
+    "share_unavailable_title": "Condivisione non disponibile",
+    "share_unavailable_message": "Il backup è stato creato, ma la condivisione non è supportata su questo dispositivo.",
+    "creating": "Creazione backup...",
+    "importing": "Importazione backup..."
+  },
+  "date": {
+    "today": "Oggi",
+    "yesterday": "Ieri",
+    "tomorrow": "Domani",
+    "days_ago": "{{count}} giorno fa",
+    "days_ago_plural": "{{count}} giorni fa",
+    "in_days": "tra {{count}} giorno",
+    "in_days_plural": "tra {{count}} giorni",
+    "weeks_ago": "{{count}} settimana fa",
+    "weeks_ago_plural": "{{count}} settimane fa",
+    "months_ago": "{{count}} mese fa",
+    "months_ago_plural": "{{count}} mesi fa",
+    "select_date": "Seleziona data",
+    "start_date": "Data di inizio",
+    "end_date": "Data di fine",
+    "duration": "Durata",
+    "days": "Giorno",
+    "days_plural": "Giorni"
+  },
+  "currency": {
+    "chf": "Franco svizzero",
+    "eur": "Euro",
+    "usd": "Dollaro americano",
+    "gbp": "Sterlina britannica",
+    "jpy": "Yen giapponese",
+    "exchange_rate": "Tasso di cambio",
+    "converted": "Convertito"
+  },
+  "onboarding": {
+    "skip": "Salta",
+    "next": "Avanti",
+    "getStarted": "Inizia",
+    "slide1": {
+      "title": "Benvenuto in Budget Vacanze",
+      "text": "Il tuo compagno digitale per una pianificazione delle vacanze senza stress e una gestione intelligente del budget. Tutto sotto controllo – dalla prima idea all'ultima spesa."
+    },
+    "slide2": {
+      "title": "Pianifica il tuo viaggio dei sogni",
+      "text": "Crea viaggi, raccogli destinazioni e hotel, salva foto e tieni tutto sotto controllo sulla mappa."
+    },
+    "slide3": {
+      "title": "Budget sempre sotto controllo",
+      "text": "Registra le spese per categoria, utilizza il supporto multivaluta con tassi di cambio in tempo reale e visualizza il tuo budget in tempo reale."
+    },
+    "slide4": {
+      "title": "Non dimenticare più nulla",
+      "text": "Usa liste di bagagli intelligenti, to-do e liste dei desideri con modelli predefiniti. Organizza facilmente con trascinamento."
+    },
+    "slide5": {
+      "title": "Ottimizzato per te",
+      "text": "Modalità scura/chiara, funziona offline, disponibile in più lingue. I tuoi dati di viaggio rimangono al sicuro sul tuo dispositivo."
+    }
+  },
+  "empty_states": {
+    "no_data": "Nessun dato disponibile",
+    "no_results": "Nessun risultato trovato",
+    "no_internet": "Nessuna connessione Internet",
+    "try_again": "Riprova",
+    "refresh": "Aggiorna"
+  },
+  "help": {
+    "title": "Aiuto",
+    "faq": "Domande frequenti",
+    "contact_support": "Contatta il supporto",
+    "tutorial": "Tutorial",
+    "tips": "Suggerimenti e trucchi"
+  },
+  "components": {
+    "currency_editor": {
+      "title": "Nuova valuta",
+      "code_label": "Codice valuta (ad es. USD, TRY)",
+      "code_placeholder": "USD",
+      "name_label": "Nome completo",
+      "name_placeholder": "Dollaro americano",
+      "symbol_label": "Simbolo (ad es. $, €, ¥)",
+      "symbol_placeholder": "$",
+      "flag_label": "Bandiera (ad es. 🇺🇸, 🇩🇪, 🇨🇭)",
+      "flag_placeholder": "🇺🇸"
+    },
+    "vacation_card": {
+      "over_budget": "Eccedenza:",
+      "remaining": "Rimanente:"
+    },
+    "budget_overview": {
+      "status": {
+        "upcoming": "Viaggio Futuro",
+        "active": "Viaggio Attivo",
+        "completed": "Viaggio Completato"
+      },
+      "progress": "{{percentage}}% usato",
+      "total_budget": "Budget Totale",
+      "spent": "Speso",
+      "remaining": "Rimanente",
+      "per_day": "Rimanente al giorno ({{days}})",
+      "vacation_ended": "Vacanza Terminata"
+    }
+  }
+}

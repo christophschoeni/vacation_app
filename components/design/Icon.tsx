@@ -73,6 +73,14 @@ import {
   Pizza,
   ClipboardList,
   BookOpen,
+  NotebookText,
+  ListChecks,
+  Bug,
+  RefreshCw,
+  ArrowUpDown,
+  ArrowLeftRight,
+  Calculator,
+  Globe,
   LucideIcon,
 } from 'lucide-react-native';
 
@@ -99,6 +107,9 @@ const iconMap: Record<string, LucideIcon> = {
   'search': Search,
   'filter': Filter,
   'more': MoreHorizontal,
+  'swap-horizontal': ArrowLeftRight,
+  'swap-vertical': ArrowUpDown,
+  'rotate': RefreshCw,
 
   // Navigation & UI
   'home': Home,
@@ -107,6 +118,7 @@ const iconMap: Record<string, LucideIcon> = {
   'settings': Settings,
   'menu': Menu,
   'back': Back,
+  'globe': Globe,
 
   // Categories
   'restaurant': UtensilsCrossed,
@@ -166,6 +178,7 @@ const iconMap: Record<string, LucideIcon> = {
   'currency': DollarSign,
   'wallet': Wallet,
   'budget': Banknote,
+  'calculator': Calculator,
 
   // Misc
   'calendar': Calendar,
@@ -175,6 +188,10 @@ const iconMap: Record<string, LucideIcon> = {
   'image': Image,
   'clipboard-list': ClipboardList,
   'book-template': BookOpen,
+  'notepad-text': NotebookText,
+  'list-checks': ListChecks,
+  'check-square': ClipboardList,
+  'bug': Bug,
 };
 
 export type IconName = keyof typeof iconMap;

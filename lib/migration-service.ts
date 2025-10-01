@@ -3,6 +3,7 @@ import { checklistRepository } from './db/repositories/checklist-repository';
 import { DEFAULT_TEMPLATES } from './checklist-service';
 import { db } from './db/database';
 import * as schema from './db/schema';
+import { logger } from './utils/logger';
 
 class MigrationService {
   private readonly MIGRATION_FLAG = '@vacation_assist_migrated_to_sqlite';
@@ -13,7 +14,7 @@ class MigrationService {
       const migrated = await AsyncStorage.getItem(this.MIGRATION_FLAG);
       return migrated === 'true';
     } catch (error) {
-      console.error('Failed to check migration status:', error);
+      logger.error('Failed to check migration status:', error);
       return false;
     }
   }
@@ -23,18 +24,18 @@ class MigrationService {
     try {
       await AsyncStorage.setItem(this.MIGRATION_FLAG, 'true');
     } catch (error) {
-      console.error('Failed to mark migration as completed:', error);
+      logger.error('Failed to mark migration as completed:', error);
     }
   }
 
   // Main migration function
   async migrateAsyncStorageToSQLite(): Promise<boolean> {
     try {
-      console.log('🔄 Starting AsyncStorage to SQLite migration...');
+      logger.info('🔄 Starting AsyncStorage to SQLite migration...');
 
       // Check if migration already completed
       if (await this.isMigrationCompleted()) {
-        console.log('✅ Migration already completed, skipping...');
+        logger.info('✅ Migration already completed, skipping...');
         return true;
       }
 
@@ -50,10 +51,10 @@ class MigrationService {
       // Mark migration as completed
       await this.markMigrationCompleted();
 
-      console.log('✅ Migration completed successfully');
+      logger.info('✅ Migration completed successfully');
       return true;
     } catch (error) {
-      console.error('❌ Migration failed:', error);
+      logger.error('❌ Migration failed:', error);
       return false;
     }
   }
@@ -61,11 +62,11 @@ class MigrationService {
   // Migrate checklists from AsyncStorage
   private async migrateChecklists(): Promise<void> {
     try {
-      console.log('📋 Migrating checklists...');
+      logger.info('📋 Migrating checklists...');
 
       const stored = await AsyncStorage.getItem('@vacation_assist_checklists');
       if (!stored) {
-        console.log('No checklists found in AsyncStorage');
+        logger.info('No checklists found in AsyncStorage');
         return;
       }
 
@@ -109,13 +110,13 @@ class MigrationService {
 
           migratedCount++;
         } catch (error) {
-          console.error(`Failed to migrate checklist "${asyncChecklist.title}":`, error);
+          logger.error(`Failed to migrate checklist "${asyncChecklist.title}":`, error);
         }
       }
 
-      console.log(`✅ Migrated ${migratedCount} checklists`);
+      logger.info(`✅ Migrated ${migratedCount} checklists`);
     } catch (error) {
-      console.error('Failed to migrate checklists:', error);
+      logger.error('Failed to migrate checklists:', error);
       throw error;
     }
   }
@@ -123,15 +124,15 @@ class MigrationService {
   // Initialize default templates if none exist
   private async initializeDefaultTemplates(): Promise<void> {
     try {
-      console.log('📚 Checking for default templates...');
+      logger.info('📚 Checking for default templates...');
 
       const existingTemplates = await checklistRepository.findTemplates();
       if (existingTemplates.length > 0) {
-        console.log(`Found ${existingTemplates.length} existing templates, skipping initialization`);
+        logger.info(`Found ${existingTemplates.length} existing templates, skipping initialization`);
         return;
       }
 
-      console.log('📚 Initializing default templates...');
+      logger.info('📚 Initializing default templates...');
 
       for (const template of DEFAULT_TEMPLATES) {
         try {
@@ -153,13 +154,13 @@ class MigrationService {
             });
           }
         } catch (error) {
-          console.error(`Failed to create template "${template.title}":`, error);
+          logger.error(`Failed to create template "${template.title}":`, error);
         }
       }
 
-      console.log(`✅ Initialized ${DEFAULT_TEMPLATES.length} default templates`);
+      logger.info(`✅ Initialized ${DEFAULT_TEMPLATES.length} default templates`);
     } catch (error) {
-      console.error('Failed to initialize default templates:', error);
+      logger.error('Failed to initialize default templates:', error);
       throw error;
     }
   }
@@ -167,7 +168,7 @@ class MigrationService {
   // Initialize default app settings
   private async initializeAppSettings(): Promise<void> {
     try {
-      console.log('⚙️ Initializing app settings...');
+      logger.info('⚙️ Initializing app settings...');
 
       const existingSettings = await db
         .select()
@@ -175,7 +176,7 @@ class MigrationService {
         .limit(1);
 
       if (existingSettings.length > 0) {
-        console.log('Settings already exist, skipping initialization');
+        logger.info('Settings already exist, skipping initialization');
         return;
       }
 
@@ -188,9 +189,9 @@ class MigrationService {
         updatedAt: new Date().toISOString(),
       });
 
-      console.log('✅ Initialized default app settings');
+      logger.info('✅ Initialized default app settings');
     } catch (error) {
-      console.error('Failed to initialize app settings:', error);
+      logger.error('Failed to initialize app settings:', error);
       throw error;
     }
   }
@@ -198,7 +199,7 @@ class MigrationService {
   // Clean up AsyncStorage after successful migration (optional)
   async cleanupAsyncStorage(): Promise<void> {
     try {
-      console.log('🧹 Cleaning up AsyncStorage...');
+      logger.info('🧹 Cleaning up AsyncStorage...');
 
       const keysToRemove = [
         '@vacation_assist_checklists',
@@ -208,22 +209,27 @@ class MigrationService {
       for (const key of keysToRemove) {
         try {
           await AsyncStorage.removeItem(key);
-          console.log(`Removed ${key}`);
+          logger.info(`Removed ${key}`);
         } catch (error) {
-          console.warn(`Failed to remove ${key}:`, error);
+          logger.warn(`Failed to remove ${key}:`, error);
         }
       }
 
-      console.log('✅ AsyncStorage cleanup completed');
+      logger.info('✅ AsyncStorage cleanup completed');
     } catch (error) {
-      console.error('Failed to cleanup AsyncStorage:', error);
+      logger.error('Failed to cleanup AsyncStorage:', error);
     }
   }
 
   // Get migration statistics
   async getMigrationStats(): Promise<{
     isMigrated: boolean;
-    sqliteRecords: any;
+    sqliteRecords: {
+      checklists: number;
+      checklistItems: number;
+      appSettings: number;
+      templates: number;
+    };
     asyncStorageKeys: string[];
   }> {
     try {
@@ -240,7 +246,7 @@ class MigrationService {
         asyncStorageKeys,
       };
     } catch (error) {
-      console.error('Failed to get migration stats:', error);
+      logger.error('Failed to get migration stats:', error);
       return {
         isMigrated: false,
         sqliteRecords: {},
@@ -268,7 +274,7 @@ class MigrationService {
         templates: checklists.filter(c => c.isTemplate).length,
       };
     } catch (error) {
-      console.error('Failed to get SQLite record counts:', error);
+      logger.error('Failed to get SQLite record counts:', error);
       return {};
     }
   }
@@ -278,7 +284,7 @@ class MigrationService {
       const allKeys = await AsyncStorage.getAllKeys();
       return allKeys.filter(key => key.startsWith('@vacation_assist'));
     } catch (error) {
-      console.error('Failed to get AsyncStorage keys:', error);
+      logger.error('Failed to get AsyncStorage keys:', error);
       return [];
     }
   }

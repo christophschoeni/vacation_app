@@ -1,15 +1,21 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+// Removed NavigationThemeProvider to avoid conflicts with DynamicColorIOS
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { insights } from 'expo-insights';
+import insights from 'expo-insights';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, useColorScheme } from 'react-native';
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { db } from '@/lib/db/database';
+import migrations from '@/lib/db/migrations/migrations';
 import { appInitialization } from '@/lib/app-initialization';
+import { ensureDefaultTemplates } from '@/lib/seed-templates';
+import { translationService } from '@/lib/i18n';
+import { CurrencyProvider } from '@/contexts/CurrencyContext';
+import { onboardingService } from '@/lib/onboarding-service';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -49,154 +55,257 @@ const modalSlideUp = {
   },
 };
 
-export default function RootLayout() {
+function RootNavigation() {
   const colorScheme = useColorScheme();
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [initError, setInitError] = useState<string | null>(null);
+  const isDark = colorScheme === 'dark';
+  const { success, error } = useMigrations(db, migrations);
+  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
-  // Initialize database and migration on app startup
+  // Check onboarding status and install default data after successful migration
   useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        console.log('🚀 Starting app initialization...');
-        const result = await appInitialization.initialize();
+    if (success) {
+      const initializeApp = async () => {
+        try {
+          // Initialize i18n system
+          await translationService.initialize();
 
-        if (result.success) {
-          console.log('✅ App initialization completed');
-          setIsInitialized(true);
-        } else {
-          console.error('❌ App initialization failed:', result.error);
-          setInitError(result.error || 'Unknown initialization error');
+          // Install default app data (categories, settings)
+          await appInitialization.installDefaultData();
+
+          // Always ensure templates exist (independent of migration flag)
+          await ensureDefaultTemplates();
+
+          // Check onboarding status
+          const completed = await onboardingService.hasCompletedOnboarding();
+          setOnboardingCompleted(completed);
+
+          if (insights && typeof insights.track === 'function') {
+            insights.track('app_launched');
+          }
+        } catch (error) {
+          console.warn('Failed to install default data or track app launch:', error);
+          // For new users, still check onboarding status even if initialization fails
+          try {
+            const completed = await onboardingService.hasCompletedOnboarding();
+            setOnboardingCompleted(completed);
+          } catch (onboardingError) {
+            // Only if onboarding check also fails, assume completed to avoid blocking
+            console.warn('Failed to check onboarding status:', onboardingError);
+            setOnboardingCompleted(true);
+          }
         }
-      } catch (error) {
-        console.error('❌ App initialization crashed:', error);
-        setInitError('App initialization crashed');
-      }
-    };
+      };
 
-    initializeApp();
-  }, []);
-
-  // Initialize Expo Insights safely
-  useEffect(() => {
-    if (isInitialized) {
-      try {
-        if (insights && typeof insights.track === 'function') {
-          insights.track('app_launched');
-        }
-      } catch (error) {
-        console.warn('Failed to track app launch:', error);
-      }
+      initializeApp();
     }
-  }, [isInitialized]);
+  }, [success]);
 
-  // Show loading screen during initialization
-  if (!isInitialized) {
+  // Show loading screen during migration
+  if (error) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colorScheme === 'dark' ? '#000' : '#fff' }}>
-        {initError ? (
-          <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: colorScheme === 'dark' ? '#fff' : '#000', fontSize: 18, marginBottom: 10 }}>
-              Initialization Error
-            </Text>
-            <Text style={{ color: colorScheme === 'dark' ? '#ccc' : '#666', textAlign: 'center' }}>
-              {initError}
-            </Text>
-          </View>
-        ) : (
-          <View style={{ alignItems: 'center' }}>
-            <ActivityIndicator size="large" color={colorScheme === 'dark' ? '#fff' : '#007AFF'} />
-            <Text style={{ color: colorScheme === 'dark' ? '#fff' : '#000', marginTop: 16, fontSize: 16 }}>
-              Initializing Vacation Assist...
-            </Text>
-          </View>
-        )}
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
+        <View style={{ alignItems: 'center', padding: 20 }}>
+          <Text style={{ color: isDark ? '#fff' : '#000', fontSize: 18, marginBottom: 10 }}>
+            Migration Error
+          </Text>
+          <Text style={{ color: isDark ? '#ccc' : '#666', textAlign: 'center' }}>
+            {error.message}
+          </Text>
+        </View>
       </View>
     );
   }
 
+  if (!success || onboardingCompleted === null) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
+        <View style={{ alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={isDark ? '#fff' : '#007AFF'} />
+          <Text style={{ color: isDark ? '#fff' : '#000', marginTop: 16, fontSize: 16 }}>
+            Initializing Reise Budget...
+          </Text>
+          <Text style={{ color: isDark ? '#888' : '#666', marginTop: 8, fontSize: 14 }}>
+            {!success ? 'Running migrations...' : 'Loading...'}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  // Show onboarding or main app based on completion status
+  if (!onboardingCompleted) {
+    return (
+      <>
+        <Stack>
+          <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="debug"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/categories"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/currency"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/notifications"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/templates"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/currency-calculator"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/currency-data"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/language"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="template/[id]/index"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="template/[id]/edit"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="vacation/[id]"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="vacation/add"
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+        <Stack.Screen
+          name="expense/add"
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+        <Stack.Screen
+          name="checklist/[id]"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="vacation-edit"
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+        <Stack.Screen
+          name="modal"
+          options={{
+            presentation: 'modal',
+            title: 'Modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+      </Stack>
+      <StatusBar style="auto" />
+    </>
+  );
+}
+
+export default function RootLayout() {
   return (
     <ErrorBoundary>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="settings/categories"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="settings/currency"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="settings/notifications"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="vacation/[id]"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="vacation/add"
-              options={{
-                headerShown: false,
-                presentation: 'modal',
-                animationDuration: 350,
-                ...modalSlideUp,
-              }}
-            />
-            <Stack.Screen
-              name="expense/add"
-              options={{
-                headerShown: false,
-                presentation: 'modal',
-                animationDuration: 350,
-                ...modalSlideUp,
-              }}
-            />
-            <Stack.Screen
-              name="checklist/[id]"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-                animationDuration: 300,
-                ...slideFromRight,
-              }}
-            />
-            <Stack.Screen
-              name="modal"
-              options={{
-                presentation: 'modal',
-                title: 'Modal',
-                animationDuration: 350,
-                ...modalSlideUp,
-              }}
-            />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </GestureHandlerRootView>
+      <CurrencyProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <RootNavigation />
+        </GestureHandlerRootView>
+      </CurrencyProvider>
     </ErrorBoundary>
   );
 }

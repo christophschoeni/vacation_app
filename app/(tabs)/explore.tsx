@@ -3,17 +3,24 @@ import {
   Text,
   ScrollView,
   StyleSheet,
+  View,
+  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function ExploreScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#F8F8F8' }]}>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#F8F8F8' }]}>
+      <AppHeader
+        title="Entdecken"
+        variant="large"
+      />
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -39,7 +46,7 @@ export default function ExploreScreen() {
           </Text>
         </Card>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

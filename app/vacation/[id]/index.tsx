@@ -6,42 +6,60 @@ import {
   StyleSheet,
   RefreshControl,
   Alert,
+  TouchableOpacity,
+  useColorScheme,
 } from 'react-native';
-import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ExpenseCard from '@/components/ui/cards/ExpenseCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
-import { Card, FloatingActionButton, Icon } from '@/components/design';
+import { Card, Icon } from '@/components/design';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useVacations, useExpenses } from '@/lib/database';
+import AppHeader from '@/components/ui/AppHeader';
+import { useRouteParam } from '@/hooks/use-route-param';
+import { useVacations } from '@/hooks/use-vacations';
+import { useExpenses } from '@/lib/database';
+import { useTranslation } from '@/lib/i18n';
 
 export default function VacationBudgetScreen() {
-  const { id } = useLocalSearchParams();
-  const vacationId = Array.isArray(id) ? id[0] : id;
-
+  const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
-  const { vacations } = useVacations();
-  const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId);
+  const { t } = useTranslation();
+  const { vacations, refreshVacations } = useVacations();
+  const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId || '');
 
   useFocusEffect(
     React.useCallback(() => {
+      refreshVacations();
       refreshExpenses();
-    }, [refreshExpenses])
+    }, [refreshVacations, refreshExpenses])
   );
 
   const vacation = vacations.find(v => v.id === vacationId);
 
   if (!vacation) {
-    return null;
+    return (
+      <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
+        <SafeAreaView style={styles.headerContainer} edges={['top']}>
+          <AppHeader
+            title={t('common.loading')}
+            showBack={true}
+            onBackPress={() => router.push('/(tabs)')}
+          />
+        </SafeAreaView>
+        <View style={styles.content}>
+          <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#000000', textAlign: 'center', marginTop: 50 }}>
+            {t('vacation.detail.loading')}
+          </Text>
+        </View>
+      </View>
+    );
   }
 
-  const handleAddExpense = () => {
-    router.push(`/expense/add?vacationId=${vacationId}`);
-  };
 
   const handleExpensePress = (expenseId: string) => {
-    console.log('Expense pressed:', expenseId);
+    // Handle expense press (future: navigate to expense detail)
   };
 
   const handleExpenseDelete = (expenseId: string) => {
@@ -49,18 +67,18 @@ export default function VacationBudgetScreen() {
     if (!expense) return;
 
     Alert.alert(
-      'Ausgabe löschen',
-      `Möchten Sie die Ausgabe "${expense.description}" wirklich löschen?`,
+      t('expense.delete.title'),
+      t('expense.delete.message', { description: expense.description }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteExpense(expenseId);
             } catch {
-              Alert.alert('Fehler', 'Ausgabe konnte nicht gelöscht werden.');
+              Alert.alert(t('common.error'), t('expense.delete.error'));
             }
           },
         },
@@ -70,7 +88,23 @@ export default function VacationBudgetScreen() {
 
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
+      <AppHeader
+        showBack={true}
+        onBackPress={() => router.push('/(tabs)')}
+        rightAction={
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => router.push(`/expense/add?vacationId=${vacationId}`)}
+            activeOpacity={0.8}
+          >
+            <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
+              <Icon name="plus" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
+            </View>
+          </TouchableOpacity>
+        }
+      />
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -83,43 +117,47 @@ export default function VacationBudgetScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
+        {/* iOS-style large title in content area */}
+        <View style={styles.titleSection}>
+          <Text style={[styles.largeTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('budget.overview.title')}
+          </Text>
+        </View>
+
         {/* Enhanced Budget Overview */}
         <BudgetOverview vacation={vacation} expenses={expenses} />
 
-        {/* Expenses List */}
+        {/* Expenses Grid */}
         <View style={[styles.expensesSection, { paddingHorizontal: 16 }]}>
           {expenses.length === 0 ? (
             <Card style={[styles.emptyExpenses, styles.emptyContent]}>
               <Icon name="budget" size={48} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} style={styles.emptyIconStyle} />
               <Text style={[styles.emptyText, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                Noch keine Ausgaben erfasst
+                {t('expense.empty.title')}
               </Text>
               <Text style={[styles.emptySubtext, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                Tippe auf ➕ um deine erste Ausgabe hinzuzufügen
+                {t('expense.empty.subtitle')}
               </Text>
             </Card>
           ) : (
-            expenses.map((expense) => (
-              <SwipeableCard
-                key={expense.id}
-                onPress={() => handleExpensePress(expense.id)}
-                onDelete={() => handleExpenseDelete(expense.id)}
-              >
-                <ExpenseCard
-                  expense={expense}
-                  onPress={handleExpensePress}
-                />
-              </SwipeableCard>
-            ))
+            <View style={styles.expensesGrid}>
+              {expenses.map((expense) => (
+                <View key={expense.id} style={styles.gridItem}>
+                  <SwipeableCard
+                    onPress={() => handleExpensePress(expense.id)}
+                    onDelete={() => handleExpenseDelete(expense.id)}
+                  >
+                    <ExpenseCard
+                      expense={expense}
+                      onPress={handleExpensePress}
+                    />
+                  </SwipeableCard>
+                </View>
+              ))}
+            </View>
           )}
         </View>
       </ScrollView>
-
-      <FloatingActionButton
-        icon="plus"
-        onPress={handleAddExpense}
-        style={styles.fab}
-      />
     </View>
   );
 }
@@ -128,18 +166,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  titleSection: {
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  largeTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 34,
+  },
+  addButton: {
+    padding: 8,
+    borderRadius: 8,
+  },
   content: {
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 0,
-    paddingBottom: 85, // Reduced space for compact tab bar
+    paddingTop: 0, // Reduced space
+    paddingBottom: 120, // Space for native tab bar
   },
   expensesSection: {
-    marginBottom: 24,
+    marginBottom: 16,
+  },
+  expensesGrid: {
+    flexDirection: 'column',
+    gap: 0,
+  },
+  gridItem: {
+    width: '100%', // Full width
   },
   emptyExpenses: {
-    marginBottom: 16,
+    marginBottom: 8,
   },
   emptyContent: {
     alignItems: 'center',
@@ -160,10 +220,40 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'System',
   },
-  fab: {
+  headerButton: {
+    padding: 4,
+  },
+  headerButtonInner: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  floatingActionButton: {
     position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 85, // Above tab bar - adjusted for smaller tab bar
+    bottom: 24,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
 });

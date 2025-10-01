@@ -6,39 +6,43 @@ import {
   Alert,
   View,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { insights } from 'expo-insights';
+import insights from 'expo-insights';
 
-import { FloatingActionButton, Colors } from '@/components/design';
+import { Colors, Icon } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useVacations } from '@/lib/database';
+import AppHeader from '@/components/ui/AppHeader';
+import { useColorScheme } from 'react-native';
+import { useVacations } from '@/hooks/use-vacations';
+import { useTranslation } from '@/lib/i18n';
 
 export default function VacationsScreen() {
   const colorScheme = useColorScheme();
-  const { vacations, loading, refresh, deleteVacation } = useVacations();
+  const { t } = useTranslation();
+  const { vacations, loading, refreshVacations, deleteVacation } = useVacations();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
-      refresh();
-    }, [refresh])
+      refreshVacations();
+    }, [refreshVacations])
   );
 
   const handleRefresh = React.useCallback(async () => {
     setIsRefreshing(true);
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
-      await refresh();
+      await refreshVacations();
     } finally {
       setIsRefreshing(false);
     }
-  }, [refresh]);
+  }, [refreshVacations]);
 
   const handleAddVacation = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -75,18 +79,18 @@ export default function VacationsScreen() {
     if (!vacation) return;
 
     Alert.alert(
-      'Ferien löschen',
-      `Möchten Sie die Ferien "${vacation.destination}" wirklich löschen?`,
+      t('vacation.delete.title'),
+      t('vacation.delete.message', { destination: vacation.destination }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteVacation(id);
             } catch {
-              Alert.alert('Fehler', 'Ferien konnten nicht gelöscht werden.');
+              Alert.alert(t('common.error'), t('vacation.delete.error'));
             }
           },
         },
@@ -97,13 +101,7 @@ export default function VacationsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          Meine Ferien
-        </Text>
-      </View>
-
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -118,15 +116,22 @@ export default function VacationsScreen() {
         }
         showsVerticalScrollIndicator={false}
         accessible={true}
-        accessibilityLabel="Liste der Ferien"
-        accessibilityHint="Ziehen Sie nach unten, um zu aktualisieren"
+        accessibilityLabel={t('navigation.vacations')}
+        accessibilityHint={t('empty_states.refresh')}
       >
+        {/* iOS-style large title in content area */}
+        <View style={styles.titleSection}>
+          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('navigation.vacations')}
+          </Text>
+        </View>
+
         {vacations.length === 0 ? (
           <EmptyState
             icon="airplane"
-            title="Keine Ferien geplant"
-            subtitle="Füge deine erste Reise hinzu und beginne mit der Planung!"
-            buttonTitle="Erste Ferien hinzufügen"
+            title={t('vacation.empty.title')}
+            subtitle={t('vacation.empty.subtitle')}
+            buttonTitle={t('vacation.empty.button')}
             onButtonPress={handleAddVacation}
           />
         ) : (
@@ -134,7 +139,6 @@ export default function VacationsScreen() {
             <SwipeableCard
               key={vacation.id}
               onPress={() => handleVacationPress(vacation.id)}
-              onEdit={() => handleVacationEdit(vacation.id)}
               onDelete={() => handleVacationDelete(vacation.id)}
             >
               <VacationCard
@@ -147,15 +151,18 @@ export default function VacationsScreen() {
         )}
       </ScrollView>
 
-      <FloatingActionButton
-        icon="plus"
-        style={styles.fab}
+      {/* Floating Action Button - iOS Style */}
+      <TouchableOpacity
+        style={[styles.floatingActionButton, { backgroundColor: isDark ? '#1C1C1E' : '#007AFF' }]}
         onPress={handleAddVacation}
+        activeOpacity={0.8}
         accessible={true}
-        accessibilityLabel="Neue Ferien hinzufügen"
-        accessibilityHint="Doppeltippen, um neue Ferien zu erstellen"
+        accessibilityLabel={t('vacation.add.button')}
+        accessibilityHint={t('vacation.add.button')}
         accessibilityRole="button"
-      />
+      >
+        <Icon name="plus" size={24} color="#FFFFFF" />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -164,32 +171,45 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    paddingHorizontal: 16,
+  titleSection: {
+    paddingHorizontal: 0, // Already has padding from content
     paddingTop: 8,
     paddingBottom: 16,
   },
-  headerTitle: {
-    fontSize: 32,
+  largeTitle: {
+    fontSize: 34,
     fontWeight: '700',
     fontFamily: 'System',
+    lineHeight: 41,
+  },
+  addButton: {
+    padding: 8,
+    borderRadius: 8,
   },
   content: {
     flex: 1,
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 8,
-    paddingBottom: 80, // Reduced space for tab bar
+    paddingTop: 4,
+    paddingBottom: 85, // Space for native tab bar
   },
-  fab: {
+  floatingActionButton: {
     position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 85, // Above tab bar - adjusted for smaller tab bar
-    elevation: 6,
-    shadowOffset: { width: 0, height: 3 },
+    bottom: 24,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
     shadowOpacity: 0.3,
-    shadowRadius: 6,
+    shadowRadius: 8,
   },
 });

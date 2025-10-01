@@ -1,21 +1,23 @@
 // Database abstraction layer
 // This allows easy migration to other databases later
 
+import { Vacation, Expense, Checklist } from '@/types';
+
 export { LocalDatabase } from './storage';
 export { useVacations, useExpenses, useChecklists } from './hooks';
 
 // Migration interfaces for future database changes
 export interface DatabaseInterface {
-  getVacations(): Promise<any[]>;
-  saveVacation(vacation: any): Promise<void>;
+  getVacations(): Promise<Vacation[]>;
+  saveVacation(vacation: Vacation): Promise<void>;
   deleteVacation(id: string): Promise<void>;
 
-  getExpenses(vacationId?: string): Promise<any[]>;
-  saveExpense(expense: any): Promise<void>;
+  getExpenses(vacationId?: string): Promise<Expense[]>;
+  saveExpense(expense: Expense): Promise<void>;
   deleteExpense(id: string): Promise<void>;
 
-  getChecklists(vacationId?: string): Promise<any[]>;
-  saveChecklist(checklist: any): Promise<void>;
+  getChecklists(vacationId?: string): Promise<Checklist[]>;
+  saveChecklist(checklist: Checklist): Promise<void>;
   deleteChecklist(id: string): Promise<void>;
 }
 

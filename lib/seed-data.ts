@@ -1,9 +1,10 @@
 import { vacationRepository } from './db/repositories/vacation-repository';
 import { checklistRepository } from './db/repositories/checklist-repository';
 import { ChecklistCategory } from '@/types';
+import { logger } from '@/lib/utils/logger';
 
 export async function seedTestData() {
-  console.log('🌱 Seeding test data...');
+  logger.info('🌱 Seeding test data...');
 
   try {
     // Create Antalya vacation if it doesn't exist
@@ -11,7 +12,7 @@ export async function seedTestData() {
     let antalyaVacation = existingVacations.find(v => v.destination === 'Antalya');
 
     if (!antalyaVacation) {
-      console.log('Creating Antalya vacation...');
+      logger.debug('Creating Antalya vacation...');
       antalyaVacation = await vacationRepository.create({
         destination: 'Antalya',
         country: 'Türkei',
@@ -23,13 +24,13 @@ export async function seedTestData() {
       });
     }
 
-    console.log(`✅ Antalya vacation: ${antalyaVacation.id}`);
+    logger.debug(`✅ Antalya vacation: ${antalyaVacation.id}`);
 
     // Check if checklists already exist
     const existingChecklists = await checklistRepository.findByVacationId(antalyaVacation.id);
 
     if (existingChecklists.length === 0) {
-      console.log('Creating test checklists...');
+      logger.debug('Creating test checklists...');
 
       // Create "Packliste" checklist
       const packingList = await checklistRepository.create({
@@ -115,19 +116,19 @@ export async function seedTestData() {
         await checklistRepository.toggleItem(planningItems.items[1].id); // Flug buchen
       }
 
-      console.log('✅ Created test checklists with items');
+      logger.info('✅ Created test checklists with items');
     } else {
-      console.log(`ℹ️ Found ${existingChecklists.length} existing checklists, skipping seed data`);
+      logger.info(`ℹ️ Found ${existingChecklists.length} existing checklists, skipping seed data`);
     }
 
     // Show final stats
     const finalChecklists = await checklistRepository.findByVacationId(antalyaVacation.id);
-    console.log('\n📊 Final checklist stats:');
+    logger.info('\n📊 Final checklist stats:');
 
     for (const checklist of finalChecklists) {
       const completedItems = checklist.items.filter(item => item.completed).length;
       const totalItems = checklist.items.length;
-      console.log(`  - "${checklist.title}": ${completedItems}/${totalItems} items`);
+      logger.info(`  - "${checklist.title}": ${completedItems}/${totalItems} items`);
     }
 
     return {
@@ -136,109 +137,10 @@ export async function seedTestData() {
     };
 
   } catch (error) {
-    console.error('❌ Failed to seed test data:', error);
+    logger.error('❌ Failed to seed test data:', error);
     throw error;
   }
 }
 
 // Create some default templates
-export async function seedTemplates() {
-  console.log('🌱 Seeding template data...');
-
-  try {
-    const existingTemplates = await checklistRepository.findTemplates();
-
-    if (existingTemplates.length === 0) {
-      console.log('Creating default templates...');
-
-      // Beach vacation template
-      const beachTemplate = await checklistRepository.create({
-        title: 'Strandurlaub',
-        description: 'Packliste für Strandurlaub',
-        isTemplate: true,
-        category: 'packing' as ChecklistCategory,
-        icon: '🏖️',
-      });
-
-      await checklistRepository.addItem({
-        checklistId: beachTemplate.id,
-        text: 'Badehose/Bikini',
-        priority: 'high',
-        order: 1,
-      });
-
-      await checklistRepository.addItem({
-        checklistId: beachTemplate.id,
-        text: 'Sonnencreme',
-        priority: 'high',
-        order: 2,
-      });
-
-      await checklistRepository.addItem({
-        checklistId: beachTemplate.id,
-        text: 'Handtuch',
-        priority: 'medium',
-        order: 3,
-      });
-
-      await checklistRepository.addItem({
-        checklistId: beachTemplate.id,
-        text: 'Sonnenbrille',
-        priority: 'medium',
-        order: 4,
-      });
-
-      await checklistRepository.addItem({
-        checklistId: beachTemplate.id,
-        text: 'Flip-Flops',
-        priority: 'medium',
-        order: 5,
-      });
-
-      // City trip template
-      const cityTemplate = await checklistRepository.create({
-        title: 'Städtereise',
-        description: 'Packliste für Städtereise',
-        isTemplate: true,
-        category: 'packing' as ChecklistCategory,
-        icon: '🏙️',
-      });
-
-      await checklistRepository.addItem({
-        checklistId: cityTemplate.id,
-        text: 'Bequeme Schuhe',
-        priority: 'high',
-        order: 1,
-      });
-
-      await checklistRepository.addItem({
-        checklistId: cityTemplate.id,
-        text: 'Stadtkarte/App',
-        priority: 'medium',
-        order: 2,
-      });
-
-      await checklistRepository.addItem({
-        checklistId: cityTemplate.id,
-        text: 'Kamera',
-        priority: 'medium',
-        order: 3,
-      });
-
-      await checklistRepository.addItem({
-        checklistId: cityTemplate.id,
-        text: 'Powerbank',
-        priority: 'medium',
-        order: 4,
-      });
-
-      console.log('✅ Created default templates');
-    } else {
-      console.log(`ℹ️ Found ${existingTemplates.length} existing templates, skipping template creation`);
-    }
-
-  } catch (error) {
-    console.error('❌ Failed to seed templates:', error);
-    throw error;
-  }
-}
+export { ensureDefaultTemplates as seedTemplates } from './seed-templates';

@@ -1,59 +1,36 @@
-import { Tabs } from 'expo-router';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import React from 'react';
-import { Platform } from 'react-native';
-
-import { Colors, Icon } from '@/components/design';
-import { HapticTab } from '@/components/haptic-tab';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
+import { useTranslation } from '@/lib/i18n';
 
 export default function MainLayout() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
+  const isDark = colorScheme === 'dark';
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors.primary[500],
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarStyle: {
-          backgroundColor: colorScheme === 'dark'
-            ? Colors.dark.surface
-            : Colors.light.surface,
-          borderTopWidth: 0,
-          elevation: 0,
-          shadowOpacity: 0,
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: Platform.OS === 'ios' ? 70 : 60,
-          paddingBottom: Platform.OS === 'ios' ? 8 : 5,
-          paddingTop: Platform.OS === 'ios' ? 8 : 5,
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Meine Ferien',
-          tabBarIcon: ({ color }) => <Icon size={26} name="airplane" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Entdecken',
-          tabBarIcon: ({ color }) => <Icon size={26} name="compass" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Einstellungen',
-          tabBarIcon: ({ color }) => <Icon size={26} name="settings" color={color} />,
-        }}
-      />
-    </Tabs>
+    <NativeTabs
+      barTintColor={isDark ? '#1C1C1E' : '#F8F9FA'}
+      tintColor={isDark ? '#007AFF' : '#007AFF'}
+      unselectedTintColor={isDark ? '#8E8E93' : '#8E8E93'}
+      labelStyle={{
+        color: isDark ? '#FFFFFF' : '#000000',
+      }}
+      materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
+    >
+      <NativeTabs.Trigger name="index">
+        <Label>{t('navigation.vacations')}</Label>
+        <Icon
+          sf="house.fill"
+        />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="settings">
+        <Label>{t('navigation.settings')}</Label>
+        <Icon
+          sf="gearshape.fill"
+        />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

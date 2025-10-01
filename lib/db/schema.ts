@@ -52,6 +52,7 @@ export const checklists = sqliteTable('checklists', {
   templateId: text('template_id'), // reference to original template
   category: text('category').notNull(), // 'packing' | 'shopping' | 'bucket' | 'todo' | 'planning' | 'general' | 'custom'
   icon: text('icon').notNull(),
+  order: integer('order').notNull().default(0),
   createdAt: text('created_at').notNull(), // ISO date string
   updatedAt: text('updated_at').notNull(), // ISO date string
 }, (table) => ({
@@ -68,6 +69,7 @@ export const checklists = sqliteTable('checklists', {
   vacationIdIdx: index('checklists_vacation_id_idx').on(table.vacationId),
   isTemplateIdx: index('checklists_is_template_idx').on(table.isTemplate),
   categoryIdx: index('checklists_category_idx').on(table.category),
+  orderIdx: index('checklists_order_idx').on(table.order),
 }));
 
 // Checklist Items table
@@ -100,18 +102,17 @@ export const categories = sqliteTable('categories', {
   isDefault: integer('is_default', { mode: 'boolean' }).notNull().default(false),
   type: text('type').notNull(), // 'expense' | 'checklist'
   createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
 }, (table) => ({
   typeIdx: index('categories_type_idx').on(table.type),
   isDefaultIdx: index('categories_is_default_idx').on(table.isDefault),
 }));
 
-// App Settings table
+// App Settings table (key-value store)
 export const appSettings = sqliteTable('app_settings', {
-  id: text('id').primaryKey().default('default'),
-  defaultCurrency: text('default_currency').notNull().default('CHF'),
-  language: text('language').notNull().default('de'), // 'de' | 'en'
-  notifications: integer('notifications', { mode: 'boolean' }).notNull().default(true),
-  theme: text('theme').notNull().default('auto'), // 'auto' | 'light' | 'dark'
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
 

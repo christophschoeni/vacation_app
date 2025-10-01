@@ -1,15 +1,26 @@
 {
   "expo": {
-    "name": "vacation_assist",
+    "name": "Ferien Budget",
     "slug": "vacation-assist",
-    "version": "0.6.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "vacationassist",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "description": "Verwalten Sie Ihr Reisebudget einfach und effizient. Erfassen Sie Ausgaben, planen Sie Ihr Budget und behalten Sie den Überblick über Ihre Reisekosten.",
+    "primaryColor": "#007AFF",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vomschoeni.vacation-assist",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationCategoryType": "public.app-category.travel"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +30,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.vomschoeni.vacationassist"
     },
     "web": {
       "output": "static",
@@ -38,7 +50,9 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-localization",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

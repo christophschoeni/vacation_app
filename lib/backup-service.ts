@@ -4,6 +4,9 @@ import * as DocumentPicker from 'expo-document-picker';
 import { Alert } from 'react-native';
 import { db, getDatabaseStats } from './db/database';
 import * as schema from './db/schema';
+import appConfig from '../app.json';
+import { ErrorHandler } from './utils/error-handler';
+import { logger } from './utils/logger';
 
 export interface BackupData {
   version: string;
@@ -49,7 +52,7 @@ class BackupService {
         format = 'json',
       } = options;
 
-      console.log('🔄 Creating backup...');
+      logger.debug('Creating backup...');
 
       // Fetch all data from database
       const [
@@ -80,7 +83,7 @@ class BackupService {
       const backupData: BackupData = {
         version: this.BACKUP_VERSION,
         exportDate: new Date().toISOString(),
-        appVersion: '1.0.0', // TODO: Get from app.json
+        appVersion: appConfig.expo.version,
         data: {
           vacations,
           expenses,
@@ -119,12 +122,12 @@ class BackupService {
       // Log backup to history
       await this.logBackup(fileName, backupData);
 
-      console.log(`✅ Backup created: ${fileName}`);
-      console.log(`📊 Total records: ${backupData.metadata.totalRecords}`);
+      logger.info(`Backup created: ${fileName}`);
+      logger.info(`Total records: ${backupData.metadata.totalRecords}`);
 
       return filePath;
     } catch (error) {
-      console.error('❌ Backup creation failed:', error);
+      await ErrorHandler.handleStorageError(error, 'backup creation', true);
       throw error;
     }
   }
@@ -144,7 +147,11 @@ class BackupService {
         );
       }
     } catch (error) {
-      console.error('Failed to share backup:', error);
+      await ErrorHandler.handleAsyncError(error, {
+        showAlert: true,
+        userMessage: 'Backup konnte nicht geteilt werden.',
+        context: 'Share backup'
+      });
       throw error;
     }
   }
@@ -160,14 +167,11 @@ class BackupService {
         try {
           await FileSystem.deleteAsync(filePath, { idempotent: true });
         } catch (error) {
-          console.warn('Failed to clean up backup file:', error);
+          await ErrorHandler.handleStorageError(error, 'backup cleanup', false);
         }
       }, 30000); // Delete after 30 seconds
     } catch (error) {
-      Alert.alert(
-        'Backup-Fehler',
-        'Backup konnte nicht erstellt werden. Bitte versuchen Sie es erneut.'
-      );
+      await ErrorHandler.handleStorageError(error, 'export and share', true);
       throw error;
     }
   }
@@ -175,7 +179,7 @@ class BackupService {
   // Import backup from file
   async importBackup(): Promise<boolean> {
     try {
-      console.log('📁 Selecting backup file...');
+      logger.debug('Selecting backup file...');
 
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/json',
@@ -187,7 +191,7 @@ class BackupService {
       }
 
       const file = result.assets[0];
-      console.log(`📖 Reading backup file: ${file.name}`);
+      logger.debug(`Reading backup file: ${file.name}`);
 
       const content = await FileSystem.readAsStringAsync(file.uri);
       const backupData: BackupData = JSON.parse(content);
@@ -223,11 +227,7 @@ class BackupService {
                   );
                   resolve(true);
                 } catch (error) {
-                  console.error('Import failed:', error);
-                  Alert.alert(
-                    'Import-Fehler',
-                    'Das Backup konnte nicht importiert werden.'
-                  );
+                  await ErrorHandler.handleStorageError(error, 'backup import', true);
                   resolve(false);
                 }
               },
@@ -236,11 +236,7 @@ class BackupService {
         );
       });
     } catch (error) {
-      console.error('Failed to import backup:', error);
-      Alert.alert(
-        'Import-Fehler',
-        'Die Backup-Datei konnte nicht gelesen werden.'
-      );
+      await ErrorHandler.handleStorageError(error, 'backup file reading', true);
       return false;
     }
   }
@@ -248,7 +244,7 @@ class BackupService {
   // Restore data from backup
   private async restoreFromBackup(backupData: BackupData): Promise<void> {
     try {
-      console.log('🔄 Restoring from backup...');
+      logger.debug('Restoring from backup...');
 
       // Clear existing data (in reverse order of dependencies)
       await db.delete(schema.checklistItems);
@@ -283,9 +279,9 @@ class BackupService {
         await db.insert(schema.checklistItems).values(backupData.data.checklistItems);
       }
 
-      console.log('✅ Backup restored successfully');
+      logger.info('Backup restored successfully');
     } catch (error) {
-      console.error('❌ Failed to restore backup:', error);
+      await ErrorHandler.handleDatabaseError(error, 'backup restore', false);
       throw error;
     }
   }
@@ -322,7 +318,7 @@ class BackupService {
         createdAt: new Date().toISOString(),
       });
     } catch (error) {
-      console.warn('Failed to log backup to history:', error);
+      await ErrorHandler.handleDatabaseError(error, 'backup history logging', false);
     }
   }
 
@@ -334,7 +330,7 @@ class BackupService {
         .from(schema.backupHistory)
         .orderBy(schema.backupHistory.createdAt);
     } catch (error) {
-      console.error('Failed to get backup history:', error);
+      await ErrorHandler.handleDatabaseError(error, 'get backup history', false);
       return [];
     }
   }
@@ -358,11 +354,11 @@ class BackupService {
             schema.backupHistory.id === backup.id
           );
         } catch (error) {
-          console.warn(`Failed to cleanup backup ${backup.fileName}:`, error);
+          await ErrorHandler.handleStorageError(error, `cleanup backup ${backup.fileName}`, false);
         }
       }
     } catch (error) {
-      console.error('Failed to cleanup old backups:', error);
+      await ErrorHandler.handleStorageError(error, 'cleanup old backups', false);
     }
   }
 }

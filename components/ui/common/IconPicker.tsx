@@ -8,7 +8,7 @@ import {
   Modal,
 } from 'react-native';
 import { Icon, IconName } from '@/components/design';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from 'react-native';
 
 // Available icons for categories - organized by category
 // Default category icons are listed first for easy access

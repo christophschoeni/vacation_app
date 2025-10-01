@@ -1,51 +1,32 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "a0b8e41c-d6c8-445f-9f6f-bc4388a6d5f0",
+  "id": "df99048c-e5fb-4989-a84e-95baf446d756",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "app_settings": {
       "name": "app_settings",
       "columns": {
-        "id": {
-          "name": "id",
+        "key": {
+          "name": "key",
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'default'"
+          "autoincrement": false
         },
-        "default_currency": {
-          "name": "default_currency",
+        "value": {
+          "name": "value",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'CHF'"
+          "autoincrement": false
         },
-        "language": {
-          "name": "language",
+        "created_at": {
+          "name": "created_at",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'de'"
-        },
-        "notifications": {
-          "name": "notifications",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": true
-        },
-        "theme": {
-          "name": "theme",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'auto'"
+          "autoincrement": false
         },
         "updated_at": {
           "name": "updated_at",

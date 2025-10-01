@@ -15,11 +15,10 @@ const SWIPE_THRESHOLD = screenWidth * 0.3;
 interface SwipeableCardProps {
   children: React.ReactNode;
   onDelete: () => void;
-  onEdit?: () => void;
   onPress: () => void;
 }
 
-export default function SwipeableCard({ children, onDelete, onEdit, onPress }: SwipeableCardProps) {
+export default function SwipeableCard({ children, onDelete, onPress }: SwipeableCardProps) {
   const translateX = useRef(new Animated.Value(0)).current;
   const panRef = useRef<PanGestureHandler>(null);
 
@@ -33,8 +32,8 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
       const { translationX, velocityX } = event.nativeEvent;
 
       if (translationX < -SWIPE_THRESHOLD || velocityX < -1000) {
-        // Swiped left enough or fast enough - show action buttons
-        const actionWidth = onEdit ? -128 : -60;
+        // Swiped left enough or fast enough - show delete button
+        const actionWidth = -68; // 60px button + 8px gap
         Animated.timing(translateX, {
           toValue: actionWidth,
           duration: 250,
@@ -79,28 +78,15 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
         style={[
           styles.actionsContainer,
           {
-            width: onEdit ? 128 : 60,
+            width: 68, // 60px button + 8px gap
             opacity: translateX.interpolate({
-              inputRange: onEdit ? [-128, -64, 0] : [-60, -30, 0],
+              inputRange: [-68, -34, 0],
               outputRange: [1, 0.5, 0],
               extrapolate: 'clamp',
             }),
           },
         ]}
       >
-        {onEdit && (
-          <TouchableOpacity
-            style={[styles.actionButton, styles.editButton]}
-            onPress={() => {
-              onEdit();
-              resetPosition();
-            }}
-            activeOpacity={0.8}
-          >
-            <Icon name="settings" size={18} color="#FFFFFF" />
-          </TouchableOpacity>
-        )}
-
         <TouchableOpacity
           style={[styles.actionButton, styles.deleteButton]}
           onPress={handleDelete}
@@ -145,25 +131,23 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 0,
-    bottom: 12,
+    bottom: 16, // Match the marginBottom of the VacationCard
     flexDirection: 'row',
-    overflow: 'visible',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    overflow: 'hidden',
     zIndex: 0, // Behind the card
+    paddingLeft: 8, // 8px gap between card and button
   },
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 60,
+    width: 56,
     height: '100%',
+    marginHorizontal: 0, // Remove margin since we use paddingLeft on container
     borderRadius: 12,
-  },
-  editButton: {
-    backgroundColor: Colors.primary[500],
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
   },
   deleteButton: {
     backgroundColor: '#FF3B30', // iOS System Red for destructive actions
-    marginLeft: 4,
   },
 });

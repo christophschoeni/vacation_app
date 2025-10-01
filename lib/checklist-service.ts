@@ -1,6 +1,33 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Checklist, ChecklistItem, ChecklistCategory } from '@/types';
 
+// Raw storage interface for checklist data
+interface RawStoredChecklistItem {
+  id: string;
+  text: string;
+  completed: boolean;
+  notes?: string;
+  priority: string;
+  dueDate?: string;
+  quantity?: number;
+  order: number;
+}
+
+interface RawStoredChecklist {
+  id: string;
+  title: string;
+  description?: string;
+  isTemplate: boolean;
+  vacationId?: string;
+  templateId?: string;
+  category: string;
+  icon: string;
+  order: number;
+  items: RawStoredChecklistItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 const CHECKLISTS_STORAGE_KEY = '@vacation_assist_checklists';
 const TEMPLATES_STORAGE_KEY = '@vacation_assist_checklist_templates';
 
@@ -270,12 +297,12 @@ class ChecklistService {
   }
 
   // Helper to parse dates from storage
-  private parseChecklistDates(checklist: any): Checklist {
+  private parseChecklistDates(checklist: RawStoredChecklist): Checklist {
     return {
       ...checklist,
       createdAt: new Date(checklist.createdAt),
       updatedAt: new Date(checklist.updatedAt),
-      items: checklist.items ? checklist.items.map((item: any) => ({
+      items: checklist.items ? checklist.items.map((item: RawStoredChecklistItem) => ({
         ...item,
         dueDate: item.dueDate ? new Date(item.dueDate) : undefined,
       })) : [],
