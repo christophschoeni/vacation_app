@@ -212,6 +212,15 @@ function RootNavigation() {
           }}
         />
         <Stack.Screen
+          name="settings/language"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
           name="template/[id]/index"
           options={{
             headerShown: false,
