@@ -2,6 +2,7 @@
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import insights from 'expo-insights';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
@@ -146,8 +147,14 @@ function RootNavigation() {
 
   return (
     <>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }}>
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: false,
+            contentStyle: { backgroundColor: 'transparent' },
+          }}
+        />
         <Stack.Screen
           name="debug"
           options={{
@@ -301,11 +308,13 @@ function RootNavigation() {
 export default function RootLayout() {
   return (
     <ErrorBoundary>
-      <CurrencyProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <RootNavigation />
-        </GestureHandlerRootView>
-      </CurrencyProvider>
+      <SafeAreaProvider>
+        <CurrencyProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <RootNavigation />
+          </GestureHandlerRootView>
+        </CurrencyProvider>
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 }

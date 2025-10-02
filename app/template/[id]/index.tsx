@@ -94,7 +94,7 @@ export default function TemplateDetailScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <AppHeader
           title="Standard-Liste"
           showBack={true}
@@ -105,13 +105,13 @@ export default function TemplateDetailScreen() {
             Lade Standard-Liste...
           </Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (!template) {
     return (
-      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <AppHeader
           title="Standard-Liste"
           showBack={true}
@@ -123,12 +123,12 @@ export default function TemplateDetailScreen() {
             Standard-Liste nicht gefunden
           </Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={template.title}
         subtitle={`${CATEGORY_CONFIG[template.category as ChecklistCategory]?.name || 'Allgemein'} • ${template.items.length} Einträge`}
@@ -271,7 +271,7 @@ export default function TemplateDetailScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

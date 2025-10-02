@@ -15,7 +15,7 @@ export default function ExploreScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#F8F8F8' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#F8F8F8' }]} edges={['top', 'bottom']}>
       <AppHeader
         title="Entdecken"
         variant="large"
@@ -46,7 +46,7 @@ export default function ExploreScreen() {
           </Text>
         </Card>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

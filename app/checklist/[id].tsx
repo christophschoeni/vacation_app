@@ -80,13 +80,13 @@ export default function ChecklistDetailScreen() {
 
   if (!checklist) {
     return (
-      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <AppHeader
           title={t('checklist.loading')}
           showBack={true}
           onBackPress={() => router.back()}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -198,7 +198,7 @@ export default function ChecklistDetailScreen() {
   const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={checklist.title}
         subtitle={`${getCategoryName(checklist.category)} • ${completedItems}/${totalItems}`}
@@ -344,7 +344,7 @@ export default function ChecklistDetailScreen() {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 

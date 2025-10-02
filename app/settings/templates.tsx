@@ -186,7 +186,7 @@ export default function TemplatesScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={t('settings.templates.title')}
         variant="large"
@@ -267,7 +267,7 @@ export default function TemplatesScreen() {
           ))}
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -139,7 +139,7 @@ export default function AddExpenseScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         variant="modal"
         showBack={true}
@@ -244,7 +244,7 @@ export default function AddExpenseScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 
