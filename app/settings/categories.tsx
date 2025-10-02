@@ -175,7 +175,7 @@ export default function CategoriesScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={t('settings.categories.title')}
         variant="large"
@@ -247,7 +247,7 @@ export default function CategoriesScreen() {
           setEditingCategory(undefined);
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

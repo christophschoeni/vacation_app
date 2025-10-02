@@ -65,7 +65,7 @@ export default function AddVacationScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         variant="modal"
         showBack={true}
@@ -143,7 +143,7 @@ export default function AddVacationScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -40,20 +40,18 @@ export default function VacationBudgetScreen() {
 
   if (!vacation) {
     return (
-      <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
-        <SafeAreaView style={styles.headerContainer} edges={['top']}>
-          <AppHeader
-            title={t('common.loading')}
-            showBack={true}
-            onBackPress={() => router.push('/(tabs)')}
-          />
-        </SafeAreaView>
+      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+        <AppHeader
+          title={t('common.loading')}
+          showBack={true}
+          onBackPress={() => router.push('/(tabs)')}
+        />
         <View style={styles.content}>
           <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#000000', textAlign: 'center', marginTop: 50 }}>
             {t('vacation.detail.loading')}
           </Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -88,7 +86,7 @@ export default function VacationBudgetScreen() {
 
 
   return (
-    <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
@@ -158,7 +156,7 @@ export default function VacationBudgetScreen() {
           )}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

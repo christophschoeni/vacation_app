@@ -101,7 +101,12 @@ export default function VacationsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+      <AppHeader
+        title={t('navigation.vacations')}
+        variant="large"
+      />
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -119,12 +124,6 @@ export default function VacationsScreen() {
         accessibilityLabel={t('navigation.vacations')}
         accessibilityHint={t('empty_states.refresh')}
       >
-        {/* iOS-style large title in content area */}
-        <View style={styles.titleSection}>
-          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('navigation.vacations')}
-          </Text>
-        </View>
 
         {vacations.length === 0 ? (
           <EmptyState
@@ -171,27 +170,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  titleSection: {
-    paddingHorizontal: 0, // Already has padding from content
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  largeTitle: {
-    fontSize: 34,
-    fontWeight: '700',
-    fontFamily: 'System',
-    lineHeight: 41,
-  },
-  addButton: {
-    padding: 8,
-    borderRadius: 8,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 4,
+    paddingTop: 16,
     paddingBottom: 85, // Space for native tab bar
   },
   floatingActionButton: {

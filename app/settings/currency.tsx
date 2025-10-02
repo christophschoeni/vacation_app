@@ -9,6 +9,7 @@ import {
   TextInput,
   useColorScheme,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Card, Icon } from '@/components/design';
@@ -140,7 +141,7 @@ export default function CurrencyScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={t('settings.currency.title')}
         variant="large"
@@ -253,7 +254,7 @@ export default function CurrencyScreen() {
         }}
         onCancel={() => setShowEditor(false)}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

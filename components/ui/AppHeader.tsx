@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@/components/design';
 import { useTranslation } from '@/lib/i18n';
 
@@ -28,10 +27,7 @@ export default function AppHeader({
   const { t } = useTranslation();
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}
-      edges={['top']}
-    >
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <View style={styles.header}>
         {/* Left Side */}
         <View style={styles.leftSide}>
@@ -90,7 +86,7 @@ export default function AppHeader({
           </Text>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -213,7 +213,7 @@ export default function CurrencyDataScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <AppHeader
           title={t('settings.currency.data.title')}
           variant="large"
@@ -226,12 +226,12 @@ export default function CurrencyDataScreen() {
             {t('settings.currency.data.loading')}
           </Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={t('settings.currency.data.title')}
         variant="large"
@@ -508,7 +508,7 @@ export default function CurrencyDataScreen() {
           </ScrollView>
         </SafeAreaView>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -138,7 +138,7 @@ export default function CurrencyCalculatorScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <AppHeader
           title={t('settings.currency.calculator.title')}
           variant="large"
@@ -151,12 +151,12 @@ export default function CurrencyCalculatorScreen() {
             {t('settings.currency.calculator.loading')}
           </Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={t('settings.currency.calculator.title')}
         variant="large"
@@ -324,7 +324,7 @@ export default function CurrencyCalculatorScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
