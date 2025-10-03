@@ -17,6 +17,12 @@ export default function MainLayout() {
         color: isDark ? '#FFFFFF' : '#000000',
       }}
       materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
+      screenOptions={{
+        headerShown: false,
+        headerStyle: { backgroundColor: 'transparent' },
+        headerTransparent: true,
+        headerShadowVisible: false,
+      }}
     >
       <NativeTabs.Trigger name="index">
         <Label>{t('navigation.vacations')}</Label>
