@@ -152,7 +152,12 @@ function RootNavigation() {
           name="(tabs)"
           options={{
             headerShown: false,
+            title: '', // Empty title to prevent "(tabs)" from showing
+            headerTitle: '', // Explicitly set empty header title
             contentStyle: { backgroundColor: 'transparent' },
+            // iOS specific: prevent navigation bar
+            presentation: 'card',
+            navigationBarHidden: true,
           }}
         />
         <Stack.Screen

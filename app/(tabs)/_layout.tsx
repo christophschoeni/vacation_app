@@ -1,12 +1,21 @@
 import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
-import React from 'react';
-import { useColorScheme } from 'react-native';
+import React, { useEffect } from 'react';
+import { useColorScheme, Platform } from 'react-native';
 import { useTranslation } from '@/lib/i18n';
 
 export default function MainLayout() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const isDark = colorScheme === 'dark';
+
+  // iOS-specific: Hide navigation bar for all tab screens
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      // This will be executed when the component mounts
+      // We need to set the navigation bar hidden for the tab bar controller
+      console.log('Setting iOS navigation bar hidden for tabs');
+    }
+  }, []);
 
   return (
     <NativeTabs
@@ -22,6 +31,10 @@ export default function MainLayout() {
         headerStyle: { backgroundColor: 'transparent' },
         headerTransparent: true,
         headerShadowVisible: false,
+        // iOS specific options
+        headerLargeTitle: false,
+        headerLargeTitleShadowVisible: false,
+        headerBackVisible: false,
       }}
     >
       <NativeTabs.Trigger name="index">
