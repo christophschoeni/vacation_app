@@ -62,7 +62,6 @@ export function useChecklists(vacationId: string) {
     try {
       const templateList = await checklistServiceSQLite.getTemplates();
       setTemplates(templateList);
-      logger.debug('Loaded templates:', templateList.length);
     } catch (error) {
       logger.warn('Failed to load templates:', error);
     }
