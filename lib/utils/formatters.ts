@@ -56,6 +56,19 @@ export function formatDate(date: Date): string {
 }
 
 /**
+ * Format date and time for display
+ */
+export function formatDateTime(date: Date): string {
+  return new Intl.DateTimeFormat('de-CH', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+}
+
+/**
  * Format a date for display with day name
  */
 export function formatDateWithDay(date: Date): string {

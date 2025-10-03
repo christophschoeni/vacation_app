@@ -21,13 +21,16 @@ import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacations } from '@/hooks/use-vacations';
 import { useExpenses } from '@/lib/database';
 import { useTranslation } from '@/lib/i18n';
+import { Vacation } from '@/types';
 
 export default function VacationBudgetScreen() {
   const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
-  const { vacations, refreshVacations } = useVacations();
+  const { vacations, loading, refreshVacations } = useVacations();
   const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId || '');
+  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+  const [cachedVacation, setCachedVacation] = React.useState<Vacation | null>(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -38,7 +41,18 @@ export default function VacationBudgetScreen() {
 
   const vacation = vacations.find(v => v.id === vacationId);
 
-  if (!vacation) {
+  // Cache the vacation to prevent flickering during refresh
+  React.useEffect(() => {
+    if (vacation) {
+      setCachedVacation(vacation);
+      setIsInitialLoad(false);
+    }
+  }, [vacation]);
+
+  // Use cached vacation if current vacation is undefined but we have a cache
+  const displayVacation = vacation || cachedVacation;
+
+  if (!displayVacation && (loading || isInitialLoad)) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
         <AppHeader
@@ -49,6 +63,23 @@ export default function VacationBudgetScreen() {
         <View style={styles.content}>
           <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#000000', textAlign: 'center', marginTop: 50 }}>
             {t('vacation.detail.loading')}
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!displayVacation) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+        <AppHeader
+          title={t('common.error')}
+          showBack={true}
+          onBackPress={() => router.push('/(tabs)')}
+        />
+        <View style={styles.content}>
+          <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#000000', textAlign: 'center', marginTop: 50 }}>
+            {t('vacation.detail.not_found')}
           </Text>
         </View>
       </SafeAreaView>
@@ -123,7 +154,7 @@ export default function VacationBudgetScreen() {
         </View>
 
         {/* Enhanced Budget Overview */}
-        <BudgetOverview vacation={vacation} expenses={expenses} />
+        <BudgetOverview vacation={displayVacation} expenses={expenses} />
 
         {/* Expenses Grid */}
         <View style={[styles.expensesSection, { paddingHorizontal: 16 }]}>

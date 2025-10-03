@@ -9,6 +9,7 @@ interface DatePickerProps {
   onChange: (date: Date) => void;
   required?: boolean;
   error?: string;
+  mode?: 'date' | 'time' | 'datetime';
 }
 
 export default function DatePicker({
@@ -17,6 +18,7 @@ export default function DatePicker({
   onChange,
   required = false,
   error,
+  mode = 'date',
 }: DatePickerProps) {
   const colorScheme = useColorScheme();
 
@@ -35,7 +37,7 @@ export default function DatePicker({
       <DateTimePicker
         testID="dateTimePicker"
         value={value}
-        mode="date"
+        mode={mode}
         is24Hour={true}
         display="default"
         onChange={handleDateChange}

@@ -147,6 +147,13 @@ export default function VacationDetailTabLayout() {
         />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="report">
+        <Label>{t('vacation.tabs.report')}</Label>
+        <TabIcon
+          sf="chart.bar.fill"
+        />
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="checklists">
         <Label>{t('vacation.tabs.lists')}</Label>
         <TabIcon

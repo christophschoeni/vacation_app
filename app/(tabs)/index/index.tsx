@@ -105,6 +105,20 @@ export default function VacationsScreen() {
       <AppHeader
         title={t('navigation.vacations')}
         variant="large"
+        rightAction={
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={handleAddVacation}
+            activeOpacity={0.8}
+            accessible={true}
+            accessibilityLabel={t('vacation.add.button')}
+            accessibilityRole="button"
+          >
+            <View style={[styles.headerButtonInner, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 122, 255, 0.1)' }]}>
+              <Icon name="plus" size={18} color={isDark ? '#FFFFFF' : '#007AFF'} />
+            </View>
+          </TouchableOpacity>
+        }
       />
 
       <ScrollView
@@ -149,19 +163,6 @@ export default function VacationsScreen() {
           ))
         )}
       </ScrollView>
-
-      {/* Floating Action Button - iOS Style */}
-      <TouchableOpacity
-        style={[styles.floatingActionButton, { backgroundColor: isDark ? '#1C1C1E' : '#007AFF' }]}
-        onPress={handleAddVacation}
-        activeOpacity={0.8}
-        accessible={true}
-        accessibilityLabel={t('vacation.add.button')}
-        accessibilityHint={t('vacation.add.button')}
-        accessibilityRole="button"
-      >
-        <Icon name="plus" size={24} color="#FFFFFF" />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -177,6 +178,16 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 16,
     paddingBottom: 85, // Space for native tab bar
+  },
+  headerButton: {
+    marginRight: -8,
+  },
+  headerButtonInner: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   floatingActionButton: {
     position: 'absolute',

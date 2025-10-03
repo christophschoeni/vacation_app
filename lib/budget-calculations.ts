@@ -1,6 +1,7 @@
 import { Vacation, Expense } from '@/types';
 import { formatCurrency as sharedFormatCurrency } from '@/lib/utils/formatters';
 import { Colors } from '@/constants/design';
+import { currencyService } from '@/lib/currency';
 
 export interface BudgetAnalysis {
   totalBudget: number;
@@ -27,6 +28,102 @@ export interface BudgetAnalysis {
   status: 'on-track' | 'over-budget' | 'under-budget' | 'future-trip';
 }
 
+// Async version with currency conversion
+export async function calculateBudgetAnalysisAsync(
+  vacation: Vacation,
+  expenses: Expense[],
+  targetCurrency: string = 'CHF'
+): Promise<BudgetAnalysis> {
+  const today = new Date();
+  const startDate = new Date(vacation.startDate);
+  const endDate = new Date(vacation.endDate);
+
+  // Calculate trip duration
+  const totalDays = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+
+  let elapsedDays = 0;
+  let remainingDays = totalDays;
+
+  if (today >= startDate && today <= endDate) {
+    // During vacation
+    elapsedDays = Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    remainingDays = Math.max(0, Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+  } else if (today > endDate) {
+    // After vacation
+    elapsedDays = totalDays;
+    remainingDays = 0;
+  } else {
+    // Before vacation
+    elapsedDays = 0;
+    remainingDays = totalDays;
+  }
+
+  // Convert budget to target currency
+  const totalBudget = await currencyService.convertCurrency(
+    vacation.budget || 0,
+    vacation.currency || 'CHF',
+    targetCurrency
+  );
+
+  // Convert all expenses to target currency
+  let totalExpenses = 0;
+  for (const expense of expenses) {
+    const convertedAmount = await currencyService.convertCurrency(
+      expense.amountCHF,
+      'CHF',
+      targetCurrency
+    );
+    totalExpenses += convertedAmount;
+  }
+
+  const remainingBudget = totalBudget - totalExpenses;
+  const budgetPercentageUsed = totalBudget > 0 ? (totalExpenses / totalBudget) * 100 : 0;
+
+  // Daily calculations
+  const budgetPerDay = totalBudget / totalDays;
+  const averageSpentPerDay = elapsedDays > 0 ? totalExpenses / elapsedDays : 0;
+  const remainingBudgetPerDay = remainingDays > 0 ? remainingBudget / remainingDays : 0;
+
+  // Projections
+  const projectedTotalSpend = averageSpentPerDay * totalDays;
+  const projectedOverOrUnder = totalBudget - projectedTotalSpend;
+  const isOverBudget = totalExpenses > totalBudget;
+
+  // Determine status
+  let status: BudgetAnalysis['status'] = 'on-track';
+  if (today < startDate) {
+    status = 'future-trip';
+  } else if (isOverBudget) {
+    status = 'over-budget';
+  } else if (projectedOverOrUnder < 0) {
+    status = 'over-budget';
+  } else if (averageSpentPerDay < budgetPerDay * 0.8) {
+    status = 'under-budget';
+  }
+
+  return {
+    totalBudget,
+    totalExpenses,
+    remainingBudget,
+    budgetPercentageUsed,
+
+    totalDays,
+    elapsedDays,
+    remainingDays,
+
+    budgetPerDay,
+    averageSpentPerDay,
+    remainingBudgetPerDay,
+
+    projectedTotalSpend,
+    projectedOverOrUnder,
+    isOverBudget,
+
+    status,
+  };
+}
+
+// Synchronous version for backward compatibility (uses CHF only)
 export function calculateBudgetAnalysis(vacation: Vacation, expenses: Expense[]): BudgetAnalysis {
   const today = new Date();
   const startDate = new Date(vacation.startDate);

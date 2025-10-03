@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "141dedaf-84b2-4f39-9f78-92d4ce33060f",
-  "prevId": "df99048c-e5fb-4989-a84e-95baf446d756",
+  "id": "f7a1738a-bfe0-4a25-84d3-215d5b962684",
+  "prevId": "fece690e-82e3-4cec-8679-1565439019cb",
   "tables": {
     "app_settings": {
       "name": "app_settings",
@@ -150,6 +150,13 @@
         },
         "created_at": {
           "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -601,14 +608,6 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
-        },
-        "currency": {
-          "name": "currency",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'CHF'"
         },
         "image_url": {
           "name": "image_url",

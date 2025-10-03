@@ -15,7 +15,6 @@ export interface UseVacationsReturn {
     startDate: Date;
     endDate: Date;
     budget?: number;
-    currency?: string;
     imageUrl?: string;
   }) => Promise<Vacation>;
   updateVacation: (id: string, data: Partial<Vacation>) => Promise<Vacation | null>;
@@ -55,7 +54,6 @@ export function useVacations(): UseVacationsReturn {
     startDate: Date;
     endDate: Date;
     budget?: number;
-    currency?: string;
     imageUrl?: string;
   }): Promise<Vacation> => {
     try {

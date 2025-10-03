@@ -29,16 +29,19 @@
     "home": "Accueil",
     "vacations": "Vacances",
     "settings": "Paramètres",
+    "report": "Rapport",
     "profile": "Profil",
     "explore": "Explorer",
     "budget": "Budget",
+      "report": "Rapport",
     "checklists": "Listes",
     "overview": "Aperçu"
   },
   "tabs": {
     "home": "Accueil",
     "explore": "Explorer",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "report": "Rapport"
   },
   "vacation": {
     "title": "Vacances",
@@ -59,7 +62,8 @@
     },
     "detail": {
       "title": "Détails des vacances",
-      "loading": "Chargement des données des vacances..."
+      "loading": "Chargement des données des vacances...",
+      "not_found": "Vacances introuvables"
     },
     "form": {
       "destination": "Destination",
@@ -68,9 +72,10 @@
       "country_placeholder": "p.ex. Turquie",
       "hotel": "Hôtel",
       "hotel_placeholder": "p.ex. Club Hotel Sera",
-      "start_date": "Date de début",
-      "end_date": "Date de fin",
+      "start_date": "Date & Heure de début",
+      "end_date": "Date & Heure de fin",
       "budget": "Budget",
+      "report": "Rapport",
       "budget_placeholder": "p.ex. 2000",
       "currency": "Devise",
       "notes": "Notes",
@@ -137,8 +142,10 @@
     },
     "tabs": {
       "budget": "Budget",
+      "report": "Rapport",
       "lists": "Listes",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+    "report": "Rapport"
     }
   },
   "expense": {
@@ -166,7 +173,7 @@
       "description": "Description",
       "description_placeholder": "p.ex. Boutique de l'aéroport",
       "category": "Catégorie",
-      "date": "Date",
+      "date": "Date & Heure",
       "converted_amount": "Converti en CHF",
       "converting": "Conversion...",
       "currency_calculator": "Convertisseur de devises"
@@ -610,8 +617,8 @@
     "months_ago": "il y a {{count}} mois",
     "months_ago_plural": "il y a {{count}} mois",
     "select_date": "Sélectionner une date",
-    "start_date": "Date de début",
-    "end_date": "Date de fin",
+    "start_date": "Date & Heure de début",
+    "end_date": "Date & Heure de fin",
     "duration": "Durée",
     "days": "Jour",
     "days_plural": "Jours"
@@ -693,5 +700,12 @@
       "per_day": "Restant par jour ({{days}})",
       "vacation_ended": "Vacances Terminées"
     }
+  },
+  "report": {
+    "total_expenses": "Dépenses Totales",
+    "no_data": "Aucune donnée disponible",
+    "no_data_subtitle": "Ajoutez des dépenses pour voir le rapport",
+    "expense_count": "{{count}} dépense",
+    "expense_count_plural": "{{count}} dépenses"
   }
 }
