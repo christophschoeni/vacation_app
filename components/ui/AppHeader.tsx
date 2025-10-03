@@ -70,6 +70,8 @@ export default function AppHeader({
                 </Text>
               </View>
             </TouchableOpacity>
+          ) : variant === 'large' ? (
+            <View style={styles.spacer} />
           ) : rightAction ? (
             rightAction
           ) : (
@@ -81,9 +83,16 @@ export default function AppHeader({
       {/* Large Title */}
       {variant === 'large' && title && (
         <View style={styles.largeTitleContainer}>
-          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {title}
-          </Text>
+          <View style={styles.largeTitleRow}>
+            <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+              {title}
+            </Text>
+            {rightAction && (
+              <View style={styles.largeTitleRightAction}>
+                {rightAction}
+              </View>
+            )}
+          </View>
         </View>
       )}
     </View>
@@ -171,10 +180,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 8,
   },
+  largeTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   largeTitle: {
     fontSize: 34,
     fontWeight: '700',
     fontFamily: 'System',
     lineHeight: 41,
+    flex: 1,
+  },
+  largeTitleRightAction: {
+    marginLeft: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

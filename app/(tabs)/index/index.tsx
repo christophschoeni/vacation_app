@@ -101,7 +101,7 @@ export default function VacationsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         title={t('navigation.vacations')}
         variant="large"
