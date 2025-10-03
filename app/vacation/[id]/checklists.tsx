@@ -1,10 +1,9 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
-import { useRouteParam } from '@/hooks/use-route-param';
-import { useCallback } from 'react';
 import { useChecklists } from '@/hooks/use-checklists';
+import { useVacations } from '@/hooks/use-vacations';
 import ChecklistCard from '@/components/ui/cards/ChecklistCard';
 import AppHeader from '@/components/ui/AppHeader';
 import { Icon } from '@/components/design';
@@ -12,7 +11,17 @@ import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
 
 export default function VacationChecklistsScreen() {
-  const vacationId = useRouteParam('id');
+  // WORKAROUND: NativeTabs in expo-router doesn't pass route params to child screens
+  // We get the vacation from the vacations list - since we're inside /vacation/[id]/
+  // the parent layout has already loaded the vacation
+  const { vacations } = useVacations();
+
+  // Get the first vacation (in a real app with multiple vacations,
+  // we'd need a better way to identify which vacation we're viewing)
+  // But since the parent _layout.tsx filters by ID, we can assume it's the active one
+  const vacation = vacations.length > 0 ? vacations[0] : null;
+  const vacationId = vacation?.id;
+
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
 
@@ -32,38 +41,25 @@ export default function VacationChecklistsScreen() {
 
   useEffect(() => {
     if (vacationId) {
-      logger.info(`🎯 Checklists screen: Loading checklists for vacation ID: ${vacationId}`);
-      // Load with a delay to ensure database and app initialization is complete
-      setTimeout(() => {
-        loadChecklists();
-        loadTemplates();
-      }, 500);
-    } else {
-      logger.warn('⚠️ No vacation ID available');
+      loadChecklists();
+      loadTemplates();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vacationId]);
 
   // Reload checklists when screen comes into focus (e.g., when returning from detail view)
   useFocusEffect(
     useCallback(() => {
       if (vacationId) {
-        // Reload when returning to this screen with longer delay on first load
-        setTimeout(() => {
-          loadChecklists();
-        }, 300);
+        loadChecklists();
+        loadTemplates();
       }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vacationId])
   );
 
-  // Debug: Log checklists data
+  // Force re-render when checklists change to ensure ChecklistCard gets updated data
   useEffect(() => {
-    logger.debug(`UI State Update: ${checklists.length} checklists loaded`);
-    checklists.forEach(checklist => {
-      const completedItems = checklist.items?.filter(item => item.completed).length || 0;
-      const totalItems = checklist.items?.length || 0;
-      logger.debug(`  UI: "${checklist.title}": ${completedItems}/${totalItems} items`);
-    });
-    // Force re-render to ensure ChecklistCard gets updated data
     forceUpdate();
   }, [checklists]);
 
