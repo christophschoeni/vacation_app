@@ -30,7 +30,6 @@ export default function AddVacationScreen() {
     startDate: new Date(),
     endDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
     budget: '',
-    currency: 'CHF',
   });
 
   const handleSave = async () => {
@@ -47,7 +46,6 @@ export default function AddVacationScreen() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: formData.budget ? parseFloat(formData.budget) : undefined,
-        currency: formData.currency,
       });
       router.back();
     } catch (error) {
@@ -118,12 +116,14 @@ export default function AddVacationScreen() {
               label={t('vacation.form.start_date')}
               value={formData.startDate}
               onChange={(date) => updateField('startDate', date)}
+              mode="datetime"
             />
 
             <DatePicker
               label={t('vacation.form.end_date')}
               value={formData.endDate}
               onChange={(date) => updateField('endDate', date)}
+              mode="datetime"
             />
 
             <FormInput
@@ -132,13 +132,6 @@ export default function AddVacationScreen() {
               onChangeText={(value) => updateField('budget', value)}
               placeholder={t('vacation.form.budget_placeholder')}
               keyboardType="numeric"
-            />
-
-            <FormInput
-              label={t('vacation.form.currency')}
-              value={formData.currency}
-              onChangeText={(value) => updateField('currency', value)}
-              placeholder="CHF"
             />
           </View>
         </ScrollView>

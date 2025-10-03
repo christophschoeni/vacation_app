@@ -239,6 +239,7 @@ export default function AddExpenseScreen() {
               label={t('expense.form.date')}
               value={formData.date}
               onChange={(date) => updateField('date', date)}
+              mode="datetime"
             />
 
           </View>

@@ -28,6 +28,7 @@
   "navigation": {
     "home": "Start",
     "vacations": "Reisen",
+    "report": "Report",
     "settings": "Einstellungen",
     "profile": "Profil",
     "explore": "Entdecken",
@@ -59,7 +60,8 @@
     },
     "detail": {
       "title": "Ferien-Details",
-      "loading": "Lade Ferien-Daten..."
+      "loading": "Lade Ferien-Daten...",
+      "not_found": "Ferien nicht gefunden"
     },
     "form": {
       "destination": "Reiseziel",
@@ -68,8 +70,8 @@
       "country_placeholder": "z.B. Türkei",
       "hotel": "Hotel",
       "hotel_placeholder": "z.B. Club Hotel Sera",
-      "start_date": "Startdatum",
-      "end_date": "Enddatum",
+      "start_date": "Startdatum & Uhrzeit",
+      "end_date": "Enddatum & Uhrzeit",
       "budget": "Budget",
       "budget_placeholder": "z.B. 2000",
       "currency": "Währung",
@@ -137,6 +139,7 @@
     },
     "tabs": {
       "budget": "Budget",
+      "report": "Report",
       "lists": "Listen",
       "settings": "Einstellungen"
     }
@@ -166,7 +169,7 @@
       "description": "Beschreibung",
       "description_placeholder": "z.B. Flughafen Kiosk",
       "category": "Kategorie",
-      "date": "Datum",
+      "date": "Datum & Uhrzeit",
       "converted_amount": "Umgerechnet in CHF",
       "converting": "Umrechnung...",
       "currency_calculator": "Währungsrechner"
@@ -610,8 +613,8 @@
     "months_ago": "vor {{count}} Monat",
     "months_ago_plural": "vor {{count}} Monaten",
     "select_date": "Datum auswählen",
-    "start_date": "Startdatum",
-    "end_date": "Enddatum",
+    "start_date": "Startdatum & Uhrzeit",
+    "end_date": "Enddatum & Uhrzeit",
     "duration": "Dauer",
     "days": "Tag",
     "days_plural": "Tage"
@@ -693,5 +696,12 @@
       "per_day": "Verbleibt pro Tag ({{days}})",
       "vacation_ended": "Ferien beendet"
     }
+  },
+  "report": {
+    "total_expenses": "Gesamtausgaben",
+    "no_data": "Keine Daten verfügbar",
+    "no_data_subtitle": "Fügen Sie Ausgaben hinzu, um den Report zu sehen",
+    "expense_count": "{{count}} Ausgabe",
+    "expense_count_plural": "{{count}} Ausgaben"
   }
 }

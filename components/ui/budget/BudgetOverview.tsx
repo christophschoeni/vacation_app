@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Card } from '@/components/design';
 import { Vacation, Expense } from '@/types';
-import { calculateBudgetAnalysis, formatCurrency, getBudgetStatusColor } from '@/lib/budget-calculations';
+import { calculateBudgetAnalysisAsync, formatCurrency, getBudgetStatusColor, BudgetAnalysis } from '@/lib/budget-calculations';
 import { useColorScheme } from 'react-native';
 import { spacing } from '@/constants/spacing';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -44,7 +44,44 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
   const isDark = colorScheme === 'dark';
   const { t } = useTranslation();
   const { defaultCurrency } = useCurrency();
-  const analysis = calculateBudgetAnalysis(vacation, expenses);
+  const [analysis, setAnalysis] = React.useState<BudgetAnalysis | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    async function loadAnalysis() {
+      setLoading(true);
+      try {
+        const result = await calculateBudgetAnalysisAsync(vacation, expenses, defaultCurrency);
+        if (!cancelled) {
+          setAnalysis(result);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadAnalysis();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [vacation, expenses, defaultCurrency]);
+
+  if (loading || !analysis) {
+    return (
+      <View style={[styles.container, {
+        backgroundColor: isDark ? '#000000' : '#FFFFFF',
+      }]}>
+        <View style={{ paddingVertical: 40, alignItems: 'center' }}>
+          <ActivityIndicator color={isDark ? '#FFFFFF' : '#000000'} />
+        </View>
+      </View>
+    );
+  }
 
   const progressColor = getBudgetStatusColor(analysis.status, analysis.budgetPercentageUsed);
 
@@ -65,17 +102,6 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
     <View style={[styles.container, {
       backgroundColor: isDark ? '#000000' : '#FFFFFF',
     }]}>
-      {/* Status badge only - title is now in header */}
-      <View style={styles.header}>
-        <View style={[styles.statusBadge, {
-          backgroundColor: isDark ? 'rgba(142, 142, 147, 0.16)' : 'rgba(142, 142, 147, 0.12)',
-        }]}>
-          <Text style={[styles.statusText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {getBudgetStatusText(analysis.status)}
-          </Text>
-        </View>
-      </View>
-
       {/* Clean progress indication */}
       <View style={styles.progressSection}>
         <View style={styles.progressContainer}>

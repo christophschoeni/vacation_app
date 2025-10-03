@@ -6,6 +6,7 @@ import { Icon } from '@/components/design';
 import { EXPENSE_CATEGORIES } from '@/lib/constants/expense-categories';
 import { Shadow } from '@/constants/design';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from '@/lib/i18n';
 
 interface CategorySelectorProps {
   selectedCategory: ExpenseCategory;
@@ -15,6 +16,7 @@ interface CategorySelectorProps {
 
 export default function CategorySelector({ selectedCategory, onSelect, style }: CategorySelectorProps) {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const isDark = colorScheme === 'dark';
 
   const handleSelect = async (category: ExpenseCategory) => {
@@ -84,7 +86,7 @@ export default function CategorySelector({ selectedCategory, onSelect, style }: 
                   fontWeight: isSelected ? '600' : '500',
                 }
               ]}>
-                {option.label}
+                {t(option.labelKey)}
               </Text>
             </TouchableOpacity>
           );

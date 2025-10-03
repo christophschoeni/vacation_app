@@ -29,16 +29,19 @@
     "home": "Home",
     "vacations": "Vacations",
     "settings": "Settings",
+    "report": "Report",
     "profile": "Profile",
     "explore": "Explore",
     "budget": "Budget",
+      "report": "Report",
     "checklists": "Checklists",
     "overview": "Overview"
   },
   "tabs": {
     "home": "Home",
     "explore": "Explore",
-    "settings": "Settings"
+    "settings": "Settings",
+    "report": "Report"
   },
   "vacation": {
     "title": "Vacation",
@@ -59,7 +62,8 @@
     },
     "detail": {
       "title": "Vacation Details",
-      "loading": "Loading vacation data..."
+      "loading": "Loading vacation data...",
+      "not_found": "Vacation not found"
     },
     "form": {
       "destination": "Destination",
@@ -68,9 +72,10 @@
       "country_placeholder": "e.g. Turkey",
       "hotel": "Hotel",
       "hotel_placeholder": "e.g. Club Hotel Sera",
-      "start_date": "Start Date",
-      "end_date": "End Date",
+      "start_date": "Start Date & Time",
+      "end_date": "End Date & Time",
       "budget": "Budget",
+      "report": "Report",
       "budget_placeholder": "e.g. 2000",
       "currency": "Currency",
       "notes": "Notes",
@@ -137,8 +142,10 @@
     },
     "tabs": {
       "budget": "Budget",
+      "report": "Report",
       "lists": "Lists",
-      "settings": "Settings"
+      "settings": "Settings",
+    "report": "Report"
     }
   },
   "expense": {
@@ -166,7 +173,7 @@
       "description": "Description",
       "description_placeholder": "e.g. Airport Shop",
       "category": "Category",
-      "date": "Date",
+      "date": "Date & Time",
       "converted_amount": "Converted to CHF",
       "converting": "Converting...",
       "currency_calculator": "Currency Calculator"
@@ -610,8 +617,8 @@
     "months_ago": "{{count}} month ago",
     "months_ago_plural": "{{count}} months ago",
     "select_date": "Select Date",
-    "start_date": "Start Date",
-    "end_date": "End Date",
+    "start_date": "Start Date & Time",
+    "end_date": "End Date & Time",
     "duration": "Duration",
     "days": "Day",
     "days_plural": "Days"
@@ -693,5 +700,12 @@
       "per_day": "Remaining per Day ({{days}})",
       "vacation_ended": "Vacation Ended"
     }
+  },
+  "report": {
+    "total_expenses": "Total Expenses",
+    "no_data": "No data available",
+    "no_data_subtitle": "Add expenses to see the report",
+    "expense_count": "{{count}} expense",
+    "expense_count_plural": "{{count}} expenses"
   }
 }
