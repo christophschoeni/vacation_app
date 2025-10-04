@@ -16,6 +16,11 @@
     "production": {
       "autoIncrement": true,
       "channel": "production"
+    },
+    "production-test": {
+      "autoIncrement": true,
+      "distribution": "internal",
+      "channel": "production"
     }
   },
   "submit": {

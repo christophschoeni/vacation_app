@@ -6,19 +6,13 @@ export default function SettingsTabLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        title: '',
-        headerTitle: '',
         contentStyle: { backgroundColor: 'transparent' },
-        navigationBarHidden: true,
       }}
     >
       <Stack.Screen
         name="index"
         options={{
           headerShown: false,
-          title: '',
-          headerTitle: '',
-          navigationBarHidden: true,
         }}
       />
     </Stack>
