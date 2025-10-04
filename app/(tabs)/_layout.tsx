@@ -23,7 +23,7 @@ export default function MainLayout() {
     >
       <NativeTabs.Trigger name="index">
         <Label>{t('navigation.vacations')}</Label>
-        <Icon sf="house.fill" />
+        <Icon sf="airplane" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
