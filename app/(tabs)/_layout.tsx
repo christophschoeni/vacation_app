@@ -1,8 +1,6 @@
-import { Tabs } from 'expo-router';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import React from 'react';
-import { useColorScheme, Platform, StyleSheet } from 'react-native';
-import { SymbolView } from 'expo-symbols';
-import { BlurView } from 'expo-blur';
+import { useColorScheme } from 'react-native';
 import { useTranslation } from '@/lib/i18n';
 
 export default function MainLayout() {
@@ -11,75 +9,27 @@ export default function MainLayout() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <Tabs
+    <NativeTabs
+      barTintColor={isDark ? '#1C1C1E' : '#F8F9FA'}
+      tintColor={isDark ? '#007AFF' : '#007AFF'}
+      unselectedTintColor={isDark ? '#8E8E93' : '#8E8E93'}
+      labelStyle={{
+        color: isDark ? '#FFFFFF' : '#000000',
+      }}
+      materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: 'transparent',
-          borderTopWidth: 0,
-          elevation: 0,
-        },
-        tabBarActiveTintColor: isDark ? '#007AFF' : '#007AFF',
-        tabBarInactiveTintColor: isDark ? '#8E8E93' : '#8E8E93',
-        tabBarLabelStyle: {
-          fontSize: 10,
-          fontFamily: 'System',
-        },
-        tabBarBackground: () => (
-          <BlurView
-            intensity={80}
-            tint={isDark ? 'dark' : 'light'}
-            style={StyleSheet.absoluteFill}
-          />
-        ),
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: t('navigation.vacations'),
-          tabBarIcon: ({ color, focused }) => (
-            Platform.OS === 'ios' ? (
-              <SymbolView
-                name="house.fill"
-                size={24}
-                tintColor={color}
-                type="hierarchical"
-              />
-            ) : (
-              <SymbolView
-                name="house.fill"
-                size={24}
-                tintColor={color}
-              />
-            )
-          ),
-        }}
-      />
+      <NativeTabs.Trigger name="index">
+        <Label>{t('navigation.vacations')}</Label>
+        <Icon sf="house.fill" />
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: t('navigation.settings'),
-          tabBarIcon: ({ color, focused }) => (
-            Platform.OS === 'ios' ? (
-              <SymbolView
-                name="gearshape.fill"
-                size={24}
-                tintColor={color}
-                type="hierarchical"
-              />
-            ) : (
-              <SymbolView
-                name="gearshape.fill"
-                size={24}
-                tintColor={color}
-              />
-            )
-          ),
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger name="settings">
+        <Label>{t('navigation.settings')}</Label>
+        <Icon sf="gearshape.fill" />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
