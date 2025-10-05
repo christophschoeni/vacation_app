@@ -12,7 +12,7 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 export default function VacationSettingsScreen() {
@@ -21,6 +21,7 @@ export default function VacationSettingsScreen() {
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const insets = useSafeAreaInsets();
 
   // Always show the settings menu, even if vacation is loading
   // The navigation already handles vacation not found cases
@@ -56,7 +57,7 @@ export default function VacationSettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import insights from 'expo-insights';
 
@@ -27,6 +27,7 @@ export default function VacationsScreen() {
   const { t } = useTranslation();
   const { vacations, loading, refreshVacations, deleteVacation } = useVacations();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -101,7 +102,7 @@ export default function VacationsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
       <AppHeader
         title={t('navigation.vacations')}
         variant="large"

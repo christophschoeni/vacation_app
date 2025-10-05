@@ -10,7 +10,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ExpenseCard from '@/components/ui/cards/ExpenseCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
@@ -31,6 +31,7 @@ export default function VacationBudgetScreen() {
   const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId || '');
   const [isInitialLoad, setIsInitialLoad] = React.useState(true);
   const [cachedVacation, setCachedVacation] = React.useState<Vacation | null>(null);
+  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -54,7 +55,7 @@ export default function VacationBudgetScreen() {
 
   if (!displayVacation && (loading || isInitialLoad)) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
         <AppHeader
           title={t('common.loading')}
           showBack={true}
@@ -71,7 +72,7 @@ export default function VacationBudgetScreen() {
 
   if (!displayVacation) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
         <AppHeader
           title={t('common.error')}
           showBack={true}
@@ -117,7 +118,7 @@ export default function VacationBudgetScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}

@@ -18,10 +18,6 @@ import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { onboardingService } from '@/lib/onboarding-service';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
     return {
@@ -137,7 +133,7 @@ function RootNavigation() {
   if (!onboardingCompleted) {
     return (
       <>
-        <Stack>
+        <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
         </Stack>
         <StatusBar style="auto" />
@@ -152,12 +148,8 @@ function RootNavigation() {
           name="(tabs)"
           options={{
             headerShown: false,
-            title: '', // Empty title to prevent "(tabs)" from showing
-            headerTitle: '', // Explicitly set empty header title
-            contentStyle: { backgroundColor: 'transparent' },
-            // iOS specific: prevent navigation bar
-            presentation: 'card',
-            navigationBarHidden: true,
+            presentation: 'transparentModal',
+            animation: 'none',
           }}
         />
         <Stack.Screen
@@ -298,8 +290,8 @@ function RootNavigation() {
         <Stack.Screen
           name="modal"
           options={{
+            headerShown: false,
             presentation: 'modal',
-            title: 'Modal',
             animationDuration: 350,
             ...modalSlideUp,
           }}
