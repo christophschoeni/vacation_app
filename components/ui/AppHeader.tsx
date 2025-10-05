@@ -38,7 +38,7 @@ export default function AppHeader({
               accessibilityLabel={t('common.back')}
             >
               {variant === 'modal' ? (
-                <View style={[styles.modalButtonInner, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.98)' }]}>
+                <View style={styles.modalButtonInner}>
                   <Text style={[styles.modalCloseText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>×</Text>
                 </View>
               ) : (
@@ -63,11 +63,8 @@ export default function AppHeader({
               style={styles.modalButton}
               accessibilityLabel={t('common.save')}
             >
-              <View style={[styles.modalSaveButton, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon name="check" size={18} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-                <Text style={[styles.modalButtonText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  {t('common.save')}
-                </Text>
+              <View style={styles.modalButtonInner}>
+                <Icon name="check" size={20} color={isDark ? '#FFFFFF' : '#007AFF'} />
               </View>
             </TouchableOpacity>
           ) : variant === 'large' ? (
@@ -135,32 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  modalSaveButton: {
-    height: 36,
-    borderRadius: 18,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    gap: 6,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: 'transparent',
   },
   modalButtonText: {
     fontSize: 16,
