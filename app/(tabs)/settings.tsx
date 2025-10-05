@@ -2,6 +2,7 @@ import { Card, Icon, IconName } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { router } from 'expo-router';
 import React from 'react';
+import * as Haptics from 'expo-haptics';
 import {
   ScrollView,
   StyleSheet,
@@ -65,25 +66,15 @@ export default function SettingsScreen() {
   const isDark = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
 
-  const handleSettingsItemPress = (route: string) => {
-    switch (route) {
-      case '/settings/language':
-        router.push('/settings/language');
-        break;
-      case '/settings/categories':
-        router.push('/settings/categories');
-        break;
-      case '/settings/templates':
-        router.push('/settings/templates');
-        break;
-      case '/settings/currency':
-        router.push('/settings/currency');
-        break;
-      case '/settings/notifications':
-        router.push('/settings/notifications');
-        break;
-      default:
-        break;
+  const handleSettingsItemPress = async (route: string) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    console.log('Navigating to:', route);
+
+    try {
+      router.push(route as any);
+    } catch (error) {
+      console.error('Navigation error:', error);
     }
   };
 
