@@ -133,7 +133,7 @@ function RootNavigation() {
   if (!onboardingCompleted) {
     return (
       <>
-        <Stack>
+        <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
         </Stack>
         <StatusBar style="auto" />
@@ -290,8 +290,8 @@ function RootNavigation() {
         <Stack.Screen
           name="modal"
           options={{
+            headerShown: false,
             presentation: 'modal',
-            title: 'Modal',
             animationDuration: 350,
             ...modalSlideUp,
           }}

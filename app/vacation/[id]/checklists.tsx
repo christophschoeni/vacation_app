@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, useColorScheme } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { useChecklists } from '@/hooks/use-checklists';
 import { useVacations } from '@/hooks/use-vacations';
@@ -24,6 +24,7 @@ export default function VacationChecklistsScreen() {
 
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   // Force re-render when checklists change
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -142,7 +143,7 @@ export default function VacationChecklistsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
