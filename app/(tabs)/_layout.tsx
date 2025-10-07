@@ -1,7 +1,8 @@
-import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
+import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, useColorScheme } from 'react-native';
+import { useColorScheme } from 'react-native';
 import { useTranslation } from '@/lib/i18n';
+import { Icon } from '@/components/design';
 
 export default function MainLayout() {
   const { t } = useTranslation();
@@ -9,25 +10,37 @@ export default function MainLayout() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <NativeTabs
+    <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarStyle: {
+          backgroundColor: isDark ? '#1C1C1E' : '#F9F9F9',
+          borderTopColor: isDark ? '#2C2C2E' : '#E5E5EA',
+          borderTopWidth: 0.5,
+        },
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: '#8E8E93',
       }}
-      tabBarPosition="bottom"
-      translucent={false}
-      barTintColor={isDark ? '#1C1C1E' : '#F9F9F9'}
-      tintColor="#007AFF"
-      unselectedTintColor="#8E8E93"
     >
-      <NativeTabs.Trigger name="index">
-        <Label>{t('navigation.vacations')}</Label>
-        <TabIcon sf="airplane" />
-      </NativeTabs.Trigger>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: t('navigation.vacations'),
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="plane" size={size} color={color} />
+          ),
+        }}
+      />
 
-      <NativeTabs.Trigger name="settings">
-        <Label>{t('navigation.settings')}</Label>
-        <TabIcon sf="gearshape.fill" />
-      </NativeTabs.Trigger>
-    </NativeTabs>
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: t('navigation.settings'),
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="settings" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }
