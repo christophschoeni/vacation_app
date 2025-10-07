@@ -78,6 +78,7 @@
       "report": "Report",
       "budget_placeholder": "e.g. 2000",
       "currency": "Currency",
+      "currency_hint": "for expenses",
       "notes": "Notes",
       "notes_placeholder": "Additional information"
     },

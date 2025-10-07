@@ -140,7 +140,7 @@ export default function AddVacationScreen() {
             />
 
             <CurrencySelector
-              label={t('vacation.form.currency')}
+              label={`${t('vacation.form.currency')} (${t('vacation.form.currency_hint')})`}
               selectedCurrency={formData.currency}
               onSelect={(value) => updateField('currency', value)}
             />
