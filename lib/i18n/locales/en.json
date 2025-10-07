@@ -339,9 +339,7 @@
       "budget_alerts": "Budget Alerts",
       "budget_alerts_subtitle": "Notification when budget is exceeded",
       "expense_reminders": "Expense Reminders",
-      "expense_reminders_subtitle": "Reminder for unrecorded expenses",
-      "trip_updates": "Trip Updates",
-      "trip_updates_subtitle": "Important updates about your trips"
+      "expense_reminders_subtitle": "Reminder for unrecorded expenses"
     },
     "currency": {
       "title": "Currency",

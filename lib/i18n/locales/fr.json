@@ -339,9 +339,7 @@
       "budget_alerts": "Alertes Budget",
       "budget_alerts_subtitle": "Notification en cas de dépassement du budget",
       "expense_reminders": "Rappels de Dépenses",
-      "expense_reminders_subtitle": "Rappel pour les dépenses non enregistrées",
-      "trip_updates": "Mises à jour du Voyage",
-      "trip_updates_subtitle": "Mises à jour importantes sur vos voyages"
+      "expense_reminders_subtitle": "Rappel pour les dépenses non enregistrées"
     },
     "currency": {
       "title": "Devise",
