@@ -163,7 +163,7 @@ export default function CategoriesScreen() {
         <AppHeader
           title={t('settings.categories.title')}
           showBack={true}
-          onBackPress={() => router.back()}
+          onBackPress={() => router.push('/(tabs)/settings')}
         />
         <View style={styles.loadingContainer}>
           <Text style={[styles.loadingText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
@@ -180,7 +180,7 @@ export default function CategoriesScreen() {
         title={t('settings.categories.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.back()}
+        onBackPress={() => router.push('/(tabs)/settings')}
         rightAction={
           <TouchableOpacity
             onPress={handleAddCategory}

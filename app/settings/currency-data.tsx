@@ -218,7 +218,7 @@ export default function CurrencyDataScreen() {
           title={t('settings.currency.data.title')}
           variant="large"
           showBack={true}
-          onBackPress={() => router.back()}
+          onBackPress={() => router.push('/(tabs)/settings')}
         />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#007AFF'} />
@@ -236,7 +236,7 @@ export default function CurrencyDataScreen() {
         title={t('settings.currency.data.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.back()}
+        onBackPress={() => router.push('/(tabs)/settings')}
       />
 
       <ScrollView

@@ -149,7 +149,7 @@ export default function NotificationsScreen() {
         title={t('settings.notifications.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.back()}
+        onBackPress={() => router.push('/(tabs)/settings')}
       />
 
       <ScrollView

@@ -191,7 +191,7 @@ export default function TemplatesScreen() {
         title={t('settings.templates.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.back()}
+        onBackPress={() => router.push('/(tabs)/settings')}
         rightAction={
           <TouchableOpacity
             onPress={handleAddTemplate}
