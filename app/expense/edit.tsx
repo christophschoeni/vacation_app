@@ -42,7 +42,7 @@ export default function EditExpenseScreen() {
     date: new Date(),
   });
 
-  const [chfAmount, setChfAmount] = useState<number | null>(null);
+  const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [converting, setConverting] = useState(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
 
@@ -59,7 +59,7 @@ export default function EditExpenseScreen() {
         category: expenseData.category,
         date: expenseData.date,
       });
-      setChfAmount(expenseData.amountCHF);
+      setConvertedAmount(expenseData.amountCHF);
       setLoading(false);
     } else if (expenses.length > 0) {
       // Expenses loaded but this one not found
@@ -68,36 +68,37 @@ export default function EditExpenseScreen() {
     }
   }, [expenseId, expenses, t]);
 
-  // Convert to CHF whenever amount or currency changes
+  // Convert to default currency whenever amount or currency changes
   React.useEffect(() => {
     const convertAmount = async () => {
       if (!formData.amount || !parseFloat(formData.amount)) {
-        setChfAmount(null);
+        setConvertedAmount(null);
         return;
       }
 
-      if (formData.currency === 'CHF') {
-        setChfAmount(parseFloat(formData.amount));
+      if (formData.currency === defaultCurrency) {
+        setConvertedAmount(parseFloat(formData.amount));
         return;
       }
 
       setConverting(true);
       try {
-        const converted = await currencyService.convertToCHF(
+        const converted = await currencyService.convertCurrency(
           parseFloat(formData.amount),
-          formData.currency
+          formData.currency,
+          defaultCurrency
         );
-        setChfAmount(converted);
+        setConvertedAmount(converted);
       } catch (error) {
         console.warn('Currency conversion failed:', error);
-        setChfAmount(parseFloat(formData.amount));
+        setConvertedAmount(parseFloat(formData.amount));
       } finally {
         setConverting(false);
       }
     };
 
     convertAmount();
-  }, [formData.amount, formData.currency]);
+  }, [formData.amount, formData.currency, defaultCurrency]);
 
   const handleSave = async () => {
     if (!formData.amount || !formData.description) {
@@ -222,13 +223,13 @@ export default function EditExpenseScreen() {
               </View>
             </View>
 
-            {chfAmount !== null && formData.currency !== defaultCurrency && (
+            {convertedAmount !== null && formData.currency !== defaultCurrency && (
               <View style={styles.conversionDisplay}>
                 <Text style={[styles.conversionLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
                   {t('expense.form.converted_amount')}:
                 </Text>
                 <Text style={[styles.conversionAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  {converting ? t('expense.form.converting') : `${defaultCurrency} ${chfAmount.toFixed(2)}`}
+                  {converting ? t('expense.form.converting') : `${defaultCurrency} ${convertedAmount.toFixed(2)}`}
                 </Text>
               </View>
             )}
