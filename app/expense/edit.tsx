@@ -25,7 +25,6 @@ import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 import * as Haptics from 'expo-haptics';
-import { expenseRepository } from '@/lib/db/repositories/expense-repository';
 
 export default function EditExpenseScreen() {
   const colorScheme = useColorScheme();
@@ -34,7 +33,6 @@ export default function EditExpenseScreen() {
   const { updateExpense, expenses } = useExpenses(vacationId as string);
   const { defaultCurrency } = useCurrency();
   const [loading, setLoading] = useState(true);
-  const [expense, setExpense] = useState<Expense | null>(null);
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -48,35 +46,27 @@ export default function EditExpenseScreen() {
   const [converting, setConverting] = useState(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
 
-  // Load expense data on mount
+  // Load expense data on mount from expenses array
   React.useEffect(() => {
-    const loadExpense = async () => {
-      if (!expenseId || Array.isArray(expenseId)) return;
+    if (!expenseId || Array.isArray(expenseId)) return;
 
-      try {
-        setLoading(true);
-        const expenseData = await expenseRepository.findById(expenseId);
-        if (expenseData) {
-          setExpense(expenseData);
-          setFormData({
-            amount: expenseData.amount.toString(),
-            currency: expenseData.currency,
-            description: expenseData.description,
-            category: expenseData.category,
-            date: expenseData.date,
-          });
-          setChfAmount(expenseData.amountCHF);
-        }
-      } catch (error) {
-        console.error('Failed to load expense:', error);
-        Alert.alert(t('common.error'), t('errors.generic'));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadExpense();
-  }, [expenseId, t]);
+    const expenseData = expenses.find(e => e.id === expenseId);
+    if (expenseData) {
+      setFormData({
+        amount: expenseData.amount.toString(),
+        currency: expenseData.currency,
+        description: expenseData.description,
+        category: expenseData.category,
+        date: expenseData.date,
+      });
+      setChfAmount(expenseData.amountCHF);
+      setLoading(false);
+    } else if (expenses.length > 0) {
+      // Expenses loaded but this one not found
+      setLoading(false);
+      Alert.alert(t('common.error'), t('errors.not_found', { item: 'Expense' }));
+    }
+  }, [expenseId, expenses, t]);
 
   // Convert to CHF whenever amount or currency changes
   React.useEffect(() => {
