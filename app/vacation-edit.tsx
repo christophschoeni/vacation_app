@@ -15,61 +15,56 @@ import {
 } from 'react-native';
 
 import { DatePicker, FormInput } from '@/components/ui/forms';
+import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useVacations } from '@/hooks/use-vacations';
 import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { useVacationId } from '@/contexts/VacationContext';
 
 export default function VacationEditScreen() {
   const params = useLocalSearchParams();
-  const vacationId = params.vacationId as string;
+  const vacationIdFromContext = useVacationId();
+  const vacationIdFromParams = params.vacationId as string;
+
+  // Try multiple sources for vacationId: Context first, then params
+  const vacationId = vacationIdFromContext || vacationIdFromParams;
+
   const { t } = useTranslation();
 
   const colorScheme = useColorScheme();
   const { vacations, updateVacation, loading } = useVacations();
+  const { defaultCurrency } = useCurrency();
 
   const vacation = vacations.find(v => v.id === vacationId);
   const isDark = colorScheme === 'dark';
 
-  logger.debug('Edit Screen Debug:', {
-    vacationId,
-    vacationsCount: vacations.length,
-    vacation: vacation ? `Found: ${vacation.destination}` : 'Not found',
-    loading
-  });
 
-  const [formData, setFormData] = useState(() => {
-    if (vacation) {
-      return {
-        destination: vacation.destination,
-        hotel: vacation.hotel,
-        startDate: vacation.startDate,
-        endDate: vacation.endDate,
-        budget: vacation.budget.toString(),
-      };
-    }
-    return {
-      destination: '',
-      hotel: '',
-      startDate: new Date(),
-      endDate: new Date(),
-      budget: '',
-    };
+  const [formData, setFormData] = useState({
+    destination: '',
+    country: '',
+    hotel: '',
+    startDate: new Date(),
+    endDate: new Date(),
+    budget: '',
+    currency: defaultCurrency || 'CHF',
   });
 
   const [formLoading, setFormLoading] = useState(false);
 
   useEffect(() => {
     if (vacation) {
-      logger.debug('Loading vacation data:', vacation);
       setFormData({
         destination: vacation.destination,
+        country: vacation.country,
         hotel: vacation.hotel,
         startDate: vacation.startDate,
         endDate: vacation.endDate,
-        budget: vacation.budget.toString(),
+        budget: vacation.budget ? vacation.budget.toString() : '',
+        currency: vacation.currency || defaultCurrency || 'CHF',
       });
     }
-  }, [vacation]);
+  }, [vacation, defaultCurrency]);
 
 
   // Show loading state while vacations are being loaded
@@ -116,10 +111,12 @@ export default function VacationEditScreen() {
       setFormLoading(true);
       const updatedVacation = await updateVacation(vacation.id, {
         destination: formData.destination,
+        country: formData.country,
         hotel: formData.hotel,
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: parseFloat(formData.budget),
+        currency: formData.currency,
       });
 
       if (updatedVacation) {
@@ -174,6 +171,14 @@ export default function VacationEditScreen() {
             />
 
             <FormInput
+              label={t('vacation.form.country')}
+              value={formData.country}
+              onChangeText={(value) => updateField('country', value)}
+              placeholder={t('vacation.form.country_placeholder')}
+              required
+            />
+
+            <FormInput
               label={t('vacation.form.hotel')}
               value={formData.hotel}
               onChangeText={(value) => updateField('hotel', value)}
@@ -185,6 +190,7 @@ export default function VacationEditScreen() {
               label={t('vacation.form.start_date')}
               value={formData.startDate}
               onChange={(date) => updateField('startDate', date)}
+              mode="datetime"
               required
             />
 
@@ -192,16 +198,23 @@ export default function VacationEditScreen() {
               label={t('vacation.form.end_date')}
               value={formData.endDate}
               onChange={(date) => updateField('endDate', date)}
+              mode="datetime"
               required
             />
 
             <FormInput
-              label={t('vacation.form.budget')}
+              label={`${t('vacation.form.budget')} (${defaultCurrency || 'CHF'})`}
               value={formData.budget}
               onChangeText={(value) => updateField('budget', value)}
               placeholder={t('vacation.form.budget_placeholder')}
               keyboardType="numeric"
               required
+            />
+
+            <CurrencySelector
+              label={t('vacation.form.currency')}
+              selectedCurrency={formData.currency}
+              onSelect={(value) => updateField('currency', value)}
             />
 
           </View>

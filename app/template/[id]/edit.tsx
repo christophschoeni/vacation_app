@@ -97,15 +97,12 @@ export default function TemplateEditScreen() {
           disabled={saving}
           accessibilityLabel="Speichern"
         >
-          <Text style={[
-            styles.saveButtonText,
-            {
-              color: saving ? (isDark ? '#8E8E93' : '#6D6D70') : '#007AFF',
-              opacity: saving ? 0.5 : 1
-            }
-          ]}>
-            {saving ? 'Speichern...' : 'Speichern'}
-          </Text>
+          <Icon
+            name="check"
+            size={20}
+            color={saving ? (isDark ? '#8E8E93' : '#6D6D70') : '#007AFF'}
+            style={{ opacity: saving ? 0.5 : 1 }}
+          />
         </TouchableOpacity>
       </View>
 
@@ -183,10 +180,6 @@ const styles = StyleSheet.create({
   },
   headerSpacer: {
     width: 40,
-  },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
   },
   keyboardView: {
     flex: 1,

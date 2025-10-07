@@ -198,7 +198,7 @@ export default function TemplatesScreen() {
             style={styles.headerButton}
             accessibilityLabel={t('template.add.button')}
           >
-            <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+            <Icon name="plus" size={20} color={isDark ? '#FFFFFF' : '#007AFF'} />
           </TouchableOpacity>
         }
       />
@@ -231,6 +231,10 @@ export default function TemplatesScreen() {
         </View>
       ) : (
         <View style={styles.content}>
+          <Text style={[styles.pageTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('settings.templates.title')}
+          </Text>
+
           <View style={styles.descriptionContainer}>
             <Text style={[styles.descriptionText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               {t('settings.templates.description')}
@@ -301,6 +305,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 8,
+  },
+  pageTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+    marginBottom: 16,
   },
   descriptionContainer: {
     marginBottom: 16,

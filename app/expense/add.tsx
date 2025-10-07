@@ -25,6 +25,8 @@ import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 import * as Haptics from 'expo-haptics';
+import { notificationService } from '@/lib/services/notification-service';
+import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 
 export default function AddExpenseScreen() {
   const colorScheme = useColorScheme();
@@ -32,6 +34,7 @@ export default function AddExpenseScreen() {
   const { vacationId } = useLocalSearchParams();
   const { saveExpense } = useExpenses(vacationId as string);
   const { defaultCurrency } = useCurrency();
+  const [vacationCurrency, setVacationCurrency] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -45,12 +48,30 @@ export default function AddExpenseScreen() {
   const [converting, setConverting] = useState(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
 
-  // Update currency when defaultCurrency is loaded
+  // Load vacation currency on mount
   React.useEffect(() => {
-    if (defaultCurrency && formData.currency === 'CHF' && defaultCurrency !== 'CHF') {
+    const loadVacationCurrency = async () => {
+      if (vacationId && !Array.isArray(vacationId)) {
+        try {
+          const vacation = await vacationRepository.findById(vacationId);
+          if (vacation && vacation.currency) {
+            setVacationCurrency(vacation.currency);
+            setFormData(prev => ({ ...prev, currency: vacation.currency }));
+          }
+        } catch (error) {
+          console.warn('Failed to load vacation currency:', error);
+        }
+      }
+    };
+    loadVacationCurrency();
+  }, [vacationId]);
+
+  // Update currency when defaultCurrency is loaded (only if no vacation currency)
+  React.useEffect(() => {
+    if (!vacationCurrency && defaultCurrency && formData.currency === 'CHF' && defaultCurrency !== 'CHF') {
       setFormData(prev => ({ ...prev, currency: defaultCurrency }));
     }
-  }, [defaultCurrency, formData.currency]);
+  }, [defaultCurrency, formData.currency, vacationCurrency]);
 
   // Convert to CHF whenever amount or currency changes
   React.useEffect(() => {
@@ -112,6 +133,10 @@ export default function AddExpenseScreen() {
 
       await saveExpense(expense);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      // Check budget and send notification if needed
+      await checkBudgetAndNotify(vacationId, expense.amountCHF);
+
       router.back();
     } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -126,6 +151,45 @@ export default function AddExpenseScreen() {
 
   const updateField = (field: string, value: string | Date | ExpenseCategory) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const checkBudgetAndNotify = async (vacationId: string, expenseAmount: number) => {
+    try {
+      const vacation = await vacationRepository.findById(vacationId);
+      if (!vacation || !vacation.budget) {
+        return;
+      }
+
+      const expenses = await vacationRepository.getExpenses(vacationId);
+      const totalSpent = expenses.reduce((sum, exp) => sum + exp.amountCHF, 0);
+      const percentageUsed = (totalSpent / vacation.budget) * 100;
+
+      // Send notification if over budget
+      if (totalSpent > vacation.budget) {
+        await notificationService.sendBudgetAlert(
+          vacation.destination,
+          Math.round(percentageUsed),
+          true
+        );
+      }
+      // Send warning at 80% and 90%
+      else if (percentageUsed >= 80 && percentageUsed < 100) {
+        const previousTotal = totalSpent - expenseAmount;
+        const previousPercentage = (previousTotal / vacation.budget) * 100;
+
+        // Only send notification if we just crossed a threshold
+        if ((percentageUsed >= 90 && previousPercentage < 90) ||
+            (percentageUsed >= 80 && previousPercentage < 80)) {
+          await notificationService.sendBudgetAlert(
+            vacation.destination,
+            Math.round(percentageUsed),
+            false
+          );
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to check budget and send notification:', error);
+    }
   };
 
   const handleCalculatorAmountChange = (amount: string, currency: string) => {

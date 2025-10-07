@@ -12,6 +12,7 @@ export interface CreateVacationInput {
   startDate: Date;
   endDate: Date;
   budget?: number;
+  currency?: string;
   imageUrl?: string;
 }
 
@@ -22,6 +23,7 @@ export interface UpdateVacationInput {
   startDate?: Date;
   endDate?: Date;
   budget?: number;
+  currency?: string;
   imageUrl?: string;
 }
 
@@ -79,7 +81,7 @@ export class VacationRepository extends BaseRepository implements IRepository<Va
       startDate: this.dateToString(data.startDate),
       endDate: this.dateToString(data.endDate),
       budget: data.budget,
-      currency: 'CHF', // Default currency
+      currency: data.currency || 'CHF', // Use provided currency or default to CHF
       imageUrl: data.imageUrl,
       createdAt: now,
       updatedAt: now,

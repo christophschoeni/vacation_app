@@ -72,7 +72,8 @@ export default function SettingsScreen() {
     console.log('Navigating to:', route);
 
     try {
-      router.push(route as any);
+      // Use navigate instead of push to escape NativeTabs context
+      router.navigate(route as any);
     } catch (error) {
       console.error('Navigation error:', error);
     }
