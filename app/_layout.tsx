@@ -274,6 +274,15 @@ function RootNavigation() {
           }}
         />
         <Stack.Screen
+          name="expense/edit"
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+        <Stack.Screen
           name="checklist/[id]"
           options={{
             headerShown: false,
