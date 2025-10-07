@@ -17,6 +17,7 @@ import { ensureDefaultTemplates } from '@/lib/seed-templates';
 import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { onboardingService } from '@/lib/onboarding-service';
+import { notificationService } from '@/lib/services/notification-service';
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -71,6 +72,9 @@ function RootNavigation() {
 
           // Always ensure templates exist (independent of migration flag)
           await ensureDefaultTemplates();
+
+          // Initialize notification service
+          await notificationService.initialize();
 
           // Check onboarding status
           const completed = await onboardingService.hasCompletedOnboarding();
@@ -262,6 +266,15 @@ function RootNavigation() {
         />
         <Stack.Screen
           name="expense/add"
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+        <Stack.Screen
+          name="expense/edit"
           options={{
             headerShown: false,
             presentation: 'modal',

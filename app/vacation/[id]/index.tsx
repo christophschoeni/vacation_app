@@ -53,6 +53,7 @@ export default function VacationBudgetScreen() {
   // Use cached vacation if current vacation is undefined but we have a cache
   const displayVacation = vacation || cachedVacation;
 
+  // Only show loading if we don't have any vacation data (not even cached)
   if (!displayVacation && (loading || isInitialLoad)) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
@@ -68,6 +69,12 @@ export default function VacationBudgetScreen() {
         </View>
       </SafeAreaView>
     );
+  }
+
+  // If we have cached vacation but loading, show the cached data
+  // This prevents the "loading" screen from showing after navigation
+  if (!vacation && cachedVacation && loading) {
+    // Continue rendering with cachedVacation below
   }
 
   if (!displayVacation) {
@@ -90,6 +97,10 @@ export default function VacationBudgetScreen() {
 
   const handleExpensePress = (expenseId: string) => {
     // Handle expense press (future: navigate to expense detail)
+  };
+
+  const handleExpenseEdit = (expenseId: string) => {
+    router.push(`/expense/edit?expenseId=${expenseId}&vacationId=${vacationId}`);
   };
 
   const handleExpenseDelete = (expenseId: string) => {
@@ -175,6 +186,7 @@ export default function VacationBudgetScreen() {
                 <View key={expense.id} style={styles.gridItem}>
                   <SwipeableCard
                     onPress={() => handleExpensePress(expense.id)}
+                    onEdit={() => handleExpenseEdit(expense.id)}
                     onDelete={() => handleExpenseDelete(expense.id)}
                   >
                     <ExpenseCard

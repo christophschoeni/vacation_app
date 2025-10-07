@@ -78,6 +78,7 @@
       "report": "Report",
       "budget_placeholder": "ad es. 2000",
       "currency": "Valuta",
+      "currency_hint": "per le spese",
       "notes": "Note",
       "notes_placeholder": "Informazioni aggiuntive"
     },

@@ -67,8 +67,6 @@ export default function AppHeader({
                 <Icon name="check" size={20} color={isDark ? '#FFFFFF' : '#007AFF'} />
               </View>
             </TouchableOpacity>
-          ) : variant === 'large' ? (
-            <View style={styles.spacer} />
           ) : rightAction ? (
             rightAction
           ) : (
@@ -80,16 +78,9 @@ export default function AppHeader({
       {/* Large Title */}
       {variant === 'large' && title && (
         <View style={styles.largeTitleContainer}>
-          <View style={styles.largeTitleRow}>
-            <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {title}
-            </Text>
-            {rightAction && (
-              <View style={styles.largeTitleRightAction}>
-                {rightAction}
-              </View>
-            )}
-          </View>
+          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {title}
+          </Text>
         </View>
       )}
     </View>

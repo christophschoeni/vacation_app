@@ -92,6 +92,26 @@ export function useExpenses(vacationId?: string) {
     }
   }, [loadExpenses]);
 
+  const updateExpense = useCallback(async (id: string, updatedData: Partial<Expense>) => {
+    try {
+      const existing = expenses.find(e => e.id === id);
+      if (!existing) {
+        throw new Error('Expense not found');
+      }
+
+      const updated: Expense = {
+        ...existing,
+        ...updatedData,
+      };
+
+      await LocalDatabase.saveExpense(updated);
+      await loadExpenses(); // Refresh data
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update expense');
+      throw err;
+    }
+  }, [expenses, loadExpenses]);
+
   const deleteExpense = useCallback(async (id: string) => {
     try {
       await LocalDatabase.deleteExpense(id);
@@ -111,6 +131,7 @@ export function useExpenses(vacationId?: string) {
     loading,
     error,
     saveExpense,
+    updateExpense,
     deleteExpense,
     refresh: loadExpenses,
   };

@@ -10,7 +10,8 @@ export const vacations = sqliteTable('vacations', {
   startDate: text('start_date').notNull(), // ISO date string
   endDate: text('end_date').notNull(),     // ISO date string
   budget: real('budget'),
-  currency: text('currency').notNull().default('CHF'), // Keep for backward compatibility
+  budgetCurrency: text('budget_currency').notNull().default('CHF'), // Currency in which budget is specified (system currency)
+  currency: text('currency').notNull().default('CHF'), // Vacation currency for expenses
   imageUrl: text('image_url'),
   createdAt: text('created_at').notNull(), // ISO date string
   updatedAt: text('updated_at').notNull(), // ISO date string

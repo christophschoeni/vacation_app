@@ -25,20 +25,18 @@ import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 import * as Haptics from 'expo-haptics';
-import { notificationService } from '@/lib/services/notification-service';
-import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 
-export default function AddExpenseScreen() {
+export default function EditExpenseScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
-  const { vacationId } = useLocalSearchParams();
-  const { saveExpense } = useExpenses(vacationId as string);
+  const { expenseId, vacationId } = useLocalSearchParams();
+  const { updateExpense, expenses } = useExpenses(vacationId as string);
   const { defaultCurrency } = useCurrency();
-  const [vacationCurrency, setVacationCurrency] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     amount: '',
-    currency: defaultCurrency || 'CHF', // Use system default, fallback to CHF
+    currency: defaultCurrency || 'CHF',
     description: '',
     category: 'food' as ExpenseCategory,
     date: new Date(),
@@ -48,30 +46,27 @@ export default function AddExpenseScreen() {
   const [converting, setConverting] = useState(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
 
-  // Load vacation currency on mount
+  // Load expense data on mount from expenses array
   React.useEffect(() => {
-    const loadVacationCurrency = async () => {
-      if (vacationId && !Array.isArray(vacationId)) {
-        try {
-          const vacation = await vacationRepository.findById(vacationId);
-          if (vacation && vacation.currency) {
-            setVacationCurrency(vacation.currency);
-            setFormData(prev => ({ ...prev, currency: vacation.currency }));
-          }
-        } catch (error) {
-          console.warn('Failed to load vacation currency:', error);
-        }
-      }
-    };
-    loadVacationCurrency();
-  }, [vacationId]);
+    if (!expenseId || Array.isArray(expenseId)) return;
 
-  // Update currency when defaultCurrency is loaded (only if no vacation currency)
-  React.useEffect(() => {
-    if (!vacationCurrency && defaultCurrency && formData.currency === 'CHF' && defaultCurrency !== 'CHF') {
-      setFormData(prev => ({ ...prev, currency: defaultCurrency }));
+    const expenseData = expenses.find(e => e.id === expenseId);
+    if (expenseData) {
+      setFormData({
+        amount: expenseData.amount.toString(),
+        currency: expenseData.currency,
+        description: expenseData.description,
+        category: expenseData.category,
+        date: expenseData.date,
+      });
+      setChfAmount(expenseData.amountCHF);
+      setLoading(false);
+    } else if (expenses.length > 0) {
+      // Expenses loaded but this one not found
+      setLoading(false);
+      Alert.alert(t('common.error'), t('errors.not_found', { item: 'Expense' }));
     }
-  }, [defaultCurrency, formData.currency, vacationCurrency]);
+  }, [expenseId, expenses, t]);
 
   // Convert to CHF whenever amount or currency changes
   React.useEffect(() => {
@@ -95,7 +90,7 @@ export default function AddExpenseScreen() {
         setChfAmount(converted);
       } catch (error) {
         console.warn('Currency conversion failed:', error);
-        setChfAmount(parseFloat(formData.amount)); // Fallback to original amount
+        setChfAmount(parseFloat(formData.amount));
       } finally {
         setConverting(false);
       }
@@ -104,7 +99,6 @@ export default function AddExpenseScreen() {
     convertAmount();
   }, [formData.amount, formData.currency]);
 
-
   const handleSave = async () => {
     if (!formData.amount || !formData.description) {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -112,32 +106,31 @@ export default function AddExpenseScreen() {
       return;
     }
 
-    if (!vacationId || Array.isArray(vacationId)) {
+    if (!expenseId || Array.isArray(expenseId)) {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(t('common.error'), t('errors.not_found', { item: 'Vacation ID' }));
+      Alert.alert(t('common.error'), t('errors.not_found', { item: 'Expense ID' }));
       return;
     }
 
     try {
-      const expense: Expense = {
-        id: Date.now().toString(),
-        vacationId: vacationId,
+      const updatedExpense: Partial<Expense> = {
         amount: parseFloat(formData.amount),
         currency: formData.currency,
         amountCHF: chfAmount || parseFloat(formData.amount),
         category: formData.category,
         description: formData.description,
         date: formData.date,
-        createdAt: new Date(),
       };
 
-      await saveExpense(expense);
+      await updateExpense(expenseId as string, updatedExpense);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      // Check budget and send notification if needed
-      await checkBudgetAndNotify(vacationId, expense.amountCHF);
-
-      router.back();
+      // Navigate back to vacation budget screen explicitly
+      if (vacationId && !Array.isArray(vacationId)) {
+        router.replace(`/vacation/${vacationId}`);
+      } else {
+        router.back();
+      }
     } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), t('errors.generic'));
@@ -146,50 +139,17 @@ export default function AddExpenseScreen() {
 
   const handleCancel = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.back();
+
+    // Navigate back to vacation budget screen explicitly
+    if (vacationId && !Array.isArray(vacationId)) {
+      router.replace(`/vacation/${vacationId}`);
+    } else {
+      router.back();
+    }
   };
 
   const updateField = (field: string, value: string | Date | ExpenseCategory) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const checkBudgetAndNotify = async (vacationId: string, expenseAmount: number) => {
-    try {
-      const vacation = await vacationRepository.findById(vacationId);
-      if (!vacation || !vacation.budget) {
-        return;
-      }
-
-      const expenses = await vacationRepository.getExpenses(vacationId);
-      const totalSpent = expenses.reduce((sum, exp) => sum + exp.amountCHF, 0);
-      const percentageUsed = (totalSpent / vacation.budget) * 100;
-
-      // Send notification if over budget
-      if (totalSpent > vacation.budget) {
-        await notificationService.sendBudgetAlert(
-          vacation.destination,
-          Math.round(percentageUsed),
-          true
-        );
-      }
-      // Send warning at 80% and 90%
-      else if (percentageUsed >= 80 && percentageUsed < 100) {
-        const previousTotal = totalSpent - expenseAmount;
-        const previousPercentage = (previousTotal / vacation.budget) * 100;
-
-        // Only send notification if we just crossed a threshold
-        if ((percentageUsed >= 90 && previousPercentage < 90) ||
-            (percentageUsed >= 80 && previousPercentage < 80)) {
-          await notificationService.sendBudgetAlert(
-            vacation.destination,
-            Math.round(percentageUsed),
-            false
-          );
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to check budget and send notification:', error);
-    }
   };
 
   const handleCalculatorAmountChange = (amount: string, currency: string) => {
@@ -201,6 +161,21 @@ export default function AddExpenseScreen() {
   };
 
   const isDark = colorScheme === 'dark';
+
+  if (loading) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+        <AppHeader
+          variant="modal"
+          showBack={true}
+          onBackPress={handleCancel}
+        />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: isDark ? '#FFFFFF' : '#1C1C1E' }}>{t('common.loading')}</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
@@ -223,7 +198,7 @@ export default function AddExpenseScreen() {
           {/* iOS-style large title in content area */}
           <View style={styles.titleSection}>
             <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {t('expense.add.title')}
+              {t('expense.edit.title')}
             </Text>
           </View>
 
@@ -365,13 +340,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     fontFamily: 'System',
-  },
-  buttonContainer: {
-    marginTop: 32,
-    gap: 12,
-  },
-  button: {
-    marginVertical: 0,
   },
   calculatorButton: {
     borderRadius: 12,

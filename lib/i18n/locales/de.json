@@ -75,6 +75,7 @@
       "budget": "Budget",
       "budget_placeholder": "z.B. 2000",
       "currency": "Währung",
+      "currency_hint": "für Ausgaben",
       "notes": "Notizen",
       "notes_placeholder": "Zusätzliche Informationen"
     },

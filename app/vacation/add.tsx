@@ -16,13 +16,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
+import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useVacations } from '@/hooks/use-vacations';
 import { useTranslation } from '@/lib/i18n';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 export default function AddVacationScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const { createVacation } = useVacations();
+  const { defaultCurrency } = useCurrency();
   const [formData, setFormData] = useState({
     destination: '',
     country: '',
@@ -30,6 +33,7 @@ export default function AddVacationScreen() {
     startDate: new Date(),
     endDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
     budget: '',
+    currency: defaultCurrency || 'CHF',
   });
 
   const handleSave = async () => {
@@ -46,8 +50,10 @@ export default function AddVacationScreen() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: formData.budget ? parseFloat(formData.budget) : undefined,
+        budgetCurrency: defaultCurrency || 'CHF',  // Budget is in system currency
+        currency: formData.currency,                // Vacation currency for expenses
       });
-      router.back();
+      router.dismiss();
     } catch (error) {
       console.error('Failed to create vacation:', error);
       Alert.alert(t('common.error'), t('errors.generic'));
@@ -127,11 +133,17 @@ export default function AddVacationScreen() {
             />
 
             <FormInput
-              label={t('vacation.form.budget')}
+              label={`${t('vacation.form.budget')} (${defaultCurrency || 'CHF'})`}
               value={formData.budget}
               onChangeText={(value) => updateField('budget', value)}
               placeholder={t('vacation.form.budget_placeholder')}
               keyboardType="numeric"
+            />
+
+            <CurrencySelector
+              label={`${t('vacation.form.currency')} (${t('vacation.form.currency_hint')})`}
+              selectedCurrency={formData.currency}
+              onSelect={(value) => updateField('currency', value)}
             />
           </View>
         </ScrollView>

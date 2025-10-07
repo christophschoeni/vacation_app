@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "f7a1738a-bfe0-4a25-84d3-215d5b962684",
+  "id": "328b96e0-6905-4339-baa0-c2989d78ec46",
   "prevId": "fece690e-82e3-4cec-8679-1565439019cb",
   "tables": {
     "app_settings": {
@@ -608,6 +608,22 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "budget_currency": {
+          "name": "budget_currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'CHF'"
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'CHF'"
         },
         "image_url": {
           "name": "image_url",

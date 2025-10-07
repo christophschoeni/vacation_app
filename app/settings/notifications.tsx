@@ -16,6 +16,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '@/lib/utils/logger';
 import { ErrorHandler } from '@/lib/utils/error-handler';
 import { useTranslation } from '@/lib/i18n';
+import { notificationService } from '@/lib/services/notification-service';
+import * as Notifications from 'expo-notifications';
+import { Linking, Alert } from 'react-native';
 
 interface NotificationSetting {
   id: string;
@@ -29,6 +32,7 @@ export default function NotificationsScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const isDark = colorScheme === 'dark';
+  const [hasPermissions, setHasPermissions] = useState(false);
 
   const [settings, setSettings] = useState<NotificationSetting[]>([
     {
@@ -57,13 +61,21 @@ export default function NotificationsScreen() {
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        const storedSettings = await AsyncStorage.getItem('@vacation_assist_notification_settings');
-        if (storedSettings) {
-          const parsed = JSON.parse(storedSettings) as NotificationSetting[];
-          setSettings(parsed);
-        }
+        // Check permissions
+        const perms = await notificationService.hasPermissions();
+        setHasPermissions(perms);
+
+        // Load settings from notification service
+        const serviceSettings = await notificationService.getSettings();
+
+        const updatedSettings = settings.map(setting => ({
+          ...setting,
+          enabled: serviceSettings[setting.id as keyof typeof serviceSettings] ?? setting.enabled,
+        }));
+
+        setSettings(updatedSettings);
       } catch (error) {
-        await ErrorHandler.handleStorageError(error, 'load notification settings', false);
+        logger.error('Failed to load notification settings', error);
       }
     };
 
@@ -71,6 +83,26 @@ export default function NotificationsScreen() {
   }, []);
 
   const handleToggle = async (settingId: string) => {
+    // If no permissions, request them first
+    if (!hasPermissions) {
+      const granted = await notificationService.requestPermissions();
+      if (!granted) {
+        Alert.alert(
+          t('settings.notifications.title'),
+          t('settings.notifications.note_message'),
+          [
+            { text: t('common.cancel'), style: 'cancel' },
+            {
+              text: t('common.ok'),
+              onPress: () => Linking.openSettings()
+            }
+          ]
+        );
+        return;
+      }
+      setHasPermissions(true);
+    }
+
     const newSettings = settings.map(setting =>
       setting.id === settingId
         ? { ...setting, enabled: !setting.enabled }
@@ -80,9 +112,34 @@ export default function NotificationsScreen() {
     setSettings(newSettings);
 
     try {
-      await AsyncStorage.setItem('@vacation_assist_notification_settings', JSON.stringify(newSettings));
+      // Update notification service
+      const serviceUpdate = {
+        [settingId]: newSettings.find(s => s.id === settingId)?.enabled ?? false,
+      };
+      await notificationService.updateSettings(serviceUpdate);
+
+      // Send test notification when enabling a setting
+      const enabledSetting = newSettings.find(s => s.id === settingId);
+      if (enabledSetting?.enabled) {
+        await sendTestNotification(settingId);
+      }
     } catch (error) {
-      await ErrorHandler.handleStorageError(error, 'save notification settings', true);
+      logger.error('Failed to save notification settings', error);
+      Alert.alert(t('common.error'), t('errors.storage'));
+    }
+  };
+
+  const sendTestNotification = async (settingId: string) => {
+    switch (settingId) {
+      case 'budget_alerts':
+        await notificationService.sendBudgetAlert('Test Reise', 80, false);
+        break;
+      case 'expense_reminders':
+        await notificationService.sendExpenseReminder('Test Reise');
+        break;
+      case 'trip_updates':
+        await notificationService.sendTripUpdate('Test', 'Benachrichtigungen aktiviert');
+        break;
     }
   };
 
@@ -92,7 +149,7 @@ export default function NotificationsScreen() {
         title={t('settings.notifications.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.back()}
+        onBackPress={() => router.push('/(tabs)/settings')}
       />
 
       <ScrollView

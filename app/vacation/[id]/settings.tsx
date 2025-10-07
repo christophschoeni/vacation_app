@@ -1,7 +1,6 @@
 import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { router } from 'expo-router';
-import { useRouteParam } from '@/hooks/use-route-param';
 import { useTranslation } from '@/lib/i18n';
 import React from 'react';
 import {
@@ -13,11 +12,12 @@ import {
   useColorScheme,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useVacationId } from '@/contexts/VacationContext';
 
 
 export default function VacationSettingsScreen() {
-  const vacationId = useRouteParam('id');
   const { t } = useTranslation();
+  const vacationId = useVacationId();
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -52,8 +52,10 @@ export default function VacationSettingsScreen() {
     // },
   ];
 
-  const handleSettingsPress = (route: string) => {
-    router.push(route as any);
+  const handleSettingsPress = (itemId: string) => {
+    if (itemId === 'vacation-details' && vacationId) {
+      router.push(`/vacation-edit?vacationId=${vacationId}`);
+    }
   };
 
   return (
@@ -83,7 +85,7 @@ export default function VacationSettingsScreen() {
           {settingsItems.map((item) => (
             <TouchableOpacity
               key={item.id}
-              onPress={() => handleSettingsPress(item.route)}
+              onPress={() => handleSettingsPress(item.id)}
               activeOpacity={0.7}
             >
               <Card variant="clean" style={styles.settingsCard}>

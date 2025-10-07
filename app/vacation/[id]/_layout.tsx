@@ -1,7 +1,7 @@
 import { router, useSegments, useFocusEffect, Slot } from 'expo-router';
 import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -9,10 +9,12 @@ import { Icon } from '@/components/design';
 import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
 import { useTranslation } from '@/lib/i18n';
+import { VacationProvider, useVacationContext } from '@/contexts/VacationContext';
 
-export default function VacationDetailTabLayout() {
+function VacationDetailContent() {
   const vacationId = useRouteParam('id');
   const segments = useSegments();
+  const { setCurrentVacationId } = useVacationContext();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { t } = useTranslation();
@@ -21,6 +23,13 @@ export default function VacationDetailTabLayout() {
 
   const vacation = vacations.find(v => v.id === vacationId);
   const isEditPage = segments[segments.length - 1] === 'edit';
+
+  // Set vacation ID in context whenever it changes
+  useEffect(() => {
+    if (vacationId) {
+      setCurrentVacationId(vacationId);
+    }
+  }, [vacationId, setCurrentVacationId]);
 
   // Refresh vacation data when returning from edit page
   useFocusEffect(
@@ -32,6 +41,13 @@ export default function VacationDetailTabLayout() {
       }
     }, [isEditPage, refreshVacations])
   );
+
+  // Force refresh if vacation not found
+  useEffect(() => {
+    if (vacationId && !vacation && !isEditPage) {
+      refreshVacations();
+    }
+  }, [vacationId, vacation, isEditPage, refreshVacations]);
 
   if (!vacation) {
     return (
@@ -89,6 +105,14 @@ export default function VacationDetailTabLayout() {
         <TabIcon sf="gearshape.fill" />
       </NativeTabs.Trigger>
     </NativeTabs>
+  );
+}
+
+export default function VacationDetailTabLayout() {
+  return (
+    <VacationProvider>
+      <VacationDetailContent />
+    </VacationProvider>
   );
 }
 
