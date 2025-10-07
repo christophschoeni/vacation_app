@@ -42,6 +42,13 @@ function VacationDetailContent() {
     }, [isEditPage, refreshVacations])
   );
 
+  // Force refresh if vacation not found
+  useEffect(() => {
+    if (vacationId && !vacation && !isEditPage) {
+      refreshVacations();
+    }
+  }, [vacationId, vacation, isEditPage, refreshVacations]);
+
   if (!vacation) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
