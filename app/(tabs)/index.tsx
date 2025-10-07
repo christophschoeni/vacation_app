@@ -153,6 +153,7 @@ export default function VacationsScreen() {
             <SwipeableCard
               key={vacation.id}
               onPress={() => handleVacationPress(vacation.id)}
+              onEdit={() => handleVacationEdit(vacation.id)}
               onDelete={() => handleVacationDelete(vacation.id)}
             >
               <VacationCard
