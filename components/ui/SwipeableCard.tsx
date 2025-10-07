@@ -119,7 +119,8 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
         ref={panRef}
         onGestureEvent={handleGestureEvent}
         onHandlerStateChange={handleStateChange}
-        activeOffsetX={[-10, 10]}
+        activeOffsetX={[-20, 20]}
+        failOffsetY={[-10, 10]}
       >
         <Animated.View
           style={[
@@ -129,7 +130,7 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
             },
           ]}
         >
-          <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+          <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.touchable}>
             {children}
           </TouchableOpacity>
         </Animated.View>
@@ -145,6 +146,9 @@ const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: 'transparent',
     zIndex: 1, // Ensure card appears above action buttons
+  },
+  touchable: {
+    flex: 1,
   },
   actionsContainer: {
     position: 'absolute',

@@ -13,6 +13,7 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DatePicker, FormInput } from '@/components/ui/forms';
 import CurrencySelector from '@/components/ui/CurrencySelector';
@@ -134,7 +135,7 @@ export default function VacationEditScreen() {
 
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         variant="modal"
         showBack={true}
@@ -221,7 +222,7 @@ export default function VacationEditScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 

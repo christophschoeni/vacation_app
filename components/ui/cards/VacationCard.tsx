@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Card, Icon } from '@/components/design';
 import { useColorScheme } from 'react-native';
@@ -17,11 +17,9 @@ import type { Vacation } from '@/types';
 
 interface VacationCardProps {
   vacation: Vacation;
-  onPress: (id: string) => void;
-  onLongPress?: (id: string) => void;
 }
 
-export default function VacationCard({ vacation, onPress, onLongPress }: VacationCardProps) {
+export default function VacationCard({ vacation }: VacationCardProps) {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const { expenses } = useExpenses(vacation.id);
@@ -38,21 +36,16 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
   const iconColor = getVacationIconColor(gradientColors);
 
   return (
-    <TouchableOpacity
-      onPress={() => onPress(vacation.id)}
-      onLongPress={onLongPress ? () => onLongPress(vacation.id) : undefined}
-      activeOpacity={0.8}
+    <LinearGradient
+      colors={gradientColors}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.gradientCard}
       accessible={true}
       accessibilityRole="button"
       accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacation.budget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
       accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
     >
-      <LinearGradient
-        colors={gradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradientCard}
-      >
         <View style={styles.cardHeader}>
           <View style={styles.destinationContainer}>
             <Text style={[styles.destination, { color: textColor }]}>
@@ -97,8 +90,7 @@ export default function VacationCard({ vacation, onPress, onLongPress }: Vacatio
             </View>
           )}
         </View>
-      </LinearGradient>
-    </TouchableOpacity>
+    </LinearGradient>
   );
 }
 

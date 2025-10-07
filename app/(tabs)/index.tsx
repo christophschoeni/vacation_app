@@ -158,8 +158,6 @@ export default function VacationsScreen() {
             >
               <VacationCard
                 vacation={vacation}
-                onPress={() => handleVacationPress(vacation.id)}
-                onLongPress={() => handleVacationEdit(vacation.id)}
               />
             </SwipeableCard>
           ))
