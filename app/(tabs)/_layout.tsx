@@ -14,11 +14,9 @@ export default function MainLayout() {
         headerShown: false,
       }}
       tabBarPosition="bottom"
-      barTintColor={undefined}
+      barTintColor={isDark ? '#1C1C1E' : '#F9F9F9'}
       tintColor="#007AFF"
       unselectedTintColor="#8E8E93"
-      materialStyle={isDark ? 'systemChromeMaterialDark' : 'systemChromeMaterialLight'}
-      translucent={true}
     >
       <NativeTabs.Trigger name="index">
         <Label>{t('navigation.vacations')}</Label>
