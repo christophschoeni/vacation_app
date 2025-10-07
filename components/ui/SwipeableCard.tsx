@@ -15,10 +15,11 @@ const SWIPE_THRESHOLD = screenWidth * 0.3;
 interface SwipeableCardProps {
   children: React.ReactNode;
   onDelete: () => void;
+  onEdit: () => void;
   onPress: () => void;
 }
 
-export default function SwipeableCard({ children, onDelete, onPress }: SwipeableCardProps) {
+export default function SwipeableCard({ children, onDelete, onEdit, onPress }: SwipeableCardProps) {
   const translateX = useRef(new Animated.Value(0)).current;
   const panRef = useRef<PanGestureHandler>(null);
 
@@ -32,8 +33,8 @@ export default function SwipeableCard({ children, onDelete, onPress }: Swipeable
       const { translationX, velocityX } = event.nativeEvent;
 
       if (translationX < -SWIPE_THRESHOLD || velocityX < -1000) {
-        // Swiped left enough or fast enough - show delete button
-        const actionWidth = -68; // 60px button + 8px gap
+        // Swiped left enough or fast enough - show action buttons
+        const actionWidth = -128; // 2 buttons à 56px + 2x 8px gap = 128px
         Animated.timing(translateX, {
           toValue: actionWidth,
           duration: 250,
@@ -62,6 +63,17 @@ export default function SwipeableCard({ children, onDelete, onPress }: Swipeable
     }).start();
   };
 
+  const handleEdit = () => {
+    onEdit();
+    // Reset position after edit with spring animation
+    Animated.spring(translateX, {
+      toValue: 0,
+      useNativeDriver: true,
+      tension: 180,
+      friction: 12,
+    }).start();
+  };
+
   const resetPosition = () => {
     Animated.spring(translateX, {
       toValue: 0,
@@ -78,15 +90,22 @@ export default function SwipeableCard({ children, onDelete, onPress }: Swipeable
         style={[
           styles.actionsContainer,
           {
-            width: 68, // 60px button + 8px gap
+            width: 128, // 2 buttons à 56px + 2x 8px gap = 128px
             opacity: translateX.interpolate({
-              inputRange: [-68, -34, 0],
+              inputRange: [-128, -64, 0],
               outputRange: [1, 0.5, 0],
               extrapolate: 'clamp',
             }),
           },
         ]}
       >
+        <TouchableOpacity
+          style={[styles.actionButton, styles.editButton]}
+          onPress={handleEdit}
+          activeOpacity={0.8}
+        >
+          <Icon name="edit" size={18} color="#FFFFFF" />
+        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.actionButton, styles.deleteButton]}
           onPress={handleDelete}
@@ -144,8 +163,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 56,
     height: '100%',
-    marginHorizontal: 0, // Remove margin since we use paddingLeft on container
+    marginHorizontal: 0,
+    marginLeft: 8, // 8px gap between buttons
     borderRadius: 12,
+  },
+  editButton: {
+    backgroundColor: '#007AFF', // iOS System Blue for edit actions
   },
   deleteButton: {
     backgroundColor: '#FF3B30', // iOS System Red for destructive actions

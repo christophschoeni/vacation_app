@@ -92,6 +92,10 @@ export default function VacationBudgetScreen() {
     // Handle expense press (future: navigate to expense detail)
   };
 
+  const handleExpenseEdit = (expenseId: string) => {
+    router.push(`/expense/edit?expenseId=${expenseId}&vacationId=${vacationId}`);
+  };
+
   const handleExpenseDelete = (expenseId: string) => {
     const expense = expenses.find(e => e.id === expenseId);
     if (!expense) return;
@@ -175,6 +179,7 @@ export default function VacationBudgetScreen() {
                 <View key={expense.id} style={styles.gridItem}>
                   <SwipeableCard
                     onPress={() => handleExpensePress(expense.id)}
+                    onEdit={() => handleExpenseEdit(expense.id)}
                     onDelete={() => handleExpenseDelete(expense.id)}
                   >
                     <ExpenseCard
