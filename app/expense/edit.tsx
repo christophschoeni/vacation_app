@@ -117,7 +117,7 @@ export default function EditExpenseScreen() {
       const updatedExpense: Partial<Expense> = {
         amount: parseFloat(formData.amount),
         currency: formData.currency,
-        amountCHF: chfAmount || parseFloat(formData.amount),
+        amountCHF: convertedAmount || parseFloat(formData.amount),
         category: formData.category,
         description: formData.description,
         date: formData.date,
