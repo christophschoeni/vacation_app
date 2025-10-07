@@ -50,7 +50,8 @@ export default function AddVacationScreen() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: formData.budget ? parseFloat(formData.budget) : undefined,
-        currency: formData.currency,
+        budgetCurrency: defaultCurrency || 'CHF',  // Budget is in system currency
+        currency: formData.currency,                // Vacation currency for expenses
       });
       router.dismiss();
     } catch (error) {

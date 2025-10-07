@@ -12,7 +12,8 @@ export interface CreateVacationInput {
   startDate: Date;
   endDate: Date;
   budget?: number;
-  currency?: string;
+  budgetCurrency?: string;  // Currency in which budget is specified (system currency)
+  currency?: string;        // Vacation currency for expenses
   imageUrl?: string;
 }
 
@@ -23,7 +24,8 @@ export interface UpdateVacationInput {
   startDate?: Date;
   endDate?: Date;
   budget?: number;
-  currency?: string;
+  budgetCurrency?: string;  // Currency in which budget is specified (system currency)
+  currency?: string;        // Vacation currency for expenses
   imageUrl?: string;
 }
 
@@ -39,6 +41,7 @@ export class VacationRepository extends BaseRepository implements IRepository<Va
       startDate: this.stringToDate(row.startDate),
       endDate: this.stringToDate(row.endDate),
       budget: row.budget,
+      budgetCurrency: row.budgetCurrency || 'CHF',
       currency: row.currency || 'CHF',
       expenses: [], // Will be loaded separately if needed
       checklists: [], // Will be loaded separately if needed

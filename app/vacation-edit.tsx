@@ -116,7 +116,8 @@ export default function VacationEditScreen() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: parseFloat(formData.budget),
-        currency: formData.currency,
+        budgetCurrency: vacation.budgetCurrency,  // Keep existing budget currency
+        currency: formData.currency,               // Vacation currency for expenses
       });
 
       if (updatedVacation) {

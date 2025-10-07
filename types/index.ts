@@ -6,7 +6,8 @@ export interface Vacation {
   startDate: Date;
   endDate: Date;
   budget?: number;
-  currency: string;
+  budgetCurrency: string;    // Currency in which budget is specified (system currency)
+  currency: string;          // Vacation currency for expenses
   expenses: Expense[];
   checklists: string[];
   imageUrl?: string;
