@@ -124,7 +124,7 @@ export default function EditExpenseScreen() {
 
       await updateExpense(expenseId as string, updatedExpense);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      router.dismiss();
+      router.back();
     } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), t('errors.generic'));
@@ -133,7 +133,7 @@ export default function EditExpenseScreen() {
 
   const handleCancel = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.dismiss();
+    router.back();
   };
 
   const updateField = (field: string, value: string | Date | ExpenseCategory) => {
