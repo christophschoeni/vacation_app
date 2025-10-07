@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
 
 import ExpenseCard from '@/components/ui/cards/ExpenseCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
@@ -31,7 +33,24 @@ export default function VacationBudgetScreen() {
   const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId || '');
   const [isInitialLoad, setIsInitialLoad] = React.useState(true);
   const [cachedVacation, setCachedVacation] = React.useState<Vacation | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const insets = useSafeAreaInsets();
+
+  // Load sort preference from AsyncStorage
+  useEffect(() => {
+    const loadSortPreference = async () => {
+      if (!vacationId) return;
+      try {
+        const saved = await AsyncStorage.getItem(`expense_sort_order_${vacationId}`);
+        if (saved === 'asc' || saved === 'desc') {
+          setSortOrder(saved);
+        }
+      } catch (error) {
+        console.warn('Failed to load sort preference:', error);
+      }
+    };
+    loadSortPreference();
+  }, [vacationId]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -41,6 +60,15 @@ export default function VacationBudgetScreen() {
   );
 
   const vacation = vacations.find(v => v.id === vacationId);
+
+  // Sort expenses by date
+  const sortedExpenses = useMemo(() => {
+    return [...expenses].sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+    });
+  }, [expenses, sortOrder]);
 
   // Cache the vacation to prevent flickering during refresh
   React.useEffect(() => {
@@ -127,6 +155,21 @@ export default function VacationBudgetScreen() {
     );
   };
 
+  const handleSortToggle = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const newSortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+    setSortOrder(newSortOrder);
+
+    // Save preference to AsyncStorage
+    if (vacationId) {
+      try {
+        await AsyncStorage.setItem(`expense_sort_order_${vacationId}`, newSortOrder);
+      } catch (error) {
+        console.warn('Failed to save sort preference:', error);
+      }
+    }
+  };
+
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
@@ -134,15 +177,30 @@ export default function VacationBudgetScreen() {
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
         rightAction={
-          <TouchableOpacity
-            style={styles.headerButton}
-            onPress={() => router.push(`/expense/add?vacationId=${vacationId}`)}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
-              <Icon name="plus" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
-            </View>
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <TouchableOpacity
+              style={styles.headerButton}
+              onPress={handleSortToggle}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
+                <Icon
+                  name={sortOrder === 'desc' ? 'arrow-down' : 'arrow-up'}
+                  size={18}
+                  color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'}
+                />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.headerButton}
+              onPress={() => router.push(`/expense/add?vacationId=${vacationId}`)}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
+                <Icon name="plus" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
+              </View>
+            </TouchableOpacity>
+          </View>
         }
       />
 
@@ -170,7 +228,7 @@ export default function VacationBudgetScreen() {
 
         {/* Expenses Grid */}
         <View style={[styles.expensesSection, { paddingHorizontal: 16 }]}>
-          {expenses.length === 0 ? (
+          {sortedExpenses.length === 0 ? (
             <Card style={[styles.emptyExpenses, styles.emptyContent]}>
               <Icon name="budget" size={48} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} style={styles.emptyIconStyle} />
               <Text style={[styles.emptyText, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
@@ -182,7 +240,7 @@ export default function VacationBudgetScreen() {
             </Card>
           ) : (
             <View style={styles.expensesGrid}>
-              {expenses.map((expense) => (
+              {sortedExpenses.map((expense) => (
                 <View key={expense.id} style={styles.gridItem}>
                   <SwipeableCard
                     onPress={() => handleExpensePress(expense.id)}
@@ -261,6 +319,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     fontFamily: 'System',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
   },
   headerButton: {
     padding: 4,

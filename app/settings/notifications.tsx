@@ -49,13 +49,6 @@ export default function NotificationsScreen() {
       icon: 'wallet',
       enabled: false,
     },
-    {
-      id: 'trip_updates',
-      titleKey: 'settings.notifications.trip_updates',
-      subtitleKey: 'settings.notifications.trip_updates_subtitle',
-      icon: 'airplane',
-      enabled: true,
-    },
   ]);
 
   useEffect(() => {
@@ -136,9 +129,6 @@ export default function NotificationsScreen() {
         break;
       case 'expense_reminders':
         await notificationService.sendExpenseReminder('Test Reise');
-        break;
-      case 'trip_updates':
-        await notificationService.sendTripUpdate('Test', 'Benachrichtigungen aktiviert');
         break;
     }
   };

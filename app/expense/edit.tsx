@@ -222,13 +222,13 @@ export default function EditExpenseScreen() {
               </View>
             </View>
 
-            {chfAmount !== null && formData.currency !== 'CHF' && (
+            {chfAmount !== null && formData.currency !== defaultCurrency && (
               <View style={styles.conversionDisplay}>
                 <Text style={[styles.conversionLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
                   {t('expense.form.converted_amount')}:
                 </Text>
                 <Text style={[styles.conversionAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  {converting ? t('expense.form.converting') : `CHF ${chfAmount.toFixed(2)}`}
+                  {converting ? t('expense.form.converting') : `${defaultCurrency} ${chfAmount.toFixed(2)}`}
                 </Text>
               </View>
             )}
@@ -256,7 +256,7 @@ export default function EditExpenseScreen() {
               visible={isCalculatorVisible}
               onClose={() => setIsCalculatorVisible(false)}
               fromCurrency={formData.currency}
-              toCurrency="CHF"
+              toCurrency={defaultCurrency}
               initialAmount={formData.amount}
               onAmountChange={handleCalculatorAmountChange}
             />

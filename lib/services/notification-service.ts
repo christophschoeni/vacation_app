@@ -9,7 +9,6 @@ const PERMISSION_KEY = '@vacation_assist_notification_permission';
 export interface NotificationSettings {
   budget_alerts: boolean;
   expense_reminders: boolean;
-  trip_updates: boolean;
 }
 
 // Configure notification handler
@@ -25,7 +24,6 @@ class NotificationService {
   private settings: NotificationSettings = {
     budget_alerts: true,
     expense_reminders: false,
-    trip_updates: true,
   };
 
   private permissionGranted = false;
@@ -151,17 +149,6 @@ class NotificationService {
     return this.scheduleNotification(title, body, {
       type: 'expense_reminder',
       vacationName,
-    });
-  }
-
-  async sendTripUpdate(title: string, message: string, vacationId?: string) {
-    if (!this.settings.trip_updates) {
-      return;
-    }
-
-    return this.scheduleNotification(`✈️ ${title}`, message, {
-      type: 'trip_update',
-      vacationId,
     });
   }
 

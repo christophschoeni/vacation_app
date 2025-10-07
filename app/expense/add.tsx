@@ -137,7 +137,8 @@ export default function AddExpenseScreen() {
       // Check budget and send notification if needed
       await checkBudgetAndNotify(vacationId, expense.amountCHF);
 
-      router.back();
+      // Navigate back to vacation budget screen explicitly
+      router.replace(`/vacation/${vacationId}`);
     } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), t('errors.generic'));
@@ -247,13 +248,13 @@ export default function AddExpenseScreen() {
               </View>
             </View>
 
-            {chfAmount !== null && formData.currency !== 'CHF' && (
+            {chfAmount !== null && formData.currency !== defaultCurrency && (
               <View style={styles.conversionDisplay}>
                 <Text style={[styles.conversionLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
                   {t('expense.form.converted_amount')}:
                 </Text>
                 <Text style={[styles.conversionAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  {converting ? t('expense.form.converting') : `CHF ${chfAmount.toFixed(2)}`}
+                  {converting ? t('expense.form.converting') : `${defaultCurrency} ${chfAmount.toFixed(2)}`}
                 </Text>
               </View>
             )}
@@ -281,7 +282,7 @@ export default function AddExpenseScreen() {
               visible={isCalculatorVisible}
               onClose={() => setIsCalculatorVisible(false)}
               fromCurrency={formData.currency}
-              toCurrency="CHF"
+              toCurrency={defaultCurrency}
               initialAmount={formData.amount}
               onAmountChange={handleCalculatorAmountChange}
             />
