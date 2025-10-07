@@ -1,4 +1,5 @@
-import { router, useSegments, useFocusEffect, Slot, Tabs } from 'expo-router';
+import { router, useSegments, useFocusEffect, Slot } from 'expo-router';
+import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useCallback, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
@@ -74,58 +75,35 @@ function VacationDetailContent() {
   }
 
   return (
-    <Tabs
+    <NativeTabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: isDark ? '#1C1C1E' : '#F9F9F9',
-          borderTopColor: isDark ? '#2C2C2E' : '#E5E5EA',
-          borderTopWidth: 0.5,
-        },
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#8E8E93',
       }}
+      tabBarPosition="bottom"
+      materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
+      tintColor="#007AFF"
+      unselectedTintColor="#8E8E93"
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: t('vacation.tabs.budget'),
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="credit-card" size={size} color={color} />
-          ),
-        }}
-      />
+      <NativeTabs.Trigger name="index">
+        <Label>{t('vacation.tabs.budget')}</Label>
+        <TabIcon sf="creditcard.fill" />
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="report"
-        options={{
-          title: t('vacation.tabs.report'),
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="bar-chart-2" size={size} color={color} />
-          ),
-        }}
-      />
+      <NativeTabs.Trigger name="report">
+        <Label>{t('vacation.tabs.report')}</Label>
+        <TabIcon sf="chart.bar.fill" />
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="checklists"
-        options={{
-          title: t('vacation.tabs.lists'),
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="list-checks" size={size} color={color} />
-          ),
-        }}
-      />
+      <NativeTabs.Trigger name="checklists">
+        <Label>{t('vacation.tabs.lists')}</Label>
+        <TabIcon sf="checklist" />
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: t('vacation.tabs.settings'),
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="settings" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger name="settings">
+        <Label>{t('vacation.tabs.settings')}</Label>
+        <TabIcon sf="gearshape.fill" />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
 
