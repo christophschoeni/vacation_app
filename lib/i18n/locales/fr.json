@@ -175,7 +175,7 @@
       "description_placeholder": "p.ex. Boutique de l'aéroport",
       "category": "Catégorie",
       "date": "Date & Heure",
-      "converted_amount": "Converti en CHF",
+      "converted_amount": "Converti",
       "converting": "Conversion...",
       "currency_calculator": "Convertisseur de devises"
     },

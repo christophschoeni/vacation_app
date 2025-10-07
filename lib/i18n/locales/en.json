@@ -175,7 +175,7 @@
       "description_placeholder": "e.g. Airport Shop",
       "category": "Category",
       "date": "Date & Time",
-      "converted_amount": "Converted to CHF",
+      "converted_amount": "Converted",
       "converting": "Converting...",
       "currency_calculator": "Currency Calculator"
     },
