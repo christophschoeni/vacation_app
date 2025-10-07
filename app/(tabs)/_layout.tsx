@@ -14,6 +14,7 @@ export default function MainLayout() {
         headerShown: false,
       }}
       tabBarPosition="bottom"
+      translucent={false}
       barTintColor={isDark ? '#1C1C1E' : '#F9F9F9'}
       tintColor="#007AFF"
       unselectedTintColor="#8E8E93"
