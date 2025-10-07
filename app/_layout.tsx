@@ -18,7 +18,6 @@ import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
-import { addCurrencyColumnIfNeeded } from '@/lib/db/migration-helper';
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -73,9 +72,6 @@ function RootNavigation() {
 
           // Always ensure templates exist (independent of migration flag)
           await ensureDefaultTemplates();
-
-          // Run manual migration to add currency column if needed
-          addCurrencyColumnIfNeeded();
 
           // Initialize notification service
           await notificationService.initialize();
