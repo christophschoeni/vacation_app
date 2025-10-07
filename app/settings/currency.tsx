@@ -10,11 +10,10 @@ import {
   useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import CurrencyEditor from '@/components/ui/forms/CurrencyEditor';
 import { logger } from '@/lib/utils/logger';
 import { ErrorHandler } from '@/lib/utils/error-handler';
 import { currencyService, POPULAR_CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
@@ -30,7 +29,6 @@ export default function CurrencyScreen() {
   const { t } = useTranslation();
   const { defaultCurrency, setDefaultCurrency, isLoading: currencyLoading } = useCurrency();
   const [currencies, setCurrencies] = useState<CurrencyInfo[]>(ALL_CURRENCIES);
-  const [showEditor, setShowEditor] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -41,6 +39,13 @@ export default function CurrencyScreen() {
   useEffect(() => {
     loadCurrencies();
   }, []);
+
+  // Reload currencies when screen gains focus
+  useFocusEffect(
+    React.useCallback(() => {
+      loadCurrencies();
+    }, [])
+  );
 
   const loadCurrencies = async () => {
     try {
@@ -149,7 +154,7 @@ export default function CurrencyScreen() {
         onBackPress={() => router.back()}
         rightAction={
           <TouchableOpacity
-            onPress={() => setShowEditor(true)}
+            onPress={() => router.push('/settings/currency-add')}
             style={styles.headerButton}
             accessibilityLabel={t('settings.currency.add_aria')}
           >
@@ -229,31 +234,6 @@ export default function CurrencyScreen() {
           ))}
         </View>
       </ScrollView>
-
-      <CurrencyEditor
-        visible={showEditor}
-        onSave={(currency: CurrencyInfo) => {
-          // Check for duplicate currency codes
-          const isDuplicate = currencies.some(c =>
-            c.code.toUpperCase() === currency.code.toUpperCase()
-          );
-
-          if (isDuplicate) {
-            Alert.alert(
-              t('settings.currency.errors.duplicate_title'),
-              t('settings.currency.errors.duplicate_message'),
-              [{ text: t('common.ok'), style: 'default' }]
-            );
-            return;
-          }
-
-          const newCurrencies = [...currencies, currency];
-          setCurrencies(newCurrencies);
-          saveCurrencies(newCurrencies);
-          setShowEditor(false);
-        }}
-        onCancel={() => setShowEditor(false)}
-      />
     </SafeAreaView>
   );
 }

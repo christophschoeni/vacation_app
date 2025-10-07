@@ -52,7 +52,7 @@ export default function AddVacationScreen() {
         budget: formData.budget ? parseFloat(formData.budget) : undefined,
         currency: formData.currency,
       });
-      router.replace('/(tabs)');
+      router.dismiss();
     } catch (error) {
       console.error('Failed to create vacation:', error);
       Alert.alert(t('common.error'), t('errors.generic'));
