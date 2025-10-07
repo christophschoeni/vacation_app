@@ -77,13 +77,12 @@ function VacationDetailContent() {
   return (
     <NativeTabs
       screenOptions={{
-        headerShown: false, // WICHTIG: Header deaktivieren!
+        headerShown: false,
       }}
       tabBarPosition="bottom"
-      barTintColor="transparent"
+      barTintColor={isDark ? '#1C1C1E' : '#F9F9F9'}
       tintColor="#007AFF"
-      unselectedTintColor={isDark ? '#8E8E93' : '#8E8E93'}
-      materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
+      unselectedTintColor="#8E8E93"
     >
       <NativeTabs.Trigger name="index">
         <Label>{t('vacation.tabs.budget')}</Label>
