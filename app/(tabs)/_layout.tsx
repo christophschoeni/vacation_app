@@ -11,13 +11,14 @@ export default function MainLayout() {
   return (
     <NativeTabs
       screenOptions={{
-        headerShown: false, // WICHTIG: Header deaktivieren!
+        headerShown: false,
       }}
       tabBarPosition="bottom"
-      barTintColor="transparent"
+      barTintColor={undefined}
       tintColor="#007AFF"
-      unselectedTintColor={isDark ? '#8E8E93' : '#8E8E93'}
-      materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
+      unselectedTintColor="#8E8E93"
+      materialStyle={isDark ? 'systemChromeMaterialDark' : 'systemChromeMaterialLight'}
+      translucent={true}
     >
       <NativeTabs.Trigger name="index">
         <Label>{t('navigation.vacations')}</Label>
