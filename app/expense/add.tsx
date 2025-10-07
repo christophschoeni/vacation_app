@@ -125,7 +125,7 @@ export default function AddExpenseScreen() {
         vacationId: vacationId,
         amount: parseFloat(formData.amount),
         currency: formData.currency,
-        amountCHF: chfAmount || parseFloat(formData.amount),
+        amountCHF: convertedAmount || parseFloat(formData.amount),
         category: formData.category,
         description: formData.description,
         date: formData.date,
