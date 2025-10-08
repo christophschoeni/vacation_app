@@ -89,7 +89,7 @@ export default function SettingsScreen() {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
         showsVerticalScrollIndicator={false}
       >
 
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 16,
-    paddingBottom: 120,
+    // paddingBottom is set dynamically in contentContainerStyle with safe area insets
   },
   section: {
     marginBottom: 24,

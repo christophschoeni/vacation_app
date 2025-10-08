@@ -1,5 +1,4 @@
-import { router, useSegments, useFocusEffect, Slot } from 'expo-router';
-import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
+import { router, useSegments, useFocusEffect, Slot, Tabs } from 'expo-router';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useCallback, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
@@ -10,6 +9,7 @@ import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
 import { useTranslation } from '@/lib/i18n';
 import { VacationProvider, useVacationContext } from '@/contexts/VacationContext';
+import GlassTabBar from '@/components/navigation/GlassTabBar';
 
 function VacationDetailContent() {
   const vacationId = useRouteParam('id');
@@ -22,7 +22,6 @@ function VacationDetailContent() {
   const insets = useSafeAreaInsets();
 
   const vacation = vacations.find(v => v.id === vacationId);
-  const isEditPage = segments[segments.length - 1] === 'edit';
 
   // Set vacation ID in context whenever it changes
   useEffect(() => {
@@ -31,23 +30,19 @@ function VacationDetailContent() {
     }
   }, [vacationId, setCurrentVacationId]);
 
-  // Refresh vacation data when returning from edit page
+  // Refresh vacation data when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      if (!isEditPage) {
-        // Only refresh when we're not on the edit page
-        // This ensures fresh data when returning from edit
-        refreshVacations();
-      }
-    }, [isEditPage, refreshVacations])
+      refreshVacations();
+    }, [refreshVacations])
   );
 
   // Force refresh if vacation not found
   useEffect(() => {
-    if (vacationId && !vacation && !isEditPage) {
+    if (vacationId && !vacation) {
       refreshVacations();
     }
-  }, [vacationId, vacation, isEditPage, refreshVacations]);
+  }, [vacationId, vacation, refreshVacations]);
 
   if (!vacation) {
     return (
@@ -69,41 +64,51 @@ function VacationDetailContent() {
     );
   }
 
-  // For edit page, render without tabs but still provide layout
-  if (isEditPage) {
-    return <Slot />;
-  }
-
   return (
-    <NativeTabs
+    <Tabs
+      tabBar={(props) => <GlassTabBar {...props} />}
       screenOptions={{
         headerShown: false,
+        tabBarStyle: {
+          position: 'absolute',
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
+          elevation: 0,
+        },
       }}
-      tabBarPosition="bottom"
-      materialStyle={isDark ? 'systemMaterialDark' : 'systemMaterialLight'}
-      tintColor="#007AFF"
-      unselectedTintColor="#8E8E93"
     >
-      <NativeTabs.Trigger name="index">
-        <Label>{t('vacation.tabs.budget')}</Label>
-        <TabIcon sf="creditcard.fill" />
-      </NativeTabs.Trigger>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: t('vacation.tabs.budget'),
+          tabBarIcon: { sfSymbol: 'dollarsign.circle' } as any,
+        }}
+      />
 
-      <NativeTabs.Trigger name="report">
-        <Label>{t('vacation.tabs.report')}</Label>
-        <TabIcon sf="chart.bar.fill" />
-      </NativeTabs.Trigger>
+      <Tabs.Screen
+        name="report"
+        options={{
+          title: t('vacation.tabs.report'),
+          tabBarIcon: { sfSymbol: 'chart.bar' } as any,
+        }}
+      />
 
-      <NativeTabs.Trigger name="checklists">
-        <Label>{t('vacation.tabs.lists')}</Label>
-        <TabIcon sf="checklist" />
-      </NativeTabs.Trigger>
+      <Tabs.Screen
+        name="checklists"
+        options={{
+          title: t('vacation.tabs.lists'),
+          tabBarIcon: { sfSymbol: 'checklist' } as any,
+        }}
+      />
 
-      <NativeTabs.Trigger name="settings">
-        <Label>{t('vacation.tabs.settings')}</Label>
-        <TabIcon sf="gearshape.fill" />
-      </NativeTabs.Trigger>
-    </NativeTabs>
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: t('vacation.tabs.settings'),
+          tabBarIcon: { sfSymbol: 'gear' } as any,
+        }}
+      />
+    </Tabs>
   );
 }
 

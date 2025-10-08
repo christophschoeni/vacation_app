@@ -124,7 +124,7 @@ export default function VacationsScreen() {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing || loading}
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 16,
-    paddingBottom: 85, // Space for native tab bar
+    // paddingBottom is set dynamically in contentContainerStyle with safe area insets
   },
   headerButton: {
     marginRight: -8,
