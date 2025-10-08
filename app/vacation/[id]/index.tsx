@@ -206,7 +206,7 @@ export default function VacationBudgetScreen() {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -285,8 +285,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 0, // Reduced space
-    paddingBottom: 120, // Space for native tab bar
+    paddingTop: 0,
+    // paddingBottom is set dynamically in contentContainerStyle with safe area insets
   },
   expensesSection: {
     marginBottom: 16,

@@ -173,7 +173,7 @@ export default function VacationChecklistsScreen() {
       {checklists.length > 0 ? (
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
           showsVerticalScrollIndicator={false}
         >
           {/* iOS-style large title in content area */}
