@@ -66,8 +66,22 @@ export default function VacationReportScreen() {
 
       // Debugging logs (only in development)
       if (__DEV__) {
+        console.log('=== Report Screen Debug ===');
         console.log('Report - vacationId:', vacationId);
+        console.log('Report - vacationId type:', typeof vacationId);
         console.log('Report - expenses from hook:', expenses.length);
+        console.log('Report - all expenses:', expenses);
+        expenses.forEach((expense, idx) => {
+          console.log(`Expense ${idx + 1}:`, {
+            id: expense.id,
+            category: expense.category,
+            amount: expense.amount,
+            vacationId: expense.vacationId,
+            vacationIdType: typeof expense.vacationId,
+            matches: String(expense.vacationId) === String(vacationId)
+          });
+        });
+        console.log('==========================');
       }
 
       // Convert all expenses to the default currency
