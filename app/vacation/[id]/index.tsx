@@ -61,20 +61,19 @@ export default function VacationBudgetScreen() {
 
   const vacation = vacations.find(v => v.id === vacationId);
 
-  // Debug logging for expense data
+  // Debug logging for expense data (only in development)
   React.useEffect(() => {
-    console.log('=== Budget Screen Debug ===');
-    console.log('Budget - vacationId:', vacationId);
-    console.log('Budget - vacationId type:', typeof vacationId);
-    console.log('Budget - expenses from hook:', expenses);
-    console.log('Budget - expenses.length:', expenses.length);
-    if (expenses.length > 0) {
-      console.log('Budget - first expense:', expenses[0]);
-      console.log('Budget - first expense vacationId:', expenses[0].vacationId);
-      console.log('Budget - first expense.vacationId type:', typeof expenses[0].vacationId);
-      console.log('Budget - comparison:', expenses[0].vacationId, '===', vacationId, '=', expenses[0].vacationId === vacationId);
+    if (__DEV__) {
+      console.log('=== Budget Screen Debug ===');
+      console.log('Budget - vacationId:', vacationId);
+      console.log('Budget - vacationId type:', typeof vacationId);
+      console.log('Budget - expenses.length:', expenses.length);
+      if (expenses.length > 0) {
+        console.log('Budget - first expense.vacationId:', expenses[0].vacationId);
+        console.log('Budget - comparison:', expenses[0].vacationId === vacationId);
+      }
+      console.log('=========================');
     }
-    console.log('=========================');
   }, [expenses, vacationId]);
 
   // Sort expenses by date
