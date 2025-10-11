@@ -95,7 +95,7 @@ export default function SettingsScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.title')}
         variant="large"
