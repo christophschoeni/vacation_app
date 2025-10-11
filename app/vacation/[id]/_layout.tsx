@@ -46,7 +46,7 @@ function VacationDetailContent() {
 
   if (!vacation) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => router.push('/(tabs)')}
