@@ -68,6 +68,16 @@ const SETTINGS_ITEMS: SettingsItem[] = [
   },
 ];
 
+const DEBUG_ITEMS: SettingsItem[] = [
+  {
+    id: 'cleanup',
+    titleKey: 'Database Cleanup',
+    subtitleKey: 'Remove orphaned expenses',
+    icon: 'trash',
+    route: '/debug/cleanup',
+  },
+];
+
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
@@ -134,6 +144,38 @@ export default function SettingsScreen() {
             </TouchableOpacity>
           ))}
         </View>
+
+        {__DEV__ && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+              Debug Tools
+            </Text>
+            {DEBUG_ITEMS.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                onPress={() => handleSettingsItemPress(item.route)}
+                activeOpacity={0.7}
+              >
+                <Card variant="clean" style={styles.settingsCard}>
+                  <View style={styles.settingsRow}>
+                    <View style={styles.settingsInfo}>
+                      <Icon name={item.icon} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                      <View style={styles.settingsText}>
+                        <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                          {item.titleKey}
+                        </Text>
+                        <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                          {item.subtitleKey}
+                        </Text>
+                      </View>
+                    </View>
+                    <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+                  </View>
+                </Card>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
