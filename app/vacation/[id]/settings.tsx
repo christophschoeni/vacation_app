@@ -59,7 +59,7 @@ export default function VacationSettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF', paddingTop: insets.top }]} edges={[]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
