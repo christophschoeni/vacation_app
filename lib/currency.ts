@@ -1,7 +1,13 @@
 import { appSettingsRepository } from '@/lib/db/repositories/app-settings-repository';
+import { exchangeRatesRepository, RateSource } from '@/lib/db/repositories/exchange-rates-repository';
 
 export interface ExchangeRates {
   [currency: string]: number;
+}
+
+export interface RateWithSource {
+  rate: number;
+  source: RateSource;
 }
 
 export interface CurrencyInfo {
@@ -215,35 +221,51 @@ class CurrencyService {
     try {
       const settings = await appSettingsRepository.getCurrencySettings();
 
+      // Step 1: Get manual rates from database (highest priority)
+      const manualRates = await this.getManualRates(baseCurrency);
+
       // Check cache first unless force update is requested
+      let apiRates: ExchangeRates = {};
       if (!forceUpdate) {
         const cachedRates = await this.getCachedRates();
         if (cachedRates) {
-          return cachedRates;
+          apiRates = cachedRates;
         }
       }
 
-      // Check if we should fetch based on update policy
-      if (!forceUpdate && settings.updatePolicy === 'manual') {
-        console.warn('Manual update policy active, using cached/fallback rates');
-        return this.fallbackRates;
+      // If no cache or force update, try to fetch new rates
+      if (Object.keys(apiRates).length === 0 || forceUpdate) {
+        // Check if we should fetch based on update policy
+        if (!forceUpdate && settings.updatePolicy === 'manual') {
+          console.warn('Manual update policy active, using manual/fallback rates');
+          apiRates = {};
+        } else {
+          // Check network connectivity and policy
+          const canFetch = await this.canFetchRates(settings);
+          if (canFetch || forceUpdate) {
+            try {
+              // Fetch fresh rates using improved multi-source approach
+              apiRates = await this.fetchRatesWithFallback(baseCurrency);
+
+              // Cache the rates and update settings
+              await this.cacheRates(apiRates);
+              await appSettingsRepository.setLastRateUpdate(new Date());
+
+              // Store API rates in database for tracking
+              await this.storeApiRates(baseCurrency, apiRates);
+            } catch (error) {
+              console.warn('Failed to fetch exchange rates from API:', error);
+            }
+          } else {
+            console.warn('Network policy prevents fetching, using manual/fallback rates');
+          }
+        }
       }
 
-      // Check network connectivity and policy
-      const canFetch = await this.canFetchRates(settings);
-      if (!canFetch && !forceUpdate) {
-        console.warn('Network policy prevents fetching, using cached/fallback rates');
-        return this.fallbackRates;
-      }
+      // Step 2: Merge rates with priority: Manual > API > Fallback
+      const mergedRates: ExchangeRates = { ...this.fallbackRates, ...apiRates, ...manualRates };
 
-      // Fetch fresh rates using improved multi-source approach
-      const rates = await this.fetchRatesWithFallback(baseCurrency);
-
-      // Cache the rates and update settings
-      await this.cacheRates(rates);
-      await appSettingsRepository.setLastRateUpdate(new Date());
-
-      return rates;
+      return mergedRates;
     } catch (error) {
       console.warn('Failed to fetch exchange rates, using fallback:', error);
       return this.fallbackRates;
@@ -540,21 +562,140 @@ class CurrencyService {
   // Add method to manually override rates (for users who want more accurate rates)
   async setManualRate(fromCurrency: string, toCurrency: string, rate: number): Promise<void> {
     try {
-      const currentRates = await this.getExchangeRates();
+      // Store manual rate in database
+      await exchangeRatesRepository.upsert({
+        baseCurrency: fromCurrency,
+        targetCurrency: toCurrency,
+        rate: rate,
+        source: 'manual',
+      });
 
-      // Update the specific rate
-      if (fromCurrency === 'CHF') {
-        currentRates[toCurrency] = rate;
-      } else if (toCurrency === 'CHF') {
-        currentRates[fromCurrency] = 1 / rate;
-      }
-
-      // Cache the updated rates
-      await this.cacheRates(currentRates);
       console.log(`Manual rate set: ${fromCurrency}/${toCurrency} = ${rate}`);
     } catch (error) {
       console.warn('Failed to set manual rate:', error);
       throw error;
+    }
+  }
+
+  // Get manual rates from database
+  private async getManualRates(baseCurrency: string = 'CHF'): Promise<ExchangeRates> {
+    try {
+      const manualRates = await exchangeRatesRepository.findByBaseCurrency(baseCurrency);
+      const rates: ExchangeRates = {};
+
+      for (const rate of manualRates) {
+        if (rate.source === 'manual') {
+          rates[rate.targetCurrency] = rate.rate;
+        }
+      }
+
+      return rates;
+    } catch (error) {
+      console.warn('Failed to load manual rates:', error);
+      return {};
+    }
+  }
+
+  // Store API rates in database for tracking
+  private async storeApiRates(baseCurrency: string, rates: ExchangeRates): Promise<void> {
+    try {
+      const entries = Object.entries(rates);
+      const apiRates = entries.map(([currency, rate]) => ({
+        baseCurrency,
+        targetCurrency: currency,
+        rate,
+        source: 'api' as RateSource,
+      }));
+
+      await exchangeRatesRepository.upsertMany(apiRates);
+    } catch (error) {
+      console.warn('Failed to store API rates:', error);
+    }
+  }
+
+  // Get rate with source information
+  async getRateWithSource(fromCurrency: string, toCurrency: string): Promise<RateWithSource> {
+    try {
+      // Check manual rate first
+      const manualRate = await exchangeRatesRepository.findByPair(fromCurrency, toCurrency);
+      if (manualRate && manualRate.source === 'manual') {
+        return { rate: manualRate.rate, source: 'manual' };
+      }
+
+      // Check API rate
+      const apiRate = await exchangeRatesRepository.findByPair(fromCurrency, toCurrency);
+      if (apiRate && apiRate.source === 'api') {
+        return { rate: apiRate.rate, source: 'api' };
+      }
+
+      // Fallback rate
+      const rates = await this.getExchangeRates(fromCurrency);
+      const rate = rates[toCurrency];
+      return { rate: rate || 1, source: 'fallback' };
+    } catch (error) {
+      console.warn('Failed to get rate with source:', error);
+      return { rate: 1, source: 'fallback' };
+    }
+  }
+
+  // Delete manual rate
+  async deleteManualRate(fromCurrency: string, toCurrency: string): Promise<void> {
+    try {
+      await exchangeRatesRepository.deleteByPair(fromCurrency, toCurrency);
+      console.log(`Manual rate deleted: ${fromCurrency}/${toCurrency}`);
+    } catch (error) {
+      console.warn('Failed to delete manual rate:', error);
+      throw error;
+    }
+  }
+
+  // Get all manual rates
+  async getAllManualRates(): Promise<Array<{ from: string; to: string; rate: number; updatedAt: Date }>> {
+    try {
+      const manualRates = await exchangeRatesRepository.findBySource('manual');
+      return manualRates.map((rate) => ({
+        from: rate.baseCurrency,
+        to: rate.targetCurrency,
+        rate: rate.rate,
+        updatedAt: rate.updatedAt,
+      }));
+    } catch (error) {
+      console.warn('Failed to get manual rates:', error);
+      return [];
+    }
+  }
+
+  // Delete all manual rates
+  async deleteAllManualRates(): Promise<number> {
+    try {
+      const count = await exchangeRatesRepository.deleteBySource('manual');
+      console.log(`Deleted ${count} manual rates`);
+      return count;
+    } catch (error) {
+      console.warn('Failed to delete all manual rates:', error);
+      throw error;
+    }
+  }
+
+  // Get all rates with their sources for a given base currency
+  async getAllRatesWithSources(baseCurrency: string = 'CHF'): Promise<Array<{ currency: string; rate: number; source: RateSource }>> {
+    try {
+      const rates = await this.getExchangeRates(baseCurrency);
+      const result: Array<{ currency: string; rate: number; source: RateSource }> = [];
+
+      for (const [currency, rate] of Object.entries(rates)) {
+        const rateWithSource = await this.getRateWithSource(baseCurrency, currency);
+        result.push({
+          currency,
+          rate: rateWithSource.rate,
+          source: rateWithSource.source,
+        });
+      }
+
+      return result;
+    } catch (error) {
+      console.warn('Failed to get all rates with sources:', error);
+      return [];
     }
   }
 }

@@ -234,6 +234,35 @@ export default function CurrencyCalculatorScreen() {
           </Card>
         </View>
 
+        {/* Exchange Rates Management */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('settings.currency.calculator.sections.exchange_rates')}
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => router.push('/settings/exchange-rates')}
+            activeOpacity={0.7}
+          >
+            <Card variant="clean" style={styles.settingsCard}>
+              <View style={styles.settingsRow}>
+                <View style={styles.settingsInfo}>
+                  <Icon name="arrow-left-right" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                  <View style={styles.settingsText}>
+                    <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                      {t('settings.currency.calculator.exchange_rates.title')}
+                    </Text>
+                    <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                      {t('settings.currency.calculator.exchange_rates.subtitle')}
+                    </Text>
+                  </View>
+                </View>
+                <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+              </View>
+            </Card>
+          </TouchableOpacity>
+        </View>
+
         {/* Cache Section */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>

@@ -130,6 +130,23 @@ export const backupHistory = sqliteTable('backup_history', {
   backupTypeIdx: index('backup_history_backup_type_idx').on(table.backupType),
 }));
 
+// Exchange Rates table (for manual currency rates and tracking)
+export const exchangeRates = sqliteTable('exchange_rates', {
+  id: text('id').primaryKey(),
+  baseCurrency: text('base_currency').notNull(), // e.g., 'CHF'
+  targetCurrency: text('target_currency').notNull(), // e.g., 'EUR'
+  rate: real('rate').notNull(), // Exchange rate value
+  source: text('source').notNull(), // 'manual' | 'api' | 'fallback'
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+}, (table) => ({
+  baseCurrencyIdx: index('exchange_rates_base_currency_idx').on(table.baseCurrency),
+  targetCurrencyIdx: index('exchange_rates_target_currency_idx').on(table.targetCurrency),
+  sourceIdx: index('exchange_rates_source_idx').on(table.source),
+  // Unique constraint for base-target pair
+  uniquePairIdx: index('exchange_rates_unique_pair_idx').on(table.baseCurrency, table.targetCurrency),
+}));
+
 // Relations
 export const vacationsRelations = relations(vacations, ({ many }) => ({
   expenses: many(expenses),
