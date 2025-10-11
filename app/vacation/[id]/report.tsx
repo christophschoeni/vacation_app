@@ -61,8 +61,18 @@ export default function VacationReportScreen() {
       const categoryMap = new Map<ExpenseCategory, { total: number; count: number }>();
       let total = 0;
 
+      // Strict filtering: Only expenses that belong to this vacation
+      const validExpenses = expenses.filter(expense =>
+        expense.vacationId === vacationId && vacationId
+      );
+
+      // Debugging logs
+      console.log('Report - vacationId:', vacationId);
+      console.log('Report - total expenses from hook:', expenses.length);
+      console.log('Report - valid expenses after filter:', validExpenses.length);
+
       // Convert all expenses to the default currency
-      for (const expense of expenses) {
+      for (const expense of validExpenses) {
         const convertedAmount = await currencyService.convertCurrency(
           expense.amountCHF,
           'CHF',
@@ -99,7 +109,7 @@ export default function VacationReportScreen() {
     return () => {
       cancelled = true;
     };
-  }, [expenses, defaultCurrency]);
+  }, [expenses, defaultCurrency, vacationId]);
 
   // Recalculate percentages when total changes
   React.useEffect(() => {
