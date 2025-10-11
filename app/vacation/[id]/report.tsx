@@ -116,7 +116,7 @@ export default function VacationReportScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}
-      edges={['top']}
+      edges={['bottom']}
     >
       <AppHeader
         title={t('vacation.tabs.report')}
