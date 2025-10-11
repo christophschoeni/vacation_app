@@ -371,7 +371,12 @@
         "loading": "Chargement des paramètres...",
         "sections": {
           "update_policy": "Mise à jour",
+          "exchange_rates": "Taux de change",
           "cache": "Cache"
+        },
+        "exchange_rates": {
+          "title": "Gérer les taux de change",
+          "subtitle": "Définir et afficher les taux manuels"
         },
         "update_policy": {
           "title": "Politique de mise à jour",
@@ -545,6 +550,52 @@
       "created_success": "4 modèles par défaut ont été créés !",
       "created_error": "Impossible de créer les modèles par défaut.",
       "order_error": "Impossible d'enregistrer l'ordre."
+    },
+    "exchange_rates": {
+      "title": "Taux de change",
+      "subtitle": "Gérer les taux manuels",
+      "loading": "Chargement des taux de change...",
+      "info": "Les taux manuels ont la priorité sur les taux automatiques. Cela vous permet d'utiliser des taux de change nationaux plus précis.",
+      "base_currency": "Devise de base",
+      "rates_title": "Taux de change",
+      "delete_all_button": "Tous manuels",
+      "rate_updated": "Taux de change mis à jour",
+      "update_success": "Taux de change mis à jour",
+      "update_button_aria": "Mettre à jour les taux de change",
+      "no_results": "Aucune devise trouvée",
+      "no_rates": "Aucun taux de change disponible",
+      "no_manual_rates_title": "Aucun taux manuel",
+      "no_manual_rates_message": "Vous n'avez pas encore défini de taux de change manuel.",
+      "source": {
+        "manual": "Manuel",
+        "api": "API",
+        "fallback": "Par défaut",
+        "unknown": "Inconnu"
+      },
+      "delete": {
+        "title": "Supprimer le taux",
+        "message": "Voulez-vous vraiment supprimer le taux manuel {{from}}/{{to}} ?"
+      },
+      "delete_all": {
+        "title": "Supprimer tous les taux manuels",
+        "message": "Voulez-vous vraiment supprimer tous les {{count}} taux de change manuels ?",
+        "success": "Tous les taux manuels ont été supprimés"
+      },
+      "edit_modal": {
+        "title": "Modifier le taux de change",
+        "subtitle": "1 {{from}} = ? {{to}}",
+        "placeholder": "p.ex. 52.184"
+      },
+      "errors": {
+        "load_failed": "Impossible de charger les taux de change",
+        "save_failed": "Impossible d'enregistrer le taux de change",
+        "delete_failed": "Impossible de supprimer le taux de change",
+        "delete_all_failed": "Impossible de supprimer les taux manuels",
+        "update_failed": "Échec de la mise à jour des taux de change",
+        "invalid_rate": "Veuillez entrer un taux de change valide (supérieur à 0)",
+        "cannot_delete_title": "Impossible de supprimer",
+        "cannot_delete_message": "Seuls les taux de change manuels peuvent être supprimés"
+      }
     }
   },
   "errors": {

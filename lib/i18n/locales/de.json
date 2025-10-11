@@ -367,7 +367,12 @@
         "loading": "Lade Einstellungen...",
         "sections": {
           "update_policy": "Aktualisierung",
+          "exchange_rates": "Wechselkurse",
           "cache": "Cache"
+        },
+        "exchange_rates": {
+          "title": "Wechselkurse verwalten",
+          "subtitle": "Manuelle Kurse setzen und anzeigen"
         },
         "update_policy": {
           "title": "Update-Richtlinie",
@@ -541,6 +546,52 @@
       "created_success": "4 Standard-Listen wurden erstellt!",
       "created_error": "Standard-Listen konnten nicht erstellt werden.",
       "order_error": "Reihenfolge konnte nicht gespeichert werden."
+    },
+    "exchange_rates": {
+      "title": "Wechselkurse",
+      "subtitle": "Manuelle Kurse verwalten",
+      "loading": "Lade Wechselkurse...",
+      "info": "Manuelle Kurse haben Vorrang vor automatischen Kursen. So können Sie präzisere nationale Wechselkurse verwenden.",
+      "base_currency": "Basiswährung",
+      "rates_title": "Wechselkurse",
+      "delete_all_button": "Alle manuellen",
+      "rate_updated": "Wechselkurs wurde aktualisiert",
+      "update_success": "Wechselkurse wurden aktualisiert",
+      "update_button_aria": "Wechselkurse aktualisieren",
+      "no_results": "Keine Währungen gefunden",
+      "no_rates": "Keine Wechselkurse verfügbar",
+      "no_manual_rates_title": "Keine manuellen Kurse",
+      "no_manual_rates_message": "Sie haben noch keine manuellen Wechselkurse gesetzt.",
+      "source": {
+        "manual": "Manuell",
+        "api": "API",
+        "fallback": "Standard",
+        "unknown": "Unbekannt"
+      },
+      "delete": {
+        "title": "Kurs löschen",
+        "message": "Möchten Sie den manuellen Kurs {{from}}/{{to}} wirklich löschen?"
+      },
+      "delete_all": {
+        "title": "Alle manuellen Kurse löschen",
+        "message": "Möchten Sie wirklich alle {{count}} manuellen Wechselkurse löschen?",
+        "success": "Alle manuellen Kurse wurden gelöscht"
+      },
+      "edit_modal": {
+        "title": "Wechselkurs bearbeiten",
+        "subtitle": "1 {{from}} = ? {{to}}",
+        "placeholder": "z.B. 52.184"
+      },
+      "errors": {
+        "load_failed": "Wechselkurse konnten nicht geladen werden",
+        "save_failed": "Wechselkurs konnte nicht gespeichert werden",
+        "delete_failed": "Wechselkurs konnte nicht gelöscht werden",
+        "delete_all_failed": "Manuelle Kurse konnten nicht gelöscht werden",
+        "update_failed": "Aktualisierung der Wechselkurse fehlgeschlagen",
+        "invalid_rate": "Bitte geben Sie einen gültigen Wechselkurs ein (größer als 0)",
+        "cannot_delete_title": "Kann nicht gelöscht werden",
+        "cannot_delete_message": "Nur manuelle Wechselkurse können gelöscht werden"
+      }
     }
   },
   "errors": {

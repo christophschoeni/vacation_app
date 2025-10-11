@@ -371,7 +371,12 @@
         "loading": "Caricamento impostazioni...",
         "sections": {
           "update_policy": "Aggiornamento",
+          "exchange_rates": "Tassi di cambio",
           "cache": "Cache"
+        },
+        "exchange_rates": {
+          "title": "Gestisci tassi di cambio",
+          "subtitle": "Imposta e visualizza tassi manuali"
         },
         "update_policy": {
           "title": "Politica di aggiornamento",
@@ -545,6 +550,52 @@
       "created_success": "4 modelli predefiniti sono stati creati!",
       "created_error": "Impossibile creare i modelli predefiniti.",
       "order_error": "Impossibile salvare l'ordine."
+    },
+    "exchange_rates": {
+      "title": "Tassi di cambio",
+      "subtitle": "Gestisci tassi manuali",
+      "loading": "Caricamento tassi di cambio...",
+      "info": "I tassi manuali hanno la precedenza sui tassi automatici. Ciò ti consente di utilizzare tassi di cambio nazionali più precisi.",
+      "base_currency": "Valuta di base",
+      "rates_title": "Tassi di cambio",
+      "delete_all_button": "Tutti manuali",
+      "rate_updated": "Tasso di cambio aggiornato",
+      "update_success": "Tassi di cambio aggiornati",
+      "update_button_aria": "Aggiorna tassi di cambio",
+      "no_results": "Nessuna valuta trovata",
+      "no_rates": "Nessun tasso di cambio disponibile",
+      "no_manual_rates_title": "Nessun tasso manuale",
+      "no_manual_rates_message": "Non hai ancora impostato tassi di cambio manuali.",
+      "source": {
+        "manual": "Manuale",
+        "api": "API",
+        "fallback": "Predefinito",
+        "unknown": "Sconosciuto"
+      },
+      "delete": {
+        "title": "Elimina tasso",
+        "message": "Vuoi davvero eliminare il tasso manuale {{from}}/{{to}}?"
+      },
+      "delete_all": {
+        "title": "Elimina tutti i tassi manuali",
+        "message": "Vuoi davvero eliminare tutti i {{count}} tassi di cambio manuali?",
+        "success": "Tutti i tassi manuali sono stati eliminati"
+      },
+      "edit_modal": {
+        "title": "Modifica tasso di cambio",
+        "subtitle": "1 {{from}} = ? {{to}}",
+        "placeholder": "es. 52.184"
+      },
+      "errors": {
+        "load_failed": "Impossibile caricare i tassi di cambio",
+        "save_failed": "Impossibile salvare il tasso di cambio",
+        "delete_failed": "Impossibile eliminare il tasso di cambio",
+        "delete_all_failed": "Impossibile eliminare i tassi manuali",
+        "update_failed": "Aggiornamento dei tassi di cambio non riuscito",
+        "invalid_rate": "Inserisci un tasso di cambio valido (maggiore di 0)",
+        "cannot_delete_title": "Impossibile eliminare",
+        "cannot_delete_message": "Solo i tassi di cambio manuali possono essere eliminati"
+      }
     }
   },
   "errors": {

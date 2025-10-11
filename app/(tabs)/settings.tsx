@@ -52,6 +52,13 @@ const SETTINGS_ITEMS: SettingsItem[] = [
     route: '/settings/currency',
   },
   {
+    id: 'exchange_rates',
+    titleKey: 'settings.exchange_rates.title',
+    subtitleKey: 'settings.exchange_rates.subtitle',
+    icon: 'arrow-left-right',
+    route: '/settings/exchange-rates',
+  },
+  {
     id: 'notifications',
     titleKey: 'settings.notifications.title',
     subtitleKey: 'settings.notifications.subtitle',

@@ -108,6 +108,7 @@ const iconMap: Record<string, LucideIcon> = {
   'filter': Filter,
   'more': MoreHorizontal,
   'swap-horizontal': ArrowLeftRight,
+  'arrow-left-right': ArrowLeftRight,
   'swap-vertical': ArrowUpDown,
   'rotate': RefreshCw,
 

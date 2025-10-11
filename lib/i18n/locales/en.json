@@ -371,7 +371,12 @@
         "loading": "Loading settings...",
         "sections": {
           "update_policy": "Update",
+          "exchange_rates": "Exchange Rates",
           "cache": "Cache"
+        },
+        "exchange_rates": {
+          "title": "Manage Exchange Rates",
+          "subtitle": "Set and view manual rates"
         },
         "update_policy": {
           "title": "Update Policy",
@@ -545,6 +550,52 @@
       "created_success": "4 default templates have been created!",
       "created_error": "Failed to create default templates.",
       "order_error": "Failed to save order."
+    },
+    "exchange_rates": {
+      "title": "Exchange Rates",
+      "subtitle": "Manage manual rates",
+      "loading": "Loading exchange rates...",
+      "info": "Manual rates take precedence over automatic rates. This allows you to use more accurate national exchange rates.",
+      "base_currency": "Base Currency",
+      "rates_title": "Exchange Rates",
+      "delete_all_button": "All manual",
+      "rate_updated": "Exchange rate updated",
+      "update_success": "Exchange rates updated",
+      "update_button_aria": "Update exchange rates",
+      "no_results": "No currencies found",
+      "no_rates": "No exchange rates available",
+      "no_manual_rates_title": "No Manual Rates",
+      "no_manual_rates_message": "You haven't set any manual exchange rates yet.",
+      "source": {
+        "manual": "Manual",
+        "api": "API",
+        "fallback": "Default",
+        "unknown": "Unknown"
+      },
+      "delete": {
+        "title": "Delete Rate",
+        "message": "Do you really want to delete the manual rate {{from}}/{{to}}?"
+      },
+      "delete_all": {
+        "title": "Delete All Manual Rates",
+        "message": "Do you really want to delete all {{count}} manual exchange rates?",
+        "success": "All manual rates have been deleted"
+      },
+      "edit_modal": {
+        "title": "Edit Exchange Rate",
+        "subtitle": "1 {{from}} = ? {{to}}",
+        "placeholder": "e.g. 52.184"
+      },
+      "errors": {
+        "load_failed": "Failed to load exchange rates",
+        "save_failed": "Failed to save exchange rate",
+        "delete_failed": "Failed to delete exchange rate",
+        "delete_all_failed": "Failed to delete manual rates",
+        "update_failed": "Failed to update exchange rates",
+        "invalid_rate": "Please enter a valid exchange rate (greater than 0)",
+        "cannot_delete_title": "Cannot Delete",
+        "cannot_delete_message": "Only manual exchange rates can be deleted"
+      }
     }
   },
   "errors": {
