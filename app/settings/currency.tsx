@@ -151,7 +151,7 @@ export default function CurrencyScreen() {
         title={t('settings.currency.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.push('/(tabs)/settings')}
+        onBackPress={() => router.back()}
         rightAction={
           <TouchableOpacity
             onPress={() => router.push('/settings/currency-add')}

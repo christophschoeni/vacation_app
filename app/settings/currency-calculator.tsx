@@ -143,7 +143,7 @@ export default function CurrencyCalculatorScreen() {
           title={t('settings.currency.calculator.title')}
           variant="large"
           showBack={true}
-          onBackPress={() => router.push('/(tabs)/settings')}
+          onBackPress={() => router.back()}
         />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#007AFF'} />
