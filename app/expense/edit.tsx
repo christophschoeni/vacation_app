@@ -123,6 +123,14 @@ export default function EditExpenseScreen() {
         date: formData.date,
       };
 
+      // Debug logging
+      console.log('=== Expense Edit Debug ===');
+      console.log('Edit - expenseId:', expenseId);
+      console.log('Edit - vacationId from params:', vacationId);
+      console.log('Edit - vacationId type:', typeof vacationId);
+      console.log('Edit - updated expense object:', updatedExpense);
+      console.log('=========================');
+
       await updateExpense(expenseId as string, updatedExpense);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
