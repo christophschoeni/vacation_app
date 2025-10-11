@@ -128,7 +128,15 @@ export class LocalDatabase {
         createdAt: new Date(expense.createdAt),
       }));
 
-      return vacationId ? expensesWithDates.filter((e: Expense) => e.vacationId === vacationId) : expensesWithDates;
+      // Strict type-safe filtering with String conversion to handle type mismatches
+      return vacationId
+        ? expensesWithDates.filter((e: Expense) => {
+            // Convert both to strings for comparison to handle any type inconsistencies
+            const expenseVacationId = String(e.vacationId || '');
+            const targetVacationId = String(vacationId || '');
+            return expenseVacationId === targetVacationId && expenseVacationId !== '';
+          })
+        : expensesWithDates;
     } catch (error) {
       console.error('Error loading expenses:', error);
       return [];

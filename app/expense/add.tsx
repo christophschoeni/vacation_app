@@ -132,6 +132,15 @@ export default function AddExpenseScreen() {
         createdAt: new Date(),
       };
 
+      // Debug logging
+      console.log('=== Expense Add Debug ===');
+      console.log('Add - vacationId from params:', vacationId);
+      console.log('Add - vacationId type:', typeof vacationId);
+      console.log('Add - expense object:', expense);
+      console.log('Add - expense.vacationId:', expense.vacationId);
+      console.log('Add - expense.vacationId type:', typeof expense.vacationId);
+      console.log('========================');
+
       await saveExpense(expense);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
