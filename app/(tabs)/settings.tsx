@@ -79,10 +79,16 @@ export default function SettingsScreen() {
     console.log('Navigating to:', route);
 
     try {
-      // Use navigate instead of push to escape NativeTabs context
-      router.navigate(route as any);
+      // Use push for reliable navigation from settings
+      router.push(route as any);
     } catch (error) {
       console.error('Navigation error:', error);
+      // Fallback to navigate if push fails
+      try {
+        router.navigate(route as any);
+      } catch (navError) {
+        console.error('Navigate fallback also failed:', navError);
+      }
     }
   };
 
