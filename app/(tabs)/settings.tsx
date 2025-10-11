@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
   useColorScheme,
+  Linking,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '@/lib/i18n';
@@ -148,6 +149,35 @@ export default function SettingsScreen() {
               </Text>
             </View>
           </Card>
+
+          <TouchableOpacity
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              const url = 'https://vacation-budget.vomschoeni.com/';
+              const canOpen = await Linking.canOpenURL(url);
+              if (canOpen) {
+                await Linking.openURL(url);
+              }
+            }}
+            activeOpacity={0.7}
+          >
+            <Card variant="clean" style={styles.settingsCard}>
+              <View style={styles.settingsRow}>
+                <View style={styles.settingsInfo}>
+                  <Icon name="globe" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                  <View style={styles.settingsText}>
+                    <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                      {t('settings.about.website')}
+                    </Text>
+                    <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                      vacation-budget.vomschoeni.com
+                    </Text>
+                  </View>
+                </View>
+                <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+              </View>
+            </Card>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
