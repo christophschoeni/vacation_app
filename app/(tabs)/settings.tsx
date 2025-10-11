@@ -99,6 +99,7 @@ export default function SettingsScreen() {
       <AppHeader
         title={t('settings.title')}
         variant="large"
+        useSafeAreaPadding={true}
       />
 
       <ScrollView

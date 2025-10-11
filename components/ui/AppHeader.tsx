@@ -12,6 +12,7 @@ interface AppHeaderProps {
   leftAction?: React.ReactNode;
   variant?: 'default' | 'modal' | 'large';
   onRightPress?: () => void;
+  useSafeAreaPadding?: boolean;
 }
 
 export default function AppHeader({
@@ -21,7 +22,8 @@ export default function AppHeader({
   rightAction,
   leftAction,
   variant = 'default',
-  onRightPress
+  onRightPress,
+  useSafeAreaPadding = false
 }: AppHeaderProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -29,7 +31,7 @@ export default function AppHeader({
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF', paddingTop: insets.top }]}>
+    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF', paddingTop: useSafeAreaPadding ? insets.top : 0 }]}>
       <View style={styles.header}>
         {/* Left Side */}
         <View style={styles.leftSide}>

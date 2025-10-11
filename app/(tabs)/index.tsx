@@ -106,6 +106,7 @@ export default function VacationsScreen() {
       <AppHeader
         title={t('navigation.vacations')}
         variant="large"
+        useSafeAreaPadding={true}
         rightAction={
           <TouchableOpacity
             style={styles.headerButton}
