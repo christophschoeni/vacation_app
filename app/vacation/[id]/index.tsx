@@ -84,7 +84,7 @@ export default function VacationBudgetScreen() {
   // Only show loading if we don't have any vacation data (not even cached)
   if (!displayVacation && (loading || isInitialLoad)) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <AppHeader
           title={t('common.loading')}
           showBack={true}
@@ -107,7 +107,7 @@ export default function VacationBudgetScreen() {
 
   if (!displayVacation) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <AppHeader
           title={t('common.error')}
           showBack={true}
@@ -172,7 +172,7 @@ export default function VacationBudgetScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
