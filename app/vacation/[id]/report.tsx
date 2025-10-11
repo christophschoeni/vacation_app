@@ -61,18 +61,17 @@ export default function VacationReportScreen() {
       const categoryMap = new Map<ExpenseCategory, { total: number; count: number }>();
       let total = 0;
 
-      // Strict filtering: Only expenses that belong to this vacation
-      const validExpenses = expenses.filter(expense =>
-        expense.vacationId === vacationId && vacationId
-      );
+      // Note: Filtering is already done in storage.ts getExpenses() with type-safe String conversion
+      // No need for duplicate filtering here - trust the hook's filtered data
 
-      // Debugging logs
-      console.log('Report - vacationId:', vacationId);
-      console.log('Report - total expenses from hook:', expenses.length);
-      console.log('Report - valid expenses after filter:', validExpenses.length);
+      // Debugging logs (only in development)
+      if (__DEV__) {
+        console.log('Report - vacationId:', vacationId);
+        console.log('Report - expenses from hook:', expenses.length);
+      }
 
       // Convert all expenses to the default currency
-      for (const expense of validExpenses) {
+      for (const expense of expenses) {
         const convertedAmount = await currencyService.convertCurrency(
           expense.amountCHF,
           'CHF',
