@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
   },
   largeTitleContainer: {
     paddingHorizontal: 16,
+    paddingTop: 8,
     paddingBottom: 8,
   },
   largeTitleRow: {

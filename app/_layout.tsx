@@ -229,6 +229,24 @@ function RootNavigation() {
           }}
         />
         <Stack.Screen
+          name="settings/exchange-rates"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="settings/currency-add"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
           name="template/[id]/index"
           options={{
             headerShown: false,
