@@ -7,7 +7,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, router } from 'expo-router';
 
 import AppHeader from '@/components/ui/AppHeader';
 import { Card, Icon } from '@/components/design';
@@ -124,6 +124,8 @@ export default function VacationReportScreen() {
       <AppHeader
         title={t('vacation.tabs.report')}
         variant="large"
+        showBack={true}
+        onBackPress={() => router.push('/(tabs)')}
       />
 
       <ScrollView
