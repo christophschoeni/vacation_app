@@ -2,7 +2,6 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { SymbolView } from 'expo-symbols';
-import { Ionicons } from '@expo/vector-icons';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from 'react-native';
@@ -25,29 +24,12 @@ export default function GlassTabBar({
   const isDark = colorScheme === 'dark';
 
   return (
-    <View style={[
-      styles.container,
-      {
-        paddingBottom: insets.bottom,
-      }
-    ]}>
-      {Platform.OS === 'ios' && (
-        <BlurView
-          intensity={80}
-          tint={isDark ? 'dark' : 'light'}
-          style={StyleSheet.absoluteFill}
-        />
-      )}
-      {Platform.OS === 'android' && (
-        <View style={[
-          StyleSheet.absoluteFill,
-          {
-            backgroundColor: isDark
-              ? 'rgba(28, 28, 30, 0.95)'
-              : 'rgba(255, 255, 255, 0.95)',
-          }
-        ]} />
-      )}
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+      <BlurView
+        intensity={100}
+        tint={isDark ? 'dark' : 'light'}
+        style={StyleSheet.absoluteFill}
+      />
       <View style={styles.tabsContainer}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -74,10 +56,10 @@ export default function GlassTabBar({
             });
           };
 
-          // Get icon names from options
-          const iconConfig = options.tabBarIcon as any;
-          const sfSymbol = iconConfig?.sfSymbol || 'circle';
-          const ioniconName = iconConfig?.ionicon || 'ellipse-outline';
+          // Get SF Symbol from options
+          const sfSymbol = options.tabBarIcon
+            ? (options.tabBarIcon as any).sfSymbol
+            : 'circle';
 
           const label =
             options.tabBarLabel !== undefined
@@ -98,7 +80,7 @@ export default function GlassTabBar({
               style={styles.tab}
               activeOpacity={0.7}
             >
-              {Platform.OS === 'ios' ? (
+              {Platform.OS === 'ios' && sfSymbol ? (
                 <SymbolView
                   name={sfSymbol}
                   size={24}
@@ -107,14 +89,7 @@ export default function GlassTabBar({
                   weight={isFocused ? 'semibold' : 'regular'}
                   style={styles.icon}
                 />
-              ) : (
-                <Ionicons
-                  name={ioniconName as any}
-                  size={24}
-                  color={isFocused ? activeTintColor : inactiveTintColor}
-                  style={styles.icon}
-                />
-              )}
+              ) : null}
               <Text
                 style={[
                   styles.label,
@@ -140,18 +115,19 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'transparent',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+    overflow: 'hidden',
   },
   tabsContainer: {
     flexDirection: 'row',
     height: 49,
-    overflow: 'hidden',
+    paddingTop: 4,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 2,
   },
   icon: {
     marginBottom: 2,
@@ -159,6 +135,5 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 10,
     fontFamily: 'System',
-    fontWeight: '500',
   },
 });

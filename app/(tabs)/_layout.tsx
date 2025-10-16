@@ -23,10 +23,7 @@ export default function MainLayout() {
         name="index"
         options={{
           title: t('navigation.vacations'),
-          tabBarIcon: {
-            sfSymbol: 'airplane.departure',
-            ionicon: 'airplane-outline'
-          } as any,
+          tabBarIcon: { sfSymbol: 'airplane.departure' } as any,
         }}
       />
 
@@ -34,10 +31,7 @@ export default function MainLayout() {
         name="settings"
         options={{
           title: t('navigation.settings'),
-          tabBarIcon: {
-            sfSymbol: 'gear',
-            ionicon: 'settings-outline'
-          } as any,
+          tabBarIcon: { sfSymbol: 'gear' } as any,
         }}
       />
     </Tabs>
