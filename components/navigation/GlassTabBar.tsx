@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: 'row',
-    height: 72, // Further increased height for better spacing
+    height: 88, // Significantly increased height for proper spacing
     paddingTop: 0,
     paddingHorizontal: 0,
   },
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 16,
-    paddingBottom: 6,
+    paddingTop: 24,
+    paddingBottom: 8,
   },
   icon: {
     marginBottom: 4,
