@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { SymbolView } from 'expo-symbols';
+import { Ionicons } from '@expo/vector-icons';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from 'react-native';
@@ -56,10 +57,10 @@ export default function GlassTabBar({
             });
           };
 
-          // Get SF Symbol from options
-          const sfSymbol = options.tabBarIcon
-            ? (options.tabBarIcon as any).sfSymbol
-            : 'circle';
+          // Get icon names from options
+          const iconConfig = options.tabBarIcon as any;
+          const sfSymbol = iconConfig?.sfSymbol || 'circle';
+          const ioniconName = iconConfig?.ionicon || 'ellipse-outline';
 
           const label =
             options.tabBarLabel !== undefined
@@ -80,7 +81,7 @@ export default function GlassTabBar({
               style={styles.tab}
               activeOpacity={0.7}
             >
-              {Platform.OS === 'ios' && sfSymbol ? (
+              {Platform.OS === 'ios' ? (
                 <SymbolView
                   name={sfSymbol}
                   size={24}
@@ -89,7 +90,14 @@ export default function GlassTabBar({
                   weight={isFocused ? 'semibold' : 'regular'}
                   style={styles.icon}
                 />
-              ) : null}
+              ) : (
+                <Ionicons
+                  name={ioniconName as any}
+                  size={24}
+                  color={isFocused ? activeTintColor : inactiveTintColor}
+                  style={styles.icon}
+                />
+              )}
               <Text
                 style={[
                   styles.label,
