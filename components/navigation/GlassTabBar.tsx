@@ -30,13 +30,21 @@ export default function GlassTabBar({
       {
         paddingBottom: insets.bottom,
         borderTopColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+        // Android fallback: solid background with transparency
+        backgroundColor: Platform.OS === 'android'
+          ? isDark
+            ? 'rgba(28, 28, 30, 0.95)'  // iOS systemBackground dark
+            : 'rgba(255, 255, 255, 0.95)' // iOS systemBackground light
+          : 'transparent',
       }
     ]}>
-      <BlurView
-        intensity={80}
-        tint={isDark ? 'dark' : 'light'}
-        style={StyleSheet.absoluteFill}
-      />
+      {Platform.OS === 'ios' && (
+        <BlurView
+          intensity={80}
+          tint={isDark ? 'dark' : 'light'}
+          style={StyleSheet.absoluteFill}
+        />
+      )}
       <View style={styles.tabsContainer}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
