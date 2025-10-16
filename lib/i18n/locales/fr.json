@@ -351,6 +351,9 @@
       "search_placeholder": "Rechercher une devise...",
       "search_results": "Résultats de recherche ({{count}})",
       "all_currencies": "Toutes les devises ({{count}})",
+      "popular_currencies": "Devises populaires",
+      "label": "Devise",
+      "select_currency": "Sélectionner une devise",
       "default_currency_delete": "Les devises par défaut ne peuvent pas être supprimées.",
       "currency_exists": "Une devise avec ce code existe déjà.",
       "delete": {

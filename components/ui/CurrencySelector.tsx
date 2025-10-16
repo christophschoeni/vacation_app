@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, SectionList,
 import { currencyService, CurrencyInfo } from '@/lib/currency';
 import { Icon } from '@/components/design';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from '@/lib/i18n';
 
 interface CurrencySelectorProps {
   selectedCurrency: string;
@@ -14,9 +15,10 @@ interface CurrencySelectorProps {
 export default function CurrencySelector({
   selectedCurrency,
   onSelect,
-  label = "Währung",
+  label,
   style
 }: CurrencySelectorProps) {
+  const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const colorScheme = useColorScheme();
@@ -29,12 +31,12 @@ export default function CurrencySelector({
     if (searchQuery.trim() === '') {
       const sections = currencyService.getCurrencySections();
       return [
-        { title: 'Beliebte Währungen', data: sections.popular },
-        { title: 'Alle Währungen', data: sections.all },
+        { title: t('settings.currency.popular_currencies'), data: sections.popular },
+        { title: t('settings.currency.all_currencies', { count: sections.all.length }), data: sections.all },
       ];
     } else {
       const filtered = currencyService.searchCurrencies(searchQuery);
-      return [{ title: 'Suchergebnisse', data: filtered }];
+      return [{ title: t('settings.currency.search_results', { count: filtered.length }), data: filtered }];
     }
   };
 
@@ -82,9 +84,9 @@ export default function CurrencySelector({
 
   return (
     <View style={[styles.container, style]}>
-      {label && (
+      {(label !== undefined ? label : t('settings.currency.label')) && (
         <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          {label}
+          {label || t('settings.currency.label')}
         </Text>
       )}
 
@@ -126,7 +128,7 @@ export default function CurrencySelector({
         ]}>
           <View style={styles.modalHeader}>
             <Text style={[styles.modalTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              Währung auswählen
+              {t('settings.currency.select_currency')}
             </Text>
             <TouchableOpacity
               onPress={() => setModalVisible(false)}
@@ -141,7 +143,7 @@ export default function CurrencySelector({
             <Icon name="search" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
             <TextInput
               style={[styles.searchInput, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}
-              placeholder="Währung suchen..."
+              placeholder={t('settings.currency.search_placeholder')}
               placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
               value={searchQuery}
               onChangeText={setSearchQuery}

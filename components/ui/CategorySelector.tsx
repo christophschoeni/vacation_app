@@ -27,7 +27,7 @@ export default function CategorySelector({ selectedCategory, onSelect, style }: 
   return (
     <View style={[styles.container, style]}>
       <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-        Kategorie
+        {t('expense.category')}
       </Text>
 
       <ScrollView

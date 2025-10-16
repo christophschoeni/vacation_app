@@ -347,6 +347,9 @@
       "search_placeholder": "Währung suchen...",
       "search_results": "Suchergebnisse ({{count}})",
       "all_currencies": "Alle Währungen ({{count}})",
+      "popular_currencies": "Beliebte Währungen",
+      "label": "Währung",
+      "select_currency": "Währung auswählen",
       "default_currency_delete": "Standardwährungen können nicht gelöscht werden.",
       "currency_exists": "Eine Währung mit diesem Code existiert bereits.",
       "delete": {

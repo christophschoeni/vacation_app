@@ -40,7 +40,7 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
             setConvertedAmount(result);
           }
         } catch (error) {
-          console.warn('Failed to convert currency:', error);
+          // Failed to convert currency - display will show original amount
         }
       } else {
         setConvertedAmount(null);

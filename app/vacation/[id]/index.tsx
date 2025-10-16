@@ -46,7 +46,7 @@ export default function VacationBudgetScreen() {
           setSortOrder(saved);
         }
       } catch (error) {
-        console.warn('Failed to load sort preference:', error);
+        // Failed to load sort preference - use default
       }
     };
     loadSortPreference();
@@ -61,20 +61,7 @@ export default function VacationBudgetScreen() {
 
   const vacation = vacations.find(v => v.id === vacationId);
 
-  // Debug logging for expense data (only in development)
-  React.useEffect(() => {
-    if (__DEV__) {
-      console.log('=== Budget Screen Debug ===');
-      console.log('Budget - vacationId:', vacationId);
-      console.log('Budget - vacationId type:', typeof vacationId);
-      console.log('Budget - expenses.length:', expenses.length);
-      if (expenses.length > 0) {
-        console.log('Budget - first expense.vacationId:', expenses[0].vacationId);
-        console.log('Budget - comparison:', expenses[0].vacationId === vacationId);
-      }
-      console.log('=========================');
-    }
-  }, [expenses, vacationId]);
+  // Expense data is filtered by vacationId in the hook
 
   // Sort expenses by date
   const sortedExpenses = useMemo(() => {
@@ -180,7 +167,7 @@ export default function VacationBudgetScreen() {
       try {
         await AsyncStorage.setItem(`expense_sort_order_${vacationId}`, newSortOrder);
       } catch (error) {
-        console.warn('Failed to save sort preference:', error);
+        // Failed to save sort preference - silent fail
       }
     }
   };

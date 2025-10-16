@@ -84,14 +84,13 @@ function RootNavigation() {
             insights.track('app_launched');
           }
         } catch (error) {
-          console.warn('Failed to install default data or track app launch:', error);
+          // Failed to install default data or track app launch
           // For new users, still check onboarding status even if initialization fails
           try {
             const completed = await onboardingService.hasCompletedOnboarding();
             setOnboardingCompleted(completed);
           } catch (onboardingError) {
             // Only if onboarding check also fails, assume completed to avoid blocking
-            console.warn('Failed to check onboarding status:', onboardingError);
             setOnboardingCompleted(true);
           }
         }

@@ -351,6 +351,9 @@
       "search_placeholder": "Cerca valuta...",
       "search_results": "Risultati ricerca ({{count}})",
       "all_currencies": "Tutte le valute ({{count}})",
+      "popular_currencies": "Valute popolari",
+      "label": "Valuta",
+      "select_currency": "Seleziona valuta",
       "default_currency_delete": "Le valute predefinite non possono essere eliminate.",
       "currency_exists": "Una valuta con questo codice esiste già.",
       "delete": {

@@ -351,6 +351,9 @@
       "search_placeholder": "Search currency...",
       "search_results": "Search Results ({{count}})",
       "all_currencies": "All Currencies ({{count}})",
+      "popular_currencies": "Popular Currencies",
+      "label": "Currency",
+      "select_currency": "Select Currency",
       "default_currency_delete": "Default currencies cannot be deleted.",
       "currency_exists": "A currency with this code already exists.",
       "delete": {

@@ -52,7 +52,7 @@ export default function VacationsScreen() {
         insights.track('vacation_add_started');
       }
     } catch (error) {
-      console.warn('Failed to track vacation add:', error);
+      // Analytics tracking failed - silent fail
     }
     router.push('/vacation/add');
   };
@@ -64,7 +64,7 @@ export default function VacationsScreen() {
         insights.track('vacation_viewed');
       }
     } catch (error) {
-      console.warn('Failed to track vacation view:', error);
+      // Analytics tracking failed - silent fail
     }
     router.push(`/vacation/${id}`);
   };

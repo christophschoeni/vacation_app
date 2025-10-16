@@ -59,7 +59,7 @@ export default function AddExpenseScreen() {
             setFormData(prev => ({ ...prev, currency: vacation.currency }));
           }
         } catch (error) {
-          console.warn('Failed to load vacation currency:', error);
+          // Failed to load vacation currency - use default
         }
       }
     };
@@ -95,8 +95,8 @@ export default function AddExpenseScreen() {
         );
         setConvertedAmount(converted);
       } catch (error) {
-        console.warn('Currency conversion failed:', error);
-        setConvertedAmount(parseFloat(formData.amount)); // Fallback to original amount
+        // Currency conversion failed - fallback to original amount
+        setConvertedAmount(parseFloat(formData.amount));
       } finally {
         setConverting(false);
       }
@@ -131,14 +131,6 @@ export default function AddExpenseScreen() {
         date: formData.date,
         createdAt: new Date(),
       };
-
-      // Debug logging (only in development)
-      if (__DEV__) {
-        console.log('=== Expense Add Debug ===');
-        console.log('Add - vacationId from params:', vacationId);
-        console.log('Add - expense.vacationId:', expense.vacationId);
-        console.log('========================');
-      }
 
       await saveExpense(expense);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -198,7 +190,7 @@ export default function AddExpenseScreen() {
         }
       }
     } catch (error) {
-      console.warn('Failed to check budget and send notification:', error);
+      // Failed to check budget and send notification - silent fail
     }
   };
 

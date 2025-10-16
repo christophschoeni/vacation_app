@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card, Icon } from '@/components/design';
 import { useColorScheme } from 'react-native';
 import { Checklist } from '@/types';
+import { useTranslation } from '@/lib/i18n';
 
 interface ChecklistCardProps {
   checklist: Checklist;
@@ -12,18 +13,13 @@ interface ChecklistCardProps {
 
 export default function ChecklistCard({ checklist, onPress, onLongPress }: ChecklistCardProps) {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
   const isDark = colorScheme === 'dark';
-
-  // Debug: Log checklist data
-  console.log(`ChecklistCard "${checklist.title}":`, {
-    itemsLength: checklist.items?.length,
-    items: checklist.items,
-    hasItems: !!checklist.items
-  });
 
   const completedItems = checklist.items?.filter(item => item.completed).length || 0;
   const totalItems = checklist.items?.length || 0;
   const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+  const isFullyCompleted = totalItems > 0 && completedItems === totalItems;
 
   const getCategoryColor = (category: string) => {
     const colors = {
@@ -39,16 +35,7 @@ export default function ChecklistCard({ checklist, onPress, onLongPress }: Check
   };
 
   const getCategoryName = (category: string) => {
-    const names = {
-      packing: 'Packen',
-      shopping: 'Einkaufen',
-      bucket: 'Bucket List',
-      todo: 'Aufgaben',
-      planning: 'Planung',
-      general: 'Allgemein',
-      custom: 'Benutzerdefiniert',
-    };
-    return names[category as keyof typeof names] || 'Allgemein';
+    return t(`checklist.categories.${category}` as any) || t('checklist.categories.general');
   };
 
   return (
@@ -60,11 +47,14 @@ export default function ChecklistCard({ checklist, onPress, onLongPress }: Check
       <Card variant="clean" style={styles.card}>
         <View style={styles.header}>
           <View style={styles.titleContainer}>
-            <View style={styles.iconContainer}>
+            <View style={[
+              styles.iconContainer,
+              isFullyCompleted && styles.iconContainerCompleted
+            ]}>
               <Icon
-                name={checklist.icon as any}
+                name={isFullyCompleted ? 'check' : checklist.icon as any}
                 size={20}
-                color={getCategoryColor(checklist.category)}
+                color={isFullyCompleted ? '#34C759' : getCategoryColor(checklist.category)}
               />
             </View>
             <View style={styles.textContainer}>
@@ -89,7 +79,7 @@ export default function ChecklistCard({ checklist, onPress, onLongPress }: Check
                       styles.progressFill,
                       {
                         width: `${progressPercent}%`,
-                        backgroundColor: getCategoryColor(checklist.category),
+                        backgroundColor: isFullyCompleted ? '#34C759' : getCategoryColor(checklist.category),
                       },
                     ]}
                   />
@@ -175,6 +165,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+  },
+  iconContainerCompleted: {
+    backgroundColor: 'rgba(52, 199, 89, 0.15)',
   },
   textContainer: {
     flex: 1,
