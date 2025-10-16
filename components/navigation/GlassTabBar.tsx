@@ -136,9 +136,9 @@ const styles = StyleSheet.create({
   tab: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 24,
-    paddingBottom: 8,
+    justifyContent: 'flex-start',
+    paddingTop: 8,
+    paddingBottom: 0,
   },
   icon: {
     marginBottom: 4,
