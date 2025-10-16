@@ -28,24 +28,32 @@ export default function GlassTabBar({
     <View style={[
       styles.container,
       {
-        paddingBottom: insets.bottom,
-        borderTopColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
-        // Android fallback: solid background with transparency
-        backgroundColor: Platform.OS === 'android'
-          ? isDark
-            ? 'rgba(28, 28, 30, 0.95)'  // iOS systemBackground dark
-            : 'rgba(255, 255, 255, 0.95)' // iOS systemBackground light
-          : 'transparent',
+        paddingBottom: insets.bottom + 8,
       }
     ]}>
-      {Platform.OS === 'ios' && (
-        <BlurView
-          intensity={80}
-          tint={isDark ? 'dark' : 'light'}
-          style={StyleSheet.absoluteFill}
-        />
-      )}
-      <View style={styles.tabsContainer}>
+      <View style={[
+        styles.tabsContainer,
+        {
+          borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+        }
+      ]}>
+        {Platform.OS === 'ios' && (
+          <BlurView
+            intensity={80}
+            tint={isDark ? 'dark' : 'light'}
+            style={StyleSheet.absoluteFill}
+          />
+        )}
+        {Platform.OS === 'android' && (
+          <View style={[
+            StyleSheet.absoluteFill,
+            {
+              backgroundColor: isDark
+                ? 'rgba(28, 28, 30, 0.95)'
+                : 'rgba(255, 255, 255, 0.95)',
+            }
+          ]} />
+        )}
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
@@ -137,25 +145,40 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    // borderTopColor is set dynamically in component for dark mode support
-    overflow: 'hidden',
+    paddingHorizontal: 20,
+    paddingBottom: 8,
+    // Transparent background, content is in tabsContainer
+    backgroundColor: 'transparent',
   },
   tabsContainer: {
     flexDirection: 'row',
-    height: 49,
-    paddingTop: 4,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: StyleSheet.hairlineWidth,
+    // borderColor is set dynamically
+    overflow: 'hidden',
+    // Shadow for floating effect
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 4,
   },
   icon: {
-    marginBottom: 2,
+    // Icon spacing handled by gap in tab
   },
   label: {
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: 'System',
+    fontWeight: '500',
   },
 });
