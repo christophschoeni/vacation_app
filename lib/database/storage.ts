@@ -105,9 +105,20 @@ export class LocalDatabase {
 
   static async deleteVacation(id: string): Promise<void> {
     try {
+      // Delete the vacation
       const vacations = await this.getVacations();
       const filtered = vacations.filter(v => v.id !== id);
       await AsyncStorage.setItem(STORAGE_KEYS.VACATIONS, JSON.stringify(filtered));
+
+      // Cascade delete: Remove all expenses belonging to this vacation
+      const allExpenses = await this.getExpenses(); // Get ALL expenses
+      const remainingExpenses = allExpenses.filter(e => String(e.vacationId) !== String(id));
+      await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(remainingExpenses));
+
+      // Cascade delete: Remove all checklists belonging to this vacation
+      const allChecklists = await this.getChecklists(); // Get ALL checklists
+      const remainingChecklists = allChecklists.filter(c => String(c.vacationId) !== String(id));
+      await AsyncStorage.setItem(STORAGE_KEYS.CHECKLISTS, JSON.stringify(remainingChecklists));
     } catch (error) {
       console.error('Error deleting vacation:', error);
       throw error;
@@ -190,7 +201,14 @@ export class LocalDatabase {
         })),
       }));
 
-      return vacationId ? checklistsWithDates.filter((c: Checklist) => c.vacationId === vacationId) : checklistsWithDates;
+      return vacationId
+        ? checklistsWithDates.filter((c: Checklist) => {
+            // Convert both to strings for comparison to handle any type inconsistencies
+            const checklistVacationId = String(c.vacationId || '');
+            const targetVacationId = String(vacationId || '');
+            return checklistVacationId === targetVacationId && checklistVacationId !== '';
+          })
+        : checklistsWithDates;
     } catch (error) {
       console.error('Error loading checklists:', error);
       return [];
@@ -223,6 +241,37 @@ export class LocalDatabase {
     } catch (error) {
       console.error('Error deleting checklist:', error);
       throw error;
+    }
+  }
+
+  // Cleanup orphaned data - removes expenses and checklists that belong to deleted vacations
+  static async cleanupOrphanedData(): Promise<{ expensesDeleted: number; checklistsDeleted: number }> {
+    try {
+      const vacations = await this.getVacations();
+      const validVacationIds = new Set(vacations.map(v => String(v.id)));
+
+      // Cleanup orphaned expenses
+      const allExpenses = await this.getExpenses();
+      const validExpenses = allExpenses.filter(e => validVacationIds.has(String(e.vacationId)));
+      const expensesDeleted = allExpenses.length - validExpenses.length;
+
+      if (expensesDeleted > 0) {
+        await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(validExpenses));
+      }
+
+      // Cleanup orphaned checklists
+      const allChecklists = await this.getChecklists();
+      const validChecklists = allChecklists.filter(c => validVacationIds.has(String(c.vacationId)));
+      const checklistsDeleted = allChecklists.length - validChecklists.length;
+
+      if (checklistsDeleted > 0) {
+        await AsyncStorage.setItem(STORAGE_KEYS.CHECKLISTS, JSON.stringify(validChecklists));
+      }
+
+      return { expensesDeleted, checklistsDeleted };
+    } catch (error) {
+      console.error('Error cleaning up orphaned data:', error);
+      return { expensesDeleted: 0, checklistsDeleted: 0 };
     }
   }
 

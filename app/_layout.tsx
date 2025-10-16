@@ -18,6 +18,7 @@ import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
+import { LocalDatabase } from '@/lib/database/storage';
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -72,6 +73,9 @@ function RootNavigation() {
 
           // Always ensure templates exist (independent of migration flag)
           await ensureDefaultTemplates();
+
+          // Cleanup any orphaned expenses/checklists from deleted vacations
+          await LocalDatabase.cleanupOrphanedData();
 
           // Initialize notification service
           await notificationService.initialize();
