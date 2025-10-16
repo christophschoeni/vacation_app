@@ -81,7 +81,10 @@ function VacationDetailContent() {
         name="index"
         options={{
           title: t('vacation.tabs.budget'),
-          tabBarIcon: { sfSymbol: 'dollarsign.circle' } as any,
+          tabBarIcon: {
+            sfSymbol: 'dollarsign.circle',
+            ionicon: 'cash-outline'
+          } as any,
         }}
       />
 
@@ -89,7 +92,10 @@ function VacationDetailContent() {
         name="report"
         options={{
           title: t('vacation.tabs.report'),
-          tabBarIcon: { sfSymbol: 'chart.bar' } as any,
+          tabBarIcon: {
+            sfSymbol: 'chart.bar',
+            ionicon: 'bar-chart-outline'
+          } as any,
         }}
       />
 
@@ -97,7 +103,10 @@ function VacationDetailContent() {
         name="checklists"
         options={{
           title: t('vacation.tabs.lists'),
-          tabBarIcon: { sfSymbol: 'checklist' } as any,
+          tabBarIcon: {
+            sfSymbol: 'checklist',
+            ionicon: 'checkmark-done-outline'
+          } as any,
         }}
       />
 
@@ -105,7 +114,10 @@ function VacationDetailContent() {
         name="settings"
         options={{
           title: t('vacation.tabs.settings'),
-          tabBarIcon: { sfSymbol: 'gear' } as any,
+          tabBarIcon: {
+            sfSymbol: 'gear',
+            ionicon: 'settings-outline'
+          } as any,
         }}
       />
     </Tabs>
