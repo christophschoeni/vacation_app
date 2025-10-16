@@ -48,13 +48,13 @@ export default function CategorySelector({ selectedCategory, onSelect, style }: 
                   backgroundColor: isSelected
                     ? option.color
                     : isDark
-                      ? 'rgba(255, 255, 255, 0.05)'
-                      : 'rgba(0, 0, 0, 0.03)',
+                      ? '#2C2C2E'
+                      : '#F2F2F7',
                   borderColor: isSelected
                     ? option.color
                     : isDark
                       ? 'rgba(255, 255, 255, 0.1)'
-                      : 'rgba(0, 0, 0, 0.1)',
+                      : 'rgba(0, 0, 0, 0.05)',
                 },
               ]}
               onPress={() => handleSelect(option.value)}
@@ -65,7 +65,9 @@ export default function CategorySelector({ selectedCategory, onSelect, style }: 
                 {
                   backgroundColor: isSelected
                     ? 'rgba(255, 255, 255, 0.2)'
-                    : 'transparent',
+                    : isDark
+                      ? 'rgba(255, 255, 255, 0.1)'
+                      : 'rgba(0, 0, 0, 0.05)',
                 }
               ]}>
                 <Icon
