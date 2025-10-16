@@ -1,12 +1,11 @@
-import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
-import { BlurView } from 'expo-blur';
-import { SymbolView } from 'expo-symbols';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useColorScheme } from 'react-native';
+import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
+import { SymbolView } from 'expo-symbols';
+import React from 'react';
+import { Platform, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface GlassTabBarProps extends BottomTabBarProps {
   activeTintColor?: string;
@@ -129,7 +128,7 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: 'row',
-    height: 88, // Significantly increased height for proper spacing
+    height: 72, // Optimal height for proper spacing
     paddingTop: 0,
     paddingHorizontal: 0,
   },
