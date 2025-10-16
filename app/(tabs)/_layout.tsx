@@ -1,45 +1,27 @@
-import { Tabs } from 'expo-router';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import React from 'react';
 import { useTranslation } from '@/lib/i18n';
-import GlassTabBar from '@/components/navigation/GlassTabBar';
 
 export default function MainLayout() {
   const { t } = useTranslation();
 
   return (
-    <Tabs
-      tabBar={(props) => <GlassTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: 'transparent',
-          borderTopWidth: 0,
-          elevation: 0,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: t('navigation.vacations'),
-          tabBarIcon: {
-            sfSymbol: 'airplane.departure',  // iOS SF Symbol
-            ionicon: 'airplane-outline'       // Android Ionicon
-          } as any,
-        }}
-      />
+    <NativeTabs>
+      <NativeTabs.Trigger name="index">
+        <Icon
+          sf={{ default: 'airplane.departure', selected: 'airplane' }}
+          drawable="airplane_outline"
+        />
+        <Label>{t('navigation.vacations')}</Label>
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: t('navigation.settings'),
-          tabBarIcon: {
-            sfSymbol: 'gear',                 // iOS SF Symbol
-            ionicon: 'settings-outline'       // Android Ionicon
-          } as any,
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger name="settings">
+        <Icon
+          sf={{ default: 'gear', selected: 'gearshape.fill' }}
+          drawable="settings_outline"
+        />
+        <Label>{t('navigation.settings')}</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
