@@ -25,9 +25,15 @@ export default function GlassTabBar({
   const isDark = colorScheme === 'dark';
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View style={[
+      styles.container,
+      {
+        paddingBottom: insets.bottom,
+        borderTopColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+      }
+    ]}>
       <BlurView
-        intensity={100}
+        intensity={80}
         tint={isDark ? 'dark' : 'light'}
         style={StyleSheet.absoluteFill}
       />
@@ -124,7 +130,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+    // borderTopColor is set dynamically in component for dark mode support
     overflow: 'hidden',
   },
   tabsContainer: {
