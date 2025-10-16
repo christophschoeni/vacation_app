@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: 'row',
-    height: 50, // iOS HIG standard TabBar height (50pt)
+    height: 65, // Increased height for better spacing
     paddingTop: 0,
     paddingHorizontal: 0,
   },
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 7,
-    paddingBottom: 2,
+    paddingTop: 12,
+    paddingBottom: 4,
   },
   icon: {
     marginBottom: 4,
