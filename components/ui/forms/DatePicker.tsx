@@ -22,21 +22,49 @@ export default function DatePicker({
 }: DatePickerProps) {
   const colorScheme = useColorScheme();
   const [show, setShow] = useState(Platform.OS === 'ios'); // iOS: always show, Android: show on demand
+  const [currentMode, setCurrentMode] = useState<'date' | 'time'>('date'); // For Android datetime mode
+  const [tempDate, setTempDate] = useState(value); // Temporary date for Android datetime mode
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
-    // Android: close picker after selection or dismissal
     if (Platform.OS === 'android') {
-      setShow(false);
-    }
-
-    // Update date only if user selected a date (not dismissed)
-    if (event.type === 'set' && selectedDate) {
-      onChange(selectedDate);
+      // Android datetime mode requires two pickers
+      if (mode === 'datetime') {
+        if (event.type === 'set' && selectedDate) {
+          if (currentMode === 'date') {
+            // Date selected, now show time picker
+            setTempDate(selectedDate);
+            setCurrentMode('time');
+            setShow(true);
+          } else {
+            // Time selected, combine with date and finish
+            setShow(false);
+            setCurrentMode('date');
+            onChange(selectedDate);
+          }
+        } else {
+          // User cancelled
+          setShow(false);
+          setCurrentMode('date');
+        }
+      } else {
+        // Single mode (date or time)
+        setShow(false);
+        if (event.type === 'set' && selectedDate) {
+          onChange(selectedDate);
+        }
+      }
+    } else {
+      // iOS: always update the date (inline picker)
+      if (selectedDate) {
+        onChange(selectedDate);
+      }
     }
   };
 
   const showPicker = () => {
     if (Platform.OS === 'android') {
+      setTempDate(value);
+      setCurrentMode(mode === 'datetime' ? 'date' : mode);
       setShow(true);
     }
   };
@@ -81,8 +109,8 @@ export default function DatePicker({
           {show && (
             <DateTimePicker
               testID="dateTimePicker"
-              value={value}
-              mode={mode}
+              value={currentMode === 'time' && mode === 'datetime' ? tempDate : value}
+              mode={currentMode}
               is24Hour={true}
               display="default"
               onChange={handleDateChange}
