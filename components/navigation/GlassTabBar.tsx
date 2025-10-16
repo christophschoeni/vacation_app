@@ -28,32 +28,27 @@ export default function GlassTabBar({
     <View style={[
       styles.container,
       {
-        paddingBottom: insets.bottom + 8,
+        paddingBottom: insets.bottom,
       }
     ]}>
-      <View style={[
-        styles.tabsContainer,
-        {
-          borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
-        }
-      ]}>
-        {Platform.OS === 'ios' && (
-          <BlurView
-            intensity={80}
-            tint={isDark ? 'dark' : 'light'}
-            style={StyleSheet.absoluteFill}
-          />
-        )}
-        {Platform.OS === 'android' && (
-          <View style={[
-            StyleSheet.absoluteFill,
-            {
-              backgroundColor: isDark
-                ? 'rgba(28, 28, 30, 0.95)'
-                : 'rgba(255, 255, 255, 0.95)',
-            }
-          ]} />
-        )}
+      {Platform.OS === 'ios' && (
+        <BlurView
+          intensity={80}
+          tint={isDark ? 'dark' : 'light'}
+          style={StyleSheet.absoluteFill}
+        />
+      )}
+      {Platform.OS === 'android' && (
+        <View style={[
+          StyleSheet.absoluteFill,
+          {
+            backgroundColor: isDark
+              ? 'rgba(28, 28, 30, 0.95)'
+              : 'rgba(255, 255, 255, 0.95)',
+          }
+        ]} />
+      )}
+      <View style={styles.tabsContainer}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
@@ -145,39 +140,24 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    // Transparent background, content is in tabsContainer
     backgroundColor: 'transparent',
   },
   tabsContainer: {
     flexDirection: 'row',
-    height: 64,
-    borderRadius: 32,
-    borderWidth: StyleSheet.hairlineWidth,
-    // borderColor is set dynamically
+    height: 49,
     overflow: 'hidden',
-    // Shadow for floating effect
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
+    gap: 2,
   },
   icon: {
-    // Icon spacing handled by gap in tab
+    marginBottom: 2,
   },
   label: {
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: 'System',
     fontWeight: '500',
   },
