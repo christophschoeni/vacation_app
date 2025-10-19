@@ -99,6 +99,10 @@
         "title": "Neue Liste erstellen",
         "prompt": "Name der Liste:"
       },
+      "edit": {
+        "title": "Liste umbenennen",
+        "prompt": "Neuer Name der Liste:"
+      },
       "delete": {
         "title": "Liste löschen",
         "message": "Möchten Sie die Liste \"{{title}}\" wirklich löschen?"
@@ -116,6 +120,7 @@
       "errors": {
         "create": "Liste konnte nicht erstellt werden.",
         "create_from_template": "Liste konnte nicht aus Vorlage erstellt werden.",
+        "update": "Liste konnte nicht aktualisiert werden.",
         "delete": "Liste konnte nicht gelöscht werden."
       }
     },

@@ -1,10 +1,11 @@
-import React, { useEffect, useReducer, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, useColorScheme } from 'react-native';
+import React, { useEffect, useReducer, useCallback, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, useColorScheme, Modal } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { useChecklists } from '@/hooks/use-checklists';
 import { useVacations } from '@/hooks/use-vacations';
 import ChecklistCard from '@/components/ui/cards/ChecklistCard';
+import SwipeableCard from '@/components/ui/SwipeableCard';
 import AppHeader from '@/components/ui/AppHeader';
 import { Icon } from '@/components/design';
 import { logger } from '@/lib/utils/logger';
@@ -28,6 +29,7 @@ export default function VacationChecklistsScreen() {
 
   // Force re-render when checklists change
   const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
 
   const {
     checklists,
@@ -37,6 +39,7 @@ export default function VacationChecklistsScreen() {
     loadTemplates,
     createChecklist,
     createFromTemplate,
+    saveChecklist,
     deleteChecklist
   } = useChecklists(vacationId || '');
 
@@ -94,28 +97,47 @@ export default function VacationChecklistsScreen() {
       return;
     }
 
-    const templateButtons = templates.map(template => ({
-      text: template.title,
-      onPress: () => handleSelectTemplate(template.id),
-    }));
-
-    Alert.alert(
-      t('vacation.checklists.templates.select_title'),
-      t('vacation.checklists.templates.select_prompt'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        ...templateButtons,
-      ]
-    );
+    setShowTemplateModal(true);
   };
 
   const handleSelectTemplate = async (templateId: string) => {
+    setShowTemplateModal(false);
     try {
       const template = templates.find(t => t.id === templateId);
       await createFromTemplate(templateId);
     } catch (error) {
       Alert.alert(t('common.error'), t('vacation.checklists.errors.create_from_template'));
     }
+  };
+
+  const handleEditChecklist = (checklistId: string) => {
+    const checklist = checklists.find(c => c.id === checklistId);
+    if (!checklist) return;
+
+    Alert.prompt(
+      t('vacation.checklists.edit.title'),
+      t('vacation.checklists.edit.prompt'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.save'),
+          onPress: async (newTitle) => {
+            if (newTitle?.trim() && newTitle.trim() !== checklist.title) {
+              try {
+                await saveChecklist({
+                  ...checklist,
+                  title: newTitle.trim(),
+                });
+              } catch (error) {
+                Alert.alert(t('common.error'), t('vacation.checklists.errors.update'));
+              }
+            }
+          },
+        },
+      ],
+      'plain-text',
+      checklist.title
+    );
   };
 
   const handleDeleteChecklist = (checklistId: string) => {
@@ -170,42 +192,89 @@ export default function VacationChecklistsScreen() {
           </View>
         }
       />
-      {checklists.length > 0 ? (
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* iOS-style large title in content area */}
-          <View style={styles.titleSection}>
-            <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {t('vacation.checklists.title')}
-            </Text>
-            <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              {t('vacation.checklists.count', { count: checklists.length })}
-            </Text>
-          </View>
-
-          {checklists.map((checklist) => (
-            <ChecklistCard
-              key={checklist.id}
-              checklist={checklist}
-              onPress={(id) => router.push(`/checklist/${id}`)}
-              onLongPress={handleDeleteChecklist}
-            />
-          ))}
-        </ScrollView>
-      ) : (
-        <View style={styles.content}>
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>📋</Text>
-            <Text style={[styles.emptyTitle, { color: isDark ? '#007AFF' : '#007AFF' }]}>{t('vacation.checklists.empty.title')}</Text>
-            <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              {t('vacation.checklists.empty.description')}
-            </Text>
-          </View>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* iOS-style large title in content area */}
+        <View style={styles.titleSection}>
+          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('vacation.checklists.title')}
+          </Text>
         </View>
-      )}
+
+        <View style={styles.listContainer}>
+          {checklists.length > 0 ? (
+            checklists.map((checklist) => (
+              <SwipeableCard
+                key={checklist.id}
+                onPress={() => router.push(`/checklist/${checklist.id}`)}
+                onEdit={() => handleEditChecklist(checklist.id)}
+                onDelete={() => handleDeleteChecklist(checklist.id)}
+              >
+                <ChecklistCard
+                  checklist={checklist}
+                  onPress={(id) => router.push(`/checklist/${id}`)}
+                />
+              </SwipeableCard>
+            ))
+          ) : (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>📋</Text>
+              <Text style={[styles.emptyTitle, { color: isDark ? '#007AFF' : '#007AFF' }]}>{t('vacation.checklists.empty.title')}</Text>
+              <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                {t('vacation.checklists.empty.description')}
+              </Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+
+      {/* Template Selection Modal */}
+      <Modal
+        visible={showTemplateModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowTemplateModal(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowTemplateModal(false)}
+        >
+          <View style={[styles.modalContent, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
+            <Text style={[styles.modalTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+              {t('vacation.checklists.templates.select_title')}
+            </Text>
+            <Text style={[styles.modalSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              {t('vacation.checklists.templates.select_prompt')}
+            </Text>
+            <ScrollView style={styles.templateList}>
+              {templates.map((template) => (
+                <TouchableOpacity
+                  key={template.id}
+                  style={[styles.templateItem, { borderBottomColor: isDark ? '#2C2C2E' : '#E5E5E5' }]}
+                  onPress={() => handleSelectTemplate(template.id)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.templateTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                    {template.title}
+                  </Text>
+                  <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.modalCancelButton}
+              onPress={() => setShowTemplateModal(false)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.modalCancelText}>{t('common.cancel')}</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
     </SafeAreaView>
   );
@@ -221,10 +290,10 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   largeTitle: {
-    fontSize: 34,
+    fontSize: 28,
     fontWeight: '700',
     fontFamily: 'System',
-    lineHeight: 41,
+    lineHeight: 34,
   },
   subtitle: {
     fontSize: 16,
@@ -247,17 +316,12 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 32,
-  },
-  scrollView: {
-    flex: 1,
-    width: '100%',
   },
   scrollContent: {
+    paddingTop: 0,
+  },
+  listContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 4,
   },
   emptyState: {
     alignItems: 'center',
@@ -278,6 +342,70 @@ const styles = StyleSheet.create({
     color: '#6D6D70',
     textAlign: 'center',
     lineHeight: 22,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '80%',
+    borderRadius: 16,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    fontFamily: 'System',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    fontFamily: 'System',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  templateList: {
+    maxHeight: 300,
+  },
+  templateItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+  },
+  templateTitle: {
+    fontSize: 17,
+    fontWeight: '400',
+    fontFamily: 'System',
+    flex: 1,
+  },
+  modalCancelButton: {
+    marginTop: 16,
+    paddingVertical: 14,
+    borderRadius: 10,
+    backgroundColor: '#007AFF',
+    alignItems: 'center',
+  },
+  modalCancelText: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+    color: '#FFFFFF',
   },
   headerButtonGroup: {
     flexDirection: 'row',

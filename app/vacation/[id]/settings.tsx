@@ -120,10 +120,9 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   titleSection: {
-    paddingHorizontal: 0,
+    paddingHorizontal: 16,
     paddingTop: 4,
     paddingBottom: 8,
-    marginLeft: 0,
   },
   largeTitle: {
     fontSize: 28,
@@ -133,14 +132,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 120,
+    paddingTop: 0,
   },
   section: {
     marginBottom: 24,
+    paddingHorizontal: 16,
   },
   sectionTitle: {
     fontSize: 22,

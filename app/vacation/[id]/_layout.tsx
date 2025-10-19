@@ -1,7 +1,8 @@
-import { router, useSegments, useFocusEffect, Slot, Tabs } from 'expo-router';
+import { router, useSegments, useFocusEffect } from 'expo-router';
+import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useCallback, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, DynamicColorIOS } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
@@ -9,7 +10,6 @@ import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
 import { useTranslation } from '@/lib/i18n';
 import { VacationProvider, useVacationContext } from '@/contexts/VacationContext';
-import GlassTabBar from '@/components/navigation/GlassTabBar';
 
 function VacationDetailContent() {
   const vacationId = useRouteParam('id');
@@ -65,62 +65,50 @@ function VacationDetailContent() {
   }
 
   return (
-    <Tabs
-      tabBar={(props) => <GlassTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: 'transparent',
-          borderTopWidth: 0,
-          elevation: 0,
-        },
+    <NativeTabs
+      labelStyle={{
+        color: DynamicColorIOS({
+          dark: 'white',
+          light: 'black',
+        }),
       }}
+      tintColor={DynamicColorIOS({
+        dark: '#0A84FF',
+        light: '#007AFF',
+      })}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: t('vacation.tabs.budget'),
-          tabBarIcon: {
-            sfSymbol: 'dollarsign.circle',
-            ionicon: 'cash-outline'
-          } as any,
-        }}
-      />
+      <NativeTabs.Trigger name="index">
+        <TabIcon
+          sf="dollarsign.circle"
+          drawable="ic_cash"
+        />
+        <Label>{t('vacation.tabs.budget')}</Label>
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="report"
-        options={{
-          title: t('vacation.tabs.report'),
-          tabBarIcon: {
-            sfSymbol: 'chart.bar',
-            ionicon: 'bar-chart-outline'
-          } as any,
-        }}
-      />
+      <NativeTabs.Trigger name="report">
+        <TabIcon
+          sf="chart.bar"
+          drawable="ic_bar_chart"
+        />
+        <Label>{t('vacation.tabs.report')}</Label>
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="checklists"
-        options={{
-          title: t('vacation.tabs.lists'),
-          tabBarIcon: {
-            sfSymbol: 'checklist',
-            ionicon: 'checkmark-done-outline'
-          } as any,
-        }}
-      />
+      <NativeTabs.Trigger name="checklists">
+        <TabIcon
+          sf="checklist"
+          drawable="ic_checklist"
+        />
+        <Label>{t('vacation.tabs.lists')}</Label>
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: t('vacation.tabs.settings'),
-          tabBarIcon: {
-            sfSymbol: 'gear',
-            ionicon: 'settings-outline'
-          } as any,
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger name="settings">
+        <TabIcon
+          sf="gear"
+          drawable="ic_settings"
+        />
+        <Label>{t('vacation.tabs.settings')}</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
 

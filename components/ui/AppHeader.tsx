@@ -10,7 +10,7 @@ interface AppHeaderProps {
   onBackPress?: () => void;
   rightAction?: React.ReactNode;
   leftAction?: React.ReactNode;
-  variant?: 'default' | 'modal' | 'large';
+  variant?: 'default' | 'modal' | 'large' | 'standard';
   onRightPress?: () => void;
   useSafeAreaPadding?: boolean;
 }
@@ -56,8 +56,16 @@ export default function AppHeader({
           )}
         </View>
 
-        {/* Center - Keep empty for iOS native look */}
-        <View style={styles.centerSpacer} />
+        {/* Center - Title for standard variant */}
+        {variant === 'standard' && title ? (
+          <View style={styles.centerTitle}>
+            <Text style={[styles.standardTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
+              {title}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.centerSpacer} />
+        )}
 
         {/* Right Side */}
         <View style={styles.rightSide}>
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 6,
-    minHeight: 32,
+    minHeight: 44,
   },
   leftSide: {
     minWidth: 40,
@@ -113,6 +121,18 @@ const styles = StyleSheet.create({
   },
   centerSpacer: {
     flex: 1,
+  },
+  centerTitle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+  },
+  standardTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+    textAlign: 'center',
   },
   backButton: {
     padding: 8,

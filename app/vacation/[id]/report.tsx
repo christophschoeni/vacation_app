@@ -122,8 +122,6 @@ export default function VacationReportScreen() {
       edges={['top', 'bottom']}
     >
       <AppHeader
-        title={t('vacation.tabs.report')}
-        variant="large"
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
       />
@@ -133,6 +131,13 @@ export default function VacationReportScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
         showsVerticalScrollIndicator={false}
       >
+        {/* iOS-style large title in content area */}
+        <View style={styles.titleSection}>
+          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('vacation.tabs.report')}
+          </Text>
+        </View>
+
         {/* Total Summary */}
         <Card style={styles.summaryCard}>
           <View style={styles.summaryContent}>
@@ -219,16 +224,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  titleSection: {
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  largeTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 34,
+  },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 85,
+    paddingTop: 0,
   },
   summaryCard: {
     marginBottom: 24,
+    marginHorizontal: 16,
     padding: 20,
   },
   summaryContent: {
@@ -252,6 +267,7 @@ const styles = StyleSheet.create({
   },
   emptyCard: {
     alignItems: 'center',
+    marginHorizontal: 16,
     paddingVertical: 48,
     paddingHorizontal: 24,
   },
@@ -269,6 +285,7 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     marginBottom: 12,
+    marginHorizontal: 16,
     padding: 16,
   },
   categoryHeader: {
