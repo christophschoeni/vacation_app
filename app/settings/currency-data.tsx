@@ -213,10 +213,11 @@ export default function CurrencyDataScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
         <AppHeader
           title={t('settings.currency.data.title')}
           variant="large"
+          useSafeAreaPadding={true}
           showBack={true}
           onBackPress={() => router.push('/(tabs)/settings')}
         />
@@ -231,10 +232,11 @@ export default function CurrencyDataScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.currency.data.title')}
         variant="large"
+        useSafeAreaPadding={true}
         showBack={true}
         onBackPress={() => router.push('/(tabs)/settings')}
       />

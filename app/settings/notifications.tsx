@@ -134,12 +134,13 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.notifications.title')}
         variant="large"
         showBack={true}
         onBackPress={() => router.push('/(tabs)/settings')}
+        useSafeAreaPadding={true}
       />
 
       <ScrollView

@@ -146,12 +146,13 @@ export default function CurrencyScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.currency.title')}
         variant="large"
         showBack={true}
         onBackPress={() => router.back()}
+        useSafeAreaPadding={true}
         rightAction={
           <TouchableOpacity
             onPress={() => router.push('/settings/currency-add')}

@@ -186,10 +186,11 @@ export default function TemplatesScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.templates.title')}
         variant="large"
+        useSafeAreaPadding={true}
         showBack={true}
         onBackPress={() => router.push('/(tabs)/settings')}
         rightAction={

@@ -244,10 +244,11 @@ export default function ExchangeRatesScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
         <AppHeader
           title={t('settings.exchange_rates.title')}
           variant="large"
+          useSafeAreaPadding={true}
           showBack={true}
           onBackPress={() => router.back()}
         />
@@ -262,10 +263,11 @@ export default function ExchangeRatesScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.exchange_rates.title')}
         variant="large"
+        useSafeAreaPadding={true}
         showBack={true}
         onBackPress={() => router.back()}
         rightAction={
