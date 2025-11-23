@@ -8,7 +8,6 @@ import {
   showImageSourcePicker,
   ImagePickerResult,
 } from '@/lib/utils/image-picker';
-import { Colors } from '@/constants/Colors';
 
 interface ImagePickerProps {
   /**
@@ -46,7 +45,7 @@ export default function ImagePicker({
 }: ImagePickerProps) {
   const { t } = useTranslation();
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const isDark = colorScheme === 'dark';
 
   const handleCameraPress = async () => {
     const result: ImagePickerResult = await pickImageFromCamera();
@@ -81,7 +80,7 @@ export default function ImagePicker({
   return (
     <View style={[styles.container, style]}>
       {label && (
-        <Text style={[styles.label, { color: colors.text }]}>
+        <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
           {label}
         </Text>
       )}
@@ -95,20 +94,20 @@ export default function ImagePicker({
           />
           <View style={styles.imageActions}>
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: colors.card }]}
+              style={[styles.actionButton, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}
               onPress={handleAddPhoto}
               accessibilityLabel={t('vacations.form.change_photo')}
               accessibilityRole="button"
             >
-              <Icon name="image" size={20} color={colors.primary} />
-              <Text style={[styles.actionButtonText, { color: colors.primary }]}>
+              <Icon name="image" size={20} color="#007AFF" />
+              <Text style={[styles.actionButtonText, { color: '#007AFF' }]}>
                 {t('vacations.form.change_photo')}
               </Text>
             </TouchableOpacity>
 
             {onImageRemoved && (
               <TouchableOpacity
-                style={[styles.actionButton, { backgroundColor: colors.card }]}
+                style={[styles.actionButton, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}
                 onPress={handleRemovePhoto}
                 accessibilityLabel={t('vacations.form.remove_photo')}
                 accessibilityRole="button"
@@ -123,13 +122,19 @@ export default function ImagePicker({
         </View>
       ) : (
         <TouchableOpacity
-          style={[styles.addPhotoButton, { backgroundColor: colors.card, borderColor: colors.border }]}
+          style={[
+            styles.addPhotoButton,
+            {
+              backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+              borderColor: isDark ? '#3A3A3C' : '#C6C6C8'
+            }
+          ]}
           onPress={handleAddPhoto}
           accessibilityLabel={t('vacations.form.add_photo')}
           accessibilityRole="button"
         >
-          <Icon name="camera" size={32} color={colors.icon} />
-          <Text style={[styles.addPhotoText, { color: colors.text }]}>
+          <Icon name="camera" size={32} color={isDark ? '#8E8E93' : '#6D6D70'} />
+          <Text style={[styles.addPhotoText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
             {t('vacations.form.add_photo')}
           </Text>
         </TouchableOpacity>
