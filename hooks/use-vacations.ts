@@ -107,26 +107,15 @@ export function useVacations(): UseVacationsReturn {
 
       logger.debug('🏖️ Deleting vacation from SQLite...', id);
 
-      // CASCADE DELETE: Delete all expenses associated with this vacation from AsyncStorage
-      // This is necessary because Vacations are in SQLite but Expenses are still in AsyncStorage
-      logger.debug('🗑️ Deleting associated expenses from AsyncStorage...', id);
-      const { LocalDatabase } = await import('@/lib/database/storage');
-      const allExpenses = await LocalDatabase.getExpenses(); // Get ALL expenses
-      const expensesToKeep = allExpenses.filter(expense =>
-        String(expense.vacationId) !== String(id)
-      );
-      await import('@react-native-async-storage/async-storage').then(module =>
-        module.default.setItem('@vacation_assist:expenses', JSON.stringify(expensesToKeep))
-      );
-      logger.debug(`✅ Deleted ${allExpenses.length - expensesToKeep.length} expenses from AsyncStorage`);
-
       // Delete vacation from SQLite
+      // CASCADE DELETE will automatically delete all associated expenses
+      // via the foreign key constraint defined in the schema
       const success = await vacationRepository.delete(id);
 
       if (success) {
         // Reload vacations to get fresh data
         await loadVacations();
-        logger.debug('✅ Vacation deleted successfully');
+        logger.debug('✅ Vacation deleted successfully (including all associated expenses via CASCADE DELETE)');
       }
 
       return success;

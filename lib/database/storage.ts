@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Vacation, Expense, Checklist, ChecklistItem } from '@/types';
+import { expenseRepository } from '@/lib/db/repositories/expense-repository';
 
 // Raw data interfaces for storage (with string dates)
 interface RawVacationData {
@@ -18,18 +19,7 @@ interface RawVacationData {
   updatedAt: string;
 }
 
-interface RawExpenseData {
-  id: string;
-  vacationId: string;
-  amount: number;
-  currency: string;
-  amountCHF: number;
-  category: string;
-  description: string;
-  date: string;
-  imageUrl?: string;
-  createdAt: string;
-}
+// RawExpenseData removed - expenses now stored in SQLite
 
 interface RawChecklistItemData {
   id: string;
@@ -114,29 +104,13 @@ export class LocalDatabase {
     }
   }
 
-  // Expense operations
+  // Expense operations - Now using SQLite via expense repository
   static async getExpenses(vacationId?: string): Promise<Expense[]> {
     try {
-      const data = await AsyncStorage.getItem(STORAGE_KEYS.EXPENSES);
-      if (!data) return [];
-
-      const expenses = JSON.parse(data) as RawExpenseData[];
-      // Convert date strings back to Date objects
-      const expensesWithDates = expenses.map((expense: RawExpenseData) => ({
-        ...expense,
-        date: new Date(expense.date),
-        createdAt: new Date(expense.createdAt),
-      }));
-
-      // Strict type-safe filtering with String conversion to handle type mismatches
-      return vacationId
-        ? expensesWithDates.filter((e: Expense) => {
-            // Convert both to strings for comparison to handle any type inconsistencies
-            const expenseVacationId = String(e.vacationId || '');
-            const targetVacationId = String(vacationId || '');
-            return expenseVacationId === targetVacationId && expenseVacationId !== '';
-          })
-        : expensesWithDates;
+      if (vacationId) {
+        return await expenseRepository.findByVacationId(vacationId);
+      }
+      return await expenseRepository.findAll();
     } catch (error) {
       console.error('Error loading expenses:', error);
       return [];
@@ -145,16 +119,35 @@ export class LocalDatabase {
 
   static async saveExpense(expense: Expense): Promise<void> {
     try {
-      const expenses = await this.getExpenses();
-      const existingIndex = expenses.findIndex(e => e.id === expense.id);
+      // Check if expense exists
+      const existing = await expenseRepository.findById(expense.id);
 
-      if (existingIndex >= 0) {
-        expenses[existingIndex] = expense;
+      if (existing) {
+        // Update existing expense
+        await expenseRepository.update(expense.id, {
+          vacationId: expense.vacationId,
+          amount: expense.amount,
+          currency: expense.currency,
+          amountCHF: expense.amountCHF,
+          category: expense.category,
+          description: expense.description,
+          date: expense.date,
+          imageUrl: expense.imageUrl,
+        });
       } else {
-        expenses.push(expense);
+        // Create new expense
+        await expenseRepository.create({
+          id: expense.id,
+          vacationId: expense.vacationId,
+          amount: expense.amount,
+          currency: expense.currency,
+          amountCHF: expense.amountCHF,
+          category: expense.category,
+          description: expense.description,
+          date: expense.date,
+          imageUrl: expense.imageUrl,
+        });
       }
-
-      await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses));
     } catch (error) {
       console.error('Error saving expense:', error);
       throw error;
@@ -163,9 +156,7 @@ export class LocalDatabase {
 
   static async deleteExpense(id: string): Promise<void> {
     try {
-      const expenses = await this.getExpenses();
-      const filtered = expenses.filter(e => e.id !== id);
-      await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(filtered));
+      await expenseRepository.delete(id);
     } catch (error) {
       console.error('Error deleting expense:', error);
       throw error;

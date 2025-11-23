@@ -18,6 +18,7 @@ import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
+import { ExpensesMigration } from '@/lib/db/migrations/migrate-expenses-to-sqlite';
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -69,6 +70,21 @@ function RootNavigation() {
 
           // Install default app data (categories, settings)
           await appInitialization.installDefaultData();
+
+          // Migrate expenses from AsyncStorage to SQLite (one-time migration)
+          const migrationResult = await ExpensesMigration.migrate();
+          if (!migrationResult.skipped && migrationResult.migrated > 0) {
+            console.log(`✅ Migrated ${migrationResult.migrated} expenses from AsyncStorage to SQLite`);
+
+            // Verify migration was successful
+            const verification = await ExpensesMigration.verifyMigration();
+            if (verification.matches) {
+              console.log('✅ Migration verification successful');
+              // Note: Cleanup is done automatically by the new storage implementation
+            } else {
+              console.warn('⚠️ Migration verification mismatch - keeping AsyncStorage data as backup');
+            }
+          }
 
           // Always ensure templates exist (independent of migration flag)
           await ensureDefaultTemplates();
