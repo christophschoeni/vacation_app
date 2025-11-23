@@ -18,12 +18,15 @@ export default function LanguageScreen() {
   const { t, getCurrentLanguage, setLanguage, getSupportedLanguages } = useTranslation();
   const isDark = colorScheme === 'dark';
 
-  // Call these inside the render to ensure they update when language changes
+  // These will update automatically when the translation service notifies listeners
+  // because useTranslation triggers re-renders via updateTrigger state
   const currentLanguage = getCurrentLanguage();
   const supportedLanguages = getSupportedLanguages();
 
   const handleLanguageSelect = async (languageCode: string) => {
     await setLanguage(languageCode);
+    // The checkbox will now update immediately due to the fixed useTranslation hook
+    // which properly manages currentLanguage state and triggers re-renders
   };
 
   return (

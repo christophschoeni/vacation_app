@@ -134,11 +134,14 @@ export const t = (key: string, options?: object): string => {
 
 // Hook for React components
 export const useTranslation = () => {
-  const [updateTrigger, setUpdateTrigger] = useState(0);
+  const [currentLanguage, setCurrentLanguage] = useState(() =>
+    translationService.getCurrentLanguage()
+  );
 
   useEffect(() => {
     const unsubscribe = translationService.subscribe(() => {
-      setUpdateTrigger(prev => prev + 1);
+      // Update the current language state to trigger re-render
+      setCurrentLanguage(translationService.getCurrentLanguage());
     });
     return unsubscribe;
   }, []);
@@ -146,7 +149,7 @@ export const useTranslation = () => {
   return {
     t: translationService.t.bind(translationService),
     setLanguage: translationService.setLanguage.bind(translationService),
-    getCurrentLanguage: translationService.getCurrentLanguage.bind(translationService),
+    getCurrentLanguage: () => currentLanguage,
     getSupportedLanguages: translationService.getSupportedLanguages.bind(translationService),
   };
 };
