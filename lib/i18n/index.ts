@@ -134,34 +134,34 @@ export const t = (key: string, options?: object): string => {
 
 // Hook for React components
 export const useTranslation = () => {
-  const [currentLanguage, setCurrentLanguage] = useState(() =>
-    translationService.getCurrentLanguage()
-  );
-
-  // Force re-render trigger to update translations
-  const [, forceUpdate] = useState(0);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
 
   useEffect(() => {
     const unsubscribe = translationService.subscribe(() => {
-      // Update the current language state to trigger re-render
-      setCurrentLanguage(translationService.getCurrentLanguage());
-      // Force re-render to update all translations
-      forceUpdate(prev => prev + 1);
+      // Trigger re-render when language changes
+      setUpdateTrigger(prev => prev + 1);
     });
     return unsubscribe;
   }, []);
 
-  // Return a wrapper function that uses the current language state
-  // This ensures translations update when language changes
+  // Return wrapper functions that depend on updateTrigger
+  // This ensures they return fresh values after language changes
   const t = (key: string, options?: object): string => {
-    // Using currentLanguage in the function ensures it's reactive
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _ = updateTrigger; // Create dependency on updateTrigger
     return translationService.t(key, options);
+  };
+
+  const getCurrentLanguage = (): string => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _ = updateTrigger; // Create dependency on updateTrigger
+    return translationService.getCurrentLanguage();
   };
 
   return {
     t,
     setLanguage: translationService.setLanguage.bind(translationService),
-    getCurrentLanguage: () => currentLanguage,
+    getCurrentLanguage,
     getSupportedLanguages: translationService.getSupportedLanguages.bind(translationService),
   };
 };
