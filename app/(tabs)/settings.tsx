@@ -1,6 +1,6 @@
 import { Card, Icon, IconName } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import React from 'react';
 import * as Haptics from 'expo-haptics';
 import {
@@ -72,9 +72,18 @@ const SETTINGS_ITEMS: SettingsItem[] = [
 
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
-  const { t } = useTranslation();
+  const { t, currentLanguage } = useTranslation();
   const isDark = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
+  const [, forceUpdate] = React.useState(0);
+
+  // Force re-render when screen comes back into focus
+  // This ensures translations update when returning from language selection
+  useFocusEffect(
+    React.useCallback(() => {
+      forceUpdate(prev => prev + 1);
+    }, [currentLanguage])
+  );
 
   const handleSettingsItemPress = async (route: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
