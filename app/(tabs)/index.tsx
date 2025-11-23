@@ -102,11 +102,11 @@ export default function VacationsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={[]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         title={t('navigation.vacations')}
         variant="large"
-        useSafeAreaPadding={true}
+        useSafeAreaPadding={false}
         rightAction={
           <TouchableOpacity
             style={styles.headerButton}
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 16,
+    paddingTop: 4,
     // paddingBottom is set dynamically in contentContainerStyle with safe area insets
   },
   headerButton: {

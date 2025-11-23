@@ -145,8 +145,8 @@ const styles = StyleSheet.create({
   },
   largeTitleContainer: {
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 8,
+    paddingTop: 4,
+    paddingBottom: 4,
   },
   largeTitleRow: {
     flexDirection: 'row',
