@@ -15,12 +15,11 @@ import { useTranslation } from '@/lib/i18n';
 
 export default function LanguageScreen() {
   const colorScheme = useColorScheme();
-  const { t, getCurrentLanguage, setLanguage, getSupportedLanguages } = useTranslation();
+  const { t, currentLanguage, setLanguage, getSupportedLanguages } = useTranslation();
   const isDark = colorScheme === 'dark';
 
-  // These will update automatically when the translation service notifies listeners
-  // because useTranslation triggers re-renders via updateTrigger state
-  const currentLanguage = getCurrentLanguage();
+  // currentLanguage is now a direct state value that updates automatically
+  // when language changes via the subscription in useTranslation hook
   const supportedLanguages = getSupportedLanguages();
 
   const handleLanguageSelect = async (languageCode: string) => {
