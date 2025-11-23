@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Card, Icon } from '@/components/design';
+import { BlurView } from 'expo-blur';
+import { Icon } from '@/components/design';
 import { useColorScheme } from 'react-native';
 import { useExpenses } from '@/lib/database';
 import {
@@ -86,24 +87,59 @@ export default function VacationCard({ vacation }: VacationCardProps) {
 
   if (vacation.imageUrl) {
     return (
-      <ImageBackground
-        source={{ uri: vacation.imageUrl }}
-        style={styles.gradientCard}
-        imageStyle={styles.backgroundImage}
+      <View
+        style={styles.imageCard}
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacation.budget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
         accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
       >
-        <LinearGradient
-          colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.7)']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.imageOverlay}
+        <ImageBackground
+          source={{ uri: vacation.imageUrl }}
+          style={styles.imageBackground}
+          imageStyle={styles.backgroundImage}
         >
-          <CardContent />
-        </LinearGradient>
-      </ImageBackground>
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.3)']}
+            style={styles.imageGradient}
+          />
+        </ImageBackground>
+
+        <BlurView intensity={80} tint="dark" style={styles.infoContainer}>
+          <View style={styles.infoContent}>
+            <View style={styles.headerRow}>
+              <View style={styles.destinationInfo}>
+                <Text style={styles.imageDestination}>
+                  {vacation.destination}
+                </Text>
+                <Text style={styles.imageCountry}>
+                  {vacation.country}
+                </Text>
+              </View>
+              <Text style={styles.imageDates}>
+                {formatDateRange(vacation.startDate, vacation.endDate)}
+              </Text>
+            </View>
+
+            {vacation.budget && (
+              <View style={styles.budgetRow}>
+                <View style={styles.budgetItem}>
+                  <Icon name="budget" size={14} color="#FFFFFF" />
+                  <Text style={styles.budgetLabel}>
+                    {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacation.budget, defaultCurrency)}
+                  </Text>
+                </View>
+                <Text style={[
+                  styles.budgetBadge,
+                  { backgroundColor: budgetStatus === 'over' ? 'rgba(255, 69, 58, 0.8)' : 'rgba(52, 199, 89, 0.8)' }
+                ]}>
+                  {budgetStatus === 'over' ? '-' : '+'}{formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}
+                </Text>
+              </View>
+            )}
+          </View>
+        </BlurView>
+      </View>
     );
   }
 
@@ -139,12 +175,105 @@ const styles = StyleSheet.create({
     elevation: 3,
     overflow: 'hidden',
   },
-  backgroundImage: {
-    borderRadius: 16,
+  imageCard: {
+    marginBottom: 16,
+    height: 280,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 6,
   },
-  imageOverlay: {
-    paddingVertical: 20,
-    paddingHorizontal: 16,
+  imageBackground: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  backgroundImage: {
+    borderRadius: 20,
+  },
+  imageGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 120,
+  },
+  infoContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    overflow: 'hidden',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  infoContent: {
+    padding: 16,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  destinationInfo: {
+    flex: 1,
+  },
+  imageDestination: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 2,
+    fontFamily: 'System',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  imageCountry: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontFamily: 'System',
+  },
+  imageDates: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.85)',
+    fontFamily: 'System',
+    textAlign: 'right',
+  },
+  budgetRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  budgetItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  budgetLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    fontFamily: 'System',
+  },
+  budgetBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    fontFamily: 'System',
+    overflow: 'hidden',
   },
   cardHeader: {
     flexDirection: 'row',
