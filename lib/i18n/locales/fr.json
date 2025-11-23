@@ -80,7 +80,15 @@
       "currency": "Devise",
       "currency_hint": "pour les dépenses",
       "notes": "Notes",
-      "notes_placeholder": "Informations supplémentaires"
+      "notes_placeholder": "Informations supplémentaires",
+      "image": "Image",
+      "add_photo": "Ajouter une photo",
+      "change_photo": "Changer la photo",
+      "remove_photo": "Supprimer la photo",
+      "photo_source": "Choisir une photo",
+      "camera": "Appareil photo",
+      "gallery": "Galerie",
+      "cancel": "Annuler"
     },
     "empty": {
       "title": "Aucunes vacances trouvées",

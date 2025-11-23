@@ -134,19 +134,35 @@ export const t = (key: string, options?: object): string => {
 
 // Hook for React components
 export const useTranslation = () => {
+  // Store current language as state for reactive updates
+  const [currentLanguage, setCurrentLanguage] = useState(() =>
+    translationService.getCurrentLanguage()
+  );
+
+  // Trigger for translation updates
   const [updateTrigger, setUpdateTrigger] = useState(0);
 
   useEffect(() => {
     const unsubscribe = translationService.subscribe(() => {
+      // Update current language state - this ensures checkbox updates
+      setCurrentLanguage(translationService.getCurrentLanguage());
+      // Trigger re-render for translations
       setUpdateTrigger(prev => prev + 1);
     });
     return unsubscribe;
   }, []);
 
+  // Translation function that re-evaluates on language change
+  const t = (key: string, options?: object): string => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _ = updateTrigger; // Create dependency on updateTrigger
+    return translationService.t(key, options);
+  };
+
   return {
-    t: translationService.t.bind(translationService),
+    t,
     setLanguage: translationService.setLanguage.bind(translationService),
-    getCurrentLanguage: translationService.getCurrentLanguage.bind(translationService),
+    currentLanguage, // Direct state value, not a function
     getSupportedLanguages: translationService.getSupportedLanguages.bind(translationService),
   };
 };

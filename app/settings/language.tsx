@@ -15,22 +15,24 @@ import { useTranslation } from '@/lib/i18n';
 
 export default function LanguageScreen() {
   const colorScheme = useColorScheme();
-  const { t, getCurrentLanguage, setLanguage, getSupportedLanguages } = useTranslation();
+  const { t, currentLanguage, setLanguage, getSupportedLanguages } = useTranslation();
   const isDark = colorScheme === 'dark';
 
-  // Call these inside the render to ensure they update when language changes
-  const currentLanguage = getCurrentLanguage();
+  // currentLanguage is now a direct state value that updates automatically
+  // when language changes via the subscription in useTranslation hook
   const supportedLanguages = getSupportedLanguages();
 
   const handleLanguageSelect = async (languageCode: string) => {
     await setLanguage(languageCode);
+    // The checkbox will now update immediately due to the fixed useTranslation hook
+    // which properly manages currentLanguage state and triggers re-renders
   };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         showBack={true}
-        onBackPress={() => router.push('/(tabs)/settings')}
+        onBackPress={() => router.back()}
       />
 
       <ScrollView

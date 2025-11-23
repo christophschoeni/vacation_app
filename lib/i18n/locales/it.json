@@ -80,7 +80,15 @@
       "currency": "Valuta",
       "currency_hint": "per le spese",
       "notes": "Note",
-      "notes_placeholder": "Informazioni aggiuntive"
+      "notes_placeholder": "Informazioni aggiuntive",
+      "image": "Immagine",
+      "add_photo": "Aggiungi foto",
+      "change_photo": "Cambia foto",
+      "remove_photo": "Rimuovi foto",
+      "photo_source": "Seleziona foto",
+      "camera": "Fotocamera",
+      "gallery": "Galleria",
+      "cancel": "Annulla"
     },
     "empty": {
       "title": "Nessuna vacanza trovata",

@@ -80,7 +80,15 @@
       "currency": "Currency",
       "currency_hint": "for expenses",
       "notes": "Notes",
-      "notes_placeholder": "Additional information"
+      "notes_placeholder": "Additional information",
+      "image": "Image",
+      "add_photo": "Add Photo",
+      "change_photo": "Change Photo",
+      "remove_photo": "Remove Photo",
+      "photo_source": "Select Photo",
+      "camera": "Camera",
+      "gallery": "Gallery",
+      "cancel": "Cancel"
     },
     "empty": {
       "title": "No Vacations Found",

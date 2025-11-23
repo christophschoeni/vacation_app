@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DatePicker, FormInput } from '@/components/ui/forms';
 import CurrencySelector from '@/components/ui/CurrencySelector';
+import ImagePicker from '@/components/ui/ImagePicker';
 import { useVacations } from '@/hooks/use-vacations';
 import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
@@ -49,6 +50,7 @@ export default function VacationEditScreen() {
     endDate: new Date(),
     budget: '',
     currency: defaultCurrency || 'CHF',
+    imageUrl: '',
   });
 
   const [formLoading, setFormLoading] = useState(false);
@@ -63,6 +65,7 @@ export default function VacationEditScreen() {
         endDate: vacation.endDate,
         budget: vacation.budget ? vacation.budget.toString() : '',
         currency: vacation.currency || defaultCurrency || 'CHF',
+        imageUrl: vacation.imageUrl || '',
       });
     }
   }, [vacation, defaultCurrency]);
@@ -119,6 +122,7 @@ export default function VacationEditScreen() {
         budget: parseFloat(formData.budget),
         budgetCurrency: vacation.budgetCurrency,  // Keep existing budget currency
         currency: formData.currency,               // Vacation currency for expenses
+        imageUrl: formData.imageUrl || undefined,
       });
 
       if (updatedVacation) {
@@ -163,6 +167,13 @@ export default function VacationEditScreen() {
             <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               {t('vacation.edit_screen.subtitle')}
             </Text>
+
+            <ImagePicker
+              imageUri={formData.imageUrl}
+              onImageSelected={(uri) => updateField('imageUrl', uri)}
+              onImageRemoved={() => updateField('imageUrl', '')}
+              label={t('vacations.form.image')}
+            />
 
             <FormInput
               label={t('vacation.form.destination')}

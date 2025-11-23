@@ -17,6 +17,7 @@ import { Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import CurrencySelector from '@/components/ui/CurrencySelector';
+import ImagePicker from '@/components/ui/ImagePicker';
 import { useVacations } from '@/hooks/use-vacations';
 import { useTranslation } from '@/lib/i18n';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -34,6 +35,7 @@ export default function AddVacationScreen() {
     endDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
     budget: '',
     currency: defaultCurrency || 'CHF',
+    imageUrl: '',
   });
 
   const handleSave = async () => {
@@ -52,6 +54,7 @@ export default function AddVacationScreen() {
         budget: formData.budget ? parseFloat(formData.budget) : undefined,
         budgetCurrency: defaultCurrency || 'CHF',  // Budget is in system currency
         currency: formData.currency,                // Vacation currency for expenses
+        imageUrl: formData.imageUrl || undefined,
       });
       // Use replace instead of dismiss to trigger useFocusEffect and refresh vacation list
       router.replace('/(tabs)');
@@ -95,6 +98,13 @@ export default function AddVacationScreen() {
           </View>
 
           <View style={styles.formContainer}>
+            <ImagePicker
+              imageUri={formData.imageUrl}
+              onImageSelected={(uri) => updateField('imageUrl', uri)}
+              onImageRemoved={() => updateField('imageUrl', '')}
+              label={t('vacations.form.image')}
+            />
+
             <FormInput
               label={t('vacation.form.destination')}
               value={formData.destination}
