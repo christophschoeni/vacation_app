@@ -98,14 +98,15 @@ export default function VacationCard({ vacation }: VacationCardProps) {
           source={{ uri: vacation.imageUrl }}
           style={styles.imageBackground}
           imageStyle={styles.backgroundImage}
-        >
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.3)']}
-            style={styles.imageGradient}
-          />
-        </ImageBackground>
+        />
 
-        <BlurView intensity={80} tint="dark" style={styles.infoContainer}>
+        <LinearGradient
+          colors={['transparent', 'transparent', 'rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)']}
+          locations={[0, 0.5, 0.75, 1]}
+          style={styles.gradientOverlay}
+        />
+
+        <BlurView intensity={60} tint="dark" style={styles.infoContainer}>
           <View style={styles.infoContent}>
             <View style={styles.headerRow}>
               <View style={styles.destinationInfo}>
@@ -197,12 +198,12 @@ const styles = StyleSheet.create({
   backgroundImage: {
     borderRadius: 20,
   },
-  imageGradient: {
+  gradientOverlay: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    height: 120,
+    height: 180,
   },
   infoContainer: {
     position: 'absolute',
@@ -212,6 +213,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
   infoContent: {
     padding: 16,
