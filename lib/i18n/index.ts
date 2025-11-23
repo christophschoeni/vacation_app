@@ -138,16 +138,28 @@ export const useTranslation = () => {
     translationService.getCurrentLanguage()
   );
 
+  // Force re-render trigger to update translations
+  const [, forceUpdate] = useState(0);
+
   useEffect(() => {
     const unsubscribe = translationService.subscribe(() => {
       // Update the current language state to trigger re-render
       setCurrentLanguage(translationService.getCurrentLanguage());
+      // Force re-render to update all translations
+      forceUpdate(prev => prev + 1);
     });
     return unsubscribe;
   }, []);
 
+  // Return a wrapper function that uses the current language state
+  // This ensures translations update when language changes
+  const t = (key: string, options?: object): string => {
+    // Using currentLanguage in the function ensures it's reactive
+    return translationService.t(key, options);
+  };
+
   return {
-    t: translationService.t.bind(translationService),
+    t,
     setLanguage: translationService.setLanguage.bind(translationService),
     getCurrentLanguage: () => currentLanguage,
     getSupportedLanguages: translationService.getSupportedLanguages.bind(translationService),
