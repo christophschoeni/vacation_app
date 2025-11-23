@@ -77,7 +77,15 @@
       "currency": "Währung",
       "currency_hint": "für Ausgaben",
       "notes": "Notizen",
-      "notes_placeholder": "Zusätzliche Informationen"
+      "notes_placeholder": "Zusätzliche Informationen",
+      "image": "Bild",
+      "add_photo": "Foto hinzufügen",
+      "change_photo": "Foto ändern",
+      "remove_photo": "Foto entfernen",
+      "photo_source": "Foto auswählen",
+      "camera": "Kamera",
+      "gallery": "Galerie",
+      "cancel": "Abbrechen"
     },
     "empty": {
       "title": "Keine Ferien gefunden",

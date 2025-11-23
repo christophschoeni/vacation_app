@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Card, Icon } from '@/components/design';
 import { useColorScheme } from 'react-native';
@@ -35,6 +35,78 @@ export default function VacationCard({ vacation }: VacationCardProps) {
   const secondaryTextColor = getVacationSecondaryTextColor(gradientColors);
   const iconColor = getVacationIconColor(gradientColors);
 
+  const CardContent = () => (
+    <>
+      <View style={styles.cardHeader}>
+        <View style={styles.destinationContainer}>
+          <Text style={[styles.destination, { color: textColor }]}>
+            {vacation.destination}
+          </Text>
+          <Text style={[styles.country, { color: secondaryTextColor }]}>
+            {vacation.country}
+          </Text>
+        </View>
+        <Text style={[styles.dates, { color: secondaryTextColor }]}>
+          {formatDateRange(vacation.startDate, vacation.endDate)}
+        </Text>
+      </View>
+
+      <View style={styles.cardContent}>
+        <View style={styles.hotelContainer}>
+          <Icon name="hotel" size={16} color={iconColor} />
+          <Text style={[styles.hotel, { color: textColor }]}>
+            {vacation.hotel}
+          </Text>
+        </View>
+
+        {vacation.budget && (
+          <View style={styles.budgetContainer}>
+            <Icon name="budget" size={16} color={iconColor} />
+            <View style={styles.budgetInfo}>
+              <Text style={[styles.budgetText, { color: textColor }]}>
+                {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacation.budget, defaultCurrency)}
+              </Text>
+              <Text style={[
+                styles.remainingText,
+                {
+                  color: budgetStatus === 'over'
+                    ? '#FFB3B3' // Light red for over budget
+                    : '#B3FFB3' // Light green for remaining budget
+                }
+              ]}>
+                {budgetStatus === 'over' ? t('components.vacation_card.over_budget') : t('components.vacation_card.remaining')}{' '}
+                {formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}
+              </Text>
+            </View>
+          </View>
+        )}
+      </View>
+    </>
+  );
+
+  if (vacation.imageUrl) {
+    return (
+      <ImageBackground
+        source={{ uri: vacation.imageUrl }}
+        style={styles.gradientCard}
+        imageStyle={styles.backgroundImage}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacation.budget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
+        accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
+      >
+        <LinearGradient
+          colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.7)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.imageOverlay}
+        >
+          <CardContent />
+        </LinearGradient>
+      </ImageBackground>
+    );
+  }
+
   return (
     <LinearGradient
       colors={gradientColors}
@@ -46,50 +118,7 @@ export default function VacationCard({ vacation }: VacationCardProps) {
       accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacation.budget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
       accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
     >
-        <View style={styles.cardHeader}>
-          <View style={styles.destinationContainer}>
-            <Text style={[styles.destination, { color: textColor }]}>
-              {vacation.destination}
-            </Text>
-            <Text style={[styles.country, { color: secondaryTextColor }]}>
-              {vacation.country}
-            </Text>
-          </View>
-          <Text style={[styles.dates, { color: secondaryTextColor }]}>
-            {formatDateRange(vacation.startDate, vacation.endDate)}
-          </Text>
-        </View>
-
-        <View style={styles.cardContent}>
-          <View style={styles.hotelContainer}>
-            <Icon name="hotel" size={16} color={iconColor} />
-            <Text style={[styles.hotel, { color: textColor }]}>
-              {vacation.hotel}
-            </Text>
-          </View>
-
-          {vacation.budget && (
-            <View style={styles.budgetContainer}>
-              <Icon name="budget" size={16} color={iconColor} />
-              <View style={styles.budgetInfo}>
-                <Text style={[styles.budgetText, { color: textColor }]}>
-                  {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacation.budget, defaultCurrency)}
-                </Text>
-                <Text style={[
-                  styles.remainingText,
-                  {
-                    color: budgetStatus === 'over'
-                      ? '#FFB3B3' // Light red for over budget
-                      : '#B3FFB3' // Light green for remaining budget
-                  }
-                ]}>
-                  {budgetStatus === 'over' ? t('components.vacation_card.over_budget') : t('components.vacation_card.remaining')}{' '}
-                  {formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}
-                </Text>
-              </View>
-            </View>
-          )}
-        </View>
+      <CardContent />
     </LinearGradient>
   );
 }
@@ -108,6 +137,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
+    overflow: 'hidden',
+  },
+  backgroundImage: {
+    borderRadius: 16,
+  },
+  imageOverlay: {
+    paddingVertical: 20,
+    paddingHorizontal: 16,
   },
   cardHeader: {
     flexDirection: 'row',

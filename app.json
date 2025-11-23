@@ -60,6 +60,13 @@
           "color": "#007AFF",
           "sounds": []
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Die App benötigt Zugriff auf deine Fotos, um Ferienbilder hinzuzufügen.",
+          "cameraPermission": "Die App benötigt Zugriff auf deine Kamera, um Ferienfotos aufzunehmen."
+        }
       ]
     ],
     "experiments": {
