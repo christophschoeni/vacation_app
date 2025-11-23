@@ -172,7 +172,7 @@ export default function VacationEditScreen() {
               imageUri={formData.imageUrl}
               onImageSelected={(uri) => updateField('imageUrl', uri)}
               onImageRemoved={() => updateField('imageUrl', '')}
-              label={t('vacations.form.image')}
+              label={t('vacation.form.image')}
             />
 
             <FormInput

@@ -65,9 +65,9 @@ export default function ImagePicker({
     showImageSourcePicker(
       handleCameraPress,
       handleGalleryPress,
-      t('vacations.form.camera'),
-      t('vacations.form.gallery'),
-      t('vacations.form.cancel')
+      t('vacation.form.camera'),
+      t('vacation.form.gallery'),
+      t('vacation.form.cancel')
     );
   };
 
@@ -96,12 +96,12 @@ export default function ImagePicker({
             <TouchableOpacity
               style={[styles.actionButton, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}
               onPress={handleAddPhoto}
-              accessibilityLabel={t('vacations.form.change_photo')}
+              accessibilityLabel={t('vacation.form.change_photo')}
               accessibilityRole="button"
             >
               <Icon name="image" size={20} color="#007AFF" />
               <Text style={[styles.actionButtonText, { color: '#007AFF' }]}>
-                {t('vacations.form.change_photo')}
+                {t('vacation.form.change_photo')}
               </Text>
             </TouchableOpacity>
 
@@ -109,12 +109,12 @@ export default function ImagePicker({
               <TouchableOpacity
                 style={[styles.actionButton, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}
                 onPress={handleRemovePhoto}
-                accessibilityLabel={t('vacations.form.remove_photo')}
+                accessibilityLabel={t('vacation.form.remove_photo')}
                 accessibilityRole="button"
               >
                 <Icon name="trash" size={20} color="#FF3B30" />
                 <Text style={[styles.actionButtonText, { color: '#FF3B30' }]}>
-                  {t('vacations.form.remove_photo')}
+                  {t('vacation.form.remove_photo')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -130,12 +130,12 @@ export default function ImagePicker({
             }
           ]}
           onPress={handleAddPhoto}
-          accessibilityLabel={t('vacations.form.add_photo')}
+          accessibilityLabel={t('vacation.form.add_photo')}
           accessibilityRole="button"
         >
           <Icon name="camera" size={32} color={isDark ? '#8E8E93' : '#6D6D70'} />
           <Text style={[styles.addPhotoText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('vacations.form.add_photo')}
+            {t('vacation.form.add_photo')}
           </Text>
         </TouchableOpacity>
       )}
