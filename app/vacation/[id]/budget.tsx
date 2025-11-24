@@ -53,6 +53,30 @@ export default function BudgetDetailScreen() {
       style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}
       edges={['top', 'bottom']}
     >
+      {/* Navigation Bar */}
+      <View style={[styles.navigationBar, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+        <TouchableOpacity
+          style={styles.navBackButton}
+          onPress={() => router.back()}
+          activeOpacity={0.8}
+        >
+          <View style={[styles.navBackButtonInner, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)' }]}>
+            <Icon name="chevron-left" size={24} color={isDark ? '#FFFFFF' : '#007AFF'} />
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.navCenter}>
+          <Text
+            style={[styles.navTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}
+            numberOfLines={1}
+          >
+            {vacation.destination}
+          </Text>
+        </View>
+
+        <View style={styles.navRightPlaceholder} />
+      </View>
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -66,17 +90,6 @@ export default function BudgetDetailScreen() {
               style={styles.headerImage}
               imageStyle={styles.headerImageStyle}
             >
-              {/* Back Button - Positioned over image */}
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => router.back()}
-                activeOpacity={0.8}
-              >
-                <BlurView intensity={80} tint="dark" style={styles.backButtonBlur}>
-                  <Icon name="chevron-left" size={24} color="#FFFFFF" />
-                </BlurView>
-              </TouchableOpacity>
-
               <LinearGradient
                 colors={['transparent', 'rgba(0,0,0,0.7)']}
                 style={styles.imageGradient}
@@ -90,17 +103,6 @@ export default function BudgetDetailScreen() {
           </View>
         ) : (
           <View style={styles.headerNoImageContainer}>
-            {/* Back Button */}
-            <TouchableOpacity
-              style={styles.backButtonNoImage}
-              onPress={() => router.back()}
-              activeOpacity={0.8}
-            >
-              <View style={[styles.backButtonNoImageInner, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)' }]}>
-                <Icon name="chevron-left" size={24} color={isDark ? '#FFFFFF' : '#007AFF'} />
-              </View>
-            </TouchableOpacity>
-
             <View style={[styles.headerNoImage, { backgroundColor: isDark ? '#1C1C1E' : '#F2F2F7' }]}>
               <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
                 {vacation.destination}
@@ -247,6 +249,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  navigationBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
+  },
+  navBackButton: {
+    width: 56,
+  },
+  navBackButtonInner: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  navCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+  },
+  navTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+  },
+  navRightPlaceholder: {
+    width: 56,
+  },
   content: {
     flex: 1,
   },
@@ -264,22 +299,6 @@ const styles = StyleSheet.create({
   headerImageStyle: {
     resizeMode: 'cover',
   },
-  backButton: {
-    position: 'absolute',
-    top: 16,
-    left: 16,
-    zIndex: 10,
-  },
-  backButtonBlur: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
   imageGradient: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -291,17 +310,6 @@ const styles = StyleSheet.create({
   headerNoImageContainer: {
     paddingHorizontal: 16,
     paddingTop: 8,
-  },
-  backButtonNoImage: {
-    marginBottom: 12,
-    alignSelf: 'flex-start',
-  },
-  backButtonNoImageInner: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   headerNoImage: {
     padding: 24,
