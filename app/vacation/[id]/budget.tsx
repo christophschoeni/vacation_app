@@ -51,8 +51,32 @@ export default function BudgetDetailScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}
-      edges={['top']}
+      edges={['top', 'bottom']}
     >
+      {/* Navigation Bar */}
+      <View style={[styles.navigationBar, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+        <TouchableOpacity
+          style={styles.navBackButton}
+          onPress={() => router.back()}
+          activeOpacity={0.8}
+        >
+          <View style={[styles.navBackButtonInner, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)' }]}>
+            <Icon name="chevron-left" size={24} color={isDark ? '#FFFFFF' : '#007AFF'} />
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.navCenter}>
+          <Text
+            style={[styles.navTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}
+            numberOfLines={1}
+          >
+            {vacation.destination}
+          </Text>
+        </View>
+
+        <View style={styles.navRightPlaceholder} />
+      </View>
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -224,6 +248,39 @@ export default function BudgetDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  navigationBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
+  },
+  navBackButton: {
+    width: 56,
+  },
+  navBackButtonInner: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  navCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+  },
+  navTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+  },
+  navRightPlaceholder: {
+    width: 56,
   },
   content: {
     flex: 1,
