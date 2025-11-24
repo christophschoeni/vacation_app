@@ -62,7 +62,7 @@ export default function AppHeader({
 
         {/* Center */}
         <View style={styles.centerSpacer}>
-          {(variant === 'modal' || variant === 'large') && title && (
+          {(variant === 'modal' || variant === 'large' || (variant === 'default' && showBack)) && title && (
             <Text style={[styles.modalTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
               {title}
             </Text>

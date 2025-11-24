@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DraggableFlatList, { RenderItemParams, ScaleDecorator } from 'react-native-draggable-flatlist';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
@@ -31,6 +33,7 @@ export default function ChecklistDetailScreen() {
 
   const [newItemText, setNewItemText] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
+  const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
 
   // Extract vacation ID from the checklist to initialize the hook
   const [vacationId, setVacationId] = useState<string>('');
@@ -193,29 +196,126 @@ export default function ChecklistDetailScreen() {
     );
   };
 
+  const handleReorderItems = async (reorderedItems: ChecklistItem[]) => {
+    try {
+      // Update order property for each item in the database
+      await Promise.all(
+        reorderedItems.map((item, index) =>
+          checklistServiceSQLite.updateItem(item.id, { order: index })
+        )
+      );
+
+      // Update local state
+      setChecklist({
+        ...checklist,
+        items: reorderedItems.map((item, index) => ({
+          ...item,
+          order: index,
+        })),
+      });
+    } catch (error) {
+      logger.error('Failed to reorder items:', error);
+      Alert.alert(t('common.error'), t('checklist.errors.reorder_items'));
+    }
+  };
+
   const completedItems = checklist.items.filter((item: ChecklistItem) => item.completed).length;
   const totalItems = checklist.items.length;
   const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+
+  const renderItem = ({ item, drag, isActive }: RenderItemParams<ChecklistItem>) => {
+    const isDragging = isActive;
+
+    return (
+      <ScaleDecorator>
+        <View
+          style={[
+            styles.itemContainer,
+            {
+              backgroundColor: isDragging
+                ? (isDark ? 'rgba(0, 122, 255, 0.1)' : 'rgba(0, 122, 255, 0.08)')
+                : 'transparent',
+              borderRadius: 8,
+              opacity: isDragging ? 0.9 : 1,
+            },
+          ]}
+        >
+          <TouchableOpacity
+            onPressIn={() => {
+              setDraggedItemId(item.id);
+              drag();
+            }}
+            style={styles.dragHandle}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon
+              name="menu"
+              size={20}
+              color={isDragging ? '#007AFF' : (isDark ? '#8E8E93' : '#C7C7CC')}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => handleToggleItem(item.id)}
+            style={[
+              styles.itemCheckbox,
+              {
+                backgroundColor: item.completed ? '#34C759' : 'transparent',
+                borderColor: item.completed ? '#34C759' : (isDark ? '#3A3A3C' : '#E5E5EA'),
+              }
+            ]}
+            disabled={isDragging}
+          >
+            <Icon
+              name="check"
+              size={16}
+              color={item.completed ? '#FFFFFF' : 'transparent'}
+            />
+          </TouchableOpacity>
+
+          <Text
+            style={[
+              styles.itemText,
+              {
+                color: item.completed
+                  ? (isDark ? '#8E8E93' : '#6D6D70')
+                  : (isDark ? '#FFFFFF' : '#1C1C1E'),
+                textDecorationLine: item.completed ? 'line-through' : 'none',
+              },
+            ]}
+          >
+            {item.text}
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => handleDeleteItem(item)}
+            style={styles.deleteButton}
+            disabled={isDragging}
+          >
+            <Icon name="close" size={14} color={isDark ? '#8E8E93' : '#6D6D70'} />
+          </TouchableOpacity>
+        </View>
+      </ScaleDecorator>
+    );
+  };
+
+  const sortedItems = [...checklist.items].sort((a: ChecklistItem, b: ChecklistItem) => a.order - b.order);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={checklist.title}
-        subtitle={`${getCategoryName(checklist.category)} • ${completedItems}/${totalItems}`}
         variant="default"
         showBack={true}
         onBackPress={() => router.back()}
-        leftAction={
-          <TouchableOpacity onPress={handleEditTitle}>
-            <Icon name="edit" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-          </TouchableOpacity>
-        }
         rightAction={
           <TouchableOpacity
             onPress={() => setIsAddingItem(!isAddingItem)}
-            style={[styles.addButton, { backgroundColor: getCategoryColor(checklist.category) }]}
+            style={styles.headerButton}
           >
-            <Icon name="plus" size={20} color="#FFFFFF" />
+            <View style={[styles.headerButtonInner, { backgroundColor: isDark ? 'rgba(52, 199, 89, 0.2)' : 'rgba(52, 199, 89, 0.15)' }]}>
+              <Icon name="plus" size={22} color={isDark ? '#34C759' : '#28A745'} />
+            </View>
           </TouchableOpacity>
         }
       />
@@ -287,47 +387,19 @@ export default function ChecklistDetailScreen() {
 
           {/* Items List */}
           <View style={styles.itemsList}>
-            {checklist.items
-              .sort((a: ChecklistItem, b: ChecklistItem) => a.order - b.order)
-              .map((item: ChecklistItem) => (
-                <View key={item.id} style={styles.itemContainer}>
-                  <TouchableOpacity
-                    onPress={() => handleToggleItem(item.id)}
-                    style={[
-                      styles.itemCheckbox,
-                      {
-                        backgroundColor: item.completed ? '#34C759' : 'transparent',
-                        borderColor: item.completed ? '#34C759' : (isDark ? '#3A3A3C' : '#E5E5EA'),
-                      }
-                    ]}
-                  >
-                    <Icon
-                      name="check"
-                      size={16}
-                      color={item.completed ? '#FFFFFF' : 'transparent'}
-                    />
-                  </TouchableOpacity>
-                  <Text
-                    style={[
-                      styles.itemText,
-                      {
-                        color: item.completed
-                          ? (isDark ? '#8E8E93' : '#6D6D70')
-                          : (isDark ? '#FFFFFF' : '#1C1C1E'),
-                        textDecorationLine: item.completed ? 'line-through' : 'none',
-                      },
-                    ]}
-                  >
-                    {item.text}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => handleDeleteItem(item)}
-                    style={styles.deleteButton}
-                  >
-                    <Icon name="close" size={14} color={isDark ? '#8E8E93' : '#6D6D70'} />
-                  </TouchableOpacity>
-                </View>
-              ))}
+            <DraggableFlatList
+              data={sortedItems}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+              onDragBegin={() => {}}
+              onDragEnd={({ data }) => {
+                handleReorderItems(data);
+                setDraggedItemId(null);
+              }}
+              scrollEnabled={false}
+              activationDistance={10}
+              dragItemOverflow={true}
+            />
           </View>
 
           {/* Empty State */}
@@ -383,10 +455,14 @@ const styles = StyleSheet.create({
   headerSpacer: {
     width: 40,
   },
-  addButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  headerButton: {
+    padding: 8,
+    marginRight: -8,
+  },
+  headerButtonInner: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -449,6 +525,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 4,
     gap: 12,
+  },
+  dragHandle: {
+    padding: 4,
+    marginRight: 4,
   },
   itemCheckbox: {
     width: 24,

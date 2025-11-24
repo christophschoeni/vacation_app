@@ -361,6 +361,24 @@ function RootNavigation() {
           }}
         />
         <Stack.Screen
+          name="checklist/select-template"
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animationDuration: 300,
+            ...slideFromRight,
+          }}
+        />
+        <Stack.Screen
+          name="checklist/create"
+          options={{
+            headerShown: false,
+            presentation: 'modal',
+            animationDuration: 350,
+            ...modalSlideUp,
+          }}
+        />
+        <Stack.Screen
           name="vacation-edit"
           options={{
             headerShown: false,

@@ -103,9 +103,18 @@
       "title": "Listen",
       "count": "{{count}} Liste",
       "count_plural": "{{count}} Listen",
+      "item": "Element",
+      "items": "Elemente",
+      "more_items": "weitere",
       "create": {
         "title": "Neue Liste erstellen",
-        "prompt": "Name der Liste:"
+        "prompt": "Name der Liste:",
+        "list_name": "Name der Liste",
+        "list_name_placeholder": "z.B. Packliste",
+        "items": "Elemente",
+        "items_hint": "Optional",
+        "item_placeholder": "z.B. Reisepass",
+        "add_item": "Element hinzufügen"
       },
       "delete": {
         "title": "Liste löschen",
@@ -113,6 +122,7 @@
       },
       "templates": {
         "title": "Vorlagen",
+        "subtitle": "Wählen Sie eine Vorlage für Ihre Liste",
         "empty": "Keine Vorlagen verfügbar.",
         "select_title": "Vorlage auswählen",
         "select_prompt": "Wählen Sie eine Vorlage aus:"
@@ -124,7 +134,8 @@
       "errors": {
         "create": "Liste konnte nicht erstellt werden.",
         "create_from_template": "Liste konnte nicht aus Vorlage erstellt werden.",
-        "delete": "Liste konnte nicht gelöscht werden."
+        "delete": "Liste konnte nicht gelöscht werden.",
+        "title_required": "Bitte geben Sie einen Namen für die Liste ein."
       }
     },
     "settings_screen": {
@@ -290,7 +301,8 @@
       "add_item": "Element konnte nicht hinzugefügt werden.",
       "update_item": "Element konnte nicht aktualisiert werden.",
       "delete_item": "Element konnte nicht gelöscht werden.",
-      "update_title": "Titel konnte nicht geändert werden."
+      "update_title": "Titel konnte nicht geändert werden.",
+      "reorder_items": "Elemente konnten nicht sortiert werden."
     },
     "progress": {
       "completed": "{{completed}} von {{total}} erledigt",

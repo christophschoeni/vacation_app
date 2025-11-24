@@ -106,9 +106,18 @@
       "title": "Lists",
       "count": "{{count}} List",
       "count_plural": "{{count}} Lists",
+      "item": "item",
+      "items": "items",
+      "more_items": "more",
       "create": {
         "title": "Create New List",
-        "prompt": "List name:"
+        "prompt": "List name:",
+        "list_name": "List Name",
+        "list_name_placeholder": "e.g. Packing List",
+        "items": "Items",
+        "items_hint": "Optional",
+        "item_placeholder": "e.g. Passport",
+        "add_item": "Add Item"
       },
       "delete": {
         "title": "Delete List",
@@ -116,6 +125,7 @@
       },
       "templates": {
         "title": "Templates",
+        "subtitle": "Choose a template for your list",
         "empty": "No templates available.",
         "select_title": "Select Template",
         "select_prompt": "Choose a template:"
@@ -127,7 +137,8 @@
       "errors": {
         "create": "Failed to create list.",
         "create_from_template": "Failed to create list from template.",
-        "delete": "Failed to delete list."
+        "delete": "Failed to delete list.",
+        "title_required": "Please enter a name for the list."
       }
     },
     "settings_screen": {
@@ -294,7 +305,8 @@
       "add_item": "Failed to add item.",
       "update_item": "Failed to update item.",
       "delete_item": "Failed to delete item.",
-      "update_title": "Failed to update title."
+      "update_title": "Failed to update title.",
+      "reorder_items": "Failed to reorder items."
     },
     "progress": {
       "completed": "{{completed}} of {{total}} completed",

@@ -65,57 +65,13 @@ export default function VacationChecklistsScreen() {
   }, [checklists]);
 
   const handleCreateList = () => {
-    Alert.prompt(
-      t('vacation.checklists.create.title'),
-      t('vacation.checklists.create.prompt'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.create'),
-          onPress: async (title) => {
-            if (title?.trim()) {
-              try {
-                await createChecklist(title.trim());
-              } catch (error) {
-                Alert.alert(t('common.error'), t('vacation.checklists.errors.create'));
-              }
-            }
-          },
-        },
-      ],
-      'plain-text'
-    );
+    if (!vacationId) return;
+    router.push(`/checklist/create?vacationId=${vacationId}`);
   };
-
 
   const handleShowTemplates = () => {
-    if (templates.length === 0) {
-      Alert.alert(t('vacation.checklists.templates.title'), t('vacation.checklists.templates.empty'));
-      return;
-    }
-
-    const templateButtons = templates.map(template => ({
-      text: template.title,
-      onPress: () => handleSelectTemplate(template.id),
-    }));
-
-    Alert.alert(
-      t('vacation.checklists.templates.select_title'),
-      t('vacation.checklists.templates.select_prompt'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        ...templateButtons,
-      ]
-    );
-  };
-
-  const handleSelectTemplate = async (templateId: string) => {
-    try {
-      const template = templates.find(t => t.id === templateId);
-      await createFromTemplate(templateId);
-    } catch (error) {
-      Alert.alert(t('common.error'), t('vacation.checklists.errors.create_from_template'));
-    }
+    if (!vacationId) return;
+    router.push(`/checklist/select-template?vacationId=${vacationId}`);
   };
 
   const handleDeleteChecklist = (checklistId: string) => {
