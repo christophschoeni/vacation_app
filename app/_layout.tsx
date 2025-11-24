@@ -3,11 +3,15 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import * as SplashScreen from 'expo-splash-screen';
 import insights from 'expo-insights';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, useColorScheme } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { db } from '@/lib/db/database';
@@ -134,6 +138,9 @@ function RootNavigation() {
           if (insights && typeof insights.track === 'function') {
             insights.track('app_launched');
           }
+
+          // Hide splash screen after initialization is complete
+          await SplashScreen.hideAsync();
         } catch (error) {
           console.warn('Failed to install default data or track app launch:', error);
           // For new users, still check onboarding status even if initialization fails
@@ -141,9 +148,13 @@ function RootNavigation() {
             const completed = await onboardingService.hasCompletedOnboarding();
             setOnboardingCompleted(completed);
           } catch (onboardingError) {
-            // Only if onboarding check also fails, assume completed to avoid blocking
+            // IMPORTANT: For new users, default to NOT completed to show onboarding
+            // This ensures first-time users always see the onboarding screen
             console.warn('Failed to check onboarding status:', onboardingError);
-            setOnboardingCompleted(true);
+            setOnboardingCompleted(false);
+          } finally {
+            // Always hide splash screen, even if initialization fails
+            await SplashScreen.hideAsync();
           }
         }
       };
