@@ -143,8 +143,10 @@ export default function VacationChecklistsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
+        title={t('vacation.checklists.title')}
+        variant="large"
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
         rightAction={
@@ -176,11 +178,7 @@ export default function VacationChecklistsScreen() {
           contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
           showsVerticalScrollIndicator={false}
         >
-          {/* iOS-style large title in content area */}
-          <View style={styles.titleSection}>
-            <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {t('vacation.checklists.title')}
-            </Text>
+          <View style={styles.subtitleContainer}>
             <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               {t('vacation.checklists.count', { count: checklists.length })}
             </Text>
@@ -215,23 +213,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  titleSection: {
+  subtitleContainer: {
     paddingHorizontal: 16,
     paddingTop: 4,
     paddingBottom: 8,
-  },
-  largeTitle: {
-    fontSize: 34,
-    fontWeight: '700',
-    fontFamily: 'System',
-    lineHeight: 41,
   },
   subtitle: {
     fontSize: 16,
     fontWeight: '400',
     fontFamily: 'System',
     color: '#6D6D70',
-    marginTop: 4,
   },
   header: {
     paddingHorizontal: 16,

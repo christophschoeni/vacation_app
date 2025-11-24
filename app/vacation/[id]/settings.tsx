@@ -61,6 +61,8 @@ export default function VacationSettingsScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
+        title={t('vacation.settings_screen.title')}
+        variant="large"
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
       />
@@ -70,12 +72,6 @@ export default function VacationSettingsScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* iOS-style large title in content area */}
-        <View style={styles.titleSection}>
-          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('vacation.settings_screen.title')}
-          </Text>
-        </View>
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
@@ -119,25 +115,13 @@ const styles = StyleSheet.create({
   headerContainer: {
     zIndex: 1000,
   },
-  titleSection: {
-    paddingHorizontal: 0,
-    paddingTop: 4,
-    paddingBottom: 8,
-    marginLeft: 0,
-  },
-  largeTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    fontFamily: 'System',
-    lineHeight: 34,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 16,
   },
   scrollContent: {
     paddingTop: 16,
-    paddingBottom: 120,
+    // paddingBottom set dynamically
   },
   section: {
     marginBottom: 24,

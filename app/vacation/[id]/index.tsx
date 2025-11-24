@@ -187,8 +187,10 @@ export default function VacationBudgetScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
+        title={t('budget.overview.title')}
+        variant="large"
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
         rightAction={
@@ -231,12 +233,6 @@ export default function VacationBudgetScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* iOS-style large title in content area */}
-        <View style={styles.titleSection}>
-          <Text style={[styles.largeTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('budget.overview.title')}
-          </Text>
-        </View>
 
         {/* Enhanced Budget Overview */}
         <BudgetOverview vacation={displayVacation} expenses={expenses} />
@@ -280,17 +276,6 @@ export default function VacationBudgetScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  titleSection: {
-    paddingHorizontal: 16,
-    paddingTop: 4,
-    paddingBottom: 8,
-  },
-  largeTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    fontFamily: 'System',
-    lineHeight: 34,
   },
   addButton: {
     padding: 8,
