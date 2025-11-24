@@ -1,7 +1,8 @@
-import { router, useSegments, useFocusEffect, Slot, Tabs } from 'expo-router';
+import { router, useSegments, useFocusEffect, Slot } from 'expo-router';
+import { NativeTabs, Icon as NativeIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useCallback, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
@@ -9,7 +10,6 @@ import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
 import { useTranslation } from '@/lib/i18n';
 import { VacationProvider, useVacationContext } from '@/contexts/VacationContext';
-import GlassTabBar from '@/components/navigation/GlassTabBar';
 
 function VacationDetailContent() {
   const vacationId = useRouteParam('id');
@@ -64,51 +64,70 @@ function VacationDetailContent() {
     );
   }
 
+  // iOS-specific tint colors (system blue)
+  const tintColor = isDark ? '#0A84FF' : '#007AFF';
+
   return (
-    <Tabs
-      tabBar={(props) => <GlassTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: 'transparent',
-          borderTopWidth: 0,
-          elevation: 0,
-        },
-      }}
+    <NativeTabs
+      minimizeBehavior="onScrollDown"
+      disableTransparentOnScrollEdge
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: t('vacation.tabs.budget'),
-          tabBarIcon: { sfSymbol: 'dollarsign.circle' } as any,
-        }}
-      />
+      <NativeTabs.Trigger name="index">
+        <Label
+          labelStyle={{
+            color: tintColor,
+          }}
+        >
+          {t('vacation.tabs.budget')}
+        </Label>
+        <NativeIcon
+          sf={Platform.OS === 'ios' ? 'dollarsign.circle' : undefined}
+          tintColor={tintColor}
+        />
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="report"
-        options={{
-          title: t('vacation.tabs.report'),
-          tabBarIcon: { sfSymbol: 'chart.bar' } as any,
-        }}
-      />
+      <NativeTabs.Trigger name="report">
+        <Label
+          labelStyle={{
+            color: tintColor,
+          }}
+        >
+          {t('vacation.tabs.report')}
+        </Label>
+        <NativeIcon
+          sf={Platform.OS === 'ios' ? 'chart.bar' : undefined}
+          tintColor={tintColor}
+        />
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="checklists"
-        options={{
-          title: t('vacation.tabs.lists'),
-          tabBarIcon: { sfSymbol: 'checklist' } as any,
-        }}
-      />
+      <NativeTabs.Trigger name="checklists">
+        <Label
+          labelStyle={{
+            color: tintColor,
+          }}
+        >
+          {t('vacation.tabs.lists')}
+        </Label>
+        <NativeIcon
+          sf={Platform.OS === 'ios' ? 'checklist' : undefined}
+          tintColor={tintColor}
+        />
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: t('vacation.tabs.settings'),
-          tabBarIcon: { sfSymbol: 'gear' } as any,
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger name="settings">
+        <Label
+          labelStyle={{
+            color: tintColor,
+          }}
+        >
+          {t('vacation.tabs.settings')}
+        </Label>
+        <NativeIcon
+          sf={Platform.OS === 'ios' ? 'gear' : undefined}
+          tintColor={tintColor}
+        />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
 
