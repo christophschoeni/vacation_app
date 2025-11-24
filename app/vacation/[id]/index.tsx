@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 17,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#FFFFFF',
     fontFamily: 'System',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',

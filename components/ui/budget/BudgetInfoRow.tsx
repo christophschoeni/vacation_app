@@ -33,19 +33,19 @@ export default function BudgetInfoRow({ vacation, expenses }: BudgetInfoRowProps
   return (
     <View style={[styles.budgetInfoRow, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <View style={styles.budgetInfoItem}>
-        <Text style={[styles.budgetInfoAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          {formatCurrency(analysis.totalBudget, defaultCurrency)}
+        <Text style={[styles.budgetInfoAmount, { color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E') }]}>
+          {formatCurrency(Math.abs(analysis.remainingBudget), defaultCurrency)}
         </Text>
         <Text style={[styles.budgetInfoLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-          {t('budget.overview.total_budget')}
+          {analysis.isOverBudget ? 'Überschritten' : 'Restbetrag'}
         </Text>
       </View>
       <View style={styles.budgetInfoItem}>
         <Text style={[styles.budgetInfoAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          {formatCurrency(analysis.totalExpenses, defaultCurrency)}
+          {formatCurrency(analysis.averageSpentPerDay, defaultCurrency)}
         </Text>
         <Text style={[styles.budgetInfoLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-          {t('budget.spent_amount')}
+          Ø Pro Tag
         </Text>
       </View>
     </View>
