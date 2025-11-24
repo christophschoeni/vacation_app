@@ -201,10 +201,17 @@ export default function VacationBudgetScreen() {
             style={styles.backButton}
             activeOpacity={0.8}
           >
-            <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
-              <Icon name="arrow-left" size={20} color="#FFFFFF" />
+            <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.35)' }]}>
+              <Icon name="arrow-left" size={22} color="#FFFFFF" />
             </View>
           </TouchableOpacity>
+
+          {/* Center Title */}
+          <View style={styles.headerCenter}>
+            <Text style={styles.headerTitle} numberOfLines={1}>
+              {displayVacation.destination}
+            </Text>
+          </View>
 
           {/* Right Action Buttons */}
           <View style={styles.headerActions}>
@@ -213,10 +220,10 @@ export default function VacationBudgetScreen() {
               onPress={handleSortToggle}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
+              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.35)' }]}>
                 <Icon
                   name={sortOrder === 'desc' ? 'arrow-down' : 'arrow-up'}
-                  size={18}
+                  size={20}
                   color="#FFFFFF"
                 />
               </View>
@@ -226,8 +233,8 @@ export default function VacationBudgetScreen() {
               onPress={() => router.push(`/expense/add?vacationId=${vacationId}`)}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
-                <Icon name="plus" size={18} color="#FFFFFF" />
+              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(52, 199, 89, 0.85)' }]}>
+                <Icon name="plus" size={22} color="#FFFFFF" />
               </View>
             </TouchableOpacity>
           </View>
@@ -367,17 +374,32 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'System',
   },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    fontFamily: 'System',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
   headerActions: {
     flexDirection: 'row',
     gap: 8,
   },
   headerButton: {
-    padding: 4,
+    // Empty style - kept for TouchableOpacity
   },
   headerButtonInner: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
