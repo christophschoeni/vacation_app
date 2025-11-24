@@ -31,6 +31,8 @@ export default function LanguageScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
+        title={t('settings.language.title')}
+        variant="large"
         showBack={true}
         onBackPress={() => router.back()}
       />
@@ -40,13 +42,6 @@ export default function LanguageScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* iOS-style large title in content area */}
-        <View style={styles.titleSection}>
-          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('settings.language.title')}
-          </Text>
-        </View>
-
         <View style={styles.section}>
           <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
             {t('settings.language.subtitle')}

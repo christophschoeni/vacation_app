@@ -14,6 +14,7 @@ import {
 import { formatDateRange, formatCurrencyCompact } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
+import { currencyService } from '@/lib/currency';
 import type { Vacation } from '@/types';
 
 interface VacationCardProps {
@@ -25,10 +26,47 @@ export default function VacationCard({ vacation }: VacationCardProps) {
   const { t } = useTranslation();
   const { expenses } = useExpenses(vacation.id);
   const { defaultCurrency } = useCurrency();
+  const [totalExpenses, setTotalExpenses] = React.useState(0);
+  const [vacationBudget, setVacationBudget] = React.useState(vacation.budget || 0);
 
-  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amountCHF, 0);
-  const remainingBudget = vacation.budget ? vacation.budget - totalExpenses : 0;
-  const budgetStatus = vacation.budget && remainingBudget < 0 ? 'over' : 'normal';
+  // Calculate total expenses with currency conversion
+  React.useEffect(() => {
+    let cancelled = false;
+
+    async function calculateTotals() {
+      // Convert all expenses to default currency
+      let total = 0;
+      for (const expense of expenses) {
+        const converted = await currencyService.convertCurrency(
+          expense.amount,
+          expense.currency,
+          defaultCurrency
+        );
+        total += converted;
+      }
+
+      // Convert vacation budget to default currency
+      const budgetConverted = await currencyService.convertCurrency(
+        vacation.budget || 0,
+        vacation.budgetCurrency || 'CHF',
+        defaultCurrency
+      );
+
+      if (!cancelled) {
+        setTotalExpenses(total);
+        setVacationBudget(budgetConverted);
+      }
+    }
+
+    calculateTotals();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [expenses, vacation.budget, vacation.budgetCurrency, defaultCurrency]);
+
+  const remainingBudget = vacationBudget - totalExpenses;
+  const budgetStatus = vacationBudget && remainingBudget < 0 ? 'over' : 'normal';
 
   // Gradient colors for this vacation
   const gradientColors = getVacationGradient(vacation);
@@ -65,7 +103,7 @@ export default function VacationCard({ vacation }: VacationCardProps) {
             <Icon name="budget" size={16} color={iconColor} />
             <View style={styles.budgetInfo}>
               <Text style={[styles.budgetText, { color: textColor }]}>
-                {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacation.budget, defaultCurrency)}
+                {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacationBudget, defaultCurrency)}
               </Text>
               <Text style={[
                 styles.remainingText,
@@ -91,7 +129,7 @@ export default function VacationCard({ vacation }: VacationCardProps) {
         style={styles.imageCard}
         accessible={true}
         accessibilityRole="button"
-        accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacation.budget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
+        accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacationBudget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
         accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
       >
         <ImageBackground
@@ -127,7 +165,7 @@ export default function VacationCard({ vacation }: VacationCardProps) {
                 <View style={styles.budgetItem}>
                   <Icon name="budget" size={14} color="#FFFFFF" />
                   <Text style={styles.budgetLabel}>
-                    {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacation.budget, defaultCurrency)}
+                    {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacationBudget, defaultCurrency)}
                   </Text>
                 </View>
                 <Text style={[
@@ -152,7 +190,7 @@ export default function VacationCard({ vacation }: VacationCardProps) {
       style={styles.gradientCard}
       accessible={true}
       accessibilityRole="button"
-      accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacation.budget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
+      accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacationBudget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
       accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
     >
       <CardContent />

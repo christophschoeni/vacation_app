@@ -69,8 +69,8 @@ export async function calculateBudgetAnalysisAsync(
   let totalExpenses = 0;
   for (const expense of expenses) {
     const convertedAmount = await currencyService.convertCurrency(
-      expense.amountCHF,
-      'CHF',
+      expense.amount,
+      expense.currency,
       targetCurrency
     );
     totalExpenses += convertedAmount;

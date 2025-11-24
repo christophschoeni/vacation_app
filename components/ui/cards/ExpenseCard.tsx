@@ -66,41 +66,46 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
     }
   };
 
+  const categoryColor = getExpenseCategoryColor(expense.category);
+
   return (
     <TouchableOpacity
       onPress={handlePress}
       onLongPress={handleLongPress}
       activeOpacity={0.7}
     >
-      <Card style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View style={styles.categoryContainer}>
+      <Card style={[styles.card, { backgroundColor: categoryColor }]}>
+        {/* Date at top */}
+        <Text style={[styles.date, { color: 'rgba(255, 255, 255, 0.8)' }]}>
+          {formatDateTime(expense.date)}
+        </Text>
+
+        {/* Main content row */}
+        <View style={styles.cardContent}>
+          <View style={styles.leftContent}>
             <Icon
               name={getExpenseCategoryIcon(expense.category) as any}
               size={20}
-              color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'}
+              color="rgba(255, 255, 255, 0.9)"
             />
             <View style={styles.descriptionContainer}>
-              <Text style={[styles.description, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+              <Text style={[styles.description, { color: '#FFFFFF' }]}>
                 {expense.description}
               </Text>
-              <Text style={[styles.category, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
+              <Text style={[styles.category, { color: 'rgba(255, 255, 255, 0.8)' }]}>
                 {getExpenseCategoryLabel(expense.category)}
               </Text>
             </View>
           </View>
           <View style={styles.amountContainer}>
-            <Text style={[styles.amount, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+            <Text style={[styles.amount, { color: '#FFFFFF' }]}>
               {formatCurrency(expense.amount, expense.currency)}
             </Text>
             {convertedAmount !== null && (
-              <Text style={[styles.convertedAmount, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                ≈ {formatCurrency(convertedAmount, defaultCurrency)}
+              <Text style={[styles.convertedAmount, { color: 'rgba(255, 255, 255, 0.8)' }]}>
+                {formatCurrency(convertedAmount, defaultCurrency)}
               </Text>
             )}
-            <Text style={[styles.date, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-              {formatDateTime(expense.date)}
-            </Text>
           </View>
         </View>
       </Card>
@@ -112,12 +117,18 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 12,
   },
-  cardHeader: {
+  date: {
+    fontSize: 13,
+    fontWeight: '400',
+    fontFamily: 'System',
+    marginBottom: 8,
+  },
+  cardContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  categoryContainer: {
+  leftContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
@@ -141,19 +152,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   amount: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
     marginBottom: 2,
     fontFamily: 'System',
   },
   convertedAmount: {
     fontSize: 13,
-    fontWeight: '400',
-    marginBottom: 2,
-    fontFamily: 'System',
-  },
-  date: {
-    fontSize: 12,
     fontWeight: '400',
     fontFamily: 'System',
   },

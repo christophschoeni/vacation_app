@@ -105,7 +105,7 @@ export default function VacationsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         title={t('navigation.vacations')}
-        variant="large"
+        variant="default"
         useSafeAreaPadding={false}
         rightAction={
           <TouchableOpacity
@@ -117,7 +117,7 @@ export default function VacationsScreen() {
             accessibilityRole="button"
           >
             <View style={[styles.headerButtonInner, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 122, 255, 0.1)' }]}>
-              <Icon name="plus" size={18} color={isDark ? '#FFFFFF' : '#007AFF'} />
+              <Icon name="plus" size={22} color={isDark ? '#FFFFFF' : '#007AFF'} />
             </View>
           </TouchableOpacity>
         }
@@ -181,12 +181,12 @@ const styles = StyleSheet.create({
     // paddingBottom is set dynamically in contentContainerStyle with safe area insets
   },
   headerButton: {
-    marginRight: -8,
+    marginRight: 0,
   },
   headerButtonInner: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },

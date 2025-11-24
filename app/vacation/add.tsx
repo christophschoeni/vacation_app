@@ -76,6 +76,7 @@ export default function AddVacationScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         variant="modal"
+        title={t('vacation.add.title')}
         showBack={true}
         onBackPress={handleCancel}
         onRightPress={handleSave}
@@ -90,13 +91,6 @@ export default function AddVacationScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* iOS-style large title in content area */}
-          <View style={styles.titleSection}>
-            <Text style={[styles.largeTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-              {t('vacation.add.title')}
-            </Text>
-          </View>
-
           <View style={styles.formContainer}>
             <ImagePicker
               imageUri={formData.imageUrl}

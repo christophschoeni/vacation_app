@@ -231,10 +231,6 @@ export default function TemplatesScreen() {
         </View>
       ) : (
         <View style={styles.content}>
-          <Text style={[styles.pageTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('settings.templates.title')}
-          </Text>
-
           <View style={styles.descriptionContainer}>
             <Text style={[styles.descriptionText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               {t('settings.templates.description')}

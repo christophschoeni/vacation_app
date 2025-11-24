@@ -158,7 +158,9 @@ export default function CurrencyScreen() {
             style={styles.headerButton}
             accessibilityLabel={t('settings.currency.add_aria')}
           >
-            <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+            <View style={[styles.headerButtonInner, { backgroundColor: isDark ? 'rgba(52, 199, 89, 0.2)' : 'rgba(52, 199, 89, 0.15)' }]}>
+              <Icon name="plus" size={22} color={isDark ? '#34C759' : '#28A745'} />
+            </View>
           </TouchableOpacity>
         }
       />
@@ -245,6 +247,13 @@ const styles = StyleSheet.create({
   headerButton: {
     padding: 8,
     marginRight: -8,
+  },
+  headerButtonInner: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     flex: 1,

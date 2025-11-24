@@ -146,9 +146,7 @@ export default function VacationChecklistsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         title={t('vacation.checklists.title')}
-        variant="large"
-        showBack={true}
-        onBackPress={() => router.push('/(tabs)')}
+        variant="default"
         rightAction={
           <View style={styles.headerButtonGroup}>
             <TouchableOpacity
@@ -156,8 +154,8 @@ export default function VacationChecklistsScreen() {
               onPress={handleShowTemplates}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon name="book-template" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
+              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 122, 255, 0.1)' }]}>
+                <Icon name="book-template" size={22} color={colorScheme === 'dark' ? '#FFFFFF' : '#007AFF'} />
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -165,8 +163,8 @@ export default function VacationChecklistsScreen() {
               onPress={handleCreateList}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon name="plus" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
+              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(52, 199, 89, 0.2)' : 'rgba(52, 199, 89, 0.15)' }]}>
+                <Icon name="plus" size={22} color={colorScheme === 'dark' ? '#34C759' : '#28A745'} />
               </View>
             </TouchableOpacity>
           </View>
@@ -175,7 +173,7 @@ export default function VacationChecklistsScreen() {
       {checklists.length > 0 ? (
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.subtitleContainer}>
@@ -214,7 +212,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   subtitleContainer: {
-    paddingHorizontal: 16,
     paddingTop: 4,
     paddingBottom: 8,
   },
@@ -247,8 +244,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   scrollContent: {
+    paddingTop: 16,
     paddingHorizontal: 16,
-    paddingVertical: 4,
   },
   emptyState: {
     alignItems: 'center',
@@ -275,21 +272,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   headerButton: {
-    padding: 4,
+    marginRight: 0,
   },
   headerButtonInner: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
 });

@@ -44,7 +44,7 @@
   "vacation": {
     "title": "Ferien",
     "add": {
-      "title": "Neue Ferien",
+      "title": "Neue Reise",
       "button": "Ferien erstellen",
       "success": "Ferien erfolgreich erstellt"
     },
@@ -90,7 +90,7 @@
     "empty": {
       "title": "Keine Ferien gefunden",
       "subtitle": "Erstellen Sie Ihre erste Reise",
-      "button": "Neue Ferien erstellen"
+      "button": "Neue Reise erstellen"
     },
     "settings": {
       "title": "Ferien-Einstellungen",
@@ -186,6 +186,9 @@
     "empty": {
       "title": "Noch keine Ausgaben erfasst",
       "subtitle": "Tippe auf ➕ um deine erste Ausgabe hinzuzufügen"
+    },
+    "section": {
+      "title": "Ausgaben"
     }
   },
   "categories": {
@@ -199,8 +202,10 @@
   },
   "budget": {
     "title": "Budget",
+    "spent_amount": "Ausgegeben",
     "overview": {
       "title": "Budget Übersicht",
+      "total_budget": "Budget",
       "available": "Verfügbar",
       "spent": "Ausgegeben",
       "remaining": "Verbleibend",
@@ -758,6 +763,12 @@
   },
   "report": {
     "total_expenses": "Gesamtausgaben",
+    "total_budget": "Gesamtbudget",
+    "remaining_budget": "Restbudget",
+    "remaining_days": "Verbleibende Tage",
+    "per_day": "Pro Tag verfügbar",
+    "day": "Tag",
+    "days": "Tage",
     "no_data": "Keine Daten verfügbar",
     "no_data_subtitle": "Fügen Sie Ausgaben hinzu, um den Report zu sehen",
     "expense_count": "{{count}} Ausgabe",

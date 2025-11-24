@@ -62,14 +62,12 @@ export default function VacationSettingsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         title={t('vacation.settings_screen.title')}
-        variant="large"
-        showBack={true}
-        onBackPress={() => router.push('/(tabs)')}
+        variant="default"
       />
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
         showsVerticalScrollIndicator={false}
       >
 
@@ -117,10 +115,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
     paddingTop: 16,
+    paddingHorizontal: 16,
     // paddingBottom set dynamically
   },
   section: {

@@ -42,8 +42,8 @@ export default function AppHeader({
               accessibilityLabel={t('common.back')}
             >
               {variant === 'modal' ? (
-                <View style={styles.modalButtonInner}>
-                  <Text style={[styles.modalCloseText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>×</Text>
+                <View style={[styles.modalButtonInner, { backgroundColor: isDark ? 'rgba(255, 69, 58, 0.2)' : 'rgba(255, 59, 48, 0.15)' }]}>
+                  <Text style={[styles.modalCloseText, { color: isDark ? '#FF453A' : '#FF3B30' }]}>×</Text>
                 </View>
               ) : (
                 <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
@@ -51,13 +51,23 @@ export default function AppHeader({
             </TouchableOpacity>
           ) : leftAction ? (
             leftAction
+          ) : variant === 'default' && title ? (
+            <Text style={[styles.defaultTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+              {title}
+            </Text>
           ) : (
             <View style={styles.spacer} />
           )}
         </View>
 
-        {/* Center - Keep empty for iOS native look */}
-        <View style={styles.centerSpacer} />
+        {/* Center */}
+        <View style={styles.centerSpacer}>
+          {(variant === 'modal' || variant === 'large') && title && (
+            <Text style={[styles.modalTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
+              {title}
+            </Text>
+          )}
+        </View>
 
         {/* Right Side */}
         <View style={styles.rightSide}>
@@ -67,8 +77,8 @@ export default function AppHeader({
               style={styles.modalButton}
               accessibilityLabel={t('common.save')}
             >
-              <View style={styles.modalButtonInner}>
-                <Icon name="check" size={20} color={isDark ? '#FFFFFF' : '#007AFF'} />
+              <View style={[styles.modalButtonInner, { backgroundColor: isDark ? 'rgba(52, 199, 89, 0.2)' : 'rgba(52, 199, 89, 0.15)' }]}>
+                <Icon name="check" size={22} color={isDark ? '#34C759' : '#28A745'} />
               </View>
             </TouchableOpacity>
           ) : rightAction ? (
@@ -79,14 +89,14 @@ export default function AppHeader({
         </View>
       </View>
 
-      {/* Large Title */}
-      {variant === 'large' && title && (
+      {/* Large Title - Disabled as title is now shown in center */}
+      {/* {variant === 'large' && title && (
         <View style={styles.largeTitleContainer}>
           <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
             {title}
           </Text>
         </View>
-      )}
+      )} */}
     </View>
   );
 }
@@ -113,21 +123,28 @@ const styles = StyleSheet.create({
   },
   centerSpacer: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+    textAlign: 'center',
   },
   backButton: {
     padding: 8,
     marginLeft: -8,
   },
   modalButton: {
-    padding: 4,
+    marginRight: 0,
   },
   modalButtonInner: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'transparent',
   },
   modalButtonText: {
     fontSize: 16,
@@ -142,6 +159,12 @@ const styles = StyleSheet.create({
   },
   spacer: {
     width: 40,
+  },
+  defaultTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 41,
   },
   largeTitleContainer: {
     paddingHorizontal: 16,

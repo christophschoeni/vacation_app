@@ -139,16 +139,16 @@ export default function VacationReportScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}
-      edges={['top', 'bottom']}
+      edges={['top']}
     >
       <AppHeader
         title={t('vacation.tabs.report')}
-        variant="large"
+        variant="default"
       />
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 24 }]}
         showsVerticalScrollIndicator={false}
       >
         {/* Total Summary */}
@@ -164,6 +164,84 @@ export default function VacationReportScreen() {
               {vacation?.destination}
             </Text>
           </View>
+
+          {/* Budget Details */}
+          {vacation?.budget && (
+            <>
+              <View style={[styles.divider, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }]} />
+
+              <View style={styles.budgetDetailsGrid}>
+                {/* Total Budget */}
+                <View style={styles.budgetDetailItem}>
+                  <Text style={[styles.budgetDetailLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                    {t('report.total_budget')}
+                  </Text>
+                  <Text style={[styles.budgetDetailValue, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                    {formatCurrency(vacation.budget, defaultCurrency)}
+                  </Text>
+                </View>
+
+                {/* Remaining Budget */}
+                <View style={styles.budgetDetailItem}>
+                  <Text style={[styles.budgetDetailLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                    {t('report.remaining_budget')}
+                  </Text>
+                  <Text style={[
+                    styles.budgetDetailValue,
+                    {
+                      color: vacation.budget - totalExpenses >= 0
+                        ? (isDark ? '#34C759' : '#28A745')
+                        : (isDark ? '#FF453A' : '#DC3545')
+                    }
+                  ]}>
+                    {formatCurrency(vacation.budget - totalExpenses, defaultCurrency)}
+                  </Text>
+                </View>
+
+                {/* Available per remaining day */}
+                {(() => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  const endDate = new Date(vacation.endDate);
+                  endDate.setHours(0, 0, 0, 0);
+                  const remainingDays = Math.max(0, Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+                  const remainingBudget = vacation.budget - totalExpenses;
+                  const perDay = remainingDays > 0 ? remainingBudget / remainingDays : 0;
+
+                  return (
+                    <>
+                      <View style={styles.budgetDetailItem}>
+                        <Text style={[styles.budgetDetailLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                          {t('report.remaining_days')}
+                        </Text>
+                        <Text style={[styles.budgetDetailValue, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                          {remainingDays} {remainingDays === 1 ? t('report.day') : t('report.days')}
+                        </Text>
+                      </View>
+
+                      {remainingDays > 0 && (
+                        <View style={styles.budgetDetailItem}>
+                          <Text style={[styles.budgetDetailLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                            {t('report.per_day')}
+                          </Text>
+                          <Text style={[
+                            styles.budgetDetailValue,
+                            {
+                              color: perDay >= 0
+                                ? (isDark ? '#34C759' : '#28A745')
+                                : (isDark ? '#FF453A' : '#DC3545')
+                            }
+                          ]}>
+                            {formatCurrency(perDay, defaultCurrency)}
+                          </Text>
+                        </View>
+                      )}
+                    </>
+                  );
+                })()}
+              </View>
+            </>
+          )}
         </Card>
 
         {/* Category Breakdown */}
@@ -239,10 +317,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
     paddingTop: 16,
+    paddingHorizontal: 16,
     paddingBottom: 85,
   },
   summaryCard: {
@@ -267,6 +345,33 @@ const styles = StyleSheet.create({
   summarySubtext: {
     fontSize: 13,
     fontFamily: 'System',
+  },
+  divider: {
+    height: 1,
+    marginVertical: 20,
+  },
+  budgetDetailsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  budgetDetailItem: {
+    flex: 1,
+    minWidth: '45%',
+    alignItems: 'center',
+  },
+  budgetDetailLabel: {
+    fontSize: 13,
+    fontWeight: '500',
+    fontFamily: 'System',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  budgetDetailValue: {
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'System',
+    textAlign: 'center',
   },
   emptyCard: {
     alignItems: 'center',

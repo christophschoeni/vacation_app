@@ -190,6 +190,9 @@
     "empty": {
       "title": "Nessuna spesa registrata",
       "subtitle": "Tocca ➕ per aggiungere la tua prima spesa"
+    },
+    "section": {
+      "title": "Spese"
     }
   },
   "categories": {
@@ -203,8 +206,10 @@
   },
   "budget": {
     "title": "Budget",
+    "spent_amount": "Speso",
     "overview": {
       "title": "Panoramica budget",
+      "total_budget": "Budget",
       "available": "Disponibile",
       "spent": "Speso",
       "remaining": "Rimanente",

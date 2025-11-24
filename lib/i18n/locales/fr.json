@@ -190,6 +190,9 @@
     "empty": {
       "title": "Aucune dépense enregistrée",
       "subtitle": "Appuyez sur ➕ pour ajouter votre première dépense"
+    },
+    "section": {
+      "title": "Dépenses"
     }
   },
   "categories": {
@@ -203,8 +206,10 @@
   },
   "budget": {
     "title": "Budget",
+    "spent_amount": "Dépensé",
     "overview": {
       "title": "Aperçu du budget",
+      "total_budget": "Budget",
       "available": "Disponible",
       "spent": "Dépensé",
       "remaining": "Restant",

@@ -195,7 +195,6 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
     paddingHorizontal: 20,
-    marginHorizontal: -16, // Negative margin to extend to screen edges
     marginBottom: 16,
   },
   header: {

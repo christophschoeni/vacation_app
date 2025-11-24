@@ -190,6 +190,9 @@
     "empty": {
       "title": "No Expenses Yet",
       "subtitle": "Tap ➕ to add your first expense"
+    },
+    "section": {
+      "title": "Expenses"
     }
   },
   "categories": {
@@ -203,8 +206,10 @@
   },
   "budget": {
     "title": "Budget",
+    "spent_amount": "Spent",
     "overview": {
       "title": "Budget Overview",
+      "total_budget": "Budget",
       "available": "Available",
       "spent": "Spent",
       "remaining": "Remaining",

@@ -17,7 +17,8 @@ import * as Haptics from 'expo-haptics';
 import ExpenseCard from '@/components/ui/cards/ExpenseCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import { Card, Icon } from '@/components/design';
-import BudgetOverview from '@/components/ui/budget/BudgetOverview';
+import VacationBudgetHeader from '@/components/ui/budget/VacationBudgetHeader';
+import BudgetInfoRow from '@/components/ui/budget/BudgetInfoRow';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacations } from '@/hooks/use-vacations';
@@ -187,24 +188,36 @@ export default function VacationBudgetScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
-      <AppHeader
-        title={t('budget.overview.title')}
-        variant="large"
-        showBack={true}
-        onBackPress={() => router.push('/(tabs)')}
-        rightAction={
+    <View style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
+      {/* Fixed Background Header with Image */}
+      <VacationBudgetHeader vacation={displayVacation} expenses={expenses} />
+
+      {/* Compact Navigation Buttons over image */}
+      <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
+        <View style={styles.compactHeader}>
+          {/* Back Button */}
+          <TouchableOpacity
+            onPress={() => router.push('/(tabs)')}
+            style={styles.backButton}
+            activeOpacity={0.8}
+          >
+            <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
+              <Icon name="arrow-left" size={20} color="#FFFFFF" />
+            </View>
+          </TouchableOpacity>
+
+          {/* Right Action Buttons */}
           <View style={styles.headerActions}>
             <TouchableOpacity
               style={styles.headerButton}
               onPress={handleSortToggle}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
+              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
                 <Icon
                   name={sortOrder === 'desc' ? 'arrow-down' : 'arrow-up'}
                   size={18}
-                  color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'}
+                  color="#FFFFFF"
                 />
               </View>
             </TouchableOpacity>
@@ -213,17 +226,18 @@ export default function VacationBudgetScreen() {
               onPress={() => router.push(`/expense/add?vacationId=${vacationId}`)}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon name="plus" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
+              <View style={[styles.headerButtonInner, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
+                <Icon name="plus" size={18} color="#FFFFFF" />
               </View>
             </TouchableOpacity>
           </View>
-        }
-      />
+        </View>
+      </View>
 
+      {/* Scrollable Expenses List */}
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: 260, paddingBottom: insets.bottom + 24 }]}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -233,12 +247,18 @@ export default function VacationBudgetScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
+        {/* Budget Info Row */}
+        <BudgetInfoRow vacation={displayVacation} expenses={expenses} />
 
-        {/* Enhanced Budget Overview */}
-        <BudgetOverview vacation={displayVacation} expenses={expenses} />
+        {/* Expenses Section Header */}
+        <View style={[styles.sectionHeader, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
+          <Text style={[styles.sectionTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+            {t('expense.section.title')}
+          </Text>
+        </View>
 
         {/* Expenses Grid */}
-        <View style={[styles.expensesSection, { paddingHorizontal: 16 }]}>
+        <View style={[styles.expensesSection, { paddingHorizontal: 16, backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
           {sortedExpenses.length === 0 ? (
             <Card style={[styles.emptyExpenses, styles.emptyContent]}>
               <Icon name="budget" size={48} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} style={styles.emptyIconStyle} />
@@ -269,13 +289,30 @@ export default function VacationBudgetScreen() {
           )}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+  },
+  compactHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  backButton: {
+    padding: 4,
   },
   addButton: {
     padding: 8,
@@ -285,8 +322,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 0,
-    // paddingBottom is set dynamically in contentContainerStyle with safe area insets
+    paddingHorizontal: 0,
+    // paddingTop and paddingBottom are set dynamically in contentContainerStyle
+  },
+  sectionHeader: {
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    fontFamily: 'System',
   },
   expensesSection: {
     marginBottom: 16,

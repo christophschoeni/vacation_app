@@ -142,6 +142,7 @@ export default function VacationEditScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         variant="modal"
+        title={t('vacation.edit_screen.title')}
         showBack={true}
         onBackPress={handleCancel}
         onRightPress={handleSave}
@@ -156,13 +157,6 @@ export default function VacationEditScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* iOS-style large title in content area */}
-          <View style={styles.titleSection}>
-            <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {t('vacation.edit_screen.title')}
-            </Text>
-          </View>
-
           <View style={styles.formContainer}>
             <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               {t('vacation.edit_screen.subtitle')}
