@@ -66,6 +66,9 @@ export default function VacationBudgetHeader({ vacation, expenses }: VacationBud
               <Text style={styles.spentAmount}>
                 {formatCurrency(analysis.totalExpenses, defaultCurrency)}
               </Text>
+              <Text style={styles.budgetSubtext}>
+                von {formatCurrency(analysis.totalBudget, defaultCurrency)}
+              </Text>
             </View>
 
             {/* Progress Bar with Green-Blue Gradient */}
@@ -95,6 +98,9 @@ export default function VacationBudgetHeader({ vacation, expenses }: VacationBud
             <View style={styles.amountContainer}>
               <Text style={styles.spentAmount}>
                 {formatCurrency(analysis.totalExpenses, defaultCurrency)}
+              </Text>
+              <Text style={styles.budgetSubtext}>
+                von {formatCurrency(analysis.totalBudget, defaultCurrency)}
               </Text>
             </View>
 
@@ -146,7 +152,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   spentAmount: {
-    fontSize: 48,
+    fontSize: 36,
     fontWeight: '700',
     fontFamily: 'System',
     color: '#FFFFFF',
@@ -154,6 +160,17 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
+  },
+  budgetSubtext: {
+    fontSize: 16,
+    fontWeight: '500',
+    fontFamily: 'System',
+    color: 'rgba(255, 255, 255, 0.85)',
+    textAlign: 'center',
+    marginTop: 6,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   progressBarContainer: {
     width: '100%',
