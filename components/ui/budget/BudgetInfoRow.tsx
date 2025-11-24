@@ -33,19 +33,27 @@ export default function BudgetInfoRow({ vacation, expenses }: BudgetInfoRowProps
   return (
     <View style={[styles.budgetInfoRow, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
       <View style={styles.budgetInfoItem}>
-        <Text style={[styles.budgetInfoAmount, { color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E') }]}>
-          {formatCurrency(Math.abs(analysis.remainingBudget), defaultCurrency)}
+        <Text style={[styles.budgetInfoAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
+          {formatCurrency(analysis.totalBudget, defaultCurrency)}
         </Text>
         <Text style={[styles.budgetInfoLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-          {analysis.isOverBudget ? 'Überschritten' : 'Restbetrag'}
+          Budget
         </Text>
       </View>
       <View style={styles.budgetInfoItem}>
-        <Text style={[styles.budgetInfoAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+        <Text style={[styles.budgetInfoAmount, { color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E') }]} numberOfLines={1}>
+          {formatCurrency(Math.abs(analysis.remainingBudget), defaultCurrency)}
+        </Text>
+        <Text style={[styles.budgetInfoLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+          {analysis.isOverBudget ? 'Über' : 'Rest'}
+        </Text>
+      </View>
+      <View style={styles.budgetInfoItem}>
+        <Text style={[styles.budgetInfoAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
           {formatCurrency(analysis.averageSpentPerDay, defaultCurrency)}
         </Text>
         <Text style={[styles.budgetInfoLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-          Ø Pro Tag
+          Ø Tag
         </Text>
       </View>
     </View>
@@ -66,13 +74,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   budgetInfoAmount: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '600',
     fontFamily: 'System',
     marginBottom: 4,
   },
   budgetInfoLabel: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '400',
     fontFamily: 'System',
   },
