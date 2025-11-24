@@ -71,8 +71,10 @@ function VacationDetailContent() {
     <NativeTabs
       minimizeBehavior="onScrollDown"
       disableTransparentOnScrollEdge
+      navigationTitle={vacation.destination}
+      backBehavior="pop"
     >
-      <NativeTabs.Trigger name="index">
+      <NativeTabs.Trigger name="budget">
         <Label
           labelStyle={{
             color: tintColor,
