@@ -6,13 +6,13 @@ import {
   ScrollView,
   ImageBackground,
   useColorScheme,
+  TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Icon } from '@/components/design';
-import AppHeader from '@/components/ui/AppHeader';
 import { useTranslation } from '@/lib/i18n';
 import { useVacationId } from '@/contexts/VacationContext';
 import { useVacations } from '@/hooks/use-vacations';
@@ -53,11 +53,6 @@ export default function BudgetDetailScreen() {
       style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}
       edges={['top', 'bottom']}
     >
-      <AppHeader
-        showBack={true}
-        onBackPress={() => router.back()}
-      />
-
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -71,6 +66,17 @@ export default function BudgetDetailScreen() {
               style={styles.headerImage}
               imageStyle={styles.headerImageStyle}
             >
+              {/* Back Button - Positioned over image */}
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => router.back()}
+                activeOpacity={0.8}
+              >
+                <BlurView intensity={80} tint="dark" style={styles.backButtonBlur}>
+                  <Icon name="chevron-left" size={24} color="#FFFFFF" />
+                </BlurView>
+              </TouchableOpacity>
+
               <LinearGradient
                 colors={['transparent', 'rgba(0,0,0,0.7)']}
                 style={styles.imageGradient}
@@ -83,13 +89,26 @@ export default function BudgetDetailScreen() {
             </ImageBackground>
           </View>
         ) : (
-          <View style={[styles.headerNoImage, { backgroundColor: isDark ? '#1C1C1E' : '#F2F2F7' }]}>
-            <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {vacation.destination}
-            </Text>
-            <Text style={[styles.headerSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              {vacation.country}
-            </Text>
+          <View style={styles.headerNoImageContainer}>
+            {/* Back Button */}
+            <TouchableOpacity
+              style={styles.backButtonNoImage}
+              onPress={() => router.back()}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.backButtonNoImageInner, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)' }]}>
+                <Icon name="chevron-left" size={24} color={isDark ? '#FFFFFF' : '#007AFF'} />
+              </View>
+            </TouchableOpacity>
+
+            <View style={[styles.headerNoImage, { backgroundColor: isDark ? '#1C1C1E' : '#F2F2F7' }]}>
+              <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                {vacation.destination}
+              </Text>
+              <Text style={[styles.headerSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                {vacation.country}
+              </Text>
+            </View>
           </View>
         )}
 
@@ -245,6 +264,22 @@ const styles = StyleSheet.create({
   headerImageStyle: {
     resizeMode: 'cover',
   },
+  backButton: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    zIndex: 10,
+  },
+  backButtonBlur: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
   imageGradient: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -253,10 +288,23 @@ const styles = StyleSheet.create({
     padding: 20,
     overflow: 'hidden',
   },
+  headerNoImageContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  backButtonNoImage: {
+    marginBottom: 12,
+    alignSelf: 'flex-start',
+  },
+  backButtonNoImageInner: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   headerNoImage: {
     padding: 24,
-    marginHorizontal: 16,
-    marginTop: 16,
     marginBottom: 24,
     borderRadius: 16,
   },
