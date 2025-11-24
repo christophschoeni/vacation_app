@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ferien Budget",
     "slug": "vacation-assist",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "vacationassist",
@@ -11,7 +11,7 @@
     "description": "Verwalten Sie Ihr Reisebudget einfach und effizient. Erfassen Sie Ausgaben, planen Sie Ihr Budget und behalten Sie den Überblick über Ihre Reisekosten.",
     "primaryColor": "#007AFF",
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.vomschoeni.ferien-budget",
       "buildNumber": "1",
       "config": {
@@ -19,7 +19,8 @@
       },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "LSApplicationCategoryType": "public.app-category.travel"
+        "LSApplicationCategoryType": "public.app-category.travel",
+        "CFBundleLocalizations": ["de", "en", "fr", "it"]
       }
     },
     "android": {
