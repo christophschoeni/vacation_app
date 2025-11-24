@@ -1,7 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from './utils/logger';
-
-const ONBOARDING_COMPLETED_KEY = '@reise_budget_onboarding_completed';
+import { appSettingsRepository } from './db/repositories/app-settings-repository';
 
 class OnboardingService {
   /**
@@ -9,8 +7,7 @@ class OnboardingService {
    */
   async hasCompletedOnboarding(): Promise<boolean> {
     try {
-      const value = await AsyncStorage.getItem(ONBOARDING_COMPLETED_KEY);
-      return value === 'true';
+      return await appSettingsRepository.getOnboardingCompleted();
     } catch (error) {
       logger.error('Failed to check onboarding status:', error);
       return false;
@@ -22,7 +19,7 @@ class OnboardingService {
    */
   async completeOnboarding(): Promise<void> {
     try {
-      await AsyncStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+      await appSettingsRepository.setOnboardingCompleted(true);
       logger.debug('Onboarding marked as completed');
     } catch (error) {
       logger.error('Failed to save onboarding completion status:', error);
@@ -35,7 +32,7 @@ class OnboardingService {
    */
   async resetOnboarding(): Promise<void> {
     try {
-      await AsyncStorage.removeItem(ONBOARDING_COMPLETED_KEY);
+      await appSettingsRepository.setOnboardingCompleted(false);
       logger.debug('Onboarding status reset');
     } catch (error) {
       logger.error('Failed to reset onboarding status:', error);

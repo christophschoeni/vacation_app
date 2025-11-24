@@ -232,6 +232,59 @@ export class AppSettingsRepository extends BaseRepository {
 
     console.log('📦 Default app settings installed');
   }
+
+  // Language settings
+  async getLanguage(): Promise<string> {
+    const value = await this.get('language');
+    return value || 'de'; // Default to German
+  }
+
+  async setLanguage(language: string): Promise<void> {
+    await this.set('language', language);
+  }
+
+  // Onboarding settings
+  async getOnboardingCompleted(): Promise<boolean> {
+    const value = await this.get('onboarding_completed');
+    return value === 'true';
+  }
+
+  async setOnboardingCompleted(completed: boolean): Promise<void> {
+    await this.set('onboarding_completed', completed.toString());
+  }
+
+  // Notification settings
+  async getNotificationsEnabled(): Promise<boolean> {
+    const value = await this.get('notifications_enabled');
+    return value === 'true'; // Default to false if not set
+  }
+
+  async setNotificationsEnabled(enabled: boolean): Promise<void> {
+    await this.set('notifications_enabled', enabled.toString());
+  }
+
+  async getNotificationsPermission(): Promise<'granted' | 'denied' | 'not-determined'> {
+    const value = await this.get('notifications_permission');
+    return (value as 'granted' | 'denied' | 'not-determined') || 'not-determined';
+  }
+
+  async setNotificationsPermission(permission: 'granted' | 'denied' | 'not-determined'): Promise<void> {
+    await this.set('notifications_permission', permission);
+  }
+
+  // Composite notification settings getter
+  async getNotificationSettings(): Promise<{
+    enabled: boolean;
+    permission: 'granted' | 'denied' | 'not-determined';
+  }> {
+    const enabled = await this.getNotificationsEnabled();
+    const permission = await this.getNotificationsPermission();
+
+    return {
+      enabled,
+      permission,
+    };
+  }
 }
 
 export const appSettingsRepository = new AppSettingsRepository();

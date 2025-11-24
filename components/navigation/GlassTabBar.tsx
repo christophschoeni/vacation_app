@@ -1,3 +1,9 @@
+/**
+ * @deprecated This component is deprecated and no longer used.
+ * The app now uses Native Tabs (expo-router/unstable-native-tabs) for true iOS Liquid Glass effect.
+ * See: app/(tabs)/_layout.tsx and docs/IOS_DESIGN_GUIDELINES.md
+ */
+
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';

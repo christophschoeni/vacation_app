@@ -1,16 +1,14 @@
 import { I18n } from 'i18n-js';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
 import { useState, useEffect } from 'react';
 import { logger } from '../utils/logger';
+import { appSettingsRepository } from '../db/repositories/app-settings-repository';
 
 // Import translation files
 import de from './locales/de.json';
 import en from './locales/en.json';
 import fr from './locales/fr.json';
 import it from './locales/it.json';
-
-const LANGUAGE_STORAGE_KEY = '@vacation_assist_language';
 
 // Supported languages
 export const SUPPORTED_LOCALES = ['de', 'en', 'fr', 'it'] as const;
@@ -72,8 +70,8 @@ class TranslationService {
 
   async initialize(): Promise<void> {
     try {
-      // Try to load saved language preference
-      const savedLanguage = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY);
+      // Try to load saved language preference from SQLite
+      const savedLanguage = await appSettingsRepository.getLanguage();
 
       if (savedLanguage && SUPPORTED_LOCALES.includes(savedLanguage as SupportedLocale)) {
         this.currentLocale = savedLanguage;
@@ -100,7 +98,7 @@ class TranslationService {
       if (SUPPORTED_LOCALES.includes(locale as SupportedLocale)) {
         this.currentLocale = locale;
         this.i18n.locale = locale;
-        await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, locale);
+        await appSettingsRepository.setLanguage(locale);
         logger.debug(`Language changed to: ${locale}`);
         this.notifyListeners();
       } else {

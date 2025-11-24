@@ -19,6 +19,8 @@ import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
 import { ExpensesMigration } from '@/lib/db/migrations/migrate-expenses-to-sqlite';
+import { vacationMigrationService } from '@/lib/db/migrations/migrate-vacations-to-sqlite';
+import { settingsMigrationService } from '@/lib/db/migrations/migrate-settings-to-sqlite';
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -65,11 +67,44 @@ function RootNavigation() {
     if (success) {
       const initializeApp = async () => {
         try {
-          // Initialize i18n system
+          // STEP 1: Migrate app settings from AsyncStorage to SQLite (one-time migration)
+          // This must happen BEFORE i18n initialization since i18n now reads from SQLite
+          const settingsMigrationResult = await settingsMigrationService.migrateSettingsToSQLite();
+          if (!settingsMigrationResult.skipped && settingsMigrationResult.migratedCount > 0) {
+            console.log(`✅ Migrated ${settingsMigrationResult.migratedCount} settings from AsyncStorage to SQLite`);
+
+            // Verify migration was successful
+            const settingsVerification = await settingsMigrationService.verifyMigration();
+            console.log('📊 Settings Migration:', settingsVerification);
+
+            // Clean up AsyncStorage if migration successful
+            if (settingsMigrationResult.success && settingsMigrationResult.errors.length === 0) {
+              await settingsMigrationService.cleanupAsyncStorage();
+              console.log('✅ Cleaned up settings data from AsyncStorage');
+            }
+          }
+
+          // STEP 2: Initialize i18n system (now reads from SQLite)
           await translationService.initialize();
 
-          // Install default app data (categories, settings)
+          // STEP 3: Install default app data (categories, settings)
           await appInitialization.installDefaultData();
+
+          // STEP 4: Migrate vacations from AsyncStorage to SQLite (one-time migration)
+          const vacationMigrationResult = await vacationMigrationService.migrateVacationsToSQLite();
+          if (vacationMigrationResult.success && vacationMigrationResult.migratedCount > 0) {
+            console.log(`✅ Migrated ${vacationMigrationResult.migratedCount} vacations from AsyncStorage to SQLite`);
+
+            // Verify migration was successful
+            const vacationVerification = await vacationMigrationService.verifyMigration();
+            console.log(`📊 Vacation Migration: SQLite=${vacationVerification.sqliteCount}, AsyncStorage=${vacationVerification.asyncStorageCount}`);
+
+            // Clean up AsyncStorage if migration successful
+            if (vacationVerification.sqliteCount > 0 && vacationMigrationResult.errors.length === 0) {
+              await vacationMigrationService.cleanupAsyncStorage();
+              console.log('✅ Cleaned up vacation data from AsyncStorage');
+            }
+          }
 
           // Migrate expenses from AsyncStorage to SQLite (one-time migration)
           const migrationResult = await ExpensesMigration.migrate();

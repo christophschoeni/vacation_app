@@ -1,39 +1,48 @@
-import { Tabs } from 'expo-router';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import React from 'react';
 import { useTranslation } from '@/lib/i18n';
-import GlassTabBar from '@/components/navigation/GlassTabBar';
+import { useColorScheme, Platform } from 'react-native';
 
 export default function MainLayout() {
   const { t } = useTranslation();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  // iOS-specific tint colors (system blue)
+  const tintColor = isDark ? '#0A84FF' : '#007AFF';
 
   return (
-    <Tabs
-      tabBar={(props) => <GlassTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: 'transparent',
-          borderTopWidth: 0,
-          elevation: 0,
-        },
-      }}
+    <NativeTabs
+      minimizeBehavior="onScrollDown"
+      disableTransparentOnScrollEdge
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: t('navigation.vacations'),
-          tabBarIcon: { sfSymbol: 'airplane.departure' } as any,
-        }}
-      />
+      <NativeTabs.Trigger name="index">
+        <Label
+          labelStyle={{
+            color: tintColor,
+          }}
+        >
+          {t('navigation.vacations')}
+        </Label>
+        <Icon
+          sf={Platform.OS === 'ios' ? 'airplane.departure' : undefined}
+          tintColor={tintColor}
+        />
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: t('navigation.settings'),
-          tabBarIcon: { sfSymbol: 'gear' } as any,
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger name="settings">
+        <Label
+          labelStyle={{
+            color: tintColor,
+          }}
+        >
+          {t('navigation.settings')}
+        </Label>
+        <Icon
+          sf={Platform.OS === 'ios' ? 'gear' : undefined}
+          tintColor={tintColor}
+        />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

@@ -1,10 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '@/lib/utils/logger';
-
-const STORAGE_KEY = '@vacation_assist_notification_settings';
-const PERMISSION_KEY = '@vacation_assist_notification_permission';
+import { appSettingsRepository } from '@/lib/db/repositories/app-settings-repository';
 
 export interface NotificationSettings {
   budget_alerts: boolean;
@@ -30,22 +27,26 @@ class NotificationService {
 
   async initialize() {
     try {
-      // Load saved settings
-      const savedSettings = await AsyncStorage.getItem(STORAGE_KEY);
-      if (savedSettings) {
-        this.settings = JSON.parse(savedSettings);
-      }
+      // Load saved settings from SQLite
+      const notificationSettings = await appSettingsRepository.getNotificationSettings();
+      this.permissionGranted = notificationSettings.permission === 'granted';
 
-      // Check if permission was previously granted
-      const permissionStatus = await AsyncStorage.getItem(PERMISSION_KEY);
-      this.permissionGranted = permissionStatus === 'granted';
+      // Use notification enabled setting from SQLite
+      // Map enabled flag to both budget_alerts and expense_reminders
+      this.settings = {
+        budget_alerts: notificationSettings.enabled,
+        expense_reminders: notificationSettings.enabled,
+      };
 
-      // Request permissions if not already asked
-      if (!permissionStatus) {
+      // Request permissions if not determined yet
+      if (notificationSettings.permission === 'not-determined') {
         await this.requestPermissions();
       }
 
-      logger.info('Notification service initialized', { settings: this.settings });
+      logger.info('Notification service initialized', {
+        settings: this.settings,
+        permission: notificationSettings.permission
+      });
     } catch (error) {
       logger.error('Failed to initialize notification service', error);
     }
@@ -62,7 +63,13 @@ class NotificationService {
       }
 
       this.permissionGranted = finalStatus === 'granted';
-      await AsyncStorage.setItem(PERMISSION_KEY, finalStatus);
+
+      // Save permission status to SQLite
+      await appSettingsRepository.setNotificationsPermission(
+        finalStatus === 'granted' ? 'granted' :
+        finalStatus === 'denied' ? 'denied' :
+        'not-determined'
+      );
 
       if (!this.permissionGranted) {
         logger.warn('Notification permissions not granted');
@@ -82,7 +89,11 @@ class NotificationService {
   async updateSettings(newSettings: Partial<NotificationSettings>) {
     try {
       this.settings = { ...this.settings, ...newSettings };
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.settings));
+
+      // Save to SQLite - use budget_alerts as the master enabled flag
+      const enabled = newSettings.budget_alerts ?? this.settings.budget_alerts;
+      await appSettingsRepository.setNotificationsEnabled(enabled);
+
       logger.info('Notification settings updated', { settings: this.settings });
     } catch (error) {
       logger.error('Failed to update notification settings', error);
