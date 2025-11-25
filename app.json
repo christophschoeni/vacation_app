@@ -11,7 +11,7 @@
     "description": "Verwalte dein Reisebudget einfach und effizient. Erfasse Ausgaben, plane dein Budget und behalte den Überblick über deine Reisekosten.",
     "primaryColor": "#007AFF",
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "com.vomschoeni.ferien-budget",
       "buildNumber": "1",
       "config": {
