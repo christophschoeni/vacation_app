@@ -49,7 +49,7 @@ function VacationDetailContent() {
       <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => router.push('/(tabs)')}
+            onPress={() => router.back()}
             style={styles.backButton}
             accessibilityLabel="Zurück"
           >

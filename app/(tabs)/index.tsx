@@ -128,7 +128,7 @@ export default function VacationsScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
         refreshControl={
           <RefreshControl
-            refreshing={isRefreshing || loading}
+            refreshing={isRefreshing}
             onRefresh={handleRefresh}
             tintColor={isDark ? '#fff' : '#000'}
             colors={[Colors.primary[500]]}

@@ -124,7 +124,7 @@ export default function VacationBudgetScreen() {
         <AppHeader
           title={t('common.loading')}
           showBack={true}
-          onBackPress={() => router.push('/(tabs)')}
+          onBackPress={() => router.back()}
         />
         <View style={styles.content}>
           <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#000000', textAlign: 'center', marginTop: 50 }}>
@@ -147,7 +147,7 @@ export default function VacationBudgetScreen() {
         <AppHeader
           title={t('common.error')}
           showBack={true}
-          onBackPress={() => router.push('/(tabs)')}
+          onBackPress={() => router.back()}
         />
         <View style={styles.content}>
           <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#000000', textAlign: 'center', marginTop: 50 }}>
@@ -217,7 +217,7 @@ export default function VacationBudgetScreen() {
         <View style={styles.compactHeader}>
           {/* Back Button */}
           <TouchableOpacity
-            onPress={() => router.push('/(tabs)')}
+            onPress={() => router.back()}
             style={styles.backButton}
             activeOpacity={0.8}
           >

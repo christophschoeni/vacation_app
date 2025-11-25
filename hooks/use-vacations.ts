@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Vacation } from '@/types';
 import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 import { logger } from '@/lib/utils/logger';
@@ -23,26 +23,51 @@ export interface UseVacationsReturn {
   refreshVacations: () => Promise<void>;
 }
 
+// Module-level cache to share vacation data between hook instances
+let cachedVacations: Vacation[] = [];
+let lastFetchTime = 0;
+const CACHE_DURATION = 500; // 500ms cache to prevent flicker
+
 export function useVacations(): UseVacationsReturn {
-  const [vacations, setVacations] = useState<Vacation[]>([]);
+  const [vacations, setVacations] = useState<Vacation[]>(cachedVacations);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isFirstLoad = useRef(cachedVacations.length === 0);
 
-  const loadVacations = useCallback(async () => {
+  const loadVacations = useCallback(async (forceRefresh = false) => {
+    // Use cache if available and recent (unless force refresh)
+    const now = Date.now();
+    if (!forceRefresh && cachedVacations.length > 0 && (now - lastFetchTime) < CACHE_DURATION) {
+      setVacations(cachedVacations);
+      return;
+    }
+
     try {
-      setLoading(true);
+      // Only show loading indicator on first load when no cached data
+      if (isFirstLoad.current) {
+        setLoading(true);
+      }
       setError(null);
 
       logger.debug('🏖️ Loading vacations from SQLite...');
       const loadedVacations = await vacationRepository.findAll();
 
       logger.debug(`📊 Loaded ${loadedVacations.length} vacations from SQLite`);
+
+      // Update cache
+      cachedVacations = loadedVacations;
+      lastFetchTime = Date.now();
+      isFirstLoad.current = false;
+
       setVacations(loadedVacations);
 
     } catch (err) {
       logger.error('❌ Failed to load vacations:', err);
       setError(err instanceof Error ? err.message : 'Failed to load vacations');
-      setVacations([]);
+      // Keep cached data on error instead of clearing
+      if (cachedVacations.length === 0) {
+        setVacations([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -64,8 +89,8 @@ export function useVacations(): UseVacationsReturn {
       logger.debug('🏖️ Creating vacation in SQLite...', data);
       const newVacation = await vacationRepository.create(data);
 
-      // Reload vacations to get fresh data
-      await loadVacations();
+      // Force reload vacations to get fresh data and update cache
+      await loadVacations(true);
 
       logger.debug('✅ Vacation created successfully:', newVacation);
       return newVacation;
@@ -86,8 +111,8 @@ export function useVacations(): UseVacationsReturn {
       const updatedVacation = await vacationRepository.update(id, data);
 
       if (updatedVacation) {
-        // Reload vacations to get fresh data
-        await loadVacations();
+        // Force reload vacations to get fresh data and update cache
+        await loadVacations(true);
         logger.debug('✅ Vacation updated successfully:', updatedVacation);
       }
 
@@ -113,8 +138,8 @@ export function useVacations(): UseVacationsReturn {
       const success = await vacationRepository.delete(id);
 
       if (success) {
-        // Reload vacations to get fresh data
-        await loadVacations();
+        // Force reload vacations to get fresh data and update cache
+        await loadVacations(true);
         logger.debug('✅ Vacation deleted successfully (including all associated expenses via CASCADE DELETE)');
       }
 
@@ -129,7 +154,8 @@ export function useVacations(): UseVacationsReturn {
   }, [loadVacations]);
 
   const refreshVacations = useCallback(async () => {
-    await loadVacations();
+    // Force refresh to ensure fresh data
+    await loadVacations(true);
   }, [loadVacations]);
 
   // Load vacations on mount

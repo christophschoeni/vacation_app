@@ -63,7 +63,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
   handleGoHome = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.replace('/(tabs)');
+    // Use dismissAll + push instead of replace to prevent Safe Area layout issues
+    router.dismissAll();
+    router.push('/(tabs)');
   };
 
   render() {

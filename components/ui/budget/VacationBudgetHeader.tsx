@@ -7,6 +7,7 @@ import { calculateBudgetAnalysisAsync, formatCurrency, getBudgetStatusColor, Bud
 import { useColorScheme } from 'react-native';
 import { useTranslation } from '@/lib/i18n';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { getVacationGradient } from '@/lib/vacation-colors';
 
 interface VacationBudgetHeaderProps {
   vacation: Vacation;
@@ -89,12 +90,17 @@ export default function VacationBudgetHeader({ vacation, expenses }: VacationBud
           </LinearGradient>
         </ImageBackground>
       ) : (
-        <View style={[styles.imageBackground, { backgroundColor: isDark ? '#1C1C1E' : '#F2F2F7', height: 260 }]}>
+        <LinearGradient
+          colors={getVacationGradient(vacation)}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.imageBackground, { height: 260 }]}
+        >
           <LinearGradient
             colors={[
               'rgba(0, 0, 0, 0)',
-              'rgba(0, 0, 0, 0.2)',
-              'rgba(0, 0, 0, 0.6)'
+              'rgba(0, 0, 0, 0.15)',
+              'rgba(0, 0, 0, 0.4)'
             ]}
             style={styles.gradientOverlay}
           >
@@ -120,7 +126,7 @@ export default function VacationBudgetHeader({ vacation, expenses }: VacationBud
               </View>
             </View>
           </LinearGradient>
-        </View>
+        </LinearGradient>
       )}
     </View>
   );
