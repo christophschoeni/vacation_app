@@ -22,7 +22,7 @@ import { useVacations } from '@/hooks/use-vacations';
 import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { useVacationId } from '@/contexts/VacationContext';
+import { useVacationId, useVacationContext } from '@/contexts/VacationContext';
 
 export default function VacationEditScreen() {
   const params = useLocalSearchParams();
@@ -33,6 +33,7 @@ export default function VacationEditScreen() {
   const vacationId = vacationIdFromContext || vacationIdFromParams;
 
   const { t } = useTranslation();
+  const { triggerRefresh } = useVacationContext();
 
   const colorScheme = useColorScheme();
   const { vacations, updateVacation, loading } = useVacations();
@@ -126,6 +127,8 @@ export default function VacationEditScreen() {
       });
 
       if (updatedVacation) {
+        // Trigger refresh to notify other screens that vacation data has changed
+        triggerRefresh();
         router.back();
       } else {
         Alert.alert(t('common.error'), t('vacation.edit_screen.errors.update_failed'));

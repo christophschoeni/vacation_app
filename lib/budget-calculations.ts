@@ -58,14 +58,12 @@ export async function calculateBudgetAnalysisAsync(
     remainingDays = totalDays;
   }
 
-  // Budget is already in budgetCurrency (system currency), convert to target if needed
-  const totalBudget = await currencyService.convertCurrency(
-    vacation.budget || 0,
-    vacation.budgetCurrency || 'CHF',
-    targetCurrency
-  );
+  // Budget is NOT converted - it's displayed as-is in the user's default currency
+  // When the user changes their default currency, the budget value stays the same
+  // (e.g., 1700 EUR becomes 1700 CHF without exchange rate conversion)
+  const totalBudget = vacation.budget || 0;
 
-  // Convert all expenses to target currency
+  // Convert all expenses to target currency (user's default currency)
   let totalExpenses = 0;
   for (const expense of expenses) {
     const convertedAmount = await currencyService.convertCurrency(

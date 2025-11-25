@@ -64,21 +64,47 @@ export function useVacations() {
 }
 
 // Custom hook for expenses
-export function useExpenses(vacationId?: string) {
+// IMPORTANT: vacationId is REQUIRED to prevent loading expenses from other vacations
+export function useExpenses(vacationId: string) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const loadExpenses = useCallback(async () => {
+    // Validate vacationId before loading - never load without a valid ID
+    if (!vacationId || vacationId.trim() === '') {
+      console.warn('useExpenses: No valid vacationId provided - skipping load');
+      setExpenses([]);
+      setLoading(false);
+      return;
+    }
+
+    // Capture current vacationId to prevent race conditions
+    const currentVacationId = vacationId;
+
     try {
       setLoading(true);
       setError(null);
-      const data = await LocalDatabase.getExpenses(vacationId);
-      setExpenses(data);
+      const data = await LocalDatabase.getExpenses(currentVacationId);
+
+      // Only update state if vacationId hasn't changed during the async operation
+      // This prevents stale data from overwriting fresh data
+      if (currentVacationId === vacationId) {
+        // Double-check: filter expenses to ensure they belong to this vacation
+        const filteredData = data.filter(expense => expense.vacationId === currentVacationId);
+        if (filteredData.length !== data.length) {
+          console.warn(`useExpenses: Filtered out ${data.length - filteredData.length} expenses with wrong vacationId`);
+        }
+        setExpenses(filteredData);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load expenses');
+      if (currentVacationId === vacationId) {
+        setError(err instanceof Error ? err.message : 'Failed to load expenses');
+      }
     } finally {
-      setLoading(false);
+      if (currentVacationId === vacationId) {
+        setLoading(false);
+      }
     }
   }, [vacationId]);
 

@@ -7,13 +7,12 @@ export default function OnboardingPage() {
   const handleComplete = async () => {
     try {
       await onboardingService.completeOnboarding();
-      // Navigate to the main tabs
-      router.replace('/(tabs)');
     } catch (error) {
       console.error('Failed to complete onboarding:', error);
-      // Navigate anyway to prevent user from being stuck
-      router.replace('/(tabs)');
     }
+    // Navigate to the main tabs - dismiss all screens first to prevent layout issues
+    router.dismissAll();
+    router.push('/(tabs)');
   };
 
   return <OnboardingScreen onComplete={handleComplete} />;

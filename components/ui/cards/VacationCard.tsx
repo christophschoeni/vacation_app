@@ -12,9 +12,9 @@ import {
   getVacationIconColor
 } from '@/lib/vacation-colors';
 import { formatDateRange, formatCurrencyCompact } from '@/lib/utils/formatters';
-import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 import { currencyService } from '@/lib/currency';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import type { Vacation } from '@/types';
 
 interface VacationCardProps {
@@ -27,34 +27,30 @@ export default function VacationCard({ vacation }: VacationCardProps) {
   const { expenses } = useExpenses(vacation.id);
   const { defaultCurrency } = useCurrency();
   const [totalExpenses, setTotalExpenses] = React.useState(0);
-  const [vacationBudget, setVacationBudget] = React.useState(vacation.budget || 0);
 
-  // Calculate total expenses with currency conversion
+  // Display currency is always the user's default currency from settings
+  // Budget is displayed as-is (no conversion) - the numeric value stays the same
+  const displayCurrency = defaultCurrency;
+  const vacationBudget = vacation.budget || 0;
+
+  // Calculate total expenses - convert each expense to user's display currency
   React.useEffect(() => {
     let cancelled = false;
 
     async function calculateTotals() {
-      // Convert all expenses to default currency
+      // Convert all expenses to the user's display currency
       let total = 0;
       for (const expense of expenses) {
         const converted = await currencyService.convertCurrency(
           expense.amount,
           expense.currency,
-          defaultCurrency
+          displayCurrency  // Convert to user's default currency
         );
         total += converted;
       }
 
-      // Convert vacation budget to default currency
-      const budgetConverted = await currencyService.convertCurrency(
-        vacation.budget || 0,
-        vacation.budgetCurrency || 'CHF',
-        defaultCurrency
-      );
-
       if (!cancelled) {
         setTotalExpenses(total);
-        setVacationBudget(budgetConverted);
       }
     }
 
@@ -63,8 +59,9 @@ export default function VacationCard({ vacation }: VacationCardProps) {
     return () => {
       cancelled = true;
     };
-  }, [expenses, vacation.budget, vacation.budgetCurrency, defaultCurrency]);
+  }, [expenses, displayCurrency]);
 
+  // Budget is NOT converted - it's displayed as-is in the user's default currency
   const remainingBudget = vacationBudget - totalExpenses;
   const budgetStatus = vacationBudget && remainingBudget < 0 ? 'over' : 'normal';
 
@@ -103,7 +100,7 @@ export default function VacationCard({ vacation }: VacationCardProps) {
             <Icon name="budget" size={16} color={iconColor} />
             <View style={styles.budgetInfo}>
               <Text style={[styles.budgetText, { color: textColor }]}>
-                {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacationBudget, defaultCurrency)}
+                {formatCurrencyCompact(totalExpenses, displayCurrency)} / {formatCurrencyCompact(vacationBudget, displayCurrency)}
               </Text>
               <Text style={[
                 styles.remainingText,
@@ -114,7 +111,7 @@ export default function VacationCard({ vacation }: VacationCardProps) {
                 }
               ]}>
                 {budgetStatus === 'over' ? t('components.vacation_card.over_budget') : t('components.vacation_card.remaining')}{' '}
-                {formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}
+                {formatCurrencyCompact(Math.abs(remainingBudget), displayCurrency)}
               </Text>
             </View>
           </View>
@@ -129,11 +126,11 @@ export default function VacationCard({ vacation }: VacationCardProps) {
         style={styles.imageCard}
         accessible={true}
         accessibilityRole="button"
-        accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacationBudget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
-        accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
+        accessibilityLabel={`Reise nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, displayCurrency)} von ${formatCurrencyCompact(vacationBudget, displayCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), displayCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, displayCurrency)}`}` : ''}`}
+        accessibilityHint="Doppeltippen zum Öffnen der Reisedetails"
       >
         <ImageBackground
-          source={{ uri: vacation.imageUrl }}
+          source={{ uri: `${vacation.imageUrl}?t=${vacation.updatedAt?.getTime?.() || Date.now()}` }}
           style={styles.imageBackground}
           imageStyle={styles.backgroundImage}
         />
@@ -165,14 +162,14 @@ export default function VacationCard({ vacation }: VacationCardProps) {
                 <View style={styles.budgetItem}>
                   <Icon name="budget" size={14} color="#FFFFFF" />
                   <Text style={styles.budgetLabel}>
-                    {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacationBudget, defaultCurrency)}
+                    {formatCurrencyCompact(totalExpenses, displayCurrency)} / {formatCurrencyCompact(vacationBudget, displayCurrency)}
                   </Text>
                 </View>
                 <Text style={[
                   styles.budgetBadge,
                   { backgroundColor: budgetStatus === 'over' ? 'rgba(255, 69, 58, 0.8)' : 'rgba(52, 199, 89, 0.8)' }
                 ]}>
-                  {budgetStatus === 'over' ? '-' : '+'}{formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}
+                  {budgetStatus === 'over' ? '-' : '+'}{formatCurrencyCompact(Math.abs(remainingBudget), displayCurrency)}
                 </Text>
               </View>
             )}
@@ -190,8 +187,8 @@ export default function VacationCard({ vacation }: VacationCardProps) {
       style={styles.gradientCard}
       accessible={true}
       accessibilityRole="button"
-      accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacationBudget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
-      accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
+      accessibilityLabel={`Reise nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, displayCurrency)} von ${formatCurrencyCompact(vacationBudget, displayCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), displayCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, displayCurrency)}`}` : ''}`}
+      accessibilityHint="Doppeltippen zum Öffnen der Reisedetails"
     >
       <CardContent />
     </LinearGradient>

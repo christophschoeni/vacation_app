@@ -20,6 +20,7 @@ import { appInitialization } from '@/lib/app-initialization';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
 import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
+import { VacationProvider } from '@/contexts/VacationContext';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
 import { ExpensesMigration } from '@/lib/db/migrations/migrate-expenses-to-sqlite';
@@ -418,9 +419,11 @@ export default function RootLayout() {
     <ErrorBoundary>
       <SafeAreaProvider>
         <CurrencyProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <RootNavigation />
-          </GestureHandlerRootView>
+          <VacationProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <RootNavigation />
+            </GestureHandlerRootView>
+          </VacationProvider>
         </CurrencyProvider>
       </SafeAreaProvider>
     </ErrorBoundary>

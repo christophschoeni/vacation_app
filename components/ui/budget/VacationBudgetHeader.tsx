@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Vacation, Expense } from '@/types';
 import { calculateBudgetAnalysisAsync, formatCurrency, getBudgetStatusColor, BudgetAnalysis } from '@/lib/budget-calculations';
 import { useColorScheme } from 'react-native';
-import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface VacationBudgetHeaderProps {
   vacation: Vacation;
@@ -17,20 +17,24 @@ export default function VacationBudgetHeader({ vacation, expenses }: VacationBud
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { t } = useTranslation();
-  const { defaultCurrency } = useCurrency();
   const insets = useSafeAreaInsets();
+  const { defaultCurrency } = useCurrency();
   const [analysis, setAnalysis] = React.useState<BudgetAnalysis | null>(null);
   const [loading, setLoading] = React.useState(true);
+
+  // Display currency is always the user's default currency from settings
+  const displayCurrency = defaultCurrency;
 
   React.useEffect(() => {
     const loadAnalysis = async () => {
       setLoading(true);
-      const result = await calculateBudgetAnalysisAsync(vacation, expenses, defaultCurrency);
+      // Calculate and display in user's default currency
+      const result = await calculateBudgetAnalysisAsync(vacation, expenses, displayCurrency);
       setAnalysis(result);
       setLoading(false);
     };
     loadAnalysis();
-  }, [vacation, expenses, defaultCurrency]);
+  }, [vacation, expenses, displayCurrency]);
 
   if (loading || !analysis) {
     return (
@@ -48,7 +52,7 @@ export default function VacationBudgetHeader({ vacation, expenses }: VacationBud
       {/* Hero Image Section with Gradient Overlay */}
       {vacation.imageUrl ? (
         <ImageBackground
-          source={{ uri: vacation.imageUrl }}
+          source={{ uri: `${vacation.imageUrl}?t=${vacation.updatedAt?.getTime?.() || Date.now()}` }}
           style={[styles.imageBackground, { height: 260 }]}
           imageStyle={styles.image}
           resizeMode="cover"
@@ -64,10 +68,10 @@ export default function VacationBudgetHeader({ vacation, expenses }: VacationBud
             {/* Large Centered Amount */}
             <View style={styles.amountContainer}>
               <Text style={styles.spentAmount}>
-                {formatCurrency(analysis.totalExpenses, defaultCurrency)}
+                {formatCurrency(analysis.totalExpenses, displayCurrency)}
               </Text>
               <Text style={styles.budgetSubtext}>
-                von {formatCurrency(analysis.totalBudget, defaultCurrency)}
+                von {formatCurrency(analysis.totalBudget, displayCurrency)}
               </Text>
             </View>
 
@@ -97,10 +101,10 @@ export default function VacationBudgetHeader({ vacation, expenses }: VacationBud
             {/* Large Centered Amount */}
             <View style={styles.amountContainer}>
               <Text style={styles.spentAmount}>
-                {formatCurrency(analysis.totalExpenses, defaultCurrency)}
+                {formatCurrency(analysis.totalExpenses, displayCurrency)}
               </Text>
               <Text style={styles.budgetSubtext}>
-                von {formatCurrency(analysis.totalBudget, defaultCurrency)}
+                von {formatCurrency(analysis.totalBudget, displayCurrency)}
               </Text>
             </View>
 

@@ -1,6 +1,6 @@
 {
   "common": {
-    "app_name": "Ferien Budget",
+    "app_name": "Reise Budget",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "delete": "Löschen",
@@ -42,26 +42,26 @@
     "settings": "Einstellungen"
   },
   "vacation": {
-    "title": "Ferien",
+    "title": "Reise",
     "add": {
       "title": "Neue Reise",
-      "button": "Ferien erstellen",
-      "success": "Ferien erfolgreich erstellt"
+      "button": "Reise erstellen",
+      "success": "Reise erfolgreich erstellt"
     },
     "edit": {
-      "title": "Ferien bearbeiten",
-      "success": "Ferien erfolgreich aktualisiert"
+      "title": "Reise bearbeiten",
+      "success": "Reise erfolgreich aktualisiert"
     },
     "delete": {
-      "title": "Ferien löschen",
-      "message": "Möchten Sie die Ferien \"{{destination}}\" wirklich löschen? Alle zugehörigen Daten (Ausgaben, Checklisten) werden ebenfalls gelöscht.",
-      "success": "Ferien erfolgreich gelöscht",
-      "error": "Ferien konnten nicht gelöscht werden"
+      "title": "Reise löschen",
+      "message": "Möchten Sie die Reise \"{{destination}}\" wirklich löschen? Alle zugehörigen Daten (Ausgaben, Checklisten) werden ebenfalls gelöscht.",
+      "success": "Reise erfolgreich gelöscht",
+      "error": "Reise konnte nicht gelöscht werden"
     },
     "detail": {
-      "title": "Ferien-Details",
-      "loading": "Lade Ferien-Daten...",
-      "not_found": "Ferien nicht gefunden"
+      "title": "Reise-Details",
+      "loading": "Lade Reise-Daten...",
+      "not_found": "Reise nicht gefunden"
     },
     "form": {
       "destination": "Reiseziel",
@@ -88,14 +88,14 @@
       "cancel": "Abbrechen"
     },
     "empty": {
-      "title": "Keine Ferien gefunden",
+      "title": "Keine Reise gefunden",
       "subtitle": "Erstellen Sie Ihre erste Reise",
       "button": "Neue Reise erstellen"
     },
     "settings": {
-      "title": "Ferien-Einstellungen",
-      "edit_vacation": "Ferien bearbeiten",
-      "delete_vacation": "Ferien löschen",
+      "title": "Reise-Einstellungen",
+      "edit_vacation": "Reise bearbeiten",
+      "delete_vacation": "Reise löschen",
       "export_data": "Daten exportieren",
       "import_data": "Daten importieren"
     },
@@ -142,19 +142,19 @@
       "title": "Einstellungen",
       "general": "Allgemein",
       "vacation_details": {
-        "title": "Ferien Details",
+        "title": "Reise Details",
         "subtitle": "Reiseziel, Hotel, Datum und Budget bearbeiten"
       }
     },
     "edit_screen": {
-      "title": "Ferien bearbeiten",
-      "subtitle": "Ändern Sie hier die Details Ihrer Ferien",
-      "loading": "Lade Ferien...",
+      "title": "Reise bearbeiten",
+      "subtitle": "Ändern Sie hier die Details Ihrer Reise",
+      "loading": "Lade Reise...",
       "errors": {
-        "not_found": "Ferien nicht gefunden.",
+        "not_found": "Reise nicht gefunden.",
         "required_fields": "Bitte füllen Sie alle Pflichtfelder aus.",
         "invalid_dates": "Das Enddatum muss nach dem Startdatum liegen.",
-        "update_failed": "Ferien konnten nicht aktualisiert werden."
+        "update_failed": "Reise konnte nicht aktualisiert werden."
       }
     },
     "tabs": {
@@ -709,8 +709,8 @@
     "next": "Weiter",
     "getStarted": "Los geht's",
     "slide1": {
-      "title": "Willkommen bei Ferien Budget",
-      "text": "Dein digitaler Begleiter für stressfreie Ferienplanung und clevere Budgetverwaltung. Alles im Griff – von der ersten Idee bis zur letzten Ausgabe."
+      "title": "Willkommen bei Reise Budget",
+      "text": "Dein digitaler Begleiter für stressfreie Reiseplanung und clevere Budgetverwaltung. Alles im Griff – von der ersten Idee bis zur letzten Ausgabe."
     },
     "slide2": {
       "title": "Plane deine Traumreise",
@@ -770,7 +770,7 @@
       "spent": "Ausgegeben",
       "remaining": "Verbleibt",
       "per_day": "Verbleibt pro Tag ({{days}})",
-      "vacation_ended": "Ferien beendet"
+      "vacation_ended": "Reise beendet"
     }
   },
   "report": {

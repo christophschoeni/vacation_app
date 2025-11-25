@@ -105,12 +105,15 @@ export class LocalDatabase {
   }
 
   // Expense operations - Now using SQLite via expense repository
-  static async getExpenses(vacationId?: string): Promise<Expense[]> {
+  // IMPORTANT: vacationId is REQUIRED - never load all expenses without a valid vacation ID
+  static async getExpenses(vacationId: string): Promise<Expense[]> {
     try {
-      if (vacationId) {
-        return await expenseRepository.findByVacationId(vacationId);
+      // Validate vacationId to prevent loading all expenses
+      if (!vacationId || vacationId.trim() === '') {
+        console.warn('getExpenses called without valid vacationId - returning empty array');
+        return [];
       }
-      return await expenseRepository.findAll();
+      return await expenseRepository.findByVacationId(vacationId);
     } catch (error) {
       console.error('Error loading expenses:', error);
       return [];

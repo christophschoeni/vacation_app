@@ -11,7 +11,7 @@ import { useFocusEffect } from 'expo-router';
 
 import AppHeader from '@/components/ui/AppHeader';
 import { Card, Icon } from '@/components/design';
-import { useRouteParam } from '@/hooks/use-route-param';
+import { useVacationContext } from '@/contexts/VacationContext';
 import { useVacations } from '@/hooks/use-vacations';
 import { useExpenses } from '@/lib/database';
 import { useTranslation } from '@/lib/i18n';
@@ -22,8 +22,8 @@ import {
   getExpenseCategoryIcon,
 } from '@/lib/constants/expense-categories';
 import { formatCurrency } from '@/lib/utils/formatters';
-import { useCurrency } from '@/contexts/CurrencyContext';
 import { currencyService } from '@/lib/currency';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface CategoryExpense {
   category: ExpenseCategory;
@@ -33,11 +33,11 @@ interface CategoryExpense {
 }
 
 export default function VacationReportScreen() {
-  const vacationId = useRouteParam('id');
+  const { currentVacationId: vacationId } = useVacationContext();
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const { vacations, refreshVacations } = useVacations();
-  const { expenses, refresh: refreshExpenses } = useExpenses(vacationId || '');
+  const { expenses, loading: expensesLoading, refresh: refreshExpenses } = useExpenses(vacationId ?? '');
   const { defaultCurrency } = useCurrency();
   const [categoryData, setCategoryData] = useState<CategoryExpense[]>([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
@@ -46,11 +46,22 @@ export default function VacationReportScreen() {
   const isDark = colorScheme === 'dark';
   const vacation = vacations.find(v => v.id === vacationId);
 
+  // Display currency is always the user's default currency from settings
+  // Fallback to CHF if not yet loaded
+  const displayCurrency = defaultCurrency || 'CHF';
+  // Budget is NOT converted - it's displayed as-is in the user's default currency
+  const vacationBudget = vacation?.budget || 0;
+
+  // Refresh data when screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
+      if (__DEV__) {
+        console.log('Report - Screen focused, refreshing data...');
+        console.log('Report - Current vacationId:', vacationId);
+      }
       refreshVacations();
       refreshExpenses();
-    }, [refreshVacations, refreshExpenses])
+    }, [refreshVacations, refreshExpenses, vacationId])
   );
 
   // Calculate category expenses for this vacation
@@ -58,47 +69,71 @@ export default function VacationReportScreen() {
     let cancelled = false;
 
     async function calculateExpenses() {
+      // Skip calculation if still loading or no valid data
+      if (expensesLoading) {
+        if (__DEV__) {
+          console.log('Report - Still loading expenses, skipping calculation');
+        }
+        return;
+      }
+
+      // Skip calculation if no vacationId or displayCurrency
+      if (!vacationId || !displayCurrency) {
+        if (__DEV__) {
+          console.log('Report - Skipping calculation: vacationId=', vacationId, 'displayCurrency=', displayCurrency);
+        }
+        return;
+      }
+
       const categoryMap = new Map<ExpenseCategory, { total: number; count: number }>();
       let total = 0;
-
-      // Note: Filtering is already done in storage.ts getExpenses() with type-safe String conversion
-      // No need for duplicate filtering here - trust the hook's filtered data
 
       // Debugging logs (only in development)
       if (__DEV__) {
         console.log('=== Report Screen Debug ===');
         console.log('Report - vacationId:', vacationId);
-        console.log('Report - vacationId type:', typeof vacationId);
+        console.log('Report - displayCurrency:', displayCurrency);
         console.log('Report - expenses from hook:', expenses.length);
-        console.log('Report - all expenses:', expenses);
-        expenses.forEach((expense, idx) => {
-          console.log(`Expense ${idx + 1}:`, {
-            id: expense.id,
-            category: expense.category,
-            amount: expense.amount,
-            vacationId: expense.vacationId,
-            vacationIdType: typeof expense.vacationId,
-            matches: String(expense.vacationId) === String(vacationId)
+        if (expenses.length > 0) {
+          expenses.forEach((expense, idx) => {
+            console.log(`Expense ${idx + 1}:`, {
+              id: expense.id,
+              category: expense.category,
+              amount: expense.amount,
+              currency: expense.currency,
+              vacationId: expense.vacationId,
+            });
           });
-        });
+        }
         console.log('==========================');
       }
 
-      // Convert all expenses to the default currency
+      // Convert all expenses to the user's display currency
       for (const expense of expenses) {
-        const convertedAmount = await currencyService.convertCurrency(
-          expense.amountCHF,
-          'CHF',
-          defaultCurrency
-        );
+        try {
+          const convertedAmount = await currencyService.convertCurrency(
+            expense.amount,
+            expense.currency,
+            displayCurrency
+          );
 
-        total += convertedAmount;
+          total += convertedAmount;
 
-        const existing = categoryMap.get(expense.category) || { total: 0, count: 0 };
-        categoryMap.set(expense.category, {
-          total: existing.total + convertedAmount,
-          count: existing.count + 1,
-        });
+          const existing = categoryMap.get(expense.category) || { total: 0, count: 0 };
+          categoryMap.set(expense.category, {
+            total: existing.total + convertedAmount,
+            count: existing.count + 1,
+          });
+        } catch (error) {
+          console.warn('Report - Currency conversion failed for expense:', expense.id, error);
+          // Fallback: use original amount
+          total += expense.amount;
+          const existing = categoryMap.get(expense.category) || { total: 0, count: 0 };
+          categoryMap.set(expense.category, {
+            total: existing.total + expense.amount,
+            count: existing.count + 1,
+          });
+        }
       }
 
       if (cancelled) return;
@@ -113,6 +148,11 @@ export default function VacationReportScreen() {
       // Sort by total descending
       data.sort((a, b) => b.total - a.total);
 
+      if (__DEV__) {
+        console.log('Report - Final total:', total);
+        console.log('Report - Category data:', data);
+      }
+
       setCategoryData(data);
       setTotalExpenses(total);
     }
@@ -122,7 +162,7 @@ export default function VacationReportScreen() {
     return () => {
       cancelled = true;
     };
-  }, [expenses, defaultCurrency, vacationId]);
+  }, [expenses, expensesLoading, displayCurrency, vacationId]);
 
   // Recalculate percentages when total changes
   React.useEffect(() => {
@@ -158,7 +198,7 @@ export default function VacationReportScreen() {
               {t('report.total_expenses')}
             </Text>
             <Text style={[styles.summaryAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {formatCurrency(totalExpenses, defaultCurrency)}
+              {formatCurrency(totalExpenses, displayCurrency)}
             </Text>
             <Text style={[styles.summarySubtext, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               {vacation?.destination}
@@ -177,7 +217,7 @@ export default function VacationReportScreen() {
                     {t('report.total_budget')}
                   </Text>
                   <Text style={[styles.budgetDetailValue, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                    {formatCurrency(vacation.budget, defaultCurrency)}
+                    {formatCurrency(vacationBudget, displayCurrency)}
                   </Text>
                 </View>
 
@@ -189,12 +229,12 @@ export default function VacationReportScreen() {
                   <Text style={[
                     styles.budgetDetailValue,
                     {
-                      color: vacation.budget - totalExpenses >= 0
+                      color: vacationBudget - totalExpenses >= 0
                         ? (isDark ? '#34C759' : '#28A745')
                         : (isDark ? '#FF453A' : '#DC3545')
                     }
                   ]}>
-                    {formatCurrency(vacation.budget - totalExpenses, defaultCurrency)}
+                    {formatCurrency(vacationBudget - totalExpenses, displayCurrency)}
                   </Text>
                 </View>
 
@@ -205,7 +245,7 @@ export default function VacationReportScreen() {
                   const endDate = new Date(vacation.endDate);
                   endDate.setHours(0, 0, 0, 0);
                   const remainingDays = Math.max(0, Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
-                  const remainingBudget = vacation.budget - totalExpenses;
+                  const remainingBudget = vacationBudget - totalExpenses;
                   const perDay = remainingDays > 0 ? remainingBudget / remainingDays : 0;
 
                   return (
@@ -232,7 +272,7 @@ export default function VacationReportScreen() {
                                 : (isDark ? '#FF453A' : '#DC3545')
                             }
                           ]}>
-                            {formatCurrency(perDay, defaultCurrency)}
+                            {formatCurrency(perDay, displayCurrency)}
                           </Text>
                         </View>
                       )}
@@ -283,7 +323,7 @@ export default function VacationReportScreen() {
                 </View>
                 <View style={styles.categoryAmountContainer}>
                   <Text style={[styles.categoryAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                    {formatCurrency(item.total, defaultCurrency)}
+                    {formatCurrency(item.total, displayCurrency)}
                   </Text>
                   <Text style={[styles.categoryPercentage, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
                     {item.percentage.toFixed(1)}%

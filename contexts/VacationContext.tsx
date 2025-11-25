@@ -1,17 +1,24 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 interface VacationContextType {
   currentVacationId: string | null;
   setCurrentVacationId: (id: string | null) => void;
+  refreshTrigger: number;
+  triggerRefresh: () => void;
 }
 
 const VacationContext = createContext<VacationContextType | undefined>(undefined);
 
 export function VacationProvider({ children }: { children: ReactNode }) {
   const [currentVacationId, setCurrentVacationId] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const triggerRefresh = useCallback(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
 
   return (
-    <VacationContext.Provider value={{ currentVacationId, setCurrentVacationId }}>
+    <VacationContext.Provider value={{ currentVacationId, setCurrentVacationId, refreshTrigger, triggerRefresh }}>
       {children}
     </VacationContext.Provider>
   );

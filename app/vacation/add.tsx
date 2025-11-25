@@ -56,8 +56,8 @@ export default function AddVacationScreen() {
         currency: formData.currency,                // Vacation currency for expenses
         imageUrl: formData.imageUrl || undefined,
       });
-      // Use replace instead of dismiss to trigger useFocusEffect and refresh vacation list
-      router.replace('/(tabs)');
+      // Navigate back to trigger useFocusEffect and refresh vacation list
+      router.back();
     } catch (error) {
       console.error('Failed to create vacation:', error);
       Alert.alert(t('common.error'), t('errors.generic'));

@@ -27,6 +27,7 @@ import { useTranslation } from '@/lib/i18n';
 import * as Haptics from 'expo-haptics';
 import { notificationService } from '@/lib/services/notification-service';
 import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
+import { expenseRepository } from '@/lib/db/repositories/expense-repository';
 
 export default function AddExpenseScreen() {
   const colorScheme = useColorScheme();
@@ -38,7 +39,7 @@ export default function AddExpenseScreen() {
 
   const [formData, setFormData] = useState({
     amount: '',
-    currency: defaultCurrency || 'CHF', // Use system default, fallback to CHF
+    currency: 'CHF', // Will be set by vacation currency on load
     description: '',
     category: 'food' as ExpenseCategory,
     date: new Date(),
@@ -48,30 +49,34 @@ export default function AddExpenseScreen() {
   const [converting, setConverting] = useState(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
 
-  // Load vacation currency on mount
+  // Load vacation currency on mount - this determines the default currency for expenses
+  // The vacation currency is the country's currency where the user is traveling
   React.useEffect(() => {
     const loadVacationCurrency = async () => {
       if (vacationId && !Array.isArray(vacationId)) {
         try {
           const vacation = await vacationRepository.findById(vacationId);
-          if (vacation && vacation.currency) {
-            setVacationCurrency(vacation.currency);
-            setFormData(prev => ({ ...prev, currency: vacation.currency }));
+          if (vacation) {
+            // Use the vacation's currency (country currency) for expenses
+            // This is the currency the user will see on price tags while traveling
+            const expenseCurrency = vacation.currency || defaultCurrency || 'CHF';
+            setVacationCurrency(expenseCurrency);
+            setFormData(prev => ({ ...prev, currency: expenseCurrency }));
+          } else {
+            // Fallback to user's default currency if vacation not found
+            setFormData(prev => ({ ...prev, currency: defaultCurrency || 'CHF' }));
           }
         } catch (error) {
           console.warn('Failed to load vacation currency:', error);
+          setFormData(prev => ({ ...prev, currency: defaultCurrency || 'CHF' }));
         }
+      } else {
+        // No vacation ID, use default currency
+        setFormData(prev => ({ ...prev, currency: defaultCurrency || 'CHF' }));
       }
     };
     loadVacationCurrency();
-  }, [vacationId]);
-
-  // Update currency when defaultCurrency is loaded (only if no vacation currency)
-  React.useEffect(() => {
-    if (!vacationCurrency && defaultCurrency && formData.currency === 'CHF' && defaultCurrency !== 'CHF') {
-      setFormData(prev => ({ ...prev, currency: defaultCurrency }));
-    }
-  }, [defaultCurrency, formData.currency, vacationCurrency]);
+  }, [vacationId, defaultCurrency]);
 
   // Convert to default currency whenever amount or currency changes
   React.useEffect(() => {
@@ -146,8 +151,8 @@ export default function AddExpenseScreen() {
       // Check budget and send notification if needed
       await checkBudgetAndNotify(vacationId, expense.amountCHF);
 
-      // Navigate back to vacation budget screen explicitly
-      router.replace(`/vacation/${vacationId}`);
+      // Navigate back to vacation budget screen
+      router.back();
     } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), t('errors.generic'));
@@ -170,8 +175,8 @@ export default function AddExpenseScreen() {
         return;
       }
 
-      const expenses = await vacationRepository.getExpenses(vacationId);
-      const totalSpent = expenses.reduce((sum, exp) => sum + exp.amountCHF, 0);
+      const expenses = await expenseRepository.findByVacationId(vacationId);
+      const totalSpent = expenses.reduce((sum: number, exp) => sum + exp.amountCHF, 0);
       const percentageUsed = (totalSpent / vacation.budget) * 100;
 
       // Send notification if over budget

@@ -24,14 +24,16 @@ import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacations } from '@/hooks/use-vacations';
 import { useExpenses } from '@/lib/database';
 import { useTranslation } from '@/lib/i18n';
+import { useVacationContext } from '@/contexts/VacationContext';
 import { Vacation } from '@/types';
 
 export default function VacationBudgetScreen() {
   const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
+  const { refreshTrigger } = useVacationContext();
   const { vacations, loading, refreshVacations } = useVacations();
-  const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId || '');
+  const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId ?? '');
   const [isInitialLoad, setIsInitialLoad] = React.useState(true);
   const [cachedVacation, setCachedVacation] = React.useState<Vacation | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -60,6 +62,16 @@ export default function VacationBudgetScreen() {
     }, [refreshVacations, refreshExpenses])
   );
 
+  // Refresh data when triggerRefresh is called (e.g., after editing vacation)
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      // Clear cached vacation to force showing fresh data
+      setCachedVacation(null);
+      refreshVacations();
+      refreshExpenses();
+    }
+  }, [refreshTrigger, refreshVacations, refreshExpenses]);
+
   const vacation = vacations.find(v => v.id === vacationId);
 
   // Debug logging for expense data (only in development)
@@ -87,15 +99,23 @@ export default function VacationBudgetScreen() {
   }, [expenses, sortOrder]);
 
   // Cache the vacation to prevent flickering during refresh
+  // Always update cache when vacation data changes (including image updates)
   React.useEffect(() => {
     if (vacation) {
-      setCachedVacation(vacation);
+      // Check if vacation data has actually changed (compare updatedAt timestamps)
+      const vacationUpdatedAt = vacation.updatedAt?.getTime?.() || 0;
+      const cachedUpdatedAt = cachedVacation?.updatedAt?.getTime?.() || 0;
+
+      if (vacationUpdatedAt !== cachedUpdatedAt || !cachedVacation) {
+        setCachedVacation(vacation);
+      }
       setIsInitialLoad(false);
     }
-  }, [vacation]);
+  }, [vacation, cachedVacation]);
 
-  // Use cached vacation if current vacation is undefined but we have a cache
-  const displayVacation = vacation || cachedVacation;
+  // Always prefer fresh vacation data over cached data
+  // Only use cache when vacation is undefined (during initial load or refresh)
+  const displayVacation = vacation ?? cachedVacation;
 
   // Only show loading if we don't have any vacation data (not even cached)
   if (!displayVacation && (loading || isInitialLoad)) {

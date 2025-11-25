@@ -134,12 +134,8 @@ export default function EditExpenseScreen() {
       await updateExpense(expenseId as string, updatedExpense);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      // Navigate back to vacation budget screen explicitly
-      if (vacationId && !Array.isArray(vacationId)) {
-        router.replace(`/vacation/${vacationId}`);
-      } else {
-        router.back();
-      }
+      // Navigate back to vacation budget screen
+      router.back();
     } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), t('errors.generic'));
@@ -148,13 +144,7 @@ export default function EditExpenseScreen() {
 
   const handleCancel = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    // Navigate back to vacation budget screen explicitly
-    if (vacationId && !Array.isArray(vacationId)) {
-      router.replace(`/vacation/${vacationId}`);
-    } else {
-      router.back();
-    }
+    router.back();
   };
 
   const updateField = (field: string, value: string | Date | ExpenseCategory) => {

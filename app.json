@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Ferien Budget",
+    "name": "Reise Budget",
     "slug": "vacation-assist",
     "version": "1.1.0",
     "orientation": "portrait",
@@ -8,7 +8,7 @@
     "scheme": "vacationassist",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "description": "Verwalten Sie Ihr Reisebudget einfach und effizient. Erfassen Sie Ausgaben, planen Sie Ihr Budget und behalten Sie den Überblick über Ihre Reisekosten.",
+    "description": "Verwalte dein Reisebudget einfach und effizient. Erfasse Ausgaben, plane dein Budget und behalte den Überblick über deine Reisekosten.",
     "primaryColor": "#007AFF",
     "ios": {
       "supportsTablet": false,
@@ -65,8 +65,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Die App benötigt Zugriff auf deine Fotos, um Ferienbilder hinzuzufügen.",
-          "cameraPermission": "Die App benötigt Zugriff auf deine Kamera, um Ferienfotos aufzunehmen."
+          "photosPermission": "Die App benötigt Zugriff auf deine Fotos, um Reisebilder hinzuzufügen.",
+          "cameraPermission": "Die App benötigt Zugriff auf deine Kamera, um Reisefotos aufzunehmen."
         }
       ]
     ],
