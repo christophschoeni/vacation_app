@@ -46,7 +46,7 @@ export default function BudgetInfoRow({ vacation, expenses }: BudgetInfoRowProps
       </View>
       <View style={styles.budgetInfoItem}>
         <Text style={[styles.budgetInfoAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
-          {formatCurrency(analysis.averageSpentPerDay, displayCurrency)}
+          {formatCurrency(analysis.remainingBudgetPerDay, displayCurrency)}
         </Text>
         <Text style={[styles.budgetInfoLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
           Ø Pro Tag

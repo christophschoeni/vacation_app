@@ -1,13 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ImageBackground } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Vacation, Expense } from '@/types';
-import { calculateBudgetAnalysisAsync, formatCurrency, getBudgetStatusColor, BudgetAnalysis } from '@/lib/budget-calculations';
-import { useColorScheme } from 'react-native';
-import { useTranslation } from '@/lib/i18n';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { BudgetAnalysis, calculateBudgetAnalysisAsync, formatCurrency, getBudgetStatusColor } from '@/lib/budget-calculations';
 import { getVacationGradient } from '@/lib/vacation-colors';
+import { Expense, Vacation } from '@/types';
+import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { ActivityIndicator, ImageBackground, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
 interface VacationBudgetHeaderProps {
   vacation: Vacation;
@@ -17,8 +14,6 @@ interface VacationBudgetHeaderProps {
 export default function VacationBudgetHeader({ vacation, expenses }: VacationBudgetHeaderProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const { defaultCurrency } = useCurrency();
   const [analysis, setAnalysis] = React.useState<BudgetAnalysis | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -46,7 +41,7 @@ export default function VacationBudgetHeader({ vacation, expenses }: VacationBud
   }
 
   const progress = analysis.budgetPercentageUsed / 100;
-  const statusColor = getBudgetStatusColor(analysis.budgetPercentageUsed);
+  const statusColor = getBudgetStatusColor(analysis.status, analysis.budgetPercentageUsed);
 
   return (
     <View style={styles.container}>

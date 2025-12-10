@@ -309,7 +309,7 @@ export default function ExchangeRatesScreen() {
         </View>
 
         {/* Info Card */}
-        <Card variant="clean" style={[styles.infoCard, { backgroundColor: isDark ? '#1C1C1E' : '#F2F2F7' }]}>
+        <Card variant="clean" style={[styles.infoCard, { backgroundColor: isDark ? '#1C1C1E' : '#F2F2F7' }] as any}>
           <View style={styles.infoContent}>
             <Icon name="info" size={20} color={isDark ? '#0A84FF' : '#007AFF'} />
             <Text style={[styles.infoText, { color: isDark ? '#EBEBF5' : '#3C3C43' }]}>

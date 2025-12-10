@@ -4,14 +4,47 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Updates from 'expo-updates';
 import insights from 'expo-insights';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, useColorScheme } from 'react-native';
+import { View, Text, ActivityIndicator, useColorScheme, Alert, Platform } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
+
+// Check for OTA updates on app start
+async function checkForUpdates() {
+  if (__DEV__) {
+    // Skip update check in development mode
+    return;
+  }
+
+  try {
+    const update = await Updates.checkForUpdateAsync();
+    if (update.isAvailable) {
+      await Updates.fetchUpdateAsync();
+      // Alert the user and reload
+      Alert.alert(
+        'Update verfügbar',
+        'Eine neue Version wurde heruntergeladen. Die App wird jetzt neu gestartet.',
+        [
+          {
+            text: 'OK',
+            onPress: async () => {
+              await Updates.reloadAsync();
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  } catch (error) {
+    // Silently fail - updates are not critical
+    console.log('Update check failed:', error);
+  }
+}
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { db } from '@/lib/db/database';
@@ -132,12 +165,15 @@ function RootNavigation() {
           // Initialize notification service
           await notificationService.initialize();
 
+          // Check for OTA updates in background
+          checkForUpdates();
+
           // Check onboarding status
           const completed = await onboardingService.hasCompletedOnboarding();
           setOnboardingCompleted(completed);
 
-          if (insights && typeof insights.track === 'function') {
-            insights.track('app_launched');
+          if (insights && typeof (insights as { track?: (name: string) => void }).track === 'function') {
+            (insights as { track: (name: string) => void }).track('app_launched');
           }
 
           // Hide splash screen after initialization is complete

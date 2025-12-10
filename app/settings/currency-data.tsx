@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { currencyService } from '@/lib/currency';
+import { currencyService, CurrencyUpdateSettings, UpdatePolicy } from '@/lib/currency';
 import { formatRelativeTime } from '@/lib/utils/formatters';
 import { ErrorHandler } from '@/lib/utils/error-handler';
 import { useTranslation } from '@/lib/i18n';
@@ -28,12 +28,6 @@ interface CacheStatus {
   lastUpdate: Date | null;
 }
 
-interface CurrencySettings {
-  updatePolicy: string;
-  allowMobileData: boolean;
-  cacheExpiryHours: number;
-  lastUpdate: Date | null;
-}
 
 export default function CurrencyDataScreen() {
   const colorScheme = useColorScheme();
@@ -60,7 +54,7 @@ export default function CurrencyDataScreen() {
   const [manualFromCurrency, setManualFromCurrency] = useState('CHF');
   const [manualToCurrency, setManualToCurrency] = useState('TRY');
   const [manualRate, setManualRate] = useState('');
-  const [settings, setSettings] = useState<CurrencySettings>({
+  const [settings, setSettings] = useState<CurrencyUpdateSettings>({
     updatePolicy: 'auto',
     allowMobileData: true,
     cacheExpiryHours: 24,
@@ -83,7 +77,7 @@ export default function CurrencyDataScreen() {
       const currentSettings = await currencyService.getUpdateSettings();
       setSettings(currentSettings);
     } catch (error) {
-      await ErrorHandler.handleError(error, 'load currency settings', false);
+      await ErrorHandler.handleAsyncError(error, { context: 'load currency settings', showAlert: false });
     }
   };
 
@@ -92,18 +86,18 @@ export default function CurrencyDataScreen() {
       const status = await currencyService.getCacheStatus();
       setCacheStatus(status);
     } catch (error) {
-      await ErrorHandler.handleError(error, 'load cache status', false);
+      await ErrorHandler.handleAsyncError(error, { context: 'load cache status', showAlert: false });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateSettings = async (newSettings: Partial<CurrencySettings>) => {
+  const updateSettings = async (newSettings: Partial<CurrencyUpdateSettings>) => {
     try {
       await currencyService.updateSettings(newSettings);
       setSettings(prev => ({ ...prev, ...newSettings }));
     } catch (error) {
-      await ErrorHandler.handleError(error, 'update currency settings', true);
+      await ErrorHandler.handleAsyncError(error, { context: 'update currency settings', showAlert: true });
     }
   };
 
@@ -128,7 +122,7 @@ export default function CurrencyDataScreen() {
         );
       }
     } catch (error) {
-      await ErrorHandler.handleError(error, 'manual currency update', true);
+      await ErrorHandler.handleAsyncError(error, { context: 'manual currency update', showAlert: true });
     } finally {
       setIsUpdating(false);
     }
@@ -153,7 +147,7 @@ export default function CurrencyDataScreen() {
                 [{ text: t('common.ok'), style: 'default' }]
               );
             } catch (error) {
-              await ErrorHandler.handleError(error, 'clear cache', true);
+              await ErrorHandler.handleAsyncError(error, { context: 'clear cache', showAlert: true });
             }
           },
         },
@@ -185,7 +179,7 @@ export default function CurrencyDataScreen() {
       setManualRate('');
       await loadCacheStatus();
     } catch (error) {
-      await ErrorHandler.handleError(error, 'set manual rate', true);
+      await ErrorHandler.handleAsyncError(error, { context: 'set manual rate', showAlert: true });
     }
   };
 
@@ -329,7 +323,7 @@ export default function CurrencyDataScreen() {
           {UPDATE_POLICIES.map((policy) => (
             <TouchableOpacity
               key={policy.value}
-              onPress={() => updateSettings({ updatePolicy: policy.value })}
+              onPress={() => updateSettings({ updatePolicy: policy.value as UpdatePolicy })}
               activeOpacity={0.7}
             >
               <Card variant="clean" style={styles.card}>
@@ -669,5 +663,24 @@ const styles = StyleSheet.create({
   headerButton: {
     fontSize: 17,
     fontFamily: 'System',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(142, 142, 147, 0.2)',
+  },
+  backButton: {
+    minWidth: 60,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+    textAlign: 'center',
+    flex: 1,
   },
 });

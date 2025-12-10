@@ -85,14 +85,16 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
 
   const progressColor = getBudgetStatusColor(analysis.status, analysis.budgetPercentageUsed);
 
-  const getBudgetStatusText = (status: typeof analysis.status): string => {
+  const getBudgetStatusText = (status: string): string => {
     switch (status) {
-      case 'upcoming':
-        return t('components.budget_overview.status.upcoming');
-      case 'active':
-        return t('components.budget_overview.status.active');
-      case 'completed':
-        return t('components.budget_overview.status.completed');
+      case 'on-track':
+        return t('components.budget_overview.status.on_track');
+      case 'over-budget':
+        return t('components.budget_overview.status.over_budget');
+      case 'under-budget':
+        return t('components.budget_overview.status.under_budget');
+      case 'future-trip':
+        return t('components.budget_overview.status.future_trip');
       default:
         return '';
     }

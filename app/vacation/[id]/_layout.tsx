@@ -64,67 +64,44 @@ function VacationDetailContent() {
     );
   }
 
-  // iOS-specific tint colors (system blue)
-  const tintColor = isDark ? '#0A84FF' : '#007AFF';
-
   return (
     <NativeTabs
       minimizeBehavior="onScrollDown"
       disableTransparentOnScrollEdge
     >
       <NativeTabs.Trigger name="index">
-        <Label
-          labelStyle={{
-            color: tintColor,
-          }}
-        >
+        <Label>
           {t('vacation.tabs.budget')}
         </Label>
         <NativeIcon
           sf={Platform.OS === 'ios' ? 'dollarsign.circle' : undefined}
-          tintColor={tintColor}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="report">
-        <Label
-          labelStyle={{
-            color: tintColor,
-          }}
-        >
+        <Label>
           {t('vacation.tabs.report')}
         </Label>
         <NativeIcon
           sf={Platform.OS === 'ios' ? 'chart.bar' : undefined}
-          tintColor={tintColor}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="checklists">
-        <Label
-          labelStyle={{
-            color: tintColor,
-          }}
-        >
+        <Label>
           {t('vacation.tabs.lists')}
         </Label>
         <NativeIcon
           sf={Platform.OS === 'ios' ? 'checklist' : undefined}
-          tintColor={tintColor}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
-        <Label
-          labelStyle={{
-            color: tintColor,
-          }}
-        >
+        <Label>
           {t('vacation.tabs.settings')}
         </Label>
         <NativeIcon
           sf={Platform.OS === 'ios' ? 'gear' : undefined}
-          tintColor={tintColor}
         />
       </NativeTabs.Trigger>
     </NativeTabs>

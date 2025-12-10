@@ -13,6 +13,17 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Haptics from 'expo-haptics';
 import insights from 'expo-insights';
 
+// Type guard for expo-insights
+const trackEvent = (eventName: string) => {
+  try {
+    if (insights && typeof (insights as { track?: (name: string) => void }).track === 'function') {
+      (insights as { track: (name: string) => void }).track(eventName);
+    }
+  } catch (error) {
+    console.warn('Failed to track event:', error);
+  }
+};
+
 import { Colors, Icon } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
@@ -47,25 +58,13 @@ export default function VacationsScreen() {
 
   const handleAddVacation = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    try {
-      if (insights && typeof insights.track === 'function') {
-        insights.track('vacation_add_started');
-      }
-    } catch (error) {
-      console.warn('Failed to track vacation add:', error);
-    }
+    trackEvent('vacation_add_started');
     router.push('/vacation/add');
   };
 
   const handleVacationPress = async (id: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    try {
-      if (insights && typeof insights.track === 'function') {
-        insights.track('vacation_viewed');
-      }
-    } catch (error) {
-      console.warn('Failed to track vacation view:', error);
-    }
+    trackEvent('vacation_viewed');
     router.push(`/vacation/${id}`);
   };
 

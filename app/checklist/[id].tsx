@@ -174,7 +174,7 @@ export default function ChecklistDetailScreen() {
         { text: t('common.cancel'), style: 'cancel' },
         {
           text: t('common.save'),
-          onPress: async (newTitle) => {
+          onPress: async (newTitle: string | undefined) => {
             if (newTitle?.trim() && newTitle !== checklist.title) {
               try {
                 await saveChecklist({

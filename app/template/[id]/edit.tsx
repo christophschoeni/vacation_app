@@ -44,10 +44,10 @@ export default function TemplateEditScreen() {
     loadTemplate();
   }, [loadTemplate]);
 
-  const handleCategorySelect = (category: any) => {
+  const handleCategorySelect = (category: string) => {
     updateFormData({
       category,
-      icon: CATEGORY_CONFIG[category]?.icon || formData.icon,
+      icon: (CATEGORY_CONFIG as Record<string, { icon: string }>)[category]?.icon || formData.icon,
     });
   };
 

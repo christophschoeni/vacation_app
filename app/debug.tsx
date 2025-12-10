@@ -133,7 +133,7 @@ export default function DebugScreen() {
     try {
       logger.info('📁 Checking database file and paths...');
 
-      const documentsDir = FileSystem.DocumentDirectoryPath || '';
+      const documentsDir = FileSystem.Paths.document.uri || '';
       const sqliteDir = `${documentsDir}SQLite/`;
       const dbPath = `${sqliteDir}vacation_assist.db`;
 

@@ -4,7 +4,7 @@ import { Card } from '@/components/design';
 import { useColorScheme } from 'react-native';
 
 interface FormInputProps {
-  label: string;
+  label?: string;
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
@@ -13,6 +13,11 @@ interface FormInputProps {
   numberOfLines?: number;
   required?: boolean;
   error?: string;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  maxLength?: number;
+  onSubmitEditing?: () => void;
+  returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send' | 'default';
+  autoFocus?: boolean;
 }
 
 export default function FormInput({
@@ -25,14 +30,21 @@ export default function FormInput({
   numberOfLines = 1,
   required = false,
   error,
+  autoCapitalize,
+  maxLength,
+  onSubmitEditing,
+  returnKeyType,
+  autoFocus,
 }: FormInputProps) {
   const colorScheme = useColorScheme();
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.label, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-        {label}{required && ' *'}
-      </Text>
+      {label && (
+        <Text style={[styles.label, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
+          {label}{required && ' *'}
+        </Text>
+      )}
 
       <Card style={styles.inputContainer}>
         <TextInput
@@ -43,6 +55,11 @@ export default function FormInput({
           keyboardType={keyboardType}
           multiline={multiline}
           numberOfLines={numberOfLines}
+          autoCapitalize={autoCapitalize}
+          maxLength={maxLength}
+          onSubmitEditing={onSubmitEditing}
+          returnKeyType={returnKeyType}
+          autoFocus={autoFocus}
           style={[
             styles.input,
             {
