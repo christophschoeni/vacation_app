@@ -59,6 +59,26 @@ import { notificationService } from '@/lib/services/notification-service';
 import { ExpensesMigration } from '@/lib/db/migrations/migrate-expenses-to-sqlite';
 import { vacationMigrationService } from '@/lib/db/migrations/migrate-vacations-to-sqlite';
 import { settingsMigrationService } from '@/lib/db/migrations/migrate-settings-to-sqlite';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://f20408dbd93c99f07c3949c553f9d9eb@o4510578472386560.ingest.de.sentry.io/4510578478940240',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -450,7 +470,7 @@ function RootNavigation() {
   );
 }
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
@@ -464,4 +484,4 @@ export default function RootLayout() {
       </SafeAreaProvider>
     </ErrorBoundary>
   );
-}
+});

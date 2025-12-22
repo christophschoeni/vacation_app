@@ -15,6 +15,7 @@ export interface UseVacationsReturn {
     startDate: Date;
     endDate: Date;
     budget?: number;
+    budgetCurrency?: string;
     currency?: string;
     imageUrl?: string;
   }) => Promise<Vacation>;
@@ -80,6 +81,7 @@ export function useVacations(): UseVacationsReturn {
     startDate: Date;
     endDate: Date;
     budget?: number;
+    budgetCurrency?: string;
     currency?: string;
     imageUrl?: string;
   }): Promise<Vacation> => {

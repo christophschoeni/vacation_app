@@ -134,6 +134,7 @@ export default function AddExpenseScreen() {
         category: formData.category,
         description: formData.description,
         date: formData.date,
+        splitType: 'equal', // Default to equal split for now
         createdAt: new Date(),
       };
 

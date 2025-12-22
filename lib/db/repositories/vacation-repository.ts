@@ -46,6 +46,8 @@ export class VacationRepository extends BaseRepository implements IRepository<Va
       expenses: [], // Will be loaded separately if needed
       checklists: [], // Will be loaded separately if needed
       imageUrl: row.imageUrl,
+      isShared: Boolean(row.isShared),
+      participantCount: row.participantCount || 1,
       createdAt: this.stringToDate(row.createdAt),
       updatedAt: this.stringToDate(row.updatedAt),
     };

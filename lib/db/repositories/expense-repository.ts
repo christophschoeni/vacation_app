@@ -41,6 +41,8 @@ export class ExpenseRepository extends BaseRepository implements IRepository<Exp
       description: row.description,
       date: this.stringToDate(row.date),
       imageUrl: row.imageUrl,
+      paidBy: row.paidBy,
+      splitType: row.splitType || 'equal',
       createdAt: this.stringToDate(row.createdAt),
     };
   }

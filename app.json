@@ -20,7 +20,12 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "LSApplicationCategoryType": "public.app-category.travel",
-        "CFBundleLocalizations": ["de", "en", "fr", "it"]
+        "CFBundleLocalizations": [
+          "de",
+          "en",
+          "fr",
+          "it"
+        ]
       }
     },
     "android": {
@@ -67,6 +72,14 @@
         {
           "photosPermission": "Die App benötigt Zugriff auf deine Fotos, um Reisebilder hinzuzufügen.",
           "cameraPermission": "Die App benötigt Zugriff auf deine Kamera, um Reisefotos aufzunehmen."
+        }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "ferien-budget",
+          "organization": "schoni-digital"
         }
       ]
     ],
