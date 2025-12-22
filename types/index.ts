@@ -11,6 +11,8 @@ export interface Vacation {
   expenses: Expense[];
   checklists: string[];
   imageUrl?: string;
+  isShared: boolean;         // Group sharing feature enabled
+  participantCount: number;  // Number of participants
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,6 +27,8 @@ export interface Expense {
   description: string;
   date: Date;
   imageUrl?: string;
+  paidBy?: string;           // Participant ID who paid
+  splitType: SplitType;      // How expense is split among participants
   createdAt: Date;
 }
 
@@ -88,4 +92,49 @@ export interface AppSettings {
 
 export interface ExchangeRates {
   [key: string]: number;
+}
+
+// Group Sharing Types
+
+export interface Participant {
+  id: string;
+  vacationId: string;
+  name: string;
+  color: string;             // Hex color for avatar
+  deviceId?: string;         // Optional: for multi-device sync
+  isOwner: boolean;
+  createdAt: Date;
+}
+
+export interface ExpenseSplit {
+  id: string;
+  expenseId: string;
+  participantId: string;
+  shareAmount: number;       // Amount this participant owes
+  sharePercentage?: number;  // Optional: percentage share
+  isPayer: boolean;          // Is this participant the payer?
+  createdAt: Date;
+}
+
+export interface AccessCode {
+  id: string;
+  vacationId: string;
+  code: string;              // Splid-style: XXX-XXX-XXX format
+  expiresAt?: Date;          // Optional expiration date
+  maxUses?: number;          // Optional max number of uses
+  useCount: number;          // Current usage count
+  createdAt: Date;
+}
+
+export type SplitType = 'equal' | 'custom' | 'percentage' | 'shares';
+
+export interface ExpenseWithSplits extends Expense {
+  splits: ExpenseSplit[];
+}
+
+export interface Settlement {
+  from: Participant;
+  to: Participant;
+  amount: number;
+  currency: string;
 }

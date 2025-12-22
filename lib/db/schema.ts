@@ -13,11 +13,14 @@ export const vacations = sqliteTable('vacations', {
   budgetCurrency: text('budget_currency').notNull().default('CHF'), // Currency in which budget is specified (system currency)
   currency: text('currency').notNull().default('CHF'), // Vacation currency for expenses
   imageUrl: text('image_url'),
+  isShared: integer('is_shared', { mode: 'boolean' }).notNull().default(false), // Group sharing feature
+  participantCount: integer('participant_count').notNull().default(1), // Number of participants
   createdAt: text('created_at').notNull(), // ISO date string
   updatedAt: text('updated_at').notNull(), // ISO date string
 }, (table) => ({
   startDateIdx: index('vacations_start_date_idx').on(table.startDate),
   countryIdx: index('vacations_country_idx').on(table.country),
+  isSharedIdx: index('vacations_is_shared_idx').on(table.isShared),
 }));
 
 // Expenses table
@@ -31,6 +34,8 @@ export const expenses = sqliteTable('expenses', {
   description: text('description').notNull(),
   date: text('date').notNull(), // ISO date string
   imageUrl: text('image_url'),
+  paidBy: text('paid_by'), // Participant ID who paid
+  splitType: text('split_type').notNull().default('equal'), // 'equal' | 'custom' | 'percentage' | 'shares'
   createdAt: text('created_at').notNull(), // ISO date string
 }, (table) => ({
   vacationIdFk: foreignKey({
@@ -41,6 +46,7 @@ export const expenses = sqliteTable('expenses', {
   vacationIdIdx: index('expenses_vacation_id_idx').on(table.vacationId),
   categoryIdx: index('expenses_category_idx').on(table.category),
   dateIdx: index('expenses_date_idx').on(table.date),
+  paidByIdx: index('expenses_paid_by_idx').on(table.paidBy),
 }));
 
 // Checklists table
@@ -147,17 +153,92 @@ export const exchangeRates = sqliteTable('exchange_rates', {
   uniquePairIdx: index('exchange_rates_unique_pair_idx').on(table.baseCurrency, table.targetCurrency),
 }));
 
+// Participants table (for group sharing)
+export const participants = sqliteTable('participants', {
+  id: text('id').primaryKey(),
+  vacationId: text('vacation_id').notNull(),
+  name: text('name').notNull(),
+  color: text('color').notNull(), // Hex color for avatar
+  deviceId: text('device_id'), // Optional: for multi-device sync
+  isOwner: integer('is_owner', { mode: 'boolean' }).notNull().default(false),
+  createdAt: text('created_at').notNull(), // ISO date string
+}, (table) => ({
+  vacationIdFk: foreignKey({
+    columns: [table.vacationId],
+    foreignColumns: [vacations.id],
+    name: 'participants_vacation_id_fk'
+  }).onDelete('cascade'),
+  vacationIdIdx: index('participants_vacation_id_idx').on(table.vacationId),
+  isOwnerIdx: index('participants_is_owner_idx').on(table.isOwner),
+  // Unique constraint for vacation + name
+  uniqueNameIdx: index('participants_unique_name_idx').on(table.vacationId, table.name),
+}));
+
+// Expense Splits table (how expenses are divided among participants)
+export const expenseSplits = sqliteTable('expense_splits', {
+  id: text('id').primaryKey(),
+  expenseId: text('expense_id').notNull(),
+  participantId: text('participant_id').notNull(),
+  shareAmount: real('share_amount').notNull(), // Amount this participant owes
+  sharePercentage: real('share_percentage'), // Optional: percentage share
+  isPayer: integer('is_payer', { mode: 'boolean' }).notNull().default(false), // Is this participant the payer?
+  createdAt: text('created_at').notNull(), // ISO date string
+}, (table) => ({
+  expenseIdFk: foreignKey({
+    columns: [table.expenseId],
+    foreignColumns: [expenses.id],
+    name: 'expense_splits_expense_id_fk'
+  }).onDelete('cascade'),
+  participantIdFk: foreignKey({
+    columns: [table.participantId],
+    foreignColumns: [participants.id],
+    name: 'expense_splits_participant_id_fk'
+  }).onDelete('cascade'),
+  expenseIdIdx: index('expense_splits_expense_id_idx').on(table.expenseId),
+  participantIdIdx: index('expense_splits_participant_id_idx').on(table.participantId),
+  isPayerIdx: index('expense_splits_is_payer_idx').on(table.isPayer),
+  // Unique constraint for expense + participant
+  uniqueSplitIdx: index('expense_splits_unique_split_idx').on(table.expenseId, table.participantId),
+}));
+
+// Access Codes table (for sharing vacations with groups)
+export const accessCodes = sqliteTable('access_codes', {
+  id: text('id').primaryKey(),
+  vacationId: text('vacation_id').notNull(),
+  code: text('code').notNull(), // Splid-style: XXX-XXX-XXX format
+  expiresAt: text('expires_at'), // Optional expiration date (ISO string)
+  maxUses: integer('max_uses'), // Optional max number of uses
+  useCount: integer('use_count').notNull().default(0), // Current usage count
+  createdAt: text('created_at').notNull(), // ISO date string
+}, (table) => ({
+  vacationIdFk: foreignKey({
+    columns: [table.vacationId],
+    foreignColumns: [vacations.id],
+    name: 'access_codes_vacation_id_fk'
+  }).onDelete('cascade'),
+  vacationIdIdx: index('access_codes_vacation_id_idx').on(table.vacationId),
+  codeIdx: index('access_codes_code_idx').on(table.code),
+  expiresAtIdx: index('access_codes_expires_at_idx').on(table.expiresAt),
+}));
+
 // Relations
 export const vacationsRelations = relations(vacations, ({ many }) => ({
   expenses: many(expenses),
   checklists: many(checklists),
+  participants: many(participants),
+  accessCodes: many(accessCodes),
 }));
 
-export const expensesRelations = relations(expenses, ({ one }) => ({
+export const expensesRelations = relations(expenses, ({ one, many }) => ({
   vacation: one(vacations, {
     fields: [expenses.vacationId],
     references: [vacations.id],
   }),
+  payer: one(participants, {
+    fields: [expenses.paidBy],
+    references: [participants.id],
+  }),
+  splits: many(expenseSplits),
 }));
 
 export const checklistsRelations = relations(checklists, ({ one, many }) => ({
@@ -176,5 +257,32 @@ export const checklistItemsRelations = relations(checklistItems, ({ one }) => ({
   checklist: one(checklists, {
     fields: [checklistItems.checklistId],
     references: [checklists.id],
+  }),
+}));
+
+export const participantsRelations = relations(participants, ({ one, many }) => ({
+  vacation: one(vacations, {
+    fields: [participants.vacationId],
+    references: [vacations.id],
+  }),
+  paidExpenses: many(expenses),
+  splits: many(expenseSplits),
+}));
+
+export const expenseSplitsRelations = relations(expenseSplits, ({ one }) => ({
+  expense: one(expenses, {
+    fields: [expenseSplits.expenseId],
+    references: [expenses.id],
+  }),
+  participant: one(participants, {
+    fields: [expenseSplits.participantId],
+    references: [participants.id],
+  }),
+}));
+
+export const accessCodesRelations = relations(accessCodes, ({ one }) => ({
+  vacation: one(vacations, {
+    fields: [accessCodes.vacationId],
+    references: [vacations.id],
   }),
 }));
