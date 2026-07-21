@@ -1,6 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity , useColorScheme } from 'react-native';
-import { Card, Icon } from '@/components/design';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+import { Icon, ProgressBar } from '@/components/design';
+import { BorderRadius, Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import { Checklist } from '@/types';
 import { useTranslation } from '@/lib/i18n';
 
@@ -10,228 +13,172 @@ interface ChecklistCardProps {
   onLongPress?: (id: string) => void;
 }
 
-export default function ChecklistCard({ checklist, onPress, onLongPress }: ChecklistCardProps) {
-  const colorScheme = useColorScheme();
-  const { t } = useTranslation();
-  const isDark = colorScheme === 'dark';
+const CATEGORY_COLORS: Record<string, string> = {
+  packing: '#007AFF',
+  shopping: '#34C759',
+  bucket: '#FF9500',
+  todo: '#FF3B30',
+  planning: '#5856D6',
+  general: '#8E8E93',
+  custom: '#6D6D70',
+};
 
-  const completedItems = checklist.items?.filter(item => item.completed).length || 0;
-  const totalItems = checklist.items?.length || 0;
-  const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+/**
+ * A checklist as a card: icon, title, completion count and a progress bar,
+ * followed by a preview of the first few items.
+ */
+export default function ChecklistCard({
+  checklist,
+  onPress,
+  onLongPress,
+}: ChecklistCardProps) {
+  const theme = useIOSTheme();
+  // The category id is data, so its label key is assembled at runtime and
+  // cannot be checked against TranslationKey.
+  const { t, tDynamic } = useTranslation();
+
+  const items = checklist.items ?? [];
+  const completedItems = items.filter((item) => item.completed).length;
+  const totalItems = items.length;
+  const progress = totalItems > 0 ? completedItems / totalItems : 0;
   const isFullyCompleted = totalItems > 0 && completedItems === totalItems;
 
-  const getCategoryColor = (category: string) => {
-    const colors = {
-      packing: '#007AFF',
-      shopping: '#34C759',
-      bucket: '#FF9500',
-      todo: '#FF3B30',
-      planning: '#5856D6',
-      general: '#8E8E93',
-      custom: '#6D6D70',
-    };
-    return colors[category as keyof typeof colors] || colors.general;
-  };
-
-  const getCategoryName = (category: string) => {
-    return t(`checklist.categories.${category}` as any) || t('checklist.categories.general');
-  };
+  const accent = CATEGORY_COLORS[checklist.category] ?? CATEGORY_COLORS.general;
+  const barColor = isFullyCompleted ? theme.success : accent;
 
   return (
     <TouchableOpacity
       onPress={() => onPress(checklist.id)}
       onLongPress={() => onLongPress?.(checklist.id)}
       activeOpacity={0.7}
+      style={[styles.card, { backgroundColor: theme.groupedBackground }]}
+      accessibilityRole="button"
+      accessibilityLabel={`${checklist.title}. ${t('checklist.progress', {
+        completed: completedItems,
+        total: totalItems,
+      })}`}
     >
-      <Card variant="clean" style={styles.card}>
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
-            <View style={[
-              styles.iconContainer,
-              isFullyCompleted && styles.iconContainerCompleted
-            ]}>
-              <Icon
-                name={isFullyCompleted ? 'check' : checklist.icon as any}
-                size={20}
-                color={isFullyCompleted ? '#34C759' : getCategoryColor(checklist.category)}
-              />
-            </View>
-            <View style={styles.textContainer}>
-              <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                {checklist.title}
-              </Text>
-              <Text style={[styles.category, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                {getCategoryName(checklist.category)}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.statsContainer}>
-            <Text style={[styles.progress, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {completedItems}/{totalItems}
-            </Text>
-            {totalItems > 0 && (
-              <View style={styles.progressBarContainer}>
-                <View style={[styles.progressBar, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
-                  <View
-                    style={[
-                      styles.progressFill,
-                      {
-                        width: `${progressPercent}%`,
-                        backgroundColor: isFullyCompleted ? '#34C759' : getCategoryColor(checklist.category),
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-            )}
-          </View>
+      <View style={styles.header}>
+        <View style={[styles.icon, { backgroundColor: barColor + '22' }]}>
+          <Icon
+            name={isFullyCompleted ? 'check' : (checklist.icon as any)}
+            size={20}
+            color={barColor}
+          />
         </View>
 
-        {checklist.description && (
-          <Text style={[styles.description, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {checklist.description}
+        <View style={styles.headerText}>
+          <Text style={[styles.title, { color: theme.label }]} numberOfLines={1}>
+            {checklist.title}
           </Text>
-        )}
+          <Text style={[styles.category, { color: theme.secondaryLabel }]} numberOfLines={1}>
+            {tDynamic(`checklist.categories.${checklist.category}`)}
+          </Text>
+        </View>
 
-        {/* Preview von den ersten paar Items */}
-        {checklist.items && checklist.items.length > 0 && (
-          <View style={styles.itemsPreview}>
-            {checklist.items.slice(0, 3).map((item, index) => (
-              <View key={item.id} style={styles.previewItem}>
-                <Icon
-                  name={item.completed ? 'check' : 'check'}
-                  size={14}
-                  color={item.completed ? getCategoryColor(checklist.category) : (isDark ? '#3A3A3C' : '#E5E5EA')}
-                />
-                <Text
-                  style={[
-                    styles.previewText,
-                    {
-                      color: item.completed
-                        ? (isDark ? '#8E8E93' : '#6D6D70')
-                        : (isDark ? '#FFFFFF' : '#1C1C1E'),
-                      textDecorationLine: item.completed ? 'line-through' : 'none',
-                    },
-                  ]}
-                  numberOfLines={1}
-                >
-                  {item.text}
-                </Text>
-              </View>
-            ))}
-            {checklist.items && checklist.items.length > 3 && (
-              <Text style={[styles.moreItems, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                +{checklist.items.length - 3} weitere
+        <Text style={[styles.count, { color: theme.secondaryLabel }]}>
+          {completedItems}/{totalItems}
+        </Text>
+      </View>
+
+      {totalItems > 0 && (
+        <ProgressBar progress={progress} color={barColor} style={styles.bar} />
+      )}
+
+      {items.length > 0 ? (
+        <View style={styles.preview}>
+          {items.slice(0, 3).map((item) => (
+            <View key={item.id} style={styles.previewItem}>
+              <Icon
+                name="check"
+                size={14}
+                color={item.completed ? barColor : theme.tertiaryLabel}
+              />
+              <Text
+                style={[
+                  styles.previewText,
+                  {
+                    color: item.completed ? theme.secondaryLabel : theme.label,
+                    textDecorationLine: item.completed ? 'line-through' : 'none',
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {item.text}
               </Text>
-            )}
-          </View>
-        )}
-
-        {(!checklist.items || checklist.items.length === 0) && (
-          <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            Noch keine Einträge
-          </Text>
-        )}
-      </Card>
+            </View>
+          ))}
+          {items.length > 3 && (
+            <Text style={[styles.more, { color: theme.secondaryLabel }]}>
+              {t('checklist.more_items', { count: items.length - 3 })}
+            </Text>
+          )}
+        </View>
+      ) : (
+        <Text style={[styles.empty, { color: theme.secondaryLabel }]}>
+          {t('checklist.no_items')}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+    marginBottom: Spacing.md,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.card,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  titleContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
-    marginRight: 12,
+    gap: Spacing.md,
   },
-  iconContainer: {
+  icon: {
     width: 32,
     height: 32,
-    borderRadius: 8,
-    backgroundColor: 'rgba(0, 122, 255, 0.1)',
-    justifyContent: 'center',
+    borderRadius: BorderRadius.lg,
     alignItems: 'center',
-    marginRight: 12,
+    justifyContent: 'center',
   },
-  iconContainerCompleted: {
-    backgroundColor: 'rgba(52, 199, 89, 0.15)',
-  },
-  textContainer: {
+  headerText: {
     flex: 1,
+    minWidth: 0,
   },
   title: {
-    fontSize: 17,
-    fontWeight: '600',
-    fontFamily: 'System',
-    marginBottom: 2,
+    fontSize: Typography.fontSize.body,
+    fontWeight: Typography.fontWeight.semibold,
   },
   category: {
-    fontSize: 13,
-    fontWeight: '400',
-    fontFamily: 'System',
+    fontSize: Typography.fontSize.footnote,
+    marginTop: 1,
   },
-  statsContainer: {
-    alignItems: 'flex-end',
-    minWidth: 60,
+  count: {
+    fontSize: Typography.fontSize.subheadline,
+    fontWeight: Typography.fontWeight.semibold,
   },
-  progress: {
-    fontSize: 15,
-    fontWeight: '600',
-    fontFamily: 'System',
-    marginBottom: 4,
+  bar: {
+    marginTop: Spacing.md,
   },
-  progressBarContainer: {
-    width: 60,
-  },
-  progressBar: {
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 2,
-  },
-  description: {
-    fontSize: 14,
-    fontFamily: 'System',
-    marginBottom: 12,
-    lineHeight: 20,
-  },
-  itemsPreview: {
+  preview: {
     gap: 6,
+    marginTop: Spacing.md,
   },
   previewItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: Spacing.sm,
   },
   previewText: {
-    fontSize: 14,
-    fontFamily: 'System',
+    fontSize: Typography.fontSize.subheadline,
     flex: 1,
   },
-  moreItems: {
-    fontSize: 12,
-    fontFamily: 'System',
-    fontStyle: 'italic',
-    marginTop: 4,
+  more: {
+    fontSize: Typography.fontSize.caption1,
+    marginTop: 2,
   },
-  emptyText: {
-    fontSize: 14,
-    fontFamily: 'System',
-    fontStyle: 'italic',
+  empty: {
+    fontSize: Typography.fontSize.subheadline,
+    marginTop: Spacing.md,
   },
 });

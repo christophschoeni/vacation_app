@@ -185,7 +185,10 @@
       "update_item": "Échec de la mise à jour de l'élément.",
       "delete_item": "Échec de la suppression de l'élément.",
       "update_title": "Échec de la modification du titre."
-    }
+    },
+    "more_items": "+{{count}} autres",
+    "no_items": "Aucune entrée",
+    "progress": "{{completed}} sur {{total}} faits"
   },
   "template": {
     "add": {

@@ -185,7 +185,10 @@
       "update_item": "項目を更新できませんでした。",
       "delete_item": "項目を削除できませんでした。",
       "update_title": "タイトルを変更できませんでした。"
-    }
+    },
+    "more_items": "他{{count}}件",
+    "no_items": "項目がありません",
+    "progress": "{{total}}件中{{completed}}件完了"
   },
   "template": {
     "add": {

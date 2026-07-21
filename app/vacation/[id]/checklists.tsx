@@ -15,6 +15,7 @@ import ChecklistCard from '@/components/ui/cards/ChecklistCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import AppHeader from '@/components/ui/AppHeader';
 import { Icon } from '@/components/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import { useTranslation } from '@/lib/i18n';
 import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 
@@ -23,6 +24,7 @@ export default function VacationChecklistsScreen() {
   const vacationId = useRouteParam('id');
 
   const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
 
   const [showTemplateModal, setShowTemplateModal] = useState(false);
@@ -136,7 +138,7 @@ export default function VacationChecklistsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
@@ -170,7 +172,7 @@ export default function VacationChecklistsScreen() {
       >
         {/* iOS-style large title in content area */}
         <View style={styles.titleSection}>
-          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          <Text style={[styles.largeTitle, { color: theme.label }]}>
             {t('vacation.checklists.title')}
           </Text>
         </View>
@@ -194,7 +196,7 @@ export default function VacationChecklistsScreen() {
             <View style={styles.emptyState}>
               <Text style={styles.emptyIcon}>📋</Text>
               <Text style={[styles.emptyTitle, { color: isDark ? '#007AFF' : '#007AFF' }]}>{t('vacation.checklists.empty.title')}</Text>
-              <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
                 {t('vacation.checklists.empty.description')}
               </Text>
             </View>
@@ -215,10 +217,10 @@ export default function VacationChecklistsScreen() {
           onPress={() => setShowTemplateModal(false)}
         >
           <View style={[styles.modalContent, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
-            <Text style={[styles.modalTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            <Text style={[styles.modalTitle, { color: theme.label }]}>
               {t('vacation.checklists.templates.select_title')}
             </Text>
-            <Text style={[styles.modalSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            <Text style={[styles.modalSubtitle, { color: theme.secondaryLabel }]}>
               {t('vacation.checklists.templates.select_prompt')}
             </Text>
             <ScrollView style={styles.templateList}>
@@ -229,7 +231,7 @@ export default function VacationChecklistsScreen() {
                   onPress={() => handleSelectTemplate(template.id)}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.templateTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                  <Text style={[styles.templateTitle, { color: theme.label }]}>
                     {template.title}
                   </Text>
                   <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />

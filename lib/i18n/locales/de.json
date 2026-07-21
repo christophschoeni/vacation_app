@@ -185,7 +185,10 @@
       "update_item": "Element konnte nicht aktualisiert werden.",
       "delete_item": "Element konnte nicht gelöscht werden.",
       "update_title": "Titel konnte nicht geändert werden."
-    }
+    },
+    "more_items": "+{{count}} weitere",
+    "no_items": "Noch keine Einträge",
+    "progress": "{{completed}} von {{total}} erledigt"
   },
   "template": {
     "add": {

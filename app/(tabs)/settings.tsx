@@ -1,4 +1,6 @@
-import { Card, Icon, IconName } from '@/components/design';
+import { Icon, IconName, GroupedList, GroupedListHeader } from '@/components/design';
+import { Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import { router } from 'expo-router';
 import React from 'react';
@@ -9,7 +11,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useColorScheme,
   Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -69,11 +70,46 @@ const SETTINGS_ITEMS: SettingsItem[] = [
   },
 ];
 
+/** A single navigable row inside one of the grouped settings lists. */
+function SettingsRow({
+  icon,
+  title,
+  subtitle,
+  onPress,
+}: {
+  icon: IconName;
+  title: string;
+  subtitle: string;
+  onPress: () => void;
+}) {
+  const theme = useIOSTheme();
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.7}
+      style={styles.row}
+      accessibilityRole="button"
+      accessibilityLabel={`${title}. ${subtitle}`}
+    >
+      <Icon name={icon} size={22} color={theme.accent} />
+      <View style={styles.rowText}>
+        <Text style={[styles.rowTitle, { color: theme.label }]} numberOfLines={1}>
+          {title}
+        </Text>
+        <Text style={[styles.rowSubtitle, { color: theme.secondaryLabel }]} numberOfLines={1}>
+          {subtitle}
+        </Text>
+      </View>
+      <Icon name="chevron-right" size={16} color={theme.tertiaryLabel} />
+    </TouchableOpacity>
+  );
+}
+
 export default function SettingsScreen() {
   const tabBarPadding = useTabBarPadding();
-  const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
-  const isDark = colorScheme === 'dark';
 
   const handleSettingsItemPress = async (route: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -93,7 +129,7 @@ export default function SettingsScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={[]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={[]}>
       <AppHeader
         title={t('settings.title')}
         variant="large"
@@ -106,50 +142,25 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
 
-        <View style={styles.section}>
+        <GroupedList>
           {SETTINGS_ITEMS.map((item) => (
-            <TouchableOpacity
+            <SettingsRow
               key={item.id}
+              icon={item.icon}
+              title={t(item.titleKey)}
+              subtitle={t(item.subtitleKey)}
               onPress={() => handleSettingsItemPress(item.route)}
-              activeOpacity={0.7}
-            >
-              <Card variant="clean" style={styles.settingsCard}>
-                <View style={styles.settingsRow}>
-                  <View style={styles.settingsInfo}>
-                    <Icon name={item.icon} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-                    <View style={styles.settingsText}>
-                      <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                        {t(item.titleKey)}
-                      </Text>
-                      <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                        {t(item.subtitleKey)}
-                      </Text>
-                    </View>
-                  </View>
-                  <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
-                </View>
-              </Card>
-            </TouchableOpacity>
+            />
           ))}
-        </View>
+        </GroupedList>
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('settings.about.title')}
-          </Text>
+        <GroupedListHeader title={t('settings.about.title')} />
 
-          <Card variant="clean" style={styles.settingsCard}>
-            <View style={styles.appInfo}>
-              <Text style={[styles.appName, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                Reise Budget
-              </Text>
-              <Text style={[styles.appVersion, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                {t('settings.about.version')} 1.0.0
-              </Text>
-            </View>
-          </Card>
-
-          <TouchableOpacity
+        <GroupedList>
+          <SettingsRow
+            icon="globe"
+            title={t('settings.about.website')}
+            subtitle="vacation-budget.vomschoeni.com"
             onPress={async () => {
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               const url = 'https://vacation-budget.vomschoeni.com/';
@@ -158,26 +169,12 @@ export default function SettingsScreen() {
                 await Linking.openURL(url);
               }
             }}
-            activeOpacity={0.7}
-          >
-            <Card variant="clean" style={styles.settingsCard}>
-              <View style={styles.settingsRow}>
-                <View style={styles.settingsInfo}>
-                  <Icon name="globe" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-                  <View style={styles.settingsText}>
-                    <Text style={[styles.settingsTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                      {t('settings.about.website')}
-                    </Text>
-                    <Text style={[styles.settingsSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                      vacation-budget.vomschoeni.com
-                    </Text>
-                  </View>
-                </View>
-                <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
-              </View>
-            </Card>
-          </TouchableOpacity>
-        </View>
+          />
+        </GroupedList>
+
+        <Text style={[styles.version, { color: theme.secondaryLabel }]}>
+          Reise Budget · {t('settings.about.version')} 1.0.0
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -195,58 +192,26 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     // paddingBottom is set dynamically in contentContainerStyle with safe area insets
   },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    marginBottom: 16,
-    fontFamily: 'System',
-  },
-  settingsCard: {
-    marginBottom: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  settingsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  settingsInfo: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.lg,
+    paddingVertical: 14,
+    paddingHorizontal: Spacing.lg,
+  },
+  rowText: {
     flex: 1,
-    gap: 16,
   },
-  settingsText: {
-    flex: 1,
+  rowTitle: {
+    fontSize: Typography.fontSize.callout,
   },
-  settingsTitle: {
-    fontSize: 17,
-    fontWeight: '400',
-    fontFamily: 'System',
-    marginBottom: 2,
+  rowSubtitle: {
+    fontSize: Typography.fontSize.caption1,
+    marginTop: 1,
   },
-  settingsSubtitle: {
-    fontSize: 13,
-    fontWeight: '400',
-    fontFamily: 'System',
-  },
-  appInfo: {
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  appName: {
-    fontSize: 20,
-    fontWeight: '600',
-    fontFamily: 'System',
-    marginBottom: 4,
-  },
-  appVersion: {
-    fontSize: 15,
-    fontWeight: '400',
-    fontFamily: 'System',
+  version: {
+    fontSize: Typography.fontSize.caption1,
+    textAlign: 'center',
+    paddingVertical: Spacing.xl,
   },
 });

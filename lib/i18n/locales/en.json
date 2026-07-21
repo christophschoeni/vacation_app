@@ -185,7 +185,10 @@
       "update_item": "Failed to update item.",
       "delete_item": "Failed to delete item.",
       "update_title": "Failed to update title."
-    }
+    },
+    "more_items": "+{{count}} more",
+    "no_items": "No entries yet",
+    "progress": "{{completed}} of {{total}} done"
   },
   "template": {
     "add": {

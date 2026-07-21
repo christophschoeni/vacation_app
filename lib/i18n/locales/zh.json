@@ -185,7 +185,10 @@
       "update_item": "无法更新条目。",
       "delete_item": "无法删除条目。",
       "update_title": "无法修改标题。"
-    }
+    },
+    "more_items": "还有 {{count}} 项",
+    "no_items": "暂无条目",
+    "progress": "已完成 {{completed}}/{{total}}"
   },
   "template": {
     "add": {
