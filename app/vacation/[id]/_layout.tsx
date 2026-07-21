@@ -9,7 +9,7 @@ import { Icon } from '@/components/design';
 import { useVacation } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 import { VacationProvider, useVacationContext } from '@/contexts/VacationContext';
-import { AppTabs, AppTabBarAppearance } from '@/components/navigation/AppTabs';
+import { AppTabs } from '@/components/navigation/AppTabs';
 
 function VacationDetailContent() {
   const vacationId = useRouteParam('id');
@@ -56,7 +56,6 @@ function VacationDetailContent() {
   return (
     <AppTabs>
       <NativeTabs.Trigger name="index">
-        <AppTabBarAppearance />
         <TabIcon
           sf="dollarsign.circle"
           drawable="ic_cash"
@@ -65,7 +64,6 @@ function VacationDetailContent() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="report">
-        <AppTabBarAppearance />
         <TabIcon
           sf="chart.bar"
           drawable="ic_bar_chart"
@@ -74,7 +72,6 @@ function VacationDetailContent() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="checklists">
-        <AppTabBarAppearance />
         <TabIcon
           sf="checklist"
           drawable="ic_checklist"
@@ -83,7 +80,6 @@ function VacationDetailContent() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
-        <AppTabBarAppearance />
         <TabIcon
           sf="gear"
           drawable="ic_settings"

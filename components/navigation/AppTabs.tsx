@@ -1,16 +1,12 @@
 import React from 'react';
 import { DynamicColorIOS, Platform } from 'react-native';
-import {
-  NativeTabs,
-  NativeTabsTriggerTabBar,
-} from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
 
 /**
- * Shared appearance for every native tab bar in the app.
+ * Shared configuration for every native tab bar in the app.
  *
- * Defined once here rather than repeated in each _layout: the two layouts had
- * drifted apart, and the tab bar appearance has to be attached per trigger
- * (see AppTabBarAppearance), which makes copy-pasting it especially error-prone.
+ * Defined once here rather than repeated per _layout: the two tab groups had
+ * already drifted apart when each configured its own colours.
  */
 const tabLabelStyle = {
   color: DynamicColorIOS({ dark: 'white', light: 'black' }),
@@ -21,31 +17,44 @@ const tabTintColor = DynamicColorIOS({ dark: '#0A84FF', light: '#007AFF' });
 /**
  * Opaque tab bar background.
  *
- * iOS makes the tab bar transparent once a scroll view reaches its edge, so
- * list content showed through the bar. `disableTransparentOnScrollEdge` keeps
- * the material in place; `systemChromeMaterial` is the standard adaptive
- * background that follows light/dark mode.
+ * iOS gives a tab bar a separate "scroll edge" appearance that is transparent
+ * by default, so list content shows through the bar. Two options are required
+ * together, and both belong on NativeTabs itself:
  *
- * Must be rendered inside each `NativeTabs.Trigger` — the underlying option is
- * per-tab, not a property of the tab bar as a whole.
+ * - `disableTransparentOnScrollEdge` makes the scroll-edge appearance reuse the
+ *   normal background instead of forcing blurEffect 'none' and backgroundColor
+ *   null (see createScrollEdgeAppearanceFromOptions in expo-router).
+ * - `backgroundColor` supplies the actual fill. A blurEffect alone is not
+ *   enough - blur over nothing still reads as transparent.
+ *
+ * DynamicColorIOS keeps the bar correct in light and dark mode. The values are
+ * UIKit's standard system chrome greys.
  */
-export function AppTabBarAppearance() {
-  // Android draws its own opaque bar; these options are iOS-only and are
-  // ignored there, so the element is simply omitted.
-  if (Platform.OS !== 'ios') return null;
+const tabBarBackgroundColor = DynamicColorIOS({
+  light: '#F9F9F9',
+  dark: '#1C1C1E',
+});
 
-  return (
-    <NativeTabsTriggerTabBar
-      disableTransparentOnScrollEdge
-      blurEffect="systemChromeMaterial"
-    />
-  );
-}
-
-/** NativeTabs with the app's shared styling applied. */
+/**
+ * NativeTabs with the app's shared styling.
+ *
+ * Use this instead of NativeTabs directly, and do not set appearance props on
+ * individual triggers - the per-trigger override exists but makes it easy to
+ * configure tabs inconsistently.
+ */
 export function AppTabs({ children }: { children: React.ReactNode }) {
   return (
-    <NativeTabs labelStyle={tabLabelStyle} tintColor={tabTintColor}>
+    <NativeTabs
+      labelStyle={tabLabelStyle}
+      tintColor={tabTintColor}
+      // Android draws an opaque bar itself; these options are iOS-only.
+      {...(Platform.OS === 'ios'
+        ? {
+            backgroundColor: tabBarBackgroundColor,
+            disableTransparentOnScrollEdge: true,
+          }
+        : null)}
+    >
       {children}
     </NativeTabs>
   );

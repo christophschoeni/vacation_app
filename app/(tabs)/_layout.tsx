@@ -1,7 +1,7 @@
 import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import React from 'react';
 import { useTranslation } from '@/lib/i18n';
-import { AppTabs, AppTabBarAppearance } from '@/components/navigation/AppTabs';
+import { AppTabs } from '@/components/navigation/AppTabs';
 
 export default function MainLayout() {
   const { t } = useTranslation();
@@ -9,7 +9,6 @@ export default function MainLayout() {
   return (
     <AppTabs>
       <NativeTabs.Trigger name="index">
-        <AppTabBarAppearance />
         <Icon
           sf="airplane.departure"
           drawable="ic_airplane"
@@ -18,7 +17,6 @@ export default function MainLayout() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
-        <AppTabBarAppearance />
         <Icon
           sf="gear"
           drawable="ic_settings"
