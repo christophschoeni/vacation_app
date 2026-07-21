@@ -20,6 +20,7 @@ import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useVacations } from '@/hooks/use-vacations';
 import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
+import { parseAmount } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useVacationId } from '@/contexts/VacationContext';
 
@@ -108,6 +109,13 @@ export default function VacationEditScreen() {
       return;
     }
 
+    // Reject non-numeric input before it reaches the database as NaN.
+    const budget = parseAmount(formData.budget);
+    if (budget === null || budget <= 0) {
+      Alert.alert(t('common.error'), t('errors.invalid_amount'));
+      return;
+    }
+
     try {
       setFormLoading(true);
       const updatedVacation = await updateVacation(vacation.id, {
@@ -116,7 +124,7 @@ export default function VacationEditScreen() {
         hotel: formData.hotel,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        budget: parseFloat(formData.budget),
+        budget: budget,
         budgetCurrency: vacation.budgetCurrency,  // Keep existing budget currency
         currency: formData.currency,               // Vacation currency for expenses
       });

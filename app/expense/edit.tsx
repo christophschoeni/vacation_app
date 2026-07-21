@@ -24,6 +24,8 @@ import { Expense, ExpenseCategory } from '@/types';
 import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
+import { parseAmount } from '@/lib/utils/formatters';
+import { logger } from '@/lib/utils/logger';
 import * as Haptics from 'expo-haptics';
 
 export default function EditExpenseScreen() {
@@ -44,6 +46,8 @@ export default function EditExpenseScreen() {
 
   const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [converting, setConverting] = useState(false);
+  // Guards against a double tap saving the same expense twice.
+  const isSavingRef = React.useRef(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
 
   // Load expense data on mount from expenses array
@@ -70,34 +74,41 @@ export default function EditExpenseScreen() {
 
   // Convert to default currency whenever amount or currency changes
   React.useEffect(() => {
+    // Guards against a slow earlier request overwriting a newer result.
+    let cancelled = false;
+
     const convertAmount = async () => {
-      if (!formData.amount || !parseFloat(formData.amount)) {
+      const parsed = parseAmount(formData.amount);
+      if (parsed === null || parsed <= 0) {
         setConvertedAmount(null);
         return;
       }
 
       if (formData.currency === defaultCurrency) {
-        setConvertedAmount(parseFloat(formData.amount));
+        setConvertedAmount(parsed);
         return;
       }
 
       setConverting(true);
       try {
         const converted = await currencyService.convertCurrency(
-          parseFloat(formData.amount),
+          parsed,
           formData.currency,
           defaultCurrency
         );
-        setConvertedAmount(converted);
+        if (!cancelled) setConvertedAmount(converted);
       } catch (error) {
-        console.warn('Currency conversion failed:', error);
-        setConvertedAmount(parseFloat(formData.amount));
+        logger.warn('Currency conversion failed:', error);
+        if (!cancelled) setConvertedAmount(parsed);
       } finally {
-        setConverting(false);
+        if (!cancelled) setConverting(false);
       }
     };
 
     convertAmount();
+    return () => {
+      cancelled = true;
+    };
   }, [formData.amount, formData.currency, defaultCurrency]);
 
   const handleSave = async () => {
@@ -113,11 +124,24 @@ export default function EditExpenseScreen() {
       return;
     }
 
+    // Reject non-numeric input before it reaches the database as NaN.
+    const amount = parseAmount(formData.amount);
+    if (amount === null || amount <= 0) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert(t('common.error'), t('errors.invalid_amount'));
+      return;
+    }
+
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
+
     try {
       const updatedExpense: Partial<Expense> = {
-        amount: parseFloat(formData.amount),
+        amount: amount,
         currency: formData.currency,
-        amountCHF: convertedAmount || parseFloat(formData.amount),
+        // ?? not ||: a legitimately converted 0 must not fall back to the
+        // unconverted amount.
+        amountCHF: convertedAmount ?? amount,
         category: formData.category,
         description: formData.description,
         date: formData.date,
@@ -143,6 +167,8 @@ export default function EditExpenseScreen() {
     } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), t('errors.generic'));
+      // Only release on failure; on success the screen navigates away.
+      isSavingRef.current = false;
     }
   };
 

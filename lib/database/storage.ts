@@ -65,6 +65,19 @@ const STORAGE_KEYS = {
 } as const;
 
 export class LocalDatabase {
+  // Every mutation below is a read-modify-write against a single AsyncStorage
+  // key. Without serialisation two overlapping writes both read the same state
+  // and the second overwrites the first, silently losing a record. All
+  // mutations are queued through here so they run strictly one after another.
+  private static writeChain: Promise<unknown> = Promise.resolve();
+
+  private static enqueueWrite<T>(operation: () => Promise<T>): Promise<T> {
+    const result = this.writeChain.then(operation, operation);
+    // Keep the chain alive even if this operation rejects.
+    this.writeChain = result.catch(() => undefined);
+    return result;
+  }
+
   // Vacation operations
   static async getVacations(): Promise<Vacation[]> {
     try {
@@ -89,25 +102,28 @@ export class LocalDatabase {
   }
 
   static async saveVacation(vacation: Vacation): Promise<void> {
-    try {
-      const vacations = await this.getVacations();
-      const existingIndex = vacations.findIndex(v => v.id === vacation.id);
+    return this.enqueueWrite(async () => {
+      try {
+        const vacations = await this.getVacations();
+        const existingIndex = vacations.findIndex(v => v.id === vacation.id);
 
-      if (existingIndex >= 0) {
-        vacations[existingIndex] = vacation;
-      } else {
-        vacations.push(vacation);
+        if (existingIndex >= 0) {
+          vacations[existingIndex] = vacation;
+        } else {
+          vacations.push(vacation);
+        }
+
+        await AsyncStorage.setItem(STORAGE_KEYS.VACATIONS, JSON.stringify(vacations));
+      } catch (error) {
+        console.error('Error saving vacation:', error);
+        throw error;
       }
-
-      await AsyncStorage.setItem(STORAGE_KEYS.VACATIONS, JSON.stringify(vacations));
-    } catch (error) {
-      console.error('Error saving vacation:', error);
-      throw error;
-    }
+    });
   }
 
   static async deleteVacation(id: string): Promise<void> {
-    try {
+    return this.enqueueWrite(async () => {
+      try {
       // Delete the vacation
       const vacations = await this.getVacations();
       const filtered = vacations.filter(v => v.id !== id);
@@ -122,10 +138,11 @@ export class LocalDatabase {
       const allChecklists = await this.getChecklists(); // Get ALL checklists
       const remainingChecklists = allChecklists.filter(c => String(c.vacationId) !== String(id));
       await AsyncStorage.setItem(STORAGE_KEYS.CHECKLISTS, JSON.stringify(remainingChecklists));
-    } catch (error) {
-      console.error('Error deleting vacation:', error);
-      throw error;
-    }
+      } catch (error) {
+        console.error('Error deleting vacation:', error);
+        throw error;
+      }
+    });
   }
 
   // Expense operations
@@ -158,32 +175,36 @@ export class LocalDatabase {
   }
 
   static async saveExpense(expense: Expense): Promise<void> {
-    try {
-      const expenses = await this.getExpenses();
-      const existingIndex = expenses.findIndex(e => e.id === expense.id);
+    return this.enqueueWrite(async () => {
+      try {
+        const expenses = await this.getExpenses();
+        const existingIndex = expenses.findIndex(e => e.id === expense.id);
 
-      if (existingIndex >= 0) {
-        expenses[existingIndex] = expense;
-      } else {
-        expenses.push(expense);
+        if (existingIndex >= 0) {
+          expenses[existingIndex] = expense;
+        } else {
+          expenses.push(expense);
+        }
+
+        await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses));
+      } catch (error) {
+        console.error('Error saving expense:', error);
+        throw error;
       }
-
-      await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses));
-    } catch (error) {
-      console.error('Error saving expense:', error);
-      throw error;
-    }
+    });
   }
 
   static async deleteExpense(id: string): Promise<void> {
-    try {
-      const expenses = await this.getExpenses();
-      const filtered = expenses.filter(e => e.id !== id);
-      await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(filtered));
-    } catch (error) {
-      console.error('Error deleting expense:', error);
-      throw error;
-    }
+    return this.enqueueWrite(async () => {
+      try {
+        const expenses = await this.getExpenses();
+        const filtered = expenses.filter(e => e.id !== id);
+        await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(filtered));
+      } catch (error) {
+        console.error('Error deleting expense:', error);
+        throw error;
+      }
+    });
   }
 
   // Checklist operations
@@ -219,63 +240,82 @@ export class LocalDatabase {
   }
 
   static async saveChecklist(checklist: Checklist): Promise<void> {
-    try {
-      const checklists = await this.getChecklists();
-      const existingIndex = checklists.findIndex(c => c.id === checklist.id);
+    return this.enqueueWrite(async () => {
+      try {
+        const checklists = await this.getChecklists();
+        const existingIndex = checklists.findIndex(c => c.id === checklist.id);
 
-      if (existingIndex >= 0) {
-        checklists[existingIndex] = checklist;
-      } else {
-        checklists.push(checklist);
+        if (existingIndex >= 0) {
+          checklists[existingIndex] = checklist;
+        } else {
+          checklists.push(checklist);
+        }
+
+        await AsyncStorage.setItem(STORAGE_KEYS.CHECKLISTS, JSON.stringify(checklists));
+      } catch (error) {
+        console.error('Error saving checklist:', error);
+        throw error;
       }
-
-      await AsyncStorage.setItem(STORAGE_KEYS.CHECKLISTS, JSON.stringify(checklists));
-    } catch (error) {
-      console.error('Error saving checklist:', error);
-      throw error;
-    }
+    });
   }
 
   static async deleteChecklist(id: string): Promise<void> {
-    try {
-      const checklists = await this.getChecklists();
-      const filtered = checklists.filter(c => c.id !== id);
-      await AsyncStorage.setItem(STORAGE_KEYS.CHECKLISTS, JSON.stringify(filtered));
-    } catch (error) {
-      console.error('Error deleting checklist:', error);
-      throw error;
-    }
+    return this.enqueueWrite(async () => {
+      try {
+        const checklists = await this.getChecklists();
+        const filtered = checklists.filter(c => c.id !== id);
+        await AsyncStorage.setItem(STORAGE_KEYS.CHECKLISTS, JSON.stringify(filtered));
+      } catch (error) {
+        console.error('Error deleting checklist:', error);
+        throw error;
+      }
+    });
   }
 
-  // Cleanup orphaned data - removes expenses and checklists that belong to deleted vacations
-  static async cleanupOrphanedData(): Promise<{ expensesDeleted: number; checklistsDeleted: number }> {
-    try {
-      const vacations = await this.getVacations();
-      const validVacationIds = new Set(vacations.map(v => String(v.id)));
+  // Cleanup orphaned data - removes expenses and checklists that belong to deleted vacations.
+  //
+  // Vacations live in SQLite, expenses and checklists in AsyncStorage. The valid
+  // IDs must therefore come from the vacation repository: reading them from
+  // AsyncStorage (which nothing writes to) yields an empty set, which would
+  // classify every expense as orphaned and delete all of them.
+  static async cleanupOrphanedData(
+    validVacationIds: Set<string>
+  ): Promise<{ expensesDeleted: number; checklistsDeleted: number }> {
+    return this.enqueueWrite(async () => {
+      try {
+        // An empty set is indistinguishable from "could not load vacations", so
+        // never treat it as licence to delete everything.
+        if (validVacationIds.size === 0) {
+          return { expensesDeleted: 0, checklistsDeleted: 0 };
+        }
 
-      // Cleanup orphaned expenses
-      const allExpenses = await this.getExpenses();
-      const validExpenses = allExpenses.filter(e => validVacationIds.has(String(e.vacationId)));
-      const expensesDeleted = allExpenses.length - validExpenses.length;
+        // Cleanup orphaned expenses
+        const allExpenses = await this.getExpenses();
+        const validExpenses = allExpenses.filter(e => validVacationIds.has(String(e.vacationId)));
+        const expensesDeleted = allExpenses.length - validExpenses.length;
 
-      if (expensesDeleted > 0) {
-        await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(validExpenses));
+        if (expensesDeleted > 0) {
+          await AsyncStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(validExpenses));
+        }
+
+        // Cleanup orphaned checklists. Templates have no vacationId and must be
+        // kept, otherwise every template would count as orphaned.
+        const allChecklists = await this.getChecklists();
+        const validChecklists = allChecklists.filter(
+          c => !c.vacationId || validVacationIds.has(String(c.vacationId))
+        );
+        const checklistsDeleted = allChecklists.length - validChecklists.length;
+
+        if (checklistsDeleted > 0) {
+          await AsyncStorage.setItem(STORAGE_KEYS.CHECKLISTS, JSON.stringify(validChecklists));
+        }
+
+        return { expensesDeleted, checklistsDeleted };
+      } catch (error) {
+        console.error('Error cleaning up orphaned data:', error);
+        return { expensesDeleted: 0, checklistsDeleted: 0 };
       }
-
-      // Cleanup orphaned checklists
-      const allChecklists = await this.getChecklists();
-      const validChecklists = allChecklists.filter(c => validVacationIds.has(String(c.vacationId)));
-      const checklistsDeleted = allChecklists.length - validChecklists.length;
-
-      if (checklistsDeleted > 0) {
-        await AsyncStorage.setItem(STORAGE_KEYS.CHECKLISTS, JSON.stringify(validChecklists));
-      }
-
-      return { expensesDeleted, checklistsDeleted };
-    } catch (error) {
-      console.error('Error cleaning up orphaned data:', error);
-      return { expensesDeleted: 0, checklistsDeleted: 0 };
-    }
+    });
   }
 
   // Clear all data (useful for development/testing)

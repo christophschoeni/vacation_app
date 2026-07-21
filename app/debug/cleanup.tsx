@@ -7,7 +7,28 @@ import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 import { LocalDatabase } from '@/lib/database/storage';
 import AppHeader from '@/components/ui/AppHeader';
 
+// This screen permanently deletes expenses and has no undo. It must never be
+// reachable in a release build — the route is deep-linkable (vacationassist://
+// debug/cleanup). The guard lives in this wrapper so the hooks below are never
+// called conditionally.
 export default function CleanupScreen() {
+  if (!__DEV__) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <AppHeader title="Nicht verfügbar" showBack onBackPress={() => router.back()} />
+        <View style={styles.content}>
+          <Text style={styles.emptyText}>
+            Dieser Bereich ist nur in der Entwicklungsumgebung verfügbar.
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return <CleanupScreenContent />;
+}
+
+function CleanupScreenContent() {
   const [logs, setLogs] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
 

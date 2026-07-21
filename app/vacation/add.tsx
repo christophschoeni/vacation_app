@@ -19,6 +19,7 @@ import { FormInput, DatePicker } from '@/components/ui/forms';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useVacations } from '@/hooks/use-vacations';
 import { useTranslation } from '@/lib/i18n';
+import { parseAmount } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
 export default function AddVacationScreen() {
@@ -42,6 +43,22 @@ export default function AddVacationScreen() {
       return;
     }
 
+    if (formData.startDate >= formData.endDate) {
+      Alert.alert(t('common.error'), t('vacation.edit_screen.errors.invalid_dates'));
+      return;
+    }
+
+    // Budget is optional here, but if entered it must be a usable number.
+    let budget: number | undefined;
+    if (formData.budget) {
+      const parsed = parseAmount(formData.budget);
+      if (parsed === null || parsed <= 0) {
+        Alert.alert(t('common.error'), t('errors.invalid_amount'));
+        return;
+      }
+      budget = parsed;
+    }
+
     try {
       await createVacation({
         destination: formData.destination,
@@ -49,7 +66,7 @@ export default function AddVacationScreen() {
         hotel: formData.hotel,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        budget: formData.budget ? parseFloat(formData.budget) : undefined,
+        budget: budget,
         budgetCurrency: defaultCurrency || 'CHF',  // Budget is in system currency
         currency: formData.currency,                // Vacation currency for expenses
       });

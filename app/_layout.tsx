@@ -18,6 +18,7 @@ import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
 import { LocalDatabase } from '@/lib/database/storage';
+import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -73,8 +74,12 @@ function RootNavigation() {
           // Always ensure templates exist (independent of migration flag)
           await ensureDefaultTemplates();
 
-          // Cleanup any orphaned expenses/checklists from deleted vacations
-          await LocalDatabase.cleanupOrphanedData();
+          // Cleanup any orphaned expenses/checklists from deleted vacations.
+          // The valid IDs come from SQLite, where vacations are stored.
+          const existingVacations = await vacationRepository.findAll();
+          await LocalDatabase.cleanupOrphanedData(
+            new Set(existingVacations.map(v => String(v.id)))
+          );
 
           // Initialize notification service
           await notificationService.initialize();

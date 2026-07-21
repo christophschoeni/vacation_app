@@ -6,6 +6,45 @@ import { currencyService } from '@/lib/currency';
 import { staticDefaultCurrency } from '@/contexts/CurrencyContext';
 
 /**
+ * Parse a user-entered monetary amount.
+ *
+ * parseFloat alone is unsafe here: it returns NaN for non-numeric input and
+ * silently truncates German-style input ("1.200,50" -> 1.2). A NaN that reaches
+ * the database poisons every downstream budget calculation and cannot be
+ * corrected from the UI.
+ *
+ * Returns null if the input is not a usable amount, so callers must handle the
+ * invalid case explicitly instead of storing a broken number.
+ */
+export function parseAmount(input: string): number | null {
+  if (typeof input !== 'string') return null;
+
+  const trimmed = input.trim();
+  if (trimmed === '') return null;
+
+  // Accept both German ("1.200,50") and English ("1,200.50") notation by
+  // treating the last separator as the decimal mark.
+  const lastComma = trimmed.lastIndexOf(',');
+  const lastDot = trimmed.lastIndexOf('.');
+  let normalized: string;
+
+  if (lastComma > lastDot) {
+    normalized = trimmed.replace(/\./g, '').replace(',', '.');
+  } else {
+    normalized = trimmed.replace(/,/g, '');
+  }
+
+  // Reject anything that is not a plain decimal number (letters, multiple
+  // separators, stray symbols) rather than letting parseFloat salvage a prefix.
+  if (!/^-?\d*\.?\d+$/.test(normalized)) return null;
+
+  const value = Number(normalized);
+  if (!Number.isFinite(value)) return null;
+
+  return value;
+}
+
+/**
  * Format currency with proper locale and symbols
  */
 export function formatCurrency(amount: number, currency?: string): string {
