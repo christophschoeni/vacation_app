@@ -2,11 +2,10 @@ import { router, useSegments, useFocusEffect } from 'expo-router';
 import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useCallback, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, DynamicColorIOS } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, DynamicColorIOS , useColorScheme } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
-import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
 import { useTranslation } from '@/lib/i18n';
 import { VacationProvider, useVacationContext } from '@/contexts/VacationContext';

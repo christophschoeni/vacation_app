@@ -1,7 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, ViewStyle } from 'react-native';
+import { TouchableOpacity, ViewStyle , useColorScheme } from 'react-native';
 import { Colors, BorderRadius, Shadow, Layout } from '@/constants/design';
-import { useColorScheme } from 'react-native';
 import { Icon, IconName } from './Icon';
 
 interface FloatingActionButtonProps {

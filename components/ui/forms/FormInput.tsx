@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet , useColorScheme } from 'react-native';
 import { Card } from '@/components/design';
-import { useColorScheme } from 'react-native';
 
 interface FormInputProps {
   label: string;

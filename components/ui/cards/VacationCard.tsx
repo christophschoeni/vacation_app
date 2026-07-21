@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet , useColorScheme } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Card, Icon } from '@/components/design';
-import { useColorScheme } from 'react-native';
 import { useExpenses } from '@/lib/database';
 import {
   getVacationGradient,

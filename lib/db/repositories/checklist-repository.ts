@@ -546,7 +546,7 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
     return deletedCount;
   }
 
-  async updateTemplateItems(templateId: string, items: Array<{ text: string; notes?: string; priority?: 'low' | 'medium' | 'high'; quantity?: number }>): Promise<Checklist> {
+  async updateTemplateItems(templateId: string, items: { text: string; notes?: string; priority?: 'low' | 'medium' | 'high'; quantity?: number }[]): Promise<Checklist> {
     // Delete existing items
     await this.db
       .delete(schema.checklistItems)

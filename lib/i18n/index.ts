@@ -115,7 +115,7 @@ class TranslationService {
     return this.currentLocale;
   }
 
-  getSupportedLanguages(): Array<{ code: string; name: string; nativeName: string; flag: string }> {
+  getSupportedLanguages(): { code: string; name: string; nativeName: string; flag: string }[] {
     return [
       { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
       { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },

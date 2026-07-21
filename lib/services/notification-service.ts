@@ -14,7 +14,8 @@ export interface NotificationSettings {
 // Configure notification handler
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
   }),
@@ -160,9 +161,9 @@ class NotificationService {
     try {
       // Schedule daily reminder at specified hour
       const trigger: Notifications.NotificationTriggerInput = {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
         hour,
         minute: 0,
-        repeats: true,
       };
 
       const id = await this.scheduleNotification(

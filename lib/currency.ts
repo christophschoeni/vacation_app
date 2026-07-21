@@ -650,7 +650,7 @@ class CurrencyService {
   }
 
   // Get all manual rates
-  async getAllManualRates(): Promise<Array<{ from: string; to: string; rate: number; updatedAt: Date }>> {
+  async getAllManualRates(): Promise<{ from: string; to: string; rate: number; updatedAt: Date }[]> {
     try {
       const manualRates = await exchangeRatesRepository.findBySource('manual');
       return manualRates.map((rate) => ({
@@ -678,10 +678,10 @@ class CurrencyService {
   }
 
   // Get all rates with their sources for a given base currency
-  async getAllRatesWithSources(baseCurrency: string = 'CHF'): Promise<Array<{ currency: string; rate: number; source: RateSource }>> {
+  async getAllRatesWithSources(baseCurrency: string = 'CHF'): Promise<{ currency: string; rate: number; source: RateSource }[]> {
     try {
       const rates = await this.getExchangeRates(baseCurrency);
-      const result: Array<{ currency: string; rate: number; source: RateSource }> = [];
+      const result: { currency: string; rate: number; source: RateSource }[] = [];
 
       for (const [currency, rate] of Object.entries(rates)) {
         const rateWithSource = await this.getRateWithSource(baseCurrency, currency);

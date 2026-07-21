@@ -6,9 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
-} from 'react-native';
+ useColorScheme } from 'react-native';
 import { Button, Icon, IconName } from '@/components/design';
-import { useColorScheme } from 'react-native';
 import IconPicker from '../common/IconPicker';
 
 // Function to get display name for icons

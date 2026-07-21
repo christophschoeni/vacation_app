@@ -5,6 +5,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Vacation, Checklist, ChecklistItem } from '@/types';
 import Constants from 'expo-constants';
 
+import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
+import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
+import { appInitialization } from '@/lib/app-initialization';
+import { seedTestData, seedTemplates } from '@/lib/seed-data';
+import { getDatabaseStats } from '@/lib/db/database';
+import * as FileSystem from 'expo-file-system';
+import { logger } from '@/lib/utils/logger';
+import { onboardingService } from '@/lib/onboarding-service';
+
 // Interface for database statistics
 interface DatabaseStats {
   vacations: number;
@@ -19,17 +28,9 @@ interface AsyncStorageError extends Error {
   message: string;
 }
 
-import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
-import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
-import { appInitialization } from '@/lib/app-initialization';
-import { seedTestData, seedTemplates } from '@/lib/seed-data';
-import { getDatabaseStats } from '@/lib/db/database';
-import * as FileSystem from 'expo-file-system';
-import { logger } from '@/lib/utils/logger';
-import { onboardingService } from '@/lib/onboarding-service';
-
+// Only allow the debug screen in development mode. The guard lives in this
+// wrapper so that DebugScreenContent's hooks are never called conditionally.
 export default function DebugScreen() {
-  // Only allow debug screen in development mode
   if (!__DEV__) {
     return (
       <View style={styles.container}>
@@ -47,6 +48,11 @@ export default function DebugScreen() {
       </View>
     );
   }
+
+  return <DebugScreenContent />;
+}
+
+function DebugScreenContent() {
   const [dbStats, setDbStats] = useState<DatabaseStats | null>(null);
   const [vacations, setVacations] = useState<Vacation[]>([]);
   const [checklists, setChecklists] = useState<Checklist[]>([]);
@@ -133,7 +139,7 @@ export default function DebugScreen() {
     try {
       logger.info('📁 Checking database file and paths...');
 
-      const documentsDir = FileSystem.DocumentDirectoryPath || '';
+      const documentsDir = FileSystem.Paths.document.uri;
       const sqliteDir = `${documentsDir}SQLite/`;
       const dbPath = `${sqliteDir}vacation_assist.db`;
 

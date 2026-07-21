@@ -36,6 +36,25 @@ interface OnboardingScreenProps {
   onComplete: () => void;
 }
 
+// Extracted so each dot owns its animated style. Calling useAnimatedStyle
+// inside a .map() callback would violate the Rules of Hooks.
+function PaginationDot({ isActive, isDark }: { isActive: boolean; isDark: boolean }) {
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: withSpring(isActive ? 32 : 8, { damping: 15 }),
+    opacity: withSpring(isActive ? 1 : 0.3, { damping: 15 }),
+  }));
+
+  return (
+    <Animated.View
+      style={[
+        styles.dot,
+        { backgroundColor: isDark ? '#FFFFFF' : '#007AFF' },
+        animatedStyle,
+      ]}
+    />
+  );
+}
+
 export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -105,26 +124,13 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
       <View style={styles.bottomContainer}>
         {/* Pagination Dots */}
         <View style={styles.pagination}>
-          {slides.map((_, index) => {
-            const animatedStyle = useAnimatedStyle(() => {
-              const isActive = currentIndex === index;
-              return {
-                width: withSpring(isActive ? 32 : 8, { damping: 15 }),
-                opacity: withSpring(isActive ? 1 : 0.3, { damping: 15 }),
-              };
-            });
-
-            return (
-              <Animated.View
-                key={index}
-                style={[
-                  styles.dot,
-                  { backgroundColor: isDark ? '#FFFFFF' : '#007AFF' },
-                  animatedStyle,
-                ]}
-              />
-            );
-          })}
+          {slides.map((_, index) => (
+            <PaginationDot
+              key={index}
+              isActive={currentIndex === index}
+              isDark={isDark}
+            />
+          ))}
         </View>
 
         {/* Buttons */}

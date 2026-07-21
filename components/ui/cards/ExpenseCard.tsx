@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity , useColorScheme } from 'react-native';
 import { Card, Icon } from '@/components/design';
-import { useColorScheme } from 'react-native';
 import { formatDateTime, formatCurrency } from '@/lib/utils/formatters';
 import {
   EXPENSE_CATEGORIES,

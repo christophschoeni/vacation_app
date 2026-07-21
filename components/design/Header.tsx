@@ -1,7 +1,6 @@
 import { Colors, Spacing, Typography } from '@/constants/design';
-import { useColorScheme } from 'react-native';
+import { useColorScheme , StyleSheet, Text, View, ViewStyle, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { StyleSheet, Text, View, ViewStyle, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from './Button';
 import { IconName } from './Icon';

@@ -6,9 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
-} from 'react-native';
+ useColorScheme } from 'react-native';
 import { Button, Icon } from '@/components/design';
-import { useColorScheme } from 'react-native';
 import { useTranslation } from '@/lib/i18n';
 
 export interface Currency {

@@ -275,7 +275,7 @@ class ChecklistServiceSQLite {
   }
 
   // Bulk operations
-  async bulkUpdateItems(updates: Array<{ itemId: string; completed: boolean }>): Promise<void> {
+  async bulkUpdateItems(updates: { itemId: string; completed: boolean }[]): Promise<void> {
     try {
       await Promise.all(
         updates.map(({ itemId, completed }) =>

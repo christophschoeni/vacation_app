@@ -7,7 +7,7 @@ import {
   Switch,
   TouchableOpacity,
   useColorScheme,
-} from 'react-native';
+ Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon, IconName } from '@/components/design';
@@ -18,7 +18,6 @@ import { ErrorHandler } from '@/lib/utils/error-handler';
 import { useTranslation } from '@/lib/i18n';
 import { notificationService } from '@/lib/services/notification-service';
 import * as Notifications from 'expo-notifications';
-import { Linking, Alert } from 'react-native';
 
 interface NotificationSetting {
   id: string;

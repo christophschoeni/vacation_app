@@ -5,9 +5,8 @@ import {
   ViewStyle,
   TextStyle,
   ActivityIndicator,
-} from 'react-native';
+ useColorScheme } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Shadow } from '@/constants/design';
-import { useColorScheme } from 'react-native';
 import { Icon, IconName } from './Icon';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';

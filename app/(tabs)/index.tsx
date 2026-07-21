@@ -7,7 +7,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-} from 'react-native';
+ useColorScheme } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -18,7 +18,6 @@ import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
 import AppHeader from '@/components/ui/AppHeader';
-import { useColorScheme } from 'react-native';
 import { useVacations } from '@/hooks/use-vacations';
 import { useTranslation } from '@/lib/i18n';
 

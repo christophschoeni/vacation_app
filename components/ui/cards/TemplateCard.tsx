@@ -4,9 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-} from 'react-native';
+ useColorScheme } from 'react-native';
 import { Card, Icon } from '@/components/design';
-import { useColorScheme } from 'react-native';
 import { Checklist, ChecklistCategory } from '@/types';
 import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 

@@ -5,8 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-} from 'react-native';
-import { useColorScheme } from 'react-native';
+ useColorScheme } from 'react-native';
 import { ChecklistCategory } from '@/types';
 import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 

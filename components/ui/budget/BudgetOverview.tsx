@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator , useColorScheme } from 'react-native';
 import { Card } from '@/components/design';
 import { Vacation, Expense } from '@/types';
 import { calculateBudgetAnalysisAsync, formatCurrency, getBudgetStatusColor, BudgetAnalysis } from '@/lib/budget-calculations';
-import { useColorScheme } from 'react-native';
 import { spacing } from '@/constants/spacing';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
