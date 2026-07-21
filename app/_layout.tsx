@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, useColorScheme } from 'react-native';
+import { View, Text, ActivityIndicator, TouchableOpacity, useColorScheme } from 'react-native';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -54,7 +54,11 @@ const modalSlideUp = {
   },
 };
 
-function RootNavigation() {
+function RootNavigation({
+  onRetryMigration,
+}: {
+  onRetryMigration: () => void;
+}) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { success, error } = useMigrations(db, migrations);
@@ -104,7 +108,9 @@ function RootNavigation() {
     }
   }, [success]);
 
-  // Show loading screen during migration
+  // A failed migration is otherwise a dead end: the same migration reruns on
+  // every launch, so without a recovery path the app stays permanently
+  // unusable and only a reinstall (losing all data) helps.
   if (error) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
@@ -112,9 +118,18 @@ function RootNavigation() {
           <Text style={{ color: isDark ? '#fff' : '#000', fontSize: 18, marginBottom: 10 }}>
             Migration Error
           </Text>
-          <Text style={{ color: isDark ? '#ccc' : '#666', textAlign: 'center' }}>
+          <Text style={{ color: isDark ? '#ccc' : '#666', textAlign: 'center', marginBottom: 24 }} selectable>
             {error.message}
           </Text>
+          <TouchableOpacity
+            onPress={onRetryMigration}
+            style={{ backgroundColor: '#007AFF', paddingVertical: 12, paddingHorizontal: 24, borderRadius: 8 }}
+            accessibilityRole="button"
+          >
+            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>
+              Erneut versuchen
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -337,12 +352,19 @@ function RootNavigation() {
 }
 
 export default function RootLayout() {
+  // Bumping this key remounts RootNavigation, which reruns useMigrations.
+  // Without it a failed migration would have no way to be retried.
+  const [migrationAttempt, setMigrationAttempt] = useState(0);
+
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
         <CurrencyProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <RootNavigation />
+            <RootNavigation
+              key={migrationAttempt}
+              onRetryMigration={() => setMigrationAttempt(attempt => attempt + 1)}
+            />
           </GestureHandlerRootView>
         </CurrencyProvider>
       </SafeAreaProvider>

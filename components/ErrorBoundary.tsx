@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Icon } from '@/components/design';
 import * as Haptics from 'expo-haptics';
+import { logger } from '@/lib/utils/logger';
 
 interface Props {
   children: ReactNode;
@@ -41,7 +42,13 @@ export class ErrorBoundary extends Component<Props, State> {
       errorInfo,
     });
 
-    // Log error to console for development (removed for production)
+    // Without this a crash leaves no trace at all, making production issues
+    // undiagnosable. The logger is __DEV__-guarded internally.
+    logger.error('Uncaught error in component tree', {
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+    });
 
     // Trigger haptic feedback to alert user
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
