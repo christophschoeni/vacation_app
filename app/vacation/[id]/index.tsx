@@ -30,7 +30,7 @@ export default function VacationBudgetScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const { data: vacation, isLoading } = useVacation(vacationId);
-  const { data: expenses = [], refetch: refetchExpenses } = useExpenses(vacationId || '');
+  const { data: expenses = [], refetch: refetchExpenses } = useExpenses(vacationId || undefined);
   const { mutateAsync: deleteExpense } = useDeleteExpense();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 

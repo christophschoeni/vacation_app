@@ -38,7 +38,7 @@ export default function VacationReportScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const { data: vacation } = useVacation(vacationId);
-  const { data: expenses = [] } = useExpenses(vacationId || '');
+  const { data: expenses = [] } = useExpenses(vacationId || undefined);
   const { defaultCurrency } = useCurrency();
   const [categoryData, setCategoryData] = useState<CategoryExpense[]>([]);
   const [totalExpenses, setTotalExpenses] = useState(0);

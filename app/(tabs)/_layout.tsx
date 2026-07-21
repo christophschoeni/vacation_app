@@ -1,25 +1,15 @@
 import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 import React from 'react';
-import { DynamicColorIOS } from 'react-native';
 import { useTranslation } from '@/lib/i18n';
+import { AppTabs, AppTabBarAppearance } from '@/components/navigation/AppTabs';
 
 export default function MainLayout() {
   const { t } = useTranslation();
 
   return (
-    <NativeTabs
-      labelStyle={{
-        color: DynamicColorIOS({
-          dark: 'white',
-          light: 'black',
-        }),
-      }}
-      tintColor={DynamicColorIOS({
-        dark: '#0A84FF',
-        light: '#007AFF',
-      })}
-    >
+    <AppTabs>
       <NativeTabs.Trigger name="index">
+        <AppTabBarAppearance />
         <Icon
           sf="airplane.departure"
           drawable="ic_airplane"
@@ -28,12 +18,13 @@ export default function MainLayout() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
+        <AppTabBarAppearance />
         <Icon
           sf="gear"
           drawable="ic_settings"
         />
         <Label>{t('navigation.settings')}</Label>
       </NativeTabs.Trigger>
-    </NativeTabs>
+    </AppTabs>
   );
 }

@@ -2,13 +2,14 @@ import { router } from 'expo-router';
 import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, DynamicColorIOS , useColorScheme } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
 import { useVacation } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 import { VacationProvider, useVacationContext } from '@/contexts/VacationContext';
+import { AppTabs, AppTabBarAppearance } from '@/components/navigation/AppTabs';
 
 function VacationDetailContent() {
   const vacationId = useRouteParam('id');
@@ -53,19 +54,9 @@ function VacationDetailContent() {
   }
 
   return (
-    <NativeTabs
-      labelStyle={{
-        color: DynamicColorIOS({
-          dark: 'white',
-          light: 'black',
-        }),
-      }}
-      tintColor={DynamicColorIOS({
-        dark: '#0A84FF',
-        light: '#007AFF',
-      })}
-    >
+    <AppTabs>
       <NativeTabs.Trigger name="index">
+        <AppTabBarAppearance />
         <TabIcon
           sf="dollarsign.circle"
           drawable="ic_cash"
@@ -74,6 +65,7 @@ function VacationDetailContent() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="report">
+        <AppTabBarAppearance />
         <TabIcon
           sf="chart.bar"
           drawable="ic_bar_chart"
@@ -82,6 +74,7 @@ function VacationDetailContent() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="checklists">
+        <AppTabBarAppearance />
         <TabIcon
           sf="checklist"
           drawable="ic_checklist"
@@ -90,13 +83,14 @@ function VacationDetailContent() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
+        <AppTabBarAppearance />
         <TabIcon
           sf="gear"
           drawable="ic_settings"
         />
         <Label>{t('vacation.tabs.settings')}</Label>
       </NativeTabs.Trigger>
-    </NativeTabs>
+    </AppTabs>
   );
 }
 

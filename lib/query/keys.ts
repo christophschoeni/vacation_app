@@ -18,8 +18,14 @@ export const vacationKeys = {
 export const expenseKeys = {
   all: ['expenses'] as const,
   lists: () => [...expenseKeys.all, 'list'] as const,
-  /** Expenses of one vacation; omit the id for the global list. */
-  list: (vacationId?: string) => [...expenseKeys.lists(), vacationId ?? 'all'] as const,
+  /**
+   * Expenses of one vacation; omit the id for the global list.
+   *
+   * An empty string is normalised to 'all' as well: callers that pass
+   * `id || ''` would otherwise produce a third, unrelated cache entry that no
+   * invalidation targets, so the screen kept showing stale data.
+   */
+  list: (vacationId?: string) => [...expenseKeys.lists(), vacationId || 'all'] as const,
   details: () => [...expenseKeys.all, 'detail'] as const,
   detail: (id: string) => [...expenseKeys.details(), id] as const,
   /** Aggregated totals per vacation, used by the vacation list. */
@@ -29,7 +35,7 @@ export const expenseKeys = {
 export const checklistKeys = {
   all: ['checklists'] as const,
   lists: () => [...checklistKeys.all, 'list'] as const,
-  list: (vacationId?: string) => [...checklistKeys.lists(), vacationId ?? 'all'] as const,
+  list: (vacationId?: string) => [...checklistKeys.lists(), vacationId || 'all'] as const,
   details: () => [...checklistKeys.all, 'detail'] as const,
   detail: (id: string) => [...checklistKeys.details(), id] as const,
   templates: () => [...checklistKeys.all, 'templates'] as const,
