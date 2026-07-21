@@ -27,7 +27,13 @@
     },
     "detail": {
       "loading": "Lade Ferien-Daten...",
-      "not_found": "Ferien nicht gefunden"
+      "not_found": "Ferien nicht gefunden",
+      "spent": "Ausgegeben",
+      "per_day": "Ø pro Tag",
+      "recent_expenses": "Letzte Ausgaben",
+      "show_all": "Alle ansehen",
+      "remaining_short": "übrig",
+      "add_expense": "Ausgabe"
     },
     "form": {
       "destination": "Reiseziel",
@@ -125,11 +131,16 @@
       "date": "Datum & Uhrzeit",
       "converted_amount": "Umgerechnet",
       "converting": "Umrechnung...",
-      "currency_calculator": "Währungsrechner"
+      "currency_calculator": "Währungsrechner",
+      "converted": "≈ {{amount}}",
+      "rate_info": "1 {{from}} = {{rate}} {{to}}"
     },
     "empty": {
       "title": "Noch keine Ausgaben erfasst",
       "subtitle": "Tippe auf ➕ um deine erste Ausgabe hinzuzufügen"
+    },
+    "sort": {
+      "toggle": "Sortierung ändern"
     }
   },
   "categories": {
@@ -409,7 +420,8 @@
         "manual": "Manuell",
         "api": "API",
         "fallback": "Standard",
-        "unknown": "Unbekannt"
+        "unknown": "Unbekannt",
+        "auto": "Auto"
       },
       "delete": {
         "title": "Kurs löschen",
@@ -434,7 +446,12 @@
         "invalid_rate": "Bitte geben Sie einen gültigen Wechselkurs ein (größer als 0)",
         "cannot_delete_title": "Kann nicht gelöscht werden",
         "cannot_delete_message": "Nur manuelle Wechselkurse können gelöscht werden"
-      }
+      },
+      "auto_update": "Kurse automatisch aktualisieren",
+      "last_updated": "Zuletzt aktualisiert",
+      "never": "Nie",
+      "manual_note": "Manuell gesetzte Kurse haben Vorrang und werden nicht überschrieben.",
+      "update_failed": "Kurse konnten nicht aktualisiert werden."
     }
   },
   "errors": {
@@ -486,7 +503,16 @@
     },
     "vacation_card": {
       "over_budget": "Überschreitung:",
-      "remaining": "Verbleibend:"
+      "remaining": "Verbleibend:",
+      "status": {
+        "active": "Aktiv",
+        "planned": "Geplant",
+        "past": "Vorbei"
+      },
+      "budget": "Budget",
+      "in_days": "in {{count}} Tagen",
+      "today": "heute",
+      "completed": "abgeschlossen"
     },
     "budget_overview": {
       "progress": "{{percentage}}% verwendet",
@@ -502,6 +528,33 @@
     "no_data": "Keine Daten verfügbar",
     "no_data_subtitle": "Fügen Sie Ausgaben hinzu, um den Report zu sehen",
     "expense_count": "{{count}} Ausgabe",
-    "expense_count_plural": "{{count}} Ausgaben"
+    "expense_count_plural": "{{count}} Ausgaben",
+    "limit": {
+      "label": "Limit {{limit}} · {{percent}}%",
+      "exceeded": "Limit {{limit}} überschritten",
+      "none": "kein Limit",
+      "set": "Limit festlegen"
+    },
+    "pace": {
+      "warning": "Bei gleichem Tempo ist das Budget {{days}} Tage vor Ende aufgebraucht (Ø {{actual}}/Tag, Ziel {{target}}/Tag).",
+      "on_track": "Im Rahmen: Ø {{actual}}/Tag bei einem Ziel von {{target}}/Tag."
+    }
+  },
+  "countdown": {
+    "title": "Timer",
+    "next_trip": "NÄCHSTE REISE",
+    "days_until": "Tage bis zur Abreise",
+    "unit": {
+      "days": "Tage",
+      "hours": "Std",
+      "minutes": "Min",
+      "seconds": "Sek"
+    },
+    "remaining_budget": "Restbudget",
+    "in_progress": "Reise läuft",
+    "empty": {
+      "title": "Keine geplante Reise",
+      "subtitle": "Sobald eine Reise in der Zukunft liegt, zählt der Timer hier herunter."
+    }
   }
 }

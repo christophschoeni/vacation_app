@@ -237,6 +237,12 @@ export const BorderRadius = {
   '2xl': 16,
   '3xl': 20,
   '4xl': 24,
+  // Continuous-corner radii used by the iOS 26 surfaces: grouped list
+  // containers and vacation cards ("card"), the compact stat tiles and inline
+  // chips ("tile"), and the pill shapes on badges and buttons ("pill").
+  card: 26,
+  tile: 18,
+  pill: 20,
   full: 9999,
 };
 

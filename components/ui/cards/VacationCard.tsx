@@ -1,14 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Icon } from '@/components/design';
-import {
-  getVacationGradient,
-  getVacationTextColor,
-  getVacationSecondaryTextColor,
-  getVacationIconColor
-} from '@/lib/vacation-colors';
+
+import { ProgressBar, StatusBadge } from '@/components/design';
+import { BorderRadius, Spacing, Typography } from '@/constants/design';
+import { budgetColor, useIOSTheme } from '@/constants/ios-theme';
+import { getVacationGradient } from '@/lib/vacation-colors';
 import { formatDateRange, formatCurrencyCompact } from '@/lib/utils/formatters';
+import { daysUntil, vacationStatus } from '@/lib/utils/vacation-status';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 import type { Vacation } from '@/types';
@@ -28,148 +27,152 @@ interface VacationCardProps {
   totalBudget: number;
 }
 
-export default function VacationCard({ vacation, totalSpent, totalBudget }: VacationCardProps) {
+/**
+ * Vacation card in the iOS 26 style: a gradient header standing in for the
+ * trip photo, then destination, status and a budget bar on a plain surface.
+ */
+export default function VacationCard({
+  vacation,
+  totalSpent,
+  totalBudget,
+}: VacationCardProps) {
   const { t } = useTranslation();
+  const theme = useIOSTheme();
   const { defaultCurrency } = useCurrency();
 
-  const totalExpenses = totalSpent;
   const hasBudget = totalBudget > 0;
-  const remainingBudget = hasBudget ? totalBudget - totalExpenses : 0;
-  const budgetStatus = hasBudget && remainingBudget < 0 ? 'over' : 'normal';
+  const ratio = hasBudget ? totalSpent / totalBudget : 0;
 
-  // Gradient colors for this vacation
-  const gradientColors = getVacationGradient(vacation);
-  const textColor = getVacationTextColor(gradientColors);
-  const secondaryTextColor = getVacationSecondaryTextColor(gradientColors);
-  const iconColor = getVacationIconColor(gradientColors);
+  const status = vacationStatus(vacation);
+  const days = daysUntil(new Date(vacation.startDate));
+
+  const tone = status === 'active' ? 'success' : status === 'planned' ? 'accent' : 'neutral';
+
+  const timing =
+    status === 'past'
+      ? t('components.vacation_card.completed')
+      : status === 'active'
+        ? t('components.vacation_card.status.active')
+        : days === 0
+          ? t('components.vacation_card.today')
+          : t('components.vacation_card.in_days', { count: days });
+
+  const dateRange = formatDateRange(
+    new Date(vacation.startDate),
+    new Date(vacation.endDate)
+  );
 
   return (
-    <LinearGradient
-      colors={gradientColors}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.gradientCard}
-      accessible={true}
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: theme.groupedBackground },
+        // A past trip is de-emphasised rather than hidden.
+        status === 'past' && styles.past,
+      ]}
+      accessible
       accessibilityRole="button"
-      accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${hasBudget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(totalBudget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
-      accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
+      accessibilityLabel={`${vacation.destination}, ${vacation.country}. ${dateRange}. ${timing}.${
+        hasBudget
+          ? ` ${t('components.vacation_card.budget')}: ${formatCurrencyCompact(
+              totalSpent,
+              defaultCurrency
+            )} / ${formatCurrencyCompact(totalBudget, defaultCurrency)}.`
+          : ''
+      }`}
     >
-        <View style={styles.cardHeader}>
-          <View style={styles.destinationContainer}>
-            <Text style={[styles.destination, { color: textColor }]}>
+      <LinearGradient
+        colors={getVacationGradient(vacation)}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.hero}
+      />
+
+      <View style={styles.body}>
+        <View style={styles.titleRow}>
+          <View style={styles.titleText}>
+            <Text style={[styles.destination, { color: theme.label }]} numberOfLines={1}>
               {vacation.destination}
             </Text>
-            <Text style={[styles.country, { color: secondaryTextColor }]}>
-              {vacation.country}
+            <Text style={[styles.meta, { color: theme.secondaryLabel }]} numberOfLines={1}>
+              {dateRange} · {timing}
             </Text>
           </View>
-          <Text style={[styles.dates, { color: secondaryTextColor }]}>
-            {formatDateRange(vacation.startDate, vacation.endDate)}
-          </Text>
+          <StatusBadge
+            label={t(`components.vacation_card.status.${status}`)}
+            tone={tone}
+          />
         </View>
 
-        <View style={styles.cardContent}>
-          <View style={styles.hotelContainer}>
-            <Icon name="hotel" size={16} color={iconColor} />
-            <Text style={[styles.hotel, { color: textColor }]}>
-              {vacation.hotel}
-            </Text>
-          </View>
-
-          {hasBudget && (
-            <View style={styles.budgetContainer}>
-              <Icon name="budget" size={16} color={iconColor} />
-              <View style={styles.budgetInfo}>
-                <Text style={[styles.budgetText, { color: textColor }]}>
-                  {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(totalBudget, defaultCurrency)}
-                </Text>
-                <Text style={[
-                  styles.remainingText,
-                  {
-                    color: budgetStatus === 'over'
-                      ? '#FFB3B3' // Light red for over budget
-                      : '#B3FFB3' // Light green for remaining budget
-                  }
-                ]}>
-                  {budgetStatus === 'over' ? t('components.vacation_card.over_budget') : t('components.vacation_card.remaining')}{' '}
-                  {formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}
-                </Text>
-              </View>
+        {hasBudget && (
+          <View style={styles.budget}>
+            <View style={styles.budgetRow}>
+              <Text style={[styles.budgetLabel, { color: theme.secondaryLabel }]}>
+                {t('components.vacation_card.budget')}
+              </Text>
+              <Text style={[styles.budgetValue, { color: theme.label }]}>
+                {formatCurrencyCompact(totalSpent, defaultCurrency)} /{' '}
+                {formatCurrencyCompact(totalBudget, defaultCurrency)}
+              </Text>
             </View>
-          )}
-        </View>
-    </LinearGradient>
+            <ProgressBar progress={ratio} color={budgetColor(theme, ratio)} />
+          </View>
+        )}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  gradientCard: {
-    marginBottom: 16,
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    borderRadius: 16,
+  card: {
+    marginBottom: Spacing.md,
+    borderRadius: BorderRadius.card,
+    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
-  cardHeader: {
+  past: {
+    opacity: 0.65,
+  },
+  hero: {
+    height: 96,
+  },
+  body: {
+    padding: Spacing.lg,
+    gap: 10,
+  },
+  titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    gap: Spacing.sm,
   },
-  destinationContainer: {
+  titleText: {
     flex: 1,
   },
   destination: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 2,
-    fontFamily: 'System',
+    fontSize: Typography.fontSize.title3,
+    fontWeight: Typography.fontWeight.semibold,
   },
-  country: {
-    fontSize: 15,
-    fontWeight: '400',
+  meta: {
+    fontSize: Typography.fontSize.footnote,
+    marginTop: 2,
   },
-  dates: {
-    fontSize: 13,
-    fontWeight: '500',
-    textAlign: 'right',
+  budget: {
+    gap: 6,
   },
-  cardContent: {
-    gap: 8,
-  },
-  hotelContainer: {
+  budgetRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
   },
-  hotel: {
-    fontSize: 15,
-    fontWeight: '400',
-    flex: 1,
+  budgetLabel: {
+    fontSize: Typography.fontSize.footnote,
   },
-  budgetContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
-    marginTop: 8,
-  },
-  budgetInfo: {
-    flex: 1,
-  },
-  budgetText: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 2,
-  },
-  remainingText: {
-    fontSize: 13,
-    fontWeight: '600',
+  budgetValue: {
+    fontSize: Typography.fontSize.footnote,
+    fontWeight: Typography.fontWeight.semibold,
   },
 });

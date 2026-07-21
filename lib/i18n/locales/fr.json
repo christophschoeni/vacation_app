@@ -27,7 +27,13 @@
     },
     "detail": {
       "loading": "Chargement des données des vacances...",
-      "not_found": "Vacances introuvables"
+      "not_found": "Vacances introuvables",
+      "spent": "Dépensé",
+      "per_day": "Moy. par jour",
+      "recent_expenses": "Dépenses récentes",
+      "show_all": "Tout voir",
+      "remaining_short": "restant",
+      "add_expense": "Dépense"
     },
     "form": {
       "destination": "Destination",
@@ -125,11 +131,16 @@
       "date": "Date & Heure",
       "converted_amount": "Converti",
       "converting": "Conversion...",
-      "currency_calculator": "Convertisseur de devises"
+      "currency_calculator": "Convertisseur de devises",
+      "converted": "≈ {{amount}}",
+      "rate_info": "1 {{from}} = {{rate}} {{to}}"
     },
     "empty": {
       "title": "Aucune dépense enregistrée",
       "subtitle": "Appuyez sur ➕ pour ajouter votre première dépense"
+    },
+    "sort": {
+      "toggle": "Changer le tri"
     }
   },
   "categories": {
@@ -409,7 +420,8 @@
         "manual": "Manuel",
         "api": "API",
         "fallback": "Par défaut",
-        "unknown": "Inconnu"
+        "unknown": "Inconnu",
+        "auto": "Auto"
       },
       "delete": {
         "title": "Supprimer le taux",
@@ -434,7 +446,12 @@
         "invalid_rate": "Veuillez entrer un taux de change valide (supérieur à 0)",
         "cannot_delete_title": "Impossible de supprimer",
         "cannot_delete_message": "Seuls les taux de change manuels peuvent être supprimés"
-      }
+      },
+      "auto_update": "Mettre à jour les taux automatiquement",
+      "last_updated": "Dernière mise à jour",
+      "never": "Jamais",
+      "manual_note": "Les taux définis manuellement sont prioritaires et ne sont pas écrasés.",
+      "update_failed": "Impossible de mettre à jour les taux."
     }
   },
   "errors": {
@@ -486,7 +503,16 @@
     },
     "vacation_card": {
       "over_budget": "Dépassement:",
-      "remaining": "Restant:"
+      "remaining": "Restant:",
+      "status": {
+        "active": "En cours",
+        "planned": "Planifié",
+        "past": "Terminé"
+      },
+      "budget": "Budget",
+      "in_days": "dans {{count}} jours",
+      "today": "aujourd'hui",
+      "completed": "terminé"
     },
     "budget_overview": {
       "progress": "{{percentage}}% utilisé",
@@ -502,6 +528,33 @@
     "no_data": "Aucune donnée disponible",
     "no_data_subtitle": "Ajoutez des dépenses pour voir le rapport",
     "expense_count": "{{count}} dépense",
-    "expense_count_plural": "{{count}} dépenses"
+    "expense_count_plural": "{{count}} dépenses",
+    "limit": {
+      "label": "Limite {{limit}} · {{percent}} %",
+      "exceeded": "Limite {{limit}} dépassée",
+      "none": "aucune limite",
+      "set": "Définir une limite"
+    },
+    "pace": {
+      "warning": "À ce rythme, le budget sera épuisé {{days}} jours avant la fin (moy. {{actual}}/jour, cible {{target}}/jour).",
+      "on_track": "Dans les clous : moy. {{actual}}/jour pour une cible de {{target}}/jour."
+    }
+  },
+  "countdown": {
+    "title": "Minuteur",
+    "next_trip": "PROCHAIN VOYAGE",
+    "days_until": "jours avant le départ",
+    "unit": {
+      "days": "Jours",
+      "hours": "Hrs",
+      "minutes": "Min",
+      "seconds": "Sec"
+    },
+    "remaining_budget": "Budget restant",
+    "in_progress": "Voyage en cours",
+    "empty": {
+      "title": "Aucun voyage prévu",
+      "subtitle": "Dès qu’un voyage est à venir, le minuteur démarre ici."
+    }
   }
 }

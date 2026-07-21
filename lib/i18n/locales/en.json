@@ -27,7 +27,13 @@
     },
     "detail": {
       "loading": "Loading vacation data...",
-      "not_found": "Vacation not found"
+      "not_found": "Vacation not found",
+      "spent": "Spent",
+      "per_day": "Avg per day",
+      "recent_expenses": "Recent expenses",
+      "show_all": "Show all",
+      "remaining_short": "left",
+      "add_expense": "Expense"
     },
     "form": {
       "destination": "Destination",
@@ -125,11 +131,16 @@
       "date": "Date & Time",
       "converted_amount": "Converted",
       "converting": "Converting...",
-      "currency_calculator": "Currency Calculator"
+      "currency_calculator": "Currency Calculator",
+      "converted": "≈ {{amount}}",
+      "rate_info": "1 {{from}} = {{rate}} {{to}}"
     },
     "empty": {
       "title": "No Expenses Yet",
       "subtitle": "Tap ➕ to add your first expense"
+    },
+    "sort": {
+      "toggle": "Change sort order"
     }
   },
   "categories": {
@@ -409,7 +420,8 @@
         "manual": "Manual",
         "api": "API",
         "fallback": "Default",
-        "unknown": "Unknown"
+        "unknown": "Unknown",
+        "auto": "Auto"
       },
       "delete": {
         "title": "Delete Rate",
@@ -434,7 +446,12 @@
         "invalid_rate": "Please enter a valid exchange rate (greater than 0)",
         "cannot_delete_title": "Cannot Delete",
         "cannot_delete_message": "Only manual exchange rates can be deleted"
-      }
+      },
+      "auto_update": "Update rates automatically",
+      "last_updated": "Last updated",
+      "never": "Never",
+      "manual_note": "Manually set rates take precedence and are not overwritten.",
+      "update_failed": "Could not update rates."
     }
   },
   "errors": {
@@ -486,7 +503,16 @@
     },
     "vacation_card": {
       "over_budget": "Over Budget:",
-      "remaining": "Remaining:"
+      "remaining": "Remaining:",
+      "status": {
+        "active": "Active",
+        "planned": "Planned",
+        "past": "Past"
+      },
+      "budget": "Budget",
+      "in_days": "in {{count}} days",
+      "today": "today",
+      "completed": "completed"
     },
     "budget_overview": {
       "progress": "{{percentage}}% used",
@@ -502,6 +528,33 @@
     "no_data": "No data available",
     "no_data_subtitle": "Add expenses to see the report",
     "expense_count": "{{count}} expense",
-    "expense_count_plural": "{{count}} expenses"
+    "expense_count_plural": "{{count}} expenses",
+    "limit": {
+      "label": "Limit {{limit}} · {{percent}}%",
+      "exceeded": "Limit {{limit}} exceeded",
+      "none": "no limit",
+      "set": "Set limit"
+    },
+    "pace": {
+      "warning": "At this pace the budget runs out {{days}} days early (avg {{actual}}/day, target {{target}}/day).",
+      "on_track": "On track: avg {{actual}}/day against a target of {{target}}/day."
+    }
+  },
+  "countdown": {
+    "title": "Timer",
+    "next_trip": "NEXT TRIP",
+    "days_until": "days until departure",
+    "unit": {
+      "days": "Days",
+      "hours": "Hrs",
+      "minutes": "Min",
+      "seconds": "Sec"
+    },
+    "remaining_budget": "Remaining budget",
+    "in_progress": "Trip in progress",
+    "empty": {
+      "title": "No upcoming trip",
+      "subtitle": "Once a trip lies in the future, the timer counts down here."
+    }
   }
 }

@@ -27,7 +27,13 @@
     },
     "detail": {
       "loading": "旅行データを読み込み中…",
-      "not_found": "旅行が見つかりません"
+      "not_found": "旅行が見つかりません",
+      "spent": "支出",
+      "per_day": "1日平均",
+      "recent_expenses": "最近の支出",
+      "show_all": "すべて表示",
+      "remaining_short": "残り",
+      "add_expense": "支出"
     },
     "form": {
       "destination": "目的地",
@@ -125,11 +131,16 @@
       "date": "日時",
       "converted_amount": "換算後",
       "converting": "換算中…",
-      "currency_calculator": "通貨換算"
+      "currency_calculator": "通貨換算",
+      "converted": "≈ {{amount}}",
+      "rate_info": "1 {{from}} = {{rate}} {{to}}"
     },
     "empty": {
       "title": "支出はまだありません",
       "subtitle": "➕ をタップして最初の支出を追加してください"
+    },
+    "sort": {
+      "toggle": "並び順を変更"
     }
   },
   "categories": {
@@ -409,7 +420,8 @@
         "manual": "手動",
         "api": "API",
         "fallback": "標準",
-        "unknown": "不明"
+        "unknown": "不明",
+        "auto": "自動"
       },
       "delete": {
         "title": "レートを削除",
@@ -434,7 +446,12 @@
         "invalid_rate": "有効な為替レートを入力してください（0より大きい値）",
         "cannot_delete_title": "削除できません",
         "cannot_delete_message": "削除できるのは手動の為替レートのみです"
-      }
+      },
+      "auto_update": "レートを自動更新",
+      "last_updated": "最終更新",
+      "never": "未更新",
+      "manual_note": "手動設定したレートが優先され、上書きされません。",
+      "update_failed": "レートを更新できませんでした。"
     }
   },
   "errors": {
@@ -486,7 +503,16 @@
     },
     "vacation_card": {
       "over_budget": "超過：",
-      "remaining": "残り："
+      "remaining": "残り：",
+      "status": {
+        "active": "進行中",
+        "planned": "予定",
+        "past": "終了"
+      },
+      "budget": "予算",
+      "in_days": "あと{{count}}日",
+      "today": "今日",
+      "completed": "完了"
     },
     "budget_overview": {
       "progress": "{{percentage}}% 使用済み",
@@ -502,6 +528,33 @@
     "no_data": "データがありません",
     "no_data_subtitle": "支出を追加するとレポートが表示されます",
     "expense_count": "{{count}} 件の支出",
-    "expense_count_plural": "{{count}} 件の支出"
+    "expense_count_plural": "{{count}} 件の支出",
+    "limit": {
+      "label": "上限 {{limit}} · {{percent}}%",
+      "exceeded": "上限 {{limit}} を超過",
+      "none": "上限なし",
+      "set": "上限を設定"
+    },
+    "pace": {
+      "warning": "このペースだと予算は{{days}}日早く尽きます（平均{{actual}}/日、目標{{target}}/日）。",
+      "on_track": "順調：平均{{actual}}/日（目標{{target}}/日）。"
+    }
+  },
+  "countdown": {
+    "title": "タイマー",
+    "next_trip": "次の旅行",
+    "days_until": "出発まで",
+    "unit": {
+      "days": "日",
+      "hours": "時",
+      "minutes": "分",
+      "seconds": "秒"
+    },
+    "remaining_budget": "残り予算",
+    "in_progress": "旅行中",
+    "empty": {
+      "title": "予定の旅行はありません",
+      "subtitle": "今後の旅行があると、ここでカウントダウンします。"
+    }
   }
 }

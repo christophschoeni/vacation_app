@@ -1,4 +1,5 @@
 import { Icon } from '@/components/design';
+import { BorderRadius } from '@/constants/design';
 import React, { useRef } from 'react';
 import {
   Animated,
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 0,
-    bottom: 16, // Match the marginBottom of the VacationCard
+    bottom: 12, // Match the marginBottom of the VacationCard (Spacing.md)
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
@@ -160,7 +161,8 @@ const styles = StyleSheet.create({
     height: '100%',
     marginHorizontal: 0,
     marginLeft: 8, // 8px gap between buttons
-    borderRadius: 12,
+    // Matches the card corner radius so the revealed actions sit flush with it.
+    borderRadius: BorderRadius.tile,
   },
   editButton: {
     backgroundColor: '#007AFF', // iOS System Blue for edit actions

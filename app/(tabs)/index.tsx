@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
 import { Colors, Icon } from '@/components/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
@@ -24,6 +25,7 @@ import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 export default function VacationsScreen() {
   const tabBarPadding = useTabBarPadding();
   const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
   const { data: vacations = [], isLoading, refetch: refetchVacations } = useVacations();
   // One aggregated query for every card's spend, instead of one query per card.
@@ -87,7 +89,7 @@ export default function VacationsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={[]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={[]}>
       <AppHeader
         title={t('navigation.vacations')}
         variant="large"

@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity , useColorScheme } from 'react-native';
-import { Card, Icon } from '@/components/design';
-import { formatDateTime, formatCurrency } from '@/lib/utils/formatters';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+import { Icon } from '@/components/design';
+import { BorderRadius, Spacing, Typography } from '@/constants/design';
+import { categoryColor, useIOSTheme } from '@/constants/ios-theme';
+import { formatDate, formatCurrency } from '@/lib/utils/formatters';
 import {
   getExpenseCategoryIcon,
-  getExpenseCategoryLabel
+  getExpenseCategoryLabel,
 } from '@/lib/constants/expense-categories';
 import type { Expense } from '@/types';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -16,12 +19,20 @@ interface ExpenseCardProps {
   onLongPress?: (id: string) => void;
 }
 
-export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCardProps) {
-  const colorScheme = useColorScheme();
+/**
+ * A single expense as a grouped-list row: category swatch, description with
+ * "category · date", and the amount in the display currency with the original
+ * foreign amount beneath it.
+ */
+export default function ExpenseCard({
+  expense,
+  onPress,
+  onLongPress,
+}: ExpenseCardProps) {
+  const theme = useIOSTheme();
   const { defaultCurrency } = useCurrency();
   const [convertedAmount, setConvertedAmount] = React.useState<number | null>(null);
 
-  // Convert amount to default currency if different
   React.useEffect(() => {
     let cancelled = false;
 
@@ -33,11 +44,9 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
             expense.currency,
             defaultCurrency
           );
-          if (!cancelled) {
-            setConvertedAmount(result);
-          }
+          if (!cancelled) setConvertedAmount(result);
         } catch {
-          // Failed to convert currency - display will show original amount
+          // Failed to convert - the original amount is shown on its own.
         }
       } else {
         setConvertedAmount(null);
@@ -51,107 +60,96 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
     };
   }, [expense.amount, expense.currency, defaultCurrency]);
 
-  const handlePress = () => {
-    if (onPress) {
-      onPress(expense.id);
-    }
-  };
+  const isForeign = convertedAmount !== null;
 
-  const handleLongPress = () => {
-    if (onLongPress) {
-      onLongPress(expense.id);
-    }
-  };
+  // Lead with the amount in the user's own currency when we have it, and keep
+  // the amount actually paid as the secondary line.
+  const primary = isForeign
+    ? formatCurrency(convertedAmount, defaultCurrency)
+    : formatCurrency(expense.amount, expense.currency);
+  const secondary = isForeign
+    ? formatCurrency(expense.amount, expense.currency)
+    : null;
+
+  const swatch = categoryColor(theme, expense.category);
 
   return (
     <TouchableOpacity
-      onPress={handlePress}
-      onLongPress={handleLongPress}
+      onPress={() => onPress?.(expense.id)}
+      onLongPress={() => onLongPress?.(expense.id)}
       activeOpacity={0.7}
+      style={[styles.row, { backgroundColor: theme.groupedBackground }]}
+      accessibilityRole="button"
+      accessibilityLabel={`${expense.description}, ${getExpenseCategoryLabel(
+        expense.category
+      )}, ${primary}`}
     >
-      <Card style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View style={styles.categoryContainer}>
-            <Icon
-              name={getExpenseCategoryIcon(expense.category) as any}
-              size={20}
-              color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'}
-            />
-            <View style={styles.descriptionContainer}>
-              <Text style={[styles.description, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-                {expense.description}
-              </Text>
-              <Text style={[styles.category, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                {getExpenseCategoryLabel(expense.category)}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.amountContainer}>
-            <Text style={[styles.amount, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-              {formatCurrency(expense.amount, expense.currency)}
-            </Text>
-            {convertedAmount !== null && (
-              <Text style={[styles.convertedAmount, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                ≈ {formatCurrency(convertedAmount, defaultCurrency)}
-              </Text>
-            )}
-            <Text style={[styles.date, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-              {formatDateTime(expense.date)}
-            </Text>
-          </View>
-        </View>
-      </Card>
+      <View style={[styles.swatch, { backgroundColor: swatch }]}>
+        <Icon
+          name={getExpenseCategoryIcon(expense.category) as any}
+          size={16}
+          color="#FFFFFF"
+        />
+      </View>
+
+      <View style={styles.text}>
+        <Text style={[styles.description, { color: theme.label }]} numberOfLines={1}>
+          {expense.description}
+        </Text>
+        <Text style={[styles.meta, { color: theme.secondaryLabel }]} numberOfLines={1}>
+          {getExpenseCategoryLabel(expense.category)} · {formatDate(expense.date)}
+        </Text>
+      </View>
+
+      <View style={styles.amounts}>
+        <Text style={[styles.amount, { color: theme.label }]} numberOfLines={1}>
+          −{primary}
+        </Text>
+        {secondary && (
+          <Text style={[styles.original, { color: theme.secondaryLabel }]} numberOfLines={1}>
+            {secondary}
+          </Text>
+        )}
+      </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginBottom: 12,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  categoryContainer: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
-    gap: 12,
+    gap: Spacing.md,
+    paddingVertical: 11,
+    paddingHorizontal: Spacing.lg,
   },
-  descriptionContainer: {
+  swatch: {
+    width: 32,
+    height: 32,
+    borderRadius: BorderRadius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
     flex: 1,
+    minWidth: 0,
   },
   description: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 2,
-    fontFamily: 'System',
+    fontSize: Typography.fontSize.callout,
   },
-  category: {
-    fontSize: 13,
-    fontWeight: '400',
-    fontFamily: 'System',
+  meta: {
+    fontSize: Typography.fontSize.caption1,
+    marginTop: 1,
   },
-  amountContainer: {
+  amounts: {
     alignItems: 'flex-end',
   },
   amount: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 2,
-    fontFamily: 'System',
+    fontSize: Typography.fontSize.callout,
+    fontWeight: Typography.fontWeight.semibold,
   },
-  convertedAmount: {
-    fontSize: 13,
-    fontWeight: '400',
-    marginBottom: 2,
-    fontFamily: 'System',
-  },
-  date: {
-    fontSize: 12,
-    fontWeight: '400',
-    fontFamily: 'System',
+  original: {
+    fontSize: Typography.fontSize.caption1,
+    marginTop: 1,
   },
 });

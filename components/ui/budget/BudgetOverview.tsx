@@ -1,7 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, useColorScheme, type StyleProp, type ViewStyle } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+
+import { BudgetRing } from '@/components/design';
+import { BorderRadius, Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import { Vacation, Expense } from '@/types';
-import { calculateBudgetAnalysisAsync, formatCurrency, getBudgetStatusColor, BudgetAnalysis } from '@/lib/budget-calculations';
+import {
+  calculateBudgetAnalysisAsync,
+  formatCurrency,
+  BudgetAnalysis,
+} from '@/lib/budget-calculations';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 
@@ -10,35 +18,32 @@ interface BudgetOverviewProps {
   expenses: Expense[];
 }
 
-interface ProgressBarProps {
-  progress: number;
-  color: string;
-  style?: StyleProp<ViewStyle>;
-}
-
-function ProgressBar({ progress, color, style }: ProgressBarProps) {
+/** One of the three compact figures under the ring. */
+function StatTile({ label, value }: { label: string; value: string }) {
+  const theme = useIOSTheme();
   return (
-    <View style={[{
-      height: 6,
-      backgroundColor: 'rgba(142, 142, 147, 0.12)',
-      borderRadius: 3,
-      overflow: 'hidden'
-    }, style]}>
-      <View
-        style={{
-          height: '100%',
-          width: `${Math.min(progress * 100, 100)}%`,
-          backgroundColor: color,
-          borderRadius: 3
-        }}
-      />
+    <View style={[styles.tile, { backgroundColor: theme.tile }]}>
+      <Text style={[styles.tileLabel, { color: theme.secondaryLabel }]} numberOfLines={1}>
+        {label}
+      </Text>
+      <Text
+        style={[styles.tileValue, { color: theme.label }]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+      >
+        {value}
+      </Text>
     </View>
   );
 }
 
+/**
+ * Budget hero for the vacation detail screen: a ring showing how much is left,
+ * with budget / spent / average-per-day underneath.
+ */
 export default function BudgetOverview({ vacation, expenses }: BudgetOverviewProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const theme = useIOSTheme();
   const { t } = useTranslation();
   const { defaultCurrency } = useCurrency();
   const [analysis, setAnalysis] = React.useState<BudgetAnalysis | null>(null);
@@ -50,14 +55,14 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
     async function loadAnalysis() {
       setLoading(true);
       try {
-        const result = await calculateBudgetAnalysisAsync(vacation, expenses, defaultCurrency);
-        if (!cancelled) {
-          setAnalysis(result);
-        }
+        const result = await calculateBudgetAnalysisAsync(
+          vacation,
+          expenses,
+          defaultCurrency
+        );
+        if (!cancelled) setAnalysis(result);
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     }
 
@@ -70,91 +75,44 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
 
   if (loading || !analysis) {
     return (
-      <View style={[styles.container, {
-        backgroundColor: isDark ? '#000000' : '#FFFFFF',
-      }]}>
-        <View style={{ paddingVertical: 40, alignItems: 'center' }}>
-          <ActivityIndicator color={isDark ? '#FFFFFF' : '#000000'} />
-        </View>
+      <View style={styles.loading}>
+        <ActivityIndicator color={theme.secondaryLabel} />
       </View>
     );
   }
 
-  const progressColor = getBudgetStatusColor(analysis.status, analysis.budgetPercentageUsed);
+  const ratio = analysis.totalBudget > 0
+    ? analysis.totalExpenses / analysis.totalBudget
+    : 0;
+
+  // The ring shows what is left; over budget it shows the overspend instead.
+  const isOver = analysis.remainingBudget < 0;
 
   return (
-    <View style={[styles.container, {
-      backgroundColor: isDark ? '#000000' : '#FFFFFF',
-    }]}>
-      {/* Clean progress indication */}
-      <View style={styles.progressSection}>
-        <View style={styles.progressContainer}>
-          <ProgressBar
-            progress={Math.min(analysis.budgetPercentageUsed / 100, 1)}
-            color={progressColor}
-            style={styles.progressBar}
-          />
-          <Text style={[styles.progressText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {t('components.budget_overview.progress', { percentage: analysis.budgetPercentageUsed.toFixed(1) })}
-          </Text>
-        </View>
-      </View>
+    <View style={styles.container}>
+      <BudgetRing
+        progress={ratio}
+        value={formatCurrency(Math.abs(analysis.remainingBudget), defaultCurrency)}
+        caption={
+          isOver
+            ? t('components.vacation_card.over_budget')
+            : `${defaultCurrency} ${t('vacation.detail.remaining_short')}`
+        }
+      />
 
-      {/* Main budget numbers in 2x2 grid */}
-      <View style={styles.mainBudgetSection}>
-        <View style={styles.budgetGrid2x2}>
-          {/* First row */}
-          <View style={styles.budgetGridRow}>
-            <View style={styles.budgetGridItem}>
-              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                {t('components.budget_overview.total_budget')}
-              </Text>
-              <Text style={[styles.budgetGridAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                {formatCurrency(analysis.totalBudget, defaultCurrency)}
-              </Text>
-            </View>
-            <View style={styles.budgetGridItem}>
-              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                {t('components.budget_overview.spent')}
-              </Text>
-              <Text style={[styles.budgetGridAmount, {
-                color: analysis.isOverBudget ? '#FF3B30' : (isDark ? '#FFFFFF' : '#1C1C1E')
-              }]}>
-                {formatCurrency(analysis.totalExpenses, defaultCurrency)}
-              </Text>
-            </View>
-          </View>
-
-          {/* Second row */}
-          <View style={styles.budgetGridRow}>
-            <View style={styles.budgetGridItem}>
-              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                {t('components.budget_overview.remaining')}
-              </Text>
-              <Text style={[styles.budgetGridAmount, {
-                color: analysis.remainingBudget < 0 ? '#FF3B30' : '#34C759'
-              }]}>
-                {formatCurrency(analysis.remainingBudget, defaultCurrency)}
-              </Text>
-            </View>
-            <View style={styles.budgetGridItem}>
-              <Text style={[styles.budgetGridLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                {analysis.remainingDays > 0
-                  ? t('components.budget_overview.per_day', { days: analysis.remainingDays })
-                  : t('components.budget_overview.vacation_ended')}
-              </Text>
-              <Text style={[styles.budgetGridAmount, {
-                color: analysis.remainingBudget < 0 ? '#FF3B30' :
-                       analysis.remainingDays <= 0 ? (isDark ? '#8E8E93' : '#6D6D70') : '#34C759'
-              }]}>
-                {analysis.remainingDays > 0 ?
-                  formatCurrency(analysis.remainingBudget / analysis.remainingDays, defaultCurrency) :
-                  '--'
-                }
-              </Text>
-            </View>
-          </View>
-        </View>
+      <View style={styles.tiles}>
+        <StatTile
+          label={t('components.budget_overview.total_budget')}
+          value={formatCurrency(analysis.totalBudget, defaultCurrency)}
+        />
+        <StatTile
+          label={t('vacation.detail.spent')}
+          value={formatCurrency(analysis.totalExpenses, defaultCurrency)}
+        />
+        <StatTile
+          label={t('vacation.detail.per_day')}
+          value={formatCurrency(analysis.averageSpentPerDay, defaultCurrency)}
+        />
       </View>
     </View>
   );
@@ -162,101 +120,33 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    marginHorizontal: -16, // Negative margin to extend to screen edges
-    marginBottom: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 4,
+    paddingTop: Spacing.xs,
+    paddingBottom: Spacing.lg,
+    gap: Spacing.lg,
   },
-  title: {
-    fontSize: 22,
-    fontWeight: '700',
-    fontFamily: 'System',
-    flex: 1,
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  statusText: {
-    fontSize: 13,
-    fontWeight: '500',
-    fontFamily: 'System',
-  },
-  progressSection: {
-    marginBottom: 24,
-  },
-  progressContainer: {
-    gap: 8,
-    paddingHorizontal: 4,
-  },
-  progressBar: {
-    height: 6,
-    borderRadius: 3,
-  },
-  progressText: {
-    fontSize: 13,
-    textAlign: 'center',
-    fontFamily: 'System',
-    fontWeight: '500',
-  },
-  mainBudgetSection: {
-    marginTop: 8,
-  },
-  budgetGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 16,
-  },
-  budgetGrid2x2: {
-    gap: 16,
-  },
-  budgetGridRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 16,
-  },
-  budgetGridItem: {
-    flex: 1,
+  loading: {
+    paddingVertical: 40,
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
   },
-  budgetGridLabel: {
-    fontSize: 13,
-    fontWeight: '500',
-    fontFamily: 'System',
-    marginBottom: 6,
-    textAlign: 'center',
-  },
-  budgetGridAmount: {
-    fontSize: 17,
-    fontWeight: '700',
-    fontFamily: 'System',
-    textAlign: 'center',
-  },
-  // Keep old styles for compatibility
-  budgetRow: {
+  tiles: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
+    gap: 10,
+    alignSelf: 'stretch',
   },
-  budgetLabel: {
-    fontSize: 16,
-    fontFamily: 'System',
+  tile: {
     flex: 1,
+    borderRadius: BorderRadius.tile,
+    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    alignItems: 'center',
   },
-  budgetAmount: {
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'System',
+  tileLabel: {
+    fontSize: Typography.fontSize.caption1,
+  },
+  tileValue: {
+    fontSize: Typography.fontSize.subheadline,
+    fontWeight: Typography.fontWeight.semibold,
+    marginTop: 2,
   },
 });

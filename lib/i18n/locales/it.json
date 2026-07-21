@@ -27,7 +27,13 @@
     },
     "detail": {
       "loading": "Caricamento dati vacanza...",
-      "not_found": "Vacanza non trovata"
+      "not_found": "Vacanza non trovata",
+      "spent": "Speso",
+      "per_day": "Media al giorno",
+      "recent_expenses": "Spese recenti",
+      "show_all": "Mostra tutte",
+      "remaining_short": "rimasti",
+      "add_expense": "Spesa"
     },
     "form": {
       "destination": "Destinazione",
@@ -125,11 +131,16 @@
       "date": "Data e Ora",
       "converted_amount": "Convertito",
       "converting": "Conversione...",
-      "currency_calculator": "Convertitore di valuta"
+      "currency_calculator": "Convertitore di valuta",
+      "converted": "≈ {{amount}}",
+      "rate_info": "1 {{from}} = {{rate}} {{to}}"
     },
     "empty": {
       "title": "Nessuna spesa registrata",
       "subtitle": "Tocca ➕ per aggiungere la tua prima spesa"
+    },
+    "sort": {
+      "toggle": "Cambia ordinamento"
     }
   },
   "categories": {
@@ -409,7 +420,8 @@
         "manual": "Manuale",
         "api": "API",
         "fallback": "Predefinito",
-        "unknown": "Sconosciuto"
+        "unknown": "Sconosciuto",
+        "auto": "Auto"
       },
       "delete": {
         "title": "Elimina tasso",
@@ -434,7 +446,12 @@
         "invalid_rate": "Inserisci un tasso di cambio valido (maggiore di 0)",
         "cannot_delete_title": "Impossibile eliminare",
         "cannot_delete_message": "Solo i tassi di cambio manuali possono essere eliminati"
-      }
+      },
+      "auto_update": "Aggiorna i tassi automaticamente",
+      "last_updated": "Ultimo aggiornamento",
+      "never": "Mai",
+      "manual_note": "I tassi impostati manualmente hanno la precedenza e non vengono sovrascritti.",
+      "update_failed": "Impossibile aggiornare i tassi."
     }
   },
   "errors": {
@@ -486,7 +503,16 @@
     },
     "vacation_card": {
       "over_budget": "Eccedenza:",
-      "remaining": "Rimanente:"
+      "remaining": "Rimanente:",
+      "status": {
+        "active": "Attiva",
+        "planned": "Pianificata",
+        "past": "Conclusa"
+      },
+      "budget": "Budget",
+      "in_days": "tra {{count}} giorni",
+      "today": "oggi",
+      "completed": "conclusa"
     },
     "budget_overview": {
       "progress": "{{percentage}}% usato",
@@ -502,6 +528,33 @@
     "no_data": "Nessun dato disponibile",
     "no_data_subtitle": "Aggiungi spese per vedere il report",
     "expense_count": "{{count}} spesa",
-    "expense_count_plural": "{{count}} spese"
+    "expense_count_plural": "{{count}} spese",
+    "limit": {
+      "label": "Limite {{limit}} · {{percent}}%",
+      "exceeded": "Limite {{limit}} superato",
+      "none": "nessun limite",
+      "set": "Imposta limite"
+    },
+    "pace": {
+      "warning": "A questo ritmo il budget finirà {{days}} giorni prima (media {{actual}}/giorno, obiettivo {{target}}/giorno).",
+      "on_track": "In linea: media {{actual}}/giorno con obiettivo {{target}}/giorno."
+    }
+  },
+  "countdown": {
+    "title": "Timer",
+    "next_trip": "PROSSIMO VIAGGIO",
+    "days_until": "giorni alla partenza",
+    "unit": {
+      "days": "Giorni",
+      "hours": "Ore",
+      "minutes": "Min",
+      "seconds": "Sec"
+    },
+    "remaining_budget": "Budget rimanente",
+    "in_progress": "Viaggio in corso",
+    "empty": {
+      "title": "Nessun viaggio in programma",
+      "subtitle": "Quando un viaggio è nel futuro, il timer parte qui."
+    }
   }
 }

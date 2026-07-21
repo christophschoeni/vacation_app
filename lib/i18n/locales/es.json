@@ -27,7 +27,13 @@
     },
     "detail": {
       "loading": "Cargando datos del viaje...",
-      "not_found": "Viaje no encontrado"
+      "not_found": "Viaje no encontrado",
+      "spent": "Gastado",
+      "per_day": "Med. por día",
+      "recent_expenses": "Gastos recientes",
+      "show_all": "Ver todo",
+      "remaining_short": "restante",
+      "add_expense": "Gasto"
     },
     "form": {
       "destination": "Destino",
@@ -125,11 +131,16 @@
       "date": "Fecha y hora",
       "converted_amount": "Convertido",
       "converting": "Convirtiendo...",
-      "currency_calculator": "Conversor de moneda"
+      "currency_calculator": "Conversor de moneda",
+      "converted": "≈ {{amount}}",
+      "rate_info": "1 {{from}} = {{rate}} {{to}}"
     },
     "empty": {
       "title": "Aún no hay gastos",
       "subtitle": "Pulsa ➕ para añadir tu primer gasto"
+    },
+    "sort": {
+      "toggle": "Cambiar orden"
     }
   },
   "categories": {
@@ -409,7 +420,8 @@
         "manual": "Manual",
         "api": "API",
         "fallback": "Predeterminado",
-        "unknown": "Desconocido"
+        "unknown": "Desconocido",
+        "auto": "Auto"
       },
       "delete": {
         "title": "Eliminar tipo",
@@ -434,7 +446,12 @@
         "invalid_rate": "Introduzca un tipo de cambio válido (mayor que 0)",
         "cannot_delete_title": "No se puede eliminar",
         "cannot_delete_message": "Solo se pueden eliminar los tipos de cambio manuales"
-      }
+      },
+      "auto_update": "Actualizar tasas automáticamente",
+      "last_updated": "Última actualización",
+      "never": "Nunca",
+      "manual_note": "Las tasas definidas manualmente tienen prioridad y no se sobrescriben.",
+      "update_failed": "No se pudieron actualizar las tasas."
     }
   },
   "errors": {
@@ -486,7 +503,16 @@
     },
     "vacation_card": {
       "over_budget": "Exceso:",
-      "remaining": "Restante:"
+      "remaining": "Restante:",
+      "status": {
+        "active": "Activa",
+        "planned": "Planificada",
+        "past": "Finalizada"
+      },
+      "budget": "Presupuesto",
+      "in_days": "en {{count}} días",
+      "today": "hoy",
+      "completed": "finalizada"
     },
     "budget_overview": {
       "progress": "{{percentage}}% usado",
@@ -502,6 +528,33 @@
     "no_data": "No hay datos disponibles",
     "no_data_subtitle": "Añada gastos para ver el informe",
     "expense_count": "{{count}} gasto",
-    "expense_count_plural": "{{count}} gastos"
+    "expense_count_plural": "{{count}} gastos",
+    "limit": {
+      "label": "Límite {{limit}} · {{percent}} %",
+      "exceeded": "Límite {{limit}} superado",
+      "none": "sin límite",
+      "set": "Definir límite"
+    },
+    "pace": {
+      "warning": "A este ritmo el presupuesto se agota {{days}} días antes (med. {{actual}}/día, objetivo {{target}}/día).",
+      "on_track": "Según lo previsto: med. {{actual}}/día frente a un objetivo de {{target}}/día."
+    }
+  },
+  "countdown": {
+    "title": "Temporizador",
+    "next_trip": "PRÓXIMO VIAJE",
+    "days_until": "días hasta la salida",
+    "unit": {
+      "days": "Días",
+      "hours": "Hrs",
+      "minutes": "Min",
+      "seconds": "Seg"
+    },
+    "remaining_budget": "Presupuesto restante",
+    "in_progress": "Viaje en curso",
+    "empty": {
+      "title": "Ningún viaje planificado",
+      "subtitle": "En cuanto haya un viaje futuro, el temporizador contará aquí."
+    }
   }
 }

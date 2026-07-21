@@ -16,7 +16,8 @@ import * as Haptics from 'expo-haptics';
 
 import ExpenseCard from '@/components/ui/cards/ExpenseCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
-import { Card, Icon } from '@/components/design';
+import { Card, Icon, GroupedList } from '@/components/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteParam } from '@/hooks/use-route-param';
@@ -28,6 +29,7 @@ export default function VacationBudgetScreen() {
   const tabBarPadding = useTabBarPadding();
   const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
   const { data: vacation, isLoading } = useVacation(vacationId);
   const { data: expenses = [], refetch: refetchExpenses } = useExpenses(vacationId || undefined);
@@ -65,14 +67,14 @@ export default function VacationBudgetScreen() {
 
   if (!displayVacation && isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
         <AppHeader
           title={t('common.loading')}
           showBack={true}
           onBackPress={() => router.push('/(tabs)')}
         />
         <View style={styles.content}>
-          <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#000000', textAlign: 'center', marginTop: 50 }}>
+          <Text style={{ color: theme.label, textAlign: 'center', marginTop: 50 }}>
             {t('vacation.detail.loading')}
           </Text>
         </View>
@@ -82,14 +84,14 @@ export default function VacationBudgetScreen() {
 
   if (!displayVacation) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
         <AppHeader
           title={t('common.error')}
           showBack={true}
           onBackPress={() => router.push('/(tabs)')}
         />
         <View style={styles.content}>
-          <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#000000', textAlign: 'center', marginTop: 50 }}>
+          <Text style={{ color: theme.label, textAlign: 'center', marginTop: 50 }}>
             {t('vacation.detail.not_found')}
           </Text>
         </View>
@@ -147,7 +149,7 @@ export default function VacationBudgetScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
@@ -155,24 +157,13 @@ export default function VacationBudgetScreen() {
           <View style={styles.headerActions}>
             <TouchableOpacity
               style={styles.headerButton}
-              onPress={handleSortToggle}
-              activeOpacity={0.8}
-            >
-              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon
-                  name={sortOrder === 'desc' ? 'arrow-down' : 'arrow-up'}
-                  size={18}
-                  color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'}
-                />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.headerButton}
               onPress={() => router.push(`/expense/add?vacationId=${vacationId}`)}
               activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel={t('expense.add.title')}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon name="plus" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
+              <View style={[styles.headerButtonInner, { backgroundColor: theme.groupedBackground }]}>
+                <Icon name="plus" size={18} color={theme.accent} />
               </View>
             </TouchableOpacity>
           </View>
@@ -191,47 +182,58 @@ export default function VacationBudgetScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* iOS-style large title in content area */}
-        <View style={styles.titleSection}>
-          <Text style={[styles.largeTitle, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('budget.overview.title')}
-          </Text>
-        </View>
+        <Text style={[styles.destinationTitle, { color: theme.label }]}>
+          {displayVacation.destination}
+        </Text>
 
-        {/* Enhanced Budget Overview */}
         <BudgetOverview vacation={displayVacation} expenses={expenses} />
 
-        {/* Expenses Grid */}
-        <View style={[styles.expensesSection, { paddingHorizontal: 16 }]}>
-          {sortedExpenses.length === 0 ? (
-            <Card style={[styles.emptyExpenses, styles.emptyContent]}>
-              <Icon name="budget" size={48} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} style={styles.emptyIconStyle} />
-              <Text style={[styles.emptyText, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                {t('expense.empty.title')}
-              </Text>
-              <Text style={[styles.emptySubtext, { color: colorScheme === 'dark' ? '#8E8E93' : '#6D6D70' }]}>
-                {t('expense.empty.subtitle')}
-              </Text>
-            </Card>
-          ) : (
-            <View style={styles.expensesGrid}>
-              {sortedExpenses.map((expense) => (
-                <View key={expense.id} style={styles.gridItem}>
-                  <SwipeableCard
-                    onPress={() => handleExpensePress(expense.id)}
-                    onEdit={() => handleExpenseEdit(expense.id)}
-                    onDelete={() => handleExpenseDelete(expense.id)}
-                  >
-                    <ExpenseCard
-                      expense={expense}
-                      onPress={handleExpensePress}
-                    />
-                  </SwipeableCard>
-                </View>
-              ))}
-            </View>
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.label }]}>
+            {t('vacation.detail.recent_expenses')}
+          </Text>
+          {sortedExpenses.length > 0 && (
+            <TouchableOpacity
+              onPress={handleSortToggle}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel={t('expense.sort.toggle')}
+            >
+              <Icon
+                name={sortOrder === 'desc' ? 'arrow-down' : 'arrow-up'}
+                size={18}
+                color={theme.accent}
+              />
+            </TouchableOpacity>
           )}
         </View>
+
+        {sortedExpenses.length === 0 ? (
+          <Card style={[styles.emptyExpenses, styles.emptyContent]}>
+            <Icon name="budget" size={48} color={theme.secondaryLabel} style={styles.emptyIconStyle} />
+            <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
+              {t('expense.empty.title')}
+            </Text>
+            <Text style={[styles.emptySubtext, { color: theme.secondaryLabel }]}>
+              {t('expense.empty.subtitle')}
+            </Text>
+          </Card>
+        ) : (
+          // Each row keeps its own swipe actions, so the rows are grouped by a
+          // shared container rather than rendered as separate cards.
+          <GroupedList>
+            {sortedExpenses.map((expense) => (
+              <SwipeableCard
+                key={expense.id}
+                onPress={() => handleExpensePress(expense.id)}
+                onEdit={() => handleExpenseEdit(expense.id)}
+                onDelete={() => handleExpenseDelete(expense.id)}
+              >
+                <ExpenseCard expense={expense} onPress={handleExpensePress} />
+              </SwipeableCard>
+            ))}
+          </GroupedList>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -241,16 +243,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  titleSection: {
-    paddingHorizontal: 16,
-    paddingTop: 4,
-    paddingBottom: 8,
-  },
-  largeTitle: {
+  destinationTitle: {
     fontSize: 28,
     fontWeight: '700',
     fontFamily: 'System',
     lineHeight: 34,
+    paddingBottom: 8,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    paddingTop: 22,
+    paddingBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
+  },
+  sectionAction: {
+    fontSize: 17,
+    fontWeight: '600',
+    fontFamily: 'System',
   },
   addButton: {
     padding: 8,
@@ -261,17 +276,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 0,
+    paddingHorizontal: 16,
     // paddingBottom is set dynamically in contentContainerStyle with safe area insets
-  },
-  expensesSection: {
-    marginBottom: 16,
-  },
-  expensesGrid: {
-    flexDirection: 'column',
-    gap: 0,
-  },
-  gridItem: {
-    width: '100%', // Full width
   },
   emptyExpenses: {
     marginBottom: 8,
