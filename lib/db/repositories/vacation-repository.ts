@@ -1,7 +1,7 @@
 import { eq, desc } from 'drizzle-orm';
 import { BaseRepository, IRepository } from './base-repository';
 import * as schema from '../schema';
-import { Vacation } from '@/types';
+import { Vacation, Expense } from '@/types';
 
 // Input types for repository operations
 export interface CreateVacationInput {
@@ -84,6 +84,7 @@ export class VacationRepository extends BaseRepository implements IRepository<Va
       startDate: this.dateToString(data.startDate),
       endDate: this.dateToString(data.endDate),
       budget: data.budget,
+      budgetCurrency: data.budgetCurrency || 'CHF', // System currency the budget is specified in
       currency: data.currency || 'CHF', // Use provided currency or default to CHF
       imageUrl: data.imageUrl,
       createdAt: now,
@@ -183,6 +184,26 @@ export class VacationRepository extends BaseRepository implements IRepository<Va
   async getTotalBudget(): Promise<number> {
     const vacations = await this.findAll();
     return vacations.reduce((total, vacation) => total + (vacation.budget || 0), 0);
+  }
+
+  async getExpenses(vacationId: string): Promise<Expense[]> {
+    const rows = await this.db
+      .select()
+      .from(schema.expenses)
+      .where(eq(schema.expenses.vacationId, vacationId));
+
+    return rows.map((row) => ({
+      id: row.id,
+      vacationId: row.vacationId,
+      amount: row.amount,
+      currency: row.currency,
+      amountCHF: row.amountCHF,
+      category: row.category as Expense['category'],
+      description: row.description,
+      date: this.stringToDate(row.date),
+      imageUrl: row.imageUrl ?? undefined,
+      createdAt: this.stringToDate(row.createdAt),
+    }));
   }
 }
 

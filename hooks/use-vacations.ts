@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Vacation } from '@/types';
-import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
+import { vacationRepository, type CreateVacationInput } from '@/lib/db/repositories/vacation-repository';
 import { logger } from '@/lib/utils/logger';
 
 export interface UseVacationsReturn {
@@ -8,16 +8,7 @@ export interface UseVacationsReturn {
   loading: boolean;
   error: string | null;
   loadVacations: () => Promise<void>;
-  createVacation: (data: {
-    destination: string;
-    country: string;
-    hotel: string;
-    startDate: Date;
-    endDate: Date;
-    budget?: number;
-    currency?: string;
-    imageUrl?: string;
-  }) => Promise<Vacation>;
+  createVacation: (data: CreateVacationInput) => Promise<Vacation>;
   updateVacation: (id: string, data: Partial<Vacation>) => Promise<Vacation | null>;
   deleteVacation: (id: string) => Promise<boolean>;
   refreshVacations: () => Promise<void>;
@@ -48,16 +39,7 @@ export function useVacations(): UseVacationsReturn {
     }
   }, []);
 
-  const createVacation = useCallback(async (data: {
-    destination: string;
-    country: string;
-    hotel: string;
-    startDate: Date;
-    endDate: Date;
-    budget?: number;
-    currency?: string;
-    imageUrl?: string;
-  }): Promise<Vacation> => {
+  const createVacation = useCallback(async (data: CreateVacationInput): Promise<Vacation> => {
     try {
       setError(null);
 
