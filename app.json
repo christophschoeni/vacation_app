@@ -60,7 +60,9 @@
           "color": "#007AFF",
           "sounds": []
         }
-      ]
+      ],
+      "expo-font",
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,
