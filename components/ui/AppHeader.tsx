@@ -6,7 +6,6 @@ import { useTranslation } from '@/lib/i18n';
 
 interface AppHeaderProps {
   title?: string;
-  subtitle?: string;
   showBack?: boolean;
   onBackPress?: () => void;
   rightAction?: React.ReactNode;

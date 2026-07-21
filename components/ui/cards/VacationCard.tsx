@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet , useColorScheme } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Card, Icon } from '@/components/design';
+import { Icon } from '@/components/design';
 import { useExpenses } from '@/lib/database';
 import {
   getVacationGradient,
@@ -19,7 +19,6 @@ interface VacationCardProps {
 }
 
 export default function VacationCard({ vacation }: VacationCardProps) {
-  const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const { expenses } = useExpenses(vacation.id);
   const { defaultCurrency } = useCurrency();

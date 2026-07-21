@@ -1,25 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Alert,
-  RefreshControl,
   useColorScheme,
 } from 'react-native';
-import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card, Icon } from '@/components/design';
-import SwipeableCard from '@/components/ui/SwipeableCard';
 import AppHeader from '@/components/ui/AppHeader';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
-import { Checklist, ChecklistCategory } from '@/types';
+import { Checklist } from '@/types';
 import { logger } from '@/lib/utils/logger';
-import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 import { useTranslation } from '@/lib/i18n';
 
 export default function TemplatesScreen() {
@@ -27,9 +23,8 @@ export default function TemplatesScreen() {
   const { t } = useTranslation();
   const [templates, setTemplates] = useState<Checklist[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     try {
       setLoading(true);
       let templateList = await checklistRepository.findTemplates();
@@ -55,52 +50,24 @@ export default function TemplatesScreen() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await loadTemplates();
-    setRefreshing(false);
-  };
+  // `t` from useTranslation is re-bound on every render; including it would recreate this
+  // callback each render and make the calling effect loop forever. Translations are only
+  // read at call time, so omitting it is safe.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     loadTemplates();
-  }, []);
+  }, [loadTemplates]);
 
   useFocusEffect(
     React.useCallback(() => {
       loadTemplates();
-    }, [])
+    }, [loadTemplates])
   );
 
   const handleTemplatePress = (template: Checklist) => {
     router.push(`/template/${template.id}`);
-  };
-
-  const handleTemplateEdit = (template: Checklist) => {
-    router.push(`/template/${template.id}/edit`);
-  };
-
-  const handleTemplateDelete = async (template: Checklist) => {
-    Alert.alert(
-      t('template.delete.title'),
-      t('template.delete.message', { title: template.title }),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.delete'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await checklistRepository.delete(template.id);
-              await loadTemplates();
-            } catch {
-              Alert.alert(t('common.error'), t('template.delete.error'));
-            }
-          },
-        },
-      ]
-    );
   };
 
   const handleAddTemplate = () => {
@@ -125,65 +92,7 @@ export default function TemplatesScreen() {
     }
   };
 
-  const handleDragEnd = async (data: Checklist[]) => {
-    try {
-      setTemplates(data);
-      const templateIds = data.map(template => template.id);
-      await checklistRepository.updateTemplateOrder(templateIds);
-    } catch (error) {
-      logger.error('Failed to update template order:', error);
-      Alert.alert(t('common.error'), t('settings.templates.order_error'));
-      // Revert the order
-      loadTemplates();
-    }
-  };
-
   const isDark = colorScheme === 'dark';
-
-  const renderTemplateItem = ({ item, drag, isActive }: RenderItemParams<Checklist>) => {
-    return (
-      <View style={[styles.templateItem, { opacity: isActive ? 0.7 : 1 }]}>
-        <SwipeableCard
-          onPress={() => handleTemplatePress(item)}
-          onEdit={() => handleTemplateEdit(item)}
-          onDelete={() => handleTemplateDelete(item)}
-        >
-          <Card variant="clean" style={styles.templateCard}>
-            <TouchableOpacity
-              onPress={() => handleTemplatePress(item)}
-              style={styles.templateContent}
-            >
-              <TouchableOpacity
-                onLongPress={drag}
-                style={styles.dragHandle}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
-                <Icon name="grip-vertical" size={20} color={isDark ? '#8E8E93' : '#6D6D70'} />
-              </TouchableOpacity>
-
-              <View style={styles.templateInfo}>
-                <Text style={styles.templateIcon}>{item.icon}</Text>
-                <View style={styles.templateText}>
-                  <Text style={[styles.templateTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                    {item.title}
-                  </Text>
-                  {item.description && (
-                    <Text style={[styles.templateDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                      {item.description}
-                    </Text>
-                  )}
-                  <Text style={[styles.templateItems, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    {t('template.items_count', { count: item.items.length })}
-                  </Text>
-                </View>
-              </View>
-              <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
-            </TouchableOpacity>
-          </Card>
-        </SwipeableCard>
-      </View>
-    );
-  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>

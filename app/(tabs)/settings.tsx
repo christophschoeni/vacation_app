@@ -12,7 +12,7 @@ import {
   useColorScheme,
   Linking,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from '@/lib/i18n';
 
 interface SettingsItem {
@@ -72,7 +72,6 @@ export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const isDark = colorScheme === 'dark';
-  const insets = useSafeAreaInsets();
 
   const handleSettingsItemPress = async (route: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -80,11 +79,11 @@ export default function SettingsScreen() {
     try {
       // Use push for reliable navigation from settings
       router.push(route as any);
-    } catch (error) {
+    } catch {
       // Fallback to navigate if push fails
       try {
         router.navigate(route as any);
-      } catch (navError) {
+      } catch {
         // Navigation failed - silent fail
       }
     }

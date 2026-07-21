@@ -1,5 +1,5 @@
 // Removed NavigationThemeProvider to avoid conflicts with DynamicColorIOS
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -91,13 +91,13 @@ function RootNavigation({
           // Check onboarding status
           const completed = await onboardingService.hasCompletedOnboarding();
           setOnboardingCompleted(completed);
-        } catch (error) {
+        } catch {
           // Failed to install default data
           // For new users, still check onboarding status even if initialization fails
           try {
             const completed = await onboardingService.hasCompletedOnboarding();
             setOnboardingCompleted(completed);
-          } catch (onboardingError) {
+          } catch {
             // Only if onboarding check also fails, assume completed to avoid blocking
             setOnboardingCompleted(true);
           }

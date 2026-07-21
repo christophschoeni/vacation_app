@@ -1,9 +1,9 @@
-import { router, useSegments, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useCallback, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, DynamicColorIOS , useColorScheme } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
 import { useVacations } from '@/hooks/use-vacations';
@@ -12,13 +12,11 @@ import { VacationProvider, useVacationContext } from '@/contexts/VacationContext
 
 function VacationDetailContent() {
   const vacationId = useRouteParam('id');
-  const segments = useSegments();
   const { setCurrentVacationId } = useVacationContext();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { t } = useTranslation();
   const { vacations, refreshVacations } = useVacations();
-  const insets = useSafeAreaInsets();
 
   const vacation = vacations.find(v => v.id === vacationId);
 

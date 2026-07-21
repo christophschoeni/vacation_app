@@ -60,7 +60,6 @@ import {
   Book,
   Phone,
   Wifi,
-  MapPin as Location2,
   Mountain,
   Trees,
   Sun,

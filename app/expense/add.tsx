@@ -13,7 +13,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button, Icon } from '@/components/design';
+import { Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import CategorySelector from '@/components/ui/CategorySelector';
@@ -62,7 +62,7 @@ export default function AddExpenseScreen() {
             setVacationCurrency(vacation.currency);
             setFormData(prev => ({ ...prev, currency: vacation.currency }));
           }
-        } catch (error) {
+        } catch {
           // Failed to load vacation currency - use default
         }
       }
@@ -102,7 +102,7 @@ export default function AddExpenseScreen() {
           defaultCurrency
         );
         if (!cancelled) setConvertedAmount(converted);
-      } catch (error) {
+      } catch {
         // Currency conversion failed - fallback to original amount
         if (!cancelled) setConvertedAmount(parsed);
       } finally {
@@ -217,7 +217,7 @@ export default function AddExpenseScreen() {
           );
         }
       }
-    } catch (error) {
+    } catch {
       // Failed to check budget and send notification - silent fail
     }
   };

@@ -3,12 +3,10 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'rea
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Vacation, Checklist, ChecklistItem } from '@/types';
-import Constants from 'expo-constants';
 
 import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { appInitialization } from '@/lib/app-initialization';
-import { seedTestData, seedTemplates } from '@/lib/seed-data';
 import { getDatabaseStats } from '@/lib/db/database';
 import * as FileSystem from 'expo-file-system';
 import { logger } from '@/lib/utils/logger';

@@ -5,11 +5,10 @@ import {
   RefreshControl,
   Alert,
   View,
-  Text,
   TouchableOpacity,
  useColorScheme } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
 import { Colors, Icon } from '@/components/design';
@@ -25,7 +24,6 @@ export default function VacationsScreen() {
   const { t } = useTranslation();
   const { vacations, loading, refreshVacations, deleteVacation } = useVacations();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
-  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     React.useCallback(() => {

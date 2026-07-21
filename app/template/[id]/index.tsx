@@ -12,11 +12,11 @@ import {
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Card, Button, Icon } from '@/components/design';
+import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteId } from '@/hooks/use-route-param';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
-import { Checklist, ChecklistCategory } from '@/types';
+import { Checklist } from '@/types';
 import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 
 export default function TemplateDetailScreen() {
@@ -131,7 +131,6 @@ export default function TemplateDetailScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={template.title}
-        subtitle={`${CATEGORY_CONFIG[template.category as ChecklistCategory]?.label || 'Allgemein'} • ${template.items.length} Einträge`}
         showBack={true}
         onBackPress={() => router.back()}
         rightAction={

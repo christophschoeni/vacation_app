@@ -5,19 +5,15 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
-  TouchableOpacity,
   useColorScheme,
  Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon, IconName } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '@/lib/utils/logger';
-import { ErrorHandler } from '@/lib/utils/error-handler';
 import { useTranslation } from '@/lib/i18n';
 import { notificationService } from '@/lib/services/notification-service';
-import * as Notifications from 'expo-notifications';
 
 interface NotificationSetting {
   id: string;
@@ -60,12 +56,14 @@ export default function NotificationsScreen() {
         // Load settings from notification service
         const serviceSettings = await notificationService.getSettings();
 
-        const updatedSettings = settings.map(setting => ({
-          ...setting,
-          enabled: serviceSettings[setting.id as keyof typeof serviceSettings] ?? setting.enabled,
-        }));
-
-        setSettings(updatedSettings);
+        // Functional update so the effect does not depend on `settings`
+        // (depending on it would re-run the effect on every setSettings -> infinite loop).
+        setSettings(current =>
+          current.map(setting => ({
+            ...setting,
+            enabled: serviceSettings[setting.id as keyof typeof serviceSettings] ?? setting.enabled,
+          }))
+        );
       } catch (error) {
         logger.error('Failed to load notification settings', error);
       }

@@ -3,10 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity , useColorScheme } from 'react
 import { Card, Icon } from '@/components/design';
 import { formatDateTime, formatCurrency } from '@/lib/utils/formatters';
 import {
-  EXPENSE_CATEGORIES,
   getExpenseCategoryIcon,
-  getExpenseCategoryLabel,
-  getExpenseCategoryColor
+  getExpenseCategoryLabel
 } from '@/lib/constants/expense-categories';
 import type { Expense } from '@/types';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -38,7 +36,7 @@ export default function ExpenseCard({ expense, onPress, onLongPress }: ExpenseCa
           if (!cancelled) {
             setConvertedAmount(result);
           }
-        } catch (error) {
+        } catch {
           // Failed to convert currency - display will show original amount
         }
       } else {

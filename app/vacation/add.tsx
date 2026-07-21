@@ -7,13 +7,11 @@ import {
   Platform,
   ScrollView,
   Text,
-  TouchableOpacity,
   useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import CurrencySelector from '@/components/ui/CurrencySelector';
@@ -72,7 +70,7 @@ export default function AddVacationScreen() {
       });
       // Use replace instead of dismiss to trigger useFocusEffect and refresh vacation list
       router.replace('/(tabs)');
-    } catch (error) {
+    } catch {
       // Failed to create vacation - show error to user
       Alert.alert(t('common.error'), t('errors.generic'));
     }

@@ -14,9 +14,8 @@ import { router, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { logger } from '@/lib/utils/logger';
 import { ErrorHandler } from '@/lib/utils/error-handler';
-import { currencyService, POPULAR_CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
+import { POPULAR_CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 
@@ -27,12 +26,12 @@ const CURRENCIES_STORAGE_KEY = '@vacation_assist_currencies';
 export default function CurrencyScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
-  const { defaultCurrency, setDefaultCurrency, isLoading: currencyLoading } = useCurrency();
+  const { defaultCurrency, setDefaultCurrency } = useCurrency();
   const [currencies, setCurrencies] = useState<CurrencyInfo[]>(ALL_CURRENCIES);
-  const [isLoading, setIsLoading] = useState(true);
+  // Only the setter is consumed today; no loading state is rendered on this screen.
+  const [, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const isOverallLoading = isLoading || currencyLoading;
   const isDark = colorScheme === 'dark';
 
   // Load currencies from storage on mount

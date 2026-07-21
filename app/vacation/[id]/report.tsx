@@ -6,7 +6,7 @@ import {
   Text,
   useColorScheme,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, router } from 'expo-router';
 
 import AppHeader from '@/components/ui/AppHeader';
@@ -41,7 +41,6 @@ export default function VacationReportScreen() {
   const { defaultCurrency } = useCurrency();
   const [categoryData, setCategoryData] = useState<CategoryExpense[]>([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
-  const insets = useSafeAreaInsets();
 
   const isDark = colorScheme === 'dark';
   const vacation = vacations.find(v => v.id === vacationId);

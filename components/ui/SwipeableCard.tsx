@@ -1,4 +1,4 @@
-import { Colors, Icon } from '@/components/design';
+import { Icon } from '@/components/design';
 import React, { useRef } from 'react';
 import {
   Animated,
@@ -66,15 +66,6 @@ export default function SwipeableCard({ children, onDelete, onEdit, onPress }: S
   const handleEdit = () => {
     onEdit();
     // Reset position after edit with spring animation
-    Animated.spring(translateX, {
-      toValue: 0,
-      useNativeDriver: true,
-      tension: 180,
-      friction: 12,
-    }).start();
-  };
-
-  const resetPosition = () => {
     Animated.spring(translateX, {
       toValue: 0,
       useNativeDriver: true,

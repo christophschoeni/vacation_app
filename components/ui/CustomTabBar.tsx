@@ -4,7 +4,6 @@ import { BlurView } from 'expo-blur';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useSegments, type Href } from 'expo-router';
 import { Icon } from '@/components/design';
-import { useRouteParam } from '@/hooks/use-route-param';
 import * as Haptics from 'expo-haptics';
 
 interface TabItem {
@@ -22,7 +21,6 @@ interface CustomTabBarProps {
 export default function CustomTabBar({ tabs, rightAction }: CustomTabBarProps) {
   const colorScheme = useColorScheme();
   const segments = useSegments();
-  const vacationId = useRouteParam('id');
   const isDark = colorScheme === 'dark';
 
   const currentTab = segments[segments.length - 1] || 'index';

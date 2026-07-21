@@ -73,7 +73,7 @@ export default function CurrencyCalculatorScreen() {
 
     try {
       await currencyService.updateSettings(newSettings);
-    } catch (error) {
+    } catch {
       Alert.alert(t('common.error'), t('settings.currency.calculator.errors.save_failed'));
     }
   };
@@ -93,7 +93,7 @@ export default function CurrencyCalculatorScreen() {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         Alert.alert(t('common.error'), result.error || t('settings.currency.calculator.errors.update_failed'));
       }
-    } catch (error) {
+    } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), t('settings.currency.calculator.errors.update_failed'));
     } finally {
@@ -116,7 +116,7 @@ export default function CurrencyCalculatorScreen() {
               await currencyService.clearCache();
               await loadCacheStatus();
               Alert.alert(t('common.success'), t('settings.currency.calculator.clear_cache.success'));
-            } catch (error) {
+            } catch {
               Alert.alert(t('common.error'), t('settings.currency.calculator.errors.clear_cache_failed'));
             }
           },

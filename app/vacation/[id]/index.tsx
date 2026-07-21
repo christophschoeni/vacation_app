@@ -10,7 +10,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 
@@ -34,7 +34,6 @@ export default function VacationBudgetScreen() {
   const [isInitialLoad, setIsInitialLoad] = React.useState(true);
   const [cachedVacation, setCachedVacation] = React.useState<Vacation | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const insets = useSafeAreaInsets();
 
   // Load sort preference from AsyncStorage
   useEffect(() => {
@@ -45,7 +44,7 @@ export default function VacationBudgetScreen() {
         if (saved === 'asc' || saved === 'desc') {
           setSortOrder(saved);
         }
-      } catch (error) {
+      } catch {
         // Failed to load sort preference - use default
       }
     };
@@ -166,7 +165,7 @@ export default function VacationBudgetScreen() {
     if (vacationId) {
       try {
         await AsyncStorage.setItem(`expense_sort_order_${vacationId}`, newSortOrder);
-      } catch (error) {
+      } catch {
         // Failed to save sort preference - silent fail
       }
     }

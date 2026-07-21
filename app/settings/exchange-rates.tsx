@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { currencyService, POPULAR_CURRENCIES, ALL_CURRENCIES, CurrencyInfo, RateWithSource } from '@/lib/currency';
+import { currencyService, POPULAR_CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
 import { RateSource } from '@/lib/db/repositories/exchange-rates-repository';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import * as Haptics from 'expo-haptics';
@@ -43,11 +43,7 @@ export default function ExchangeRatesScreen() {
   const [editValue, setEditValue] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    loadRates();
-  }, [defaultCurrency]);
-
-  const loadRates = async () => {
+  const loadRates = useCallback(async () => {
     try {
       setIsLoading(true);
       const allRates = await currencyService.getAllRatesWithSources(defaultCurrency);
@@ -78,7 +74,15 @@ export default function ExchangeRatesScreen() {
     } finally {
       setIsLoading(false);
     }
-  };
+  // `t` from useTranslation is re-bound on every render; including it would recreate this
+  // callback each render and make the calling effect loop forever. Translations are only
+  // read at call time, so omitting it is safe.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultCurrency]);
+
+  useEffect(() => {
+    loadRates();
+  }, [loadRates]);
 
   // Filter rates based on search query
   useEffect(() => {
@@ -110,7 +114,7 @@ export default function ExchangeRatesScreen() {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         Alert.alert(t('common.error'), result.error || t('settings.exchange_rates.errors.update_failed'));
       }
-    } catch (error) {
+    } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), t('settings.exchange_rates.errors.update_failed'));
     } finally {
@@ -142,7 +146,7 @@ export default function ExchangeRatesScreen() {
       await loadRates();
 
       Alert.alert(t('common.success'), t('settings.exchange_rates.rate_updated'));
-    } catch (error) {
+    } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(t('common.error'), t('settings.exchange_rates.errors.save_failed'));
     }
@@ -173,7 +177,7 @@ export default function ExchangeRatesScreen() {
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               await currencyService.deleteManualRate(defaultCurrency, rate.targetCurrency);
               await loadRates();
-            } catch (error) {
+            } catch {
               Alert.alert(t('common.error'), t('settings.exchange_rates.errors.delete_failed'));
             }
           },
@@ -207,7 +211,7 @@ export default function ExchangeRatesScreen() {
               await currencyService.deleteAllManualRates();
               await loadRates();
               Alert.alert(t('common.success'), t('settings.exchange_rates.delete_all.success'));
-            } catch (error) {
+            } catch {
               Alert.alert(t('common.error'), t('settings.exchange_rates.errors.delete_all_failed'));
             }
           },

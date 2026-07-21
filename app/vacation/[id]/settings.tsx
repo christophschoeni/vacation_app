@@ -11,7 +11,7 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useVacationId } from '@/contexts/VacationContext';
 
 
@@ -21,7 +21,6 @@ export default function VacationSettingsScreen() {
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const insets = useSafeAreaInsets();
 
   // Always show the settings menu, even if vacation is loading
   // The navigation already handles vacation not found cases

@@ -1,4 +1,3 @@
-import { Button, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -9,7 +8,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   useColorScheme,
 } from 'react-native';
@@ -18,7 +16,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatePicker, FormInput } from '@/components/ui/forms';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useVacations } from '@/hooks/use-vacations';
-import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
 import { parseAmount } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -52,7 +49,8 @@ export default function VacationEditScreen() {
     currency: defaultCurrency || 'CHF',
   });
 
-  const [formLoading, setFormLoading] = useState(false);
+  // Only the setter is consumed today; the value is not yet surfaced in the UI.
+  const [, setFormLoading] = useState(false);
 
   useEffect(() => {
     if (vacation) {

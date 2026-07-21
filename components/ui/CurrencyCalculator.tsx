@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
-  Alert,
   Dimensions,
   Modal,
   SafeAreaView,
@@ -15,7 +13,7 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Icon } from '@/components/design';
-import { currencyService, CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
+import { currencyService, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
 
 interface CurrencyCalculatorProps {
   visible: boolean;
@@ -26,7 +24,7 @@ interface CurrencyCalculatorProps {
   onAmountChange?: (amount: string, currency: string) => void;
 }
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get('window');
 const BUTTON_MARGIN = 10;
 const HORIZONTAL_PADDING = 32;
 const buttonSize = (screenWidth - HORIZONTAL_PADDING - (BUTTON_MARGIN * 3)) / 4; // 4 buttons per row with proper margins
@@ -55,23 +53,7 @@ export default function CurrencyCalculator({
   const [showToCurrencySelector, setShowToCurrencySelector] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    // Always try to convert, even for '0' or empty display
-    convertCurrency();
-  }, [display, currentFromCurrency, currentToCurrency]);
-
-  useEffect(() => {
-    setCurrentFromCurrency(fromCurrency);
-    setCurrentToCurrency(toCurrency);
-  }, [fromCurrency, toCurrency]);
-
-  useEffect(() => {
-    if (initialAmount !== display) {
-      setDisplay(initialAmount);
-    }
-  }, [initialAmount]);
-
-  const convertCurrency = async () => {
+  const convertCurrency = useCallback(async () => {
     const displayValue = display || '0';
     const amount = parseFloat(displayValue);
 
@@ -92,7 +74,27 @@ export default function CurrencyCalculator({
     } finally {
       setIsConverting(false);
     }
-  };
+  }, [display, currentFromCurrency, currentToCurrency]);
+
+  useEffect(() => {
+    // Always try to convert, even for '0' or empty display
+    convertCurrency();
+  }, [convertCurrency]);
+
+  useEffect(() => {
+    setCurrentFromCurrency(fromCurrency);
+    setCurrentToCurrency(toCurrency);
+  }, [fromCurrency, toCurrency]);
+
+  // Sync the display only when the `initialAmount` prop changes. `display` is read as a
+  // guard but must not be a dependency: it changes on every keystroke and would reset the
+  // user's input back to `initialAmount` while typing.
+  useEffect(() => {
+    if (initialAmount !== display) {
+      setDisplay(initialAmount);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialAmount]);
 
   const handleNumberPress = async (num: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

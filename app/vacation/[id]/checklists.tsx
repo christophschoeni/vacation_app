@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useCallback, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, useColorScheme, Modal } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { useChecklists } from '@/hooks/use-checklists';
 import { useVacations } from '@/hooks/use-vacations';
@@ -8,7 +8,6 @@ import ChecklistCard from '@/components/ui/cards/ChecklistCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import AppHeader from '@/components/ui/AppHeader';
 import { Icon } from '@/components/design';
-import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
 
 export default function VacationChecklistsScreen() {
@@ -25,7 +24,6 @@ export default function VacationChecklistsScreen() {
 
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
 
   // Force re-render when checklists change
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -34,7 +32,6 @@ export default function VacationChecklistsScreen() {
   const {
     checklists,
     templates,
-    loading,
     loadChecklists,
     loadTemplates,
     createChecklist,
@@ -79,7 +76,7 @@ export default function VacationChecklistsScreen() {
             if (title?.trim()) {
               try {
                 await createChecklist(title.trim());
-              } catch (error) {
+              } catch {
                 Alert.alert(t('common.error'), t('vacation.checklists.errors.create'));
               }
             }
@@ -103,9 +100,8 @@ export default function VacationChecklistsScreen() {
   const handleSelectTemplate = async (templateId: string) => {
     setShowTemplateModal(false);
     try {
-      const template = templates.find(t => t.id === templateId);
       await createFromTemplate(templateId);
-    } catch (error) {
+    } catch {
       Alert.alert(t('common.error'), t('vacation.checklists.errors.create_from_template'));
     }
   };
@@ -128,7 +124,7 @@ export default function VacationChecklistsScreen() {
                   ...checklist,
                   title: newTitle.trim(),
                 });
-              } catch (error) {
+              } catch {
                 Alert.alert(t('common.error'), t('vacation.checklists.errors.update'));
               }
             }
@@ -153,7 +149,7 @@ export default function VacationChecklistsScreen() {
           onPress: async () => {
             try {
               await deleteChecklist(checklistId);
-            } catch (error) {
+            } catch {
               Alert.alert(t('common.error'), t('vacation.checklists.errors.delete'));
             }
           },

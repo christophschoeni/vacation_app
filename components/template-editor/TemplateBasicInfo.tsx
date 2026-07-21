@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { FormInput } from '@/components/ui/forms';
-import { ChecklistCategory } from '@/types';
 
 interface TemplateBasicInfoProps {
   title: string;

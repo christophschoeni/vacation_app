@@ -67,7 +67,7 @@ export default function ChecklistDetailScreen() {
     if (vacationId) {
       loadChecklists();
     }
-  }, [vacationId]);
+  }, [vacationId, loadChecklists]);
 
   useEffect(() => {
     if (checklists.length > 0) {
@@ -101,19 +101,6 @@ export default function ChecklistDetailScreen() {
       custom: '#6D6D70',
     };
     return colors[category as keyof typeof colors] || colors.general;
-  };
-
-  const getCategoryName = (category: string) => {
-    const names: Record<string, string> = {
-      packing: t('checklist.categories.packing'),
-      shopping: t('checklist.categories.shopping'),
-      bucket: t('checklist.categories.bucket'),
-      todo: t('checklist.categories.todo'),
-      planning: t('checklist.categories.planning'),
-      general: t('checklist.categories.general'),
-      custom: t('checklist.categories.custom'),
-    };
-    return names[category] || t('checklist.categories.general');
   };
 
   const handleAddItem = async () => {
@@ -201,7 +188,6 @@ export default function ChecklistDetailScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
       <AppHeader
         title={checklist.title}
-        subtitle={`${getCategoryName(checklist.category)} • ${completedItems}/${totalItems}`}
         variant="default"
         showBack={true}
         onBackPress={() => router.back()}

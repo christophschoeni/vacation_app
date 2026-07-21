@@ -9,7 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { Card, Icon } from '@/components/design';
-import { Checklist, ChecklistCategory } from '@/types';
+import { Checklist } from '@/types';
 import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 
 interface TemplateCardProps {

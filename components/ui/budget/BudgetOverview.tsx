@@ -1,9 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, useColorScheme, type StyleProp, type ViewStyle } from 'react-native';
-import { Card } from '@/components/design';
 import { Vacation, Expense } from '@/types';
 import { calculateBudgetAnalysisAsync, formatCurrency, getBudgetStatusColor, BudgetAnalysis } from '@/lib/budget-calculations';
-import { spacing } from '@/constants/spacing';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 
@@ -158,21 +156,6 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
           </View>
         </View>
       </View>
-    </View>
-  );
-}
-
-interface BudgetRowProps {
-  label: string;
-  amount: string;
-  color: string;
-}
-
-function BudgetRow({ label, amount, color }: BudgetRowProps) {
-  return (
-    <View style={styles.budgetRow}>
-      <Text style={[styles.budgetLabel, { color }]}>{label}</Text>
-      <Text style={[styles.budgetAmount, { color }]}>{amount}</Text>
     </View>
   );
 }

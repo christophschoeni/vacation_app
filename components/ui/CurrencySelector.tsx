@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, SectionList, TextInput, useColorScheme } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, SectionList, TextInput, useColorScheme } from 'react-native';
 import { currencyService, CurrencyInfo } from '@/lib/currency';
 import { Icon } from '@/components/design';
 import * as Haptics from 'expo-haptics';
