@@ -5,11 +5,11 @@
 
 import { ExpenseCategory } from '@/types';
 import { Colors } from '@/constants/design';
-import { translationService } from '@/lib/i18n';
+import { translationService, type TranslationKey } from '@/lib/i18n';
 
 interface ExpenseCategoryConfig {
   value: ExpenseCategory;
-  labelKey: string; // Translation key instead of hardcoded label
+  labelKey: TranslationKey; // Translation key instead of hardcoded label
   icon: string;
   color: string;
 }

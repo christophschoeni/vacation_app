@@ -1,60 +1,31 @@
 {
   "common": {
-    "app_name": "Budget Vacances",
     "save": "Enregistrer",
     "cancel": "Annuler",
     "delete": "Supprimer",
-    "edit": "Modifier",
     "back": "Retour",
     "ok": "OK",
-    "yes": "Oui",
-    "no": "Non",
     "loading": "Chargement...",
     "error": "Erreur",
     "success": "Succès",
     "add": "Ajouter",
-    "create": "Créer",
-    "update": "Mettre à jour",
-    "close": "Fermer",
-    "done": "Terminé",
-    "next": "Suivant",
-    "previous": "Précédent",
-    "skip": "Passer",
-    "search": "Rechercher",
-    "filter": "Filtrer",
-    "sort": "Trier",
-    "required": "Requis"
+    "create": "Créer"
   },
   "navigation": {
-    "home": "Accueil",
     "vacations": "Vacances",
-    "settings": "Paramètres",
-    "report": "Rapport",
-    "profile": "Profil",
-    "explore": "Explorer",
-    "budget": "Budget",
-    "checklists": "Listes",
-    "overview": "Aperçu"
+    "settings": "Paramètres"
   },
   "vacation": {
-    "title": "Vacances",
     "add": {
       "title": "Nouvelles Vacances",
-      "button": "Créer des vacances",
-      "success": "Vacances créées avec succès"
-    },
-    "edit": {
-      "title": "Modifier les vacances",
-      "success": "Vacances mises à jour avec succès"
+      "button": "Créer des vacances"
     },
     "delete": {
       "title": "Supprimer les vacances",
       "message": "Êtes-vous sûr de vouloir supprimer les vacances \"{{destination}}\" ? Toutes les données associées (dépenses, listes) seront également supprimées.",
-      "success": "Vacances supprimées avec succès",
       "error": "Échec de la suppression des vacances"
     },
     "detail": {
-      "title": "Détails des vacances",
       "loading": "Chargement des données des vacances...",
       "not_found": "Vacances introuvables"
     },
@@ -70,26 +41,15 @@
       "budget": "Budget",
       "budget_placeholder": "p.ex. 2000",
       "currency": "Devise",
-      "currency_hint": "pour les dépenses",
-      "notes": "Notes",
-      "notes_placeholder": "Informations supplémentaires"
+      "currency_hint": "pour les dépenses"
     },
     "empty": {
       "title": "Aucunes vacances trouvées",
       "subtitle": "Créez votre premier voyage",
       "button": "Créer de nouvelles vacances"
     },
-    "settings": {
-      "title": "Paramètres des vacances",
-      "edit_vacation": "Modifier les vacances",
-      "delete_vacation": "Supprimer les vacances",
-      "export_data": "Exporter les données",
-      "import_data": "Importer les données"
-    },
     "checklists": {
       "title": "Listes",
-      "count": "{{count}} liste",
-      "count_plural": "{{count}} listes",
       "create": {
         "title": "Créer une nouvelle liste",
         "prompt": "Nom de la liste :"
@@ -146,30 +106,22 @@
     }
   },
   "expense": {
-    "title": "Dépense",
-    "title_plural": "Dépenses",
     "add": {
-      "title": "Nouvelle dépense",
-      "button": "Enregistrer une dépense",
-      "success": "Dépense enregistrée avec succès"
+      "title": "Nouvelle dépense"
     },
     "edit": {
-      "title": "Modifier la dépense",
-      "success": "Dépense mise à jour avec succès"
+      "title": "Modifier la dépense"
     },
     "delete": {
       "title": "Supprimer la dépense",
       "message": "Êtes-vous sûr de vouloir supprimer la dépense \"{{description}}\" ?",
-      "success": "Dépense supprimée avec succès",
       "error": "Échec de la suppression de la dépense"
     },
     "form": {
       "amount": "Montant",
       "amount_placeholder": "52.50",
-      "currency": "Devise",
       "description": "Description",
       "description_placeholder": "p.ex. Boutique de l'aéroport",
-      "category": "Catégorie",
       "date": "Date & Heure",
       "converted_amount": "Converti",
       "converting": "Conversion...",
@@ -181,6 +133,7 @@
     }
   },
   "categories": {
+    "label": "Catégorie",
     "food": "Nourriture",
     "transport": "Transport",
     "accommodation": "Hébergement",
@@ -190,37 +143,11 @@
     "unknown": "Inconnu"
   },
   "budget": {
-    "title": "Budget",
     "overview": {
-      "title": "Aperçu du budget",
-      "available": "Disponible",
-      "spent": "Dépensé",
-      "remaining": "Restant",
-      "exceeded": "Dépassement",
-      "total": "Total",
-      "percentage": "{{percent}}% dépensé"
-    },
-    "stats": {
-      "daily_average": "Moyenne journalière",
-      "days_remaining": "Jours restants",
-      "per_day_available": "Disponible par jour",
-      "largest_expense": "Plus grande dépense",
-      "by_category": "Par catégorie"
-    },
-    "alerts": {
-      "exceeded_title": "Budget dépassé",
-      "exceeded_message": "Vous avez dépassé votre budget de {{amount}}.",
-      "warning_title": "Alerte budget",
-      "warning_message": "Vous avez dépensé {{percent}}% de votre budget."
-    },
-    "empty": {
-      "title": "Aucun budget défini",
-      "subtitle": "Définissez un budget pour suivre vos dépenses"
+      "title": "Aperçu du budget"
     }
   },
   "checklist": {
-    "title": "Liste de contrôle",
-    "title_plural": "Listes de contrôle",
     "loading": "Chargement de la liste...",
     "add_item_placeholder": "Ajouter un nouvel élément...",
     "categories": {
@@ -232,20 +159,6 @@
       "general": "Général",
       "custom": "Personnalisé"
     },
-    "add": {
-      "title": "Nouvelle liste",
-      "button": "Créer une liste",
-      "success": "Liste créée avec succès"
-    },
-    "edit": {
-      "title": "Modifier la liste",
-      "success": "Liste mise à jour avec succès"
-    },
-    "delete": {
-      "title": "Supprimer la liste",
-      "message": "Êtes-vous sûr de vouloir supprimer la liste \"{{title}}\" ?",
-      "success": "Liste supprimée avec succès"
-    },
     "delete_item": {
       "title": "Supprimer l'élément",
       "message": "Êtes-vous sûr de vouloir supprimer \"{{text}}\" ?"
@@ -254,79 +167,29 @@
       "title": "Renommer la liste",
       "prompt": "Nouveau nom :"
     },
-    "form": {
-      "title": "Titre",
-      "title_placeholder": "p.ex. Liste de bagages",
-      "add_item": "Ajouter un élément",
-      "item_placeholder": "Nouvel élément"
-    },
-    "item": {
-      "add": "Ajouter un élément",
-      "edit": "Modifier l'élément",
-      "delete": "Supprimer l'élément",
-      "completed": "Terminé",
-      "pending": "En attente"
-    },
     "empty": {
       "title": "La liste est vide",
-      "description": "Ajoutez votre premier élément pour commencer.",
-      "subtitle": "Créez votre première liste",
-      "no_items": "Aucun élément disponible"
+      "description": "Ajoutez votre premier élément pour commencer."
     },
     "errors": {
       "add_item": "Échec de l'ajout de l'élément.",
       "update_item": "Échec de la mise à jour de l'élément.",
       "delete_item": "Échec de la suppression de l'élément.",
       "update_title": "Échec de la modification du titre."
-    },
-    "progress": {
-      "completed": "{{completed}} sur {{total}} terminé",
-      "percentage": "{{percent}}% terminé"
     }
   },
   "template": {
-    "title": "Modèle",
-    "title_plural": "Modèles",
     "add": {
-      "title": "Nouveau modèle",
-      "button": "Créer un modèle",
-      "success": "Modèle créé avec succès"
-    },
-    "edit": {
-      "title": "Modifier le modèle",
-      "success": "Modèle mis à jour avec succès"
-    },
-    "delete": {
-      "title": "Supprimer le modèle",
-      "message": "Êtes-vous sûr de vouloir supprimer le modèle \"{{title}}\" ?",
-      "success": "Modèle supprimé avec succès",
-      "error": "Échec de la suppression du modèle."
-    },
-    "use": {
-      "button": "Utiliser le modèle",
-      "success": "Modèle appliqué avec succès"
+      "button": "Créer un modèle"
     },
     "empty": {
       "title": "Aucun modèle",
       "subtitle": "Créez des modèles pour vos voyages",
       "create_defaults": "Créer 4 modèles par défaut"
-    },
-    "items_count": "{{count}} élément",
-    "items_count_plural": "{{count}} éléments",
-    "default": {
-      "beach_vacation": "Vacances à la plage",
-      "city_trip": "Voyage en ville",
-      "ski_vacation": "Vacances au ski",
-      "camping": "Camping",
-      "backpacking": "Voyage sac à dos"
     }
   },
   "settings": {
     "title": "Paramètres",
-    "account": {
-      "title": "Compte",
-      "subtitle": "Gérez votre compte"
-    },
     "notifications": {
       "title": "Notifications",
       "subtitle": "Gérez vos notifications",
@@ -340,8 +203,6 @@
     "currency": {
       "title": "Devise",
       "subtitle": "Sélectionnez votre devise préférée",
-      "default": "Devise par défaut",
-      "add_currency": "Ajouter une nouvelle devise",
       "add_aria": "Ajouter une nouvelle devise",
       "delete_aria": "Supprimer la devise {{name}}",
       "search_placeholder": "Rechercher une devise...",
@@ -350,8 +211,6 @@
       "popular_currencies": "Devises populaires",
       "label": "Devise",
       "select_currency": "Sélectionner une devise",
-      "default_currency_delete": "Les devises par défaut ne peuvent pas être supprimées.",
-      "currency_exists": "Une devise avec ce code existe déjà.",
       "delete": {
         "title": "Supprimer la devise",
         "message": "Êtes-vous sûr de vouloir supprimer la devise \"{{name}}\" ?"
@@ -362,9 +221,6 @@
         "duplicate_title": "Devise déjà existante",
         "duplicate_message": "Une devise avec ce code existe déjà."
       },
-      "exchange_rates": "Taux de change",
-      "last_updated": "Dernière mise à jour : {{date}}",
-      "update_rates": "Mettre à jour les taux",
       "calculator": {
         "title": "Convertisseur de devises",
         "loading": "Chargement des paramètres...",
@@ -500,31 +356,15 @@
       "subtitle": "Sélectionnez votre langue préférée",
       "restart_required": "L'application doit être redémarrée pour que tous les changements prennent effet."
     },
-    "data": {
-      "title": "Données et stockage",
-      "subtitle": "Gérez vos données",
-      "backup": "Sauvegarde et restauration",
-      "export": "Exporter les données",
-      "import": "Importer les données",
-      "clear_cache": "Vider le cache",
-      "storage_used": "Stockage utilisé"
-    },
     "about": {
       "title": "À propos",
-      "subtitle": "Informations sur l'application",
       "version": "Version",
-      "website": "Site web",
-      "privacy_policy": "Politique de confidentialité",
-      "terms": "Conditions d'utilisation",
-      "support": "Support",
-      "rate_app": "Évaluer l'application"
+      "website": "Site web"
     },
     "categories": {
       "title": "Catégories",
       "subtitle": "Appuyez sur une catégorie pour la modifier",
       "loading": "Chargement des catégories...",
-      "custom": "Catégories personnalisées",
-      "add": "Ajouter une catégorie",
       "add_aria": "Ajouter une nouvelle catégorie",
       "delete_aria": "Supprimer la catégorie {{name}}",
       "delete": {
@@ -548,8 +388,7 @@
       "description": "Gérez ici vos listes par défaut pour les voyages. Appuyez sur une liste pour la voir ou la modifier.",
       "error_load": "Impossible de charger les modèles.",
       "created_success": "4 modèles par défaut ont été créés !",
-      "created_error": "Impossible de créer les modèles par défaut.",
-      "order_error": "Impossible d'enregistrer l'ordre."
+      "created_error": "Impossible de créer les modèles par défaut."
     },
     "exchange_rates": {
       "title": "Taux de change",
@@ -600,24 +439,10 @@
   },
   "errors": {
     "generic": "Une erreur s'est produite. Veuillez réessayer.",
-    "network": "Erreur réseau. Veuillez vérifier votre connexion Internet.",
     "storage": "Erreur lors de l'enregistrement des données. Veuillez réessayer.",
-    "database": "Erreur lors de l'accès à la base de données. Veuillez réessayer.",
-    "validation": "Entrée invalide pour {{field}}. Veuillez vérifier vos informations.",
-    "currency_save": "Impossible d'enregistrer le paramètre de devise.",
     "required_field": "Veuillez remplir tous les champs obligatoires.",
     "invalid_amount": "Montant invalide",
-    "invalid_date": "Date invalide",
-    "invalid_email": "Adresse e-mail invalide",
-    "not_found": "{{item}} introuvable",
-    "permission_denied": "Accès refusé",
-    "backup": {
-      "create_failed": "Impossible de créer la sauvegarde. Veuillez réessayer.",
-      "share_failed": "Impossible de partager la sauvegarde.",
-      "import_failed": "Impossible d'importer la sauvegarde.",
-      "file_read_failed": "Impossible de lire le fichier de sauvegarde.",
-      "invalid": "Le fichier sélectionné n'est pas une sauvegarde Vacation Assist valide."
-    }
+    "not_found": "{{item}} introuvable"
   },
   "onboarding": {
     "skip": "Passer",
@@ -645,10 +470,6 @@
     }
   },
   "empty_states": {
-    "no_data": "Aucune donnée disponible",
-    "no_results": "Aucun résultat trouvé",
-    "no_internet": "Aucune connexion Internet",
-    "try_again": "Réessayer",
     "refresh": "Actualiser"
   },
   "components": {

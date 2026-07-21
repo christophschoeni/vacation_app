@@ -1,60 +1,31 @@
 {
   "common": {
-    "app_name": "Vacation Budget",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "edit": "Edit",
     "back": "Back",
     "ok": "OK",
-    "yes": "Yes",
-    "no": "No",
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
     "add": "Add",
-    "create": "Create",
-    "update": "Update",
-    "close": "Close",
-    "done": "Done",
-    "next": "Next",
-    "previous": "Previous",
-    "skip": "Skip",
-    "search": "Search",
-    "filter": "Filter",
-    "sort": "Sort",
-    "required": "Required"
+    "create": "Create"
   },
   "navigation": {
-    "home": "Home",
     "vacations": "Vacations",
-    "settings": "Settings",
-    "report": "Report",
-    "profile": "Profile",
-    "explore": "Explore",
-    "budget": "Budget",
-    "checklists": "Checklists",
-    "overview": "Overview"
+    "settings": "Settings"
   },
   "vacation": {
-    "title": "Vacation",
     "add": {
       "title": "New Vacation",
-      "button": "Create Vacation",
-      "success": "Vacation created successfully"
-    },
-    "edit": {
-      "title": "Edit Vacation",
-      "success": "Vacation updated successfully"
+      "button": "Create Vacation"
     },
     "delete": {
       "title": "Delete Vacation",
       "message": "Are you sure you want to delete the vacation \"{{destination}}\"? All associated data (expenses, checklists) will also be deleted.",
-      "success": "Vacation deleted successfully",
       "error": "Failed to delete vacation"
     },
     "detail": {
-      "title": "Vacation Details",
       "loading": "Loading vacation data...",
       "not_found": "Vacation not found"
     },
@@ -70,26 +41,15 @@
       "budget": "Budget",
       "budget_placeholder": "e.g. 2000",
       "currency": "Currency",
-      "currency_hint": "for expenses",
-      "notes": "Notes",
-      "notes_placeholder": "Additional information"
+      "currency_hint": "for expenses"
     },
     "empty": {
       "title": "No Vacations Found",
       "subtitle": "Create your first trip",
       "button": "Create New Vacation"
     },
-    "settings": {
-      "title": "Vacation Settings",
-      "edit_vacation": "Edit Vacation",
-      "delete_vacation": "Delete Vacation",
-      "export_data": "Export Data",
-      "import_data": "Import Data"
-    },
     "checklists": {
       "title": "Lists",
-      "count": "{{count}} List",
-      "count_plural": "{{count}} Lists",
       "create": {
         "title": "Create New List",
         "prompt": "List name:"
@@ -146,30 +106,22 @@
     }
   },
   "expense": {
-    "title": "Expense",
-    "title_plural": "Expenses",
     "add": {
-      "title": "New Expense",
-      "button": "Add Expense",
-      "success": "Expense added successfully"
+      "title": "New Expense"
     },
     "edit": {
-      "title": "Edit Expense",
-      "success": "Expense updated successfully"
+      "title": "Edit Expense"
     },
     "delete": {
       "title": "Delete Expense",
       "message": "Are you sure you want to delete the expense \"{{description}}\"?",
-      "success": "Expense deleted successfully",
       "error": "Failed to delete expense"
     },
     "form": {
       "amount": "Amount",
       "amount_placeholder": "52.50",
-      "currency": "Currency",
       "description": "Description",
       "description_placeholder": "e.g. Airport Shop",
-      "category": "Category",
       "date": "Date & Time",
       "converted_amount": "Converted",
       "converting": "Converting...",
@@ -181,6 +133,7 @@
     }
   },
   "categories": {
+    "label": "Category",
     "food": "Food",
     "transport": "Transport",
     "accommodation": "Accommodation",
@@ -190,37 +143,11 @@
     "unknown": "Unknown"
   },
   "budget": {
-    "title": "Budget",
     "overview": {
-      "title": "Budget Overview",
-      "available": "Available",
-      "spent": "Spent",
-      "remaining": "Remaining",
-      "exceeded": "Exceeded",
-      "total": "Total",
-      "percentage": "{{percent}}% spent"
-    },
-    "stats": {
-      "daily_average": "Daily Average",
-      "days_remaining": "Days Remaining",
-      "per_day_available": "Available Per Day",
-      "largest_expense": "Largest Expense",
-      "by_category": "By Category"
-    },
-    "alerts": {
-      "exceeded_title": "Budget Exceeded",
-      "exceeded_message": "You have exceeded your budget by {{amount}}.",
-      "warning_title": "Budget Warning",
-      "warning_message": "You have spent {{percent}}% of your budget."
-    },
-    "empty": {
-      "title": "No Budget Set",
-      "subtitle": "Set a budget to track your expenses"
+      "title": "Budget Overview"
     }
   },
   "checklist": {
-    "title": "Checklist",
-    "title_plural": "Checklists",
     "loading": "Loading list...",
     "add_item_placeholder": "Add new item...",
     "categories": {
@@ -232,20 +159,6 @@
       "general": "General",
       "custom": "Custom"
     },
-    "add": {
-      "title": "New Checklist",
-      "button": "Create Checklist",
-      "success": "Checklist created successfully"
-    },
-    "edit": {
-      "title": "Edit Checklist",
-      "success": "Checklist updated successfully"
-    },
-    "delete": {
-      "title": "Delete Checklist",
-      "message": "Are you sure you want to delete the checklist \"{{title}}\"?",
-      "success": "Checklist deleted successfully"
-    },
     "delete_item": {
       "title": "Delete Item",
       "message": "Are you sure you want to delete \"{{text}}\"?"
@@ -254,79 +167,29 @@
       "title": "Rename List",
       "prompt": "New name:"
     },
-    "form": {
-      "title": "Title",
-      "title_placeholder": "e.g. Packing List",
-      "add_item": "Add Item",
-      "item_placeholder": "New item"
-    },
-    "item": {
-      "add": "Add Item",
-      "edit": "Edit Item",
-      "delete": "Delete Item",
-      "completed": "Completed",
-      "pending": "Pending"
-    },
     "empty": {
       "title": "List is Empty",
-      "description": "Add your first item to get started.",
-      "subtitle": "Create your first checklist",
-      "no_items": "No items available"
+      "description": "Add your first item to get started."
     },
     "errors": {
       "add_item": "Failed to add item.",
       "update_item": "Failed to update item.",
       "delete_item": "Failed to delete item.",
       "update_title": "Failed to update title."
-    },
-    "progress": {
-      "completed": "{{completed}} of {{total}} completed",
-      "percentage": "{{percent}}% completed"
     }
   },
   "template": {
-    "title": "Template",
-    "title_plural": "Templates",
     "add": {
-      "title": "New Template",
-      "button": "Create Template",
-      "success": "Template created successfully"
-    },
-    "edit": {
-      "title": "Edit Template",
-      "success": "Template updated successfully"
-    },
-    "delete": {
-      "title": "Delete Template",
-      "message": "Are you sure you want to delete the template \"{{title}}\"?",
-      "success": "Template deleted successfully",
-      "error": "Failed to delete template."
-    },
-    "use": {
-      "button": "Use Template",
-      "success": "Template applied successfully"
+      "button": "Create Template"
     },
     "empty": {
       "title": "No Templates",
       "subtitle": "Create templates for your trips",
       "create_defaults": "Create 4 Default Templates"
-    },
-    "items_count": "{{count}} Item",
-    "items_count_plural": "{{count}} Items",
-    "default": {
-      "beach_vacation": "Beach Vacation",
-      "city_trip": "City Trip",
-      "ski_vacation": "Ski Vacation",
-      "camping": "Camping",
-      "backpacking": "Backpacking"
     }
   },
   "settings": {
     "title": "Settings",
-    "account": {
-      "title": "Account",
-      "subtitle": "Manage your account"
-    },
     "notifications": {
       "title": "Notifications",
       "subtitle": "Manage your notifications",
@@ -340,8 +203,6 @@
     "currency": {
       "title": "Currency",
       "subtitle": "Select your preferred currency",
-      "default": "Default Currency",
-      "add_currency": "Add New Currency",
       "add_aria": "Add new currency",
       "delete_aria": "Delete currency {{name}}",
       "search_placeholder": "Search currency...",
@@ -350,8 +211,6 @@
       "popular_currencies": "Popular Currencies",
       "label": "Currency",
       "select_currency": "Select Currency",
-      "default_currency_delete": "Default currencies cannot be deleted.",
-      "currency_exists": "A currency with this code already exists.",
       "delete": {
         "title": "Delete Currency",
         "message": "Are you sure you want to delete the currency \"{{name}}\"?"
@@ -362,9 +221,6 @@
         "duplicate_title": "Currency Already Exists",
         "duplicate_message": "A currency with this code already exists."
       },
-      "exchange_rates": "Exchange Rates",
-      "last_updated": "Last updated: {{date}}",
-      "update_rates": "Update Rates",
       "calculator": {
         "title": "Currency Calculator",
         "loading": "Loading settings...",
@@ -500,31 +356,15 @@
       "subtitle": "Select your preferred language",
       "restart_required": "The app must be restarted for all changes to take effect."
     },
-    "data": {
-      "title": "Data & Storage",
-      "subtitle": "Manage your data",
-      "backup": "Backup & Restore",
-      "export": "Export Data",
-      "import": "Import Data",
-      "clear_cache": "Clear Cache",
-      "storage_used": "Storage Used"
-    },
     "about": {
       "title": "About",
-      "subtitle": "App information",
       "version": "Version",
-      "website": "Website",
-      "privacy_policy": "Privacy Policy",
-      "terms": "Terms of Service",
-      "support": "Support",
-      "rate_app": "Rate App"
+      "website": "Website"
     },
     "categories": {
       "title": "Categories",
       "subtitle": "Tap a category to edit it",
       "loading": "Loading categories...",
-      "custom": "Custom Categories",
-      "add": "Add Category",
       "add_aria": "Add new category",
       "delete_aria": "Delete category {{name}}",
       "delete": {
@@ -548,8 +388,7 @@
       "description": "Manage your default lists for trips here. Tap a list to view or edit it.",
       "error_load": "Failed to load templates.",
       "created_success": "4 default templates have been created!",
-      "created_error": "Failed to create default templates.",
-      "order_error": "Failed to save order."
+      "created_error": "Failed to create default templates."
     },
     "exchange_rates": {
       "title": "Exchange Rates",
@@ -600,24 +439,10 @@
   },
   "errors": {
     "generic": "An error occurred. Please try again.",
-    "network": "Network error. Please check your internet connection.",
     "storage": "Error saving data. Please try again.",
-    "database": "Error accessing the database. Please try again.",
-    "validation": "Invalid input for {{field}}. Please check your information.",
-    "currency_save": "Failed to save currency setting.",
     "required_field": "Please fill in all required fields.",
     "invalid_amount": "Invalid amount",
-    "invalid_date": "Invalid date",
-    "invalid_email": "Invalid email address",
-    "not_found": "{{item}} not found",
-    "permission_denied": "Access denied",
-    "backup": {
-      "create_failed": "Failed to create backup. Please try again.",
-      "share_failed": "Failed to share backup.",
-      "import_failed": "Failed to import backup.",
-      "file_read_failed": "Failed to read backup file.",
-      "invalid": "The selected file is not a valid Vacation Assist backup."
-    }
+    "not_found": "{{item}} not found"
   },
   "onboarding": {
     "skip": "Skip",
@@ -645,10 +470,6 @@
     }
   },
   "empty_states": {
-    "no_data": "No data available",
-    "no_results": "No results found",
-    "no_internet": "No internet connection",
-    "try_again": "Try again",
     "refresh": "Refresh"
   },
   "components": {

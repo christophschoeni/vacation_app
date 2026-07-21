@@ -30,9 +30,7 @@ export default function TemplatesScreen() {
       logger.error('Failed to load templates:', error);
       Alert.alert(t('common.error'), t('settings.templates.error_load'));
     }
-    // `t` is re-bound on every render; the alert only depends on the error.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error]);
+  }, [error, t]);
 
   const handleTemplatePress = (template: Checklist) => {
     router.push(`/template/${template.id}`);

@@ -12,15 +12,15 @@ import {
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import OnboardingSlide from './OnboardingSlide';
 import { IconName } from '@/components/design/Icon';
-import { useTranslation } from '@/lib/i18n';
+import { useTranslation, type TranslationKey } from '@/lib/i18n';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface SlideData {
   id: string;
   icon: IconName;
-  titleKey: string;
-  textKey: string;
+  titleKey: TranslationKey;
+  textKey: TranslationKey;
   color: string;
 }
 

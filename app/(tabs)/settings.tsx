@@ -13,12 +13,12 @@ import {
   Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from '@/lib/i18n';
+import { useTranslation, type TranslationKey } from '@/lib/i18n';
 
 interface SettingsItem {
   id: string;
-  titleKey: string;
-  subtitleKey: string;
+  titleKey: TranslationKey;
+  subtitleKey: TranslationKey;
   icon: IconName;
   route: string;
 }

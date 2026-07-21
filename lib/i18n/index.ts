@@ -1,8 +1,11 @@
 import { I18n } from 'i18n-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { logger } from '../utils/logger';
+import type { TranslationKey } from './generated-keys';
+
+export type { TranslationKey };
 
 // Import translation files
 import de from './locales/de.json';
@@ -91,7 +94,15 @@ class TranslationService {
     }
   }
 
-  t(key: string, options?: object): string {
+  t(key: TranslationKey, options?: object): string {
+    return this.i18n.t(key, options);
+  }
+
+  /**
+   * Escape hatch for keys assembled at runtime, e.g.
+   * `checklist.categories.${category}`, which cannot be checked statically.
+   */
+  tDynamic(key: string, options?: object): string {
     return this.i18n.t(key, options);
   }
 
@@ -127,26 +138,40 @@ class TranslationService {
 
 export const translationService = new TranslationService();
 
-// Convenience function for translations
-export const t = (key: string, options?: object): string => {
+// Convenience function for translations outside React components
+export const t = (key: TranslationKey, options?: object): string => {
   return translationService.t(key, options);
 };
 
-// Hook for React components
+/**
+ * Translation hook.
+ *
+ * The returned object is memoised per locale. Previously every render produced
+ * fresh `.bind()` results, which made `t` unusable as a hook dependency: adding
+ * it to a dependency array recreated the callback on every render and sent the
+ * consuming effect into a loop. Several screens had to suppress
+ * react-hooks/exhaustive-deps because of this.
+ */
 export const useTranslation = () => {
-  const [updateTrigger, setUpdateTrigger] = useState(0);
+  const [locale, setLocale] = useState(() => translationService.getCurrentLanguage());
 
   useEffect(() => {
-    const unsubscribe = translationService.subscribe(() => {
-      setUpdateTrigger(prev => prev + 1);
+    return translationService.subscribe(() => {
+      setLocale(translationService.getCurrentLanguage());
     });
-    return unsubscribe;
   }, []);
 
-  return {
-    t: translationService.t.bind(translationService),
-    setLanguage: translationService.setLanguage.bind(translationService),
-    getCurrentLanguage: translationService.getCurrentLanguage.bind(translationService),
-    getSupportedLanguages: translationService.getSupportedLanguages.bind(translationService),
-  };
+  return useMemo(
+    () => ({
+      locale,
+      t: (key: TranslationKey, options?: object) => translationService.t(key, options),
+      tDynamic: (key: string, options?: object) => translationService.tDynamic(key, options),
+      setLanguage: (next: string) => translationService.setLanguage(next),
+      getCurrentLanguage: () => translationService.getCurrentLanguage(),
+      getSupportedLanguages: () => translationService.getSupportedLanguages(),
+    }),
+    // `locale` is the only input that changes what t() returns; re-creating the
+    // object on a locale switch is exactly what re-renders consumers.
+    [locale]
+  );
 };

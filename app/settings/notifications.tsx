@@ -12,13 +12,13 @@ import { router } from 'expo-router';
 import { Card, Icon, IconName } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { logger } from '@/lib/utils/logger';
-import { useTranslation } from '@/lib/i18n';
+import { useTranslation, type TranslationKey } from '@/lib/i18n';
 import { notificationService } from '@/lib/services/notification-service';
 
 interface NotificationSetting {
   id: string;
-  titleKey: string;
-  subtitleKey: string;
+  titleKey: TranslationKey;
+  subtitleKey: TranslationKey;
   icon: IconName;
   enabled: boolean;
 }

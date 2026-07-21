@@ -74,11 +74,7 @@ export default function ExchangeRatesScreen() {
     } finally {
       setIsLoading(false);
     }
-  // `t` from useTranslation is re-bound on every render; including it would recreate this
-  // callback each render and make the calling effect loop forever. Translations are only
-  // read at call time, so omitting it is safe.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultCurrency]);
+  }, [defaultCurrency, t]);
 
   useEffect(() => {
     loadRates();
