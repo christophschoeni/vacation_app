@@ -124,6 +124,7 @@ export type TranslationKey =
   | 'report.limit.set'
   | 'report.no_data'
   | 'report.no_data_subtitle'
+  | 'report.of_budget'
   | 'report.pace.on_track'
   | 'report.pace.warning'
   | 'report.total_expenses'

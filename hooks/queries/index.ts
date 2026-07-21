@@ -23,6 +23,12 @@ export {
 } from './use-expenses';
 
 export {
+  useCategoryLimits,
+  useSetCategoryLimit,
+  useClearCategoryLimit,
+} from './use-category-limits';
+
+export {
   useChecklists,
   useChecklist,
   useTemplates,

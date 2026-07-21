@@ -46,6 +46,12 @@ export const categoryKeys = {
   list: (type?: 'expense' | 'checklist') => [...categoryKeys.all, type ?? 'all'] as const,
 };
 
+export const categoryLimitKeys = {
+  all: ['categoryLimits'] as const,
+  lists: () => [...categoryLimitKeys.all, 'list'] as const,
+  list: (vacationId?: string) => [...categoryLimitKeys.lists(), vacationId || 'all'] as const,
+};
+
 export const currencyKeys = {
   all: ['currency'] as const,
   defaultCurrency: () => [...currencyKeys.all, 'default'] as const,

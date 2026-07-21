@@ -538,7 +538,8 @@
     "pace": {
       "warning": "At this pace the budget runs out {{days}} days early (avg {{actual}}/day, target {{target}}/day).",
       "on_track": "On track: avg {{actual}}/day against a target of {{target}}/day."
-    }
+    },
+    "of_budget": "of {{budget}} · {{percent}}%"
   },
   "countdown": {
     "title": "Timer",

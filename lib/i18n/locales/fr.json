@@ -538,7 +538,8 @@
     "pace": {
       "warning": "À ce rythme, le budget sera épuisé {{days}} jours avant la fin (moy. {{actual}}/jour, cible {{target}}/jour).",
       "on_track": "Dans les clous : moy. {{actual}}/jour pour une cible de {{target}}/jour."
-    }
+    },
+    "of_budget": "sur {{budget}} · {{percent}} %"
   },
   "countdown": {
     "title": "Minuteur",

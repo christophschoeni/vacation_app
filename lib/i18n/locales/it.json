@@ -538,7 +538,8 @@
     "pace": {
       "warning": "A questo ritmo il budget finirà {{days}} giorni prima (media {{actual}}/giorno, obiettivo {{target}}/giorno).",
       "on_track": "In linea: media {{actual}}/giorno con obiettivo {{target}}/giorno."
-    }
+    },
+    "of_budget": "di {{budget}} · {{percent}}%"
   },
   "countdown": {
     "title": "Timer",

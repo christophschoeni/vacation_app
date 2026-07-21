@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real, foreignKey, index } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, real, foreignKey, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 
 // Vacations table
@@ -145,6 +145,30 @@ export const exchangeRates = sqliteTable('exchange_rates', {
   sourceIdx: index('exchange_rates_source_idx').on(table.source),
   // Unique constraint for base-target pair
   uniquePairIdx: index('exchange_rates_unique_pair_idx').on(table.baseCurrency, table.targetCurrency),
+}));
+
+// Per-category spending limits for a vacation.
+//
+// A limit is optional: a category without a row here has no cap, which is what
+// the report renders as "kein Limit". The amount is stored in the vacation's
+// own budgetCurrency so it stays comparable with vacation.budget without a
+// conversion at read time.
+export const categoryLimits = sqliteTable('category_limits', {
+  id: text('id').primaryKey(),
+  vacationId: text('vacation_id').notNull(),
+  category: text('category').notNull(),
+  limitAmount: real('limit_amount').notNull(),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+}, (table) => ({
+  vacationIdFk: foreignKey({
+    columns: [table.vacationId],
+    foreignColumns: [vacations.id],
+    name: 'category_limits_vacation_id_fk'
+  }).onDelete('cascade'),
+  vacationIdIdx: index('category_limits_vacation_id_idx').on(table.vacationId),
+  // One limit per category per vacation.
+  uniqueCategoryIdx: uniqueIndex('category_limits_unique_idx').on(table.vacationId, table.category),
 }));
 
 // Relations

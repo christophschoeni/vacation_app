@@ -4,26 +4,38 @@ import {
   StyleSheet,
   View,
   Text,
-  useColorScheme,
+  Alert,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import AppHeader from '@/components/ui/AppHeader';
-import { Card, Icon } from '@/components/design';
+import {
+  Card,
+  Icon,
+  GroupedList,
+  ProgressBar,
+  SegmentedBar,
+} from '@/components/design';
+import { BorderRadius, Spacing, Typography } from '@/constants/design';
+import { categoryColor, useIOSTheme } from '@/constants/ios-theme';
 import { useRouteParam } from '@/hooks/use-route-param';
-import { useVacation, useExpenses } from '@/hooks/queries';
+import {
+  useVacation,
+  useExpenses,
+  useCategoryLimits,
+  useSetCategoryLimit,
+  useClearCategoryLimit,
+} from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 import { ExpenseCategory } from '@/types';
-import {
-  getExpenseCategoryLabel,
-  getExpenseCategoryColor,
-  getExpenseCategoryIcon,
-} from '@/lib/constants/expense-categories';
-import { formatCurrency } from '@/lib/utils/formatters';
+import { getExpenseCategoryLabel } from '@/lib/constants/expense-categories';
+import { formatCurrency, parseAmount } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { currencyService } from '@/lib/currency';
 import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
+import { calculateBudgetAnalysisAsync, type BudgetAnalysis } from '@/lib/budget-calculations';
 
 interface CategoryExpense {
   category: ExpenseCategory;
@@ -32,20 +44,100 @@ interface CategoryExpense {
   percentage: number;
 }
 
+/** One category row: swatch, name, spend, and its limit bar. */
+function CategoryRow({
+  item,
+  limit,
+  currency,
+  onEditLimit,
+}: {
+  item: CategoryExpense;
+  limit: number | undefined;
+  currency: string;
+  onEditLimit: () => void;
+}) {
+  const theme = useIOSTheme();
+  const { t } = useTranslation();
+
+  const swatch = categoryColor(theme, item.category);
+  const hasLimit = limit !== undefined && limit > 0;
+  const ratio = hasLimit ? item.total / limit : 0;
+  const isOver = hasLimit && item.total > limit;
+
+  return (
+    <TouchableOpacity
+      onPress={onEditLimit}
+      activeOpacity={0.7}
+      style={styles.categoryRow}
+      accessibilityRole="button"
+      accessibilityLabel={`${getExpenseCategoryLabel(item.category)}, ${formatCurrency(
+        item.total,
+        currency
+      )}. ${hasLimit ? t('report.limit.label', { limit: formatCurrency(limit, currency), percent: Math.round(ratio * 100) }) : t('report.limit.none')}`}
+    >
+      <View style={styles.categoryHead}>
+        <View style={[styles.swatch, { backgroundColor: swatch }]} />
+        <Text style={[styles.categoryName, { color: theme.label }]} numberOfLines={1}>
+          {getExpenseCategoryLabel(item.category)}
+        </Text>
+        <Text
+          style={[
+            styles.categoryAmount,
+            { color: isOver ? theme.danger : theme.label },
+          ]}
+        >
+          {formatCurrency(item.total, currency)}
+        </Text>
+      </View>
+
+      <View style={styles.limitRow}>
+        <ProgressBar
+          progress={hasLimit ? ratio : 0}
+          color={isOver ? theme.danger : swatch}
+          height={5}
+          style={styles.limitBar}
+        />
+        <Text
+          style={[
+            styles.limitLabel,
+            {
+              color: isOver ? theme.danger : theme.secondaryLabel,
+              fontWeight: isOver
+                ? Typography.fontWeight.semibold
+                : Typography.fontWeight.regular,
+            },
+          ]}
+          numberOfLines={1}
+        >
+          {!hasLimit
+            ? t('report.limit.none')
+            : isOver
+              ? t('report.limit.exceeded', { limit: formatCurrency(limit, currency) })
+              : t('report.limit.label', {
+                  limit: formatCurrency(limit, currency),
+                  percent: Math.round(ratio * 100),
+                })}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
 export default function VacationReportScreen() {
   const tabBarPadding = useTabBarPadding();
   const vacationId = useRouteParam('id');
-  const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
   const { data: vacation } = useVacation(vacationId);
   const { data: expenses = [] } = useExpenses(vacationId || undefined);
+  const { data: limits } = useCategoryLimits(vacationId);
+  const { mutateAsync: setLimit } = useSetCategoryLimit();
+  const { mutateAsync: clearLimit } = useClearCategoryLimit();
   const { defaultCurrency } = useCurrency();
   const [categoryData, setCategoryData] = useState<CategoryExpense[]>([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [analysis, setAnalysis] = useState<BudgetAnalysis | null>(null);
 
-  const isDark = colorScheme === 'dark';
-
-  // Calculate category expenses for this vacation
   React.useEffect(() => {
     let cancelled = false;
 
@@ -53,10 +145,6 @@ export default function VacationReportScreen() {
       const categoryMap = new Map<ExpenseCategory, { total: number; count: number }>();
       let total = 0;
 
-      // Note: Filtering is already done in storage.ts getExpenses() with type-safe String conversion
-      // No need for duplicate filtering here - trust the hook's filtered data
-
-      // Convert all expenses to the default currency
       for (const expense of expenses) {
         const convertedAmount = await currencyService.convertCurrency(
           expense.amountCHF,
@@ -75,14 +163,15 @@ export default function VacationReportScreen() {
 
       if (cancelled) return;
 
-      const data: CategoryExpense[] = Array.from(categoryMap.entries()).map(([category, { total: catTotal, count }]) => ({
-        category,
-        total: catTotal,
-        count,
-        percentage: catTotal > 0 && total > 0 ? (catTotal / total) * 100 : 0,
-      }));
+      const data: CategoryExpense[] = Array.from(categoryMap.entries()).map(
+        ([category, { total: catTotal, count }]) => ({
+          category,
+          total: catTotal,
+          count,
+          percentage: total > 0 ? (catTotal / total) * 100 : 0,
+        })
+      );
 
-      // Sort by total descending
       data.sort((a, b) => b.total - a.total);
 
       setCategoryData(data);
@@ -96,116 +185,164 @@ export default function VacationReportScreen() {
     };
   }, [expenses, defaultCurrency, vacationId]);
 
-  // Recalculate percentages when total changes
+  // Pace forecast needs the same budget figures the detail screen shows.
   React.useEffect(() => {
-    if (totalExpenses > 0) {
-      setCategoryData(prevData =>
-        prevData.map(item => ({
-          ...item,
-          percentage: (item.total / totalExpenses) * 100
-        }))
-      );
-    }
-  }, [totalExpenses]);
+    let cancelled = false;
+    if (!vacation) return;
+
+    calculateBudgetAnalysisAsync(vacation, expenses, defaultCurrency).then((result) => {
+      if (!cancelled) setAnalysis(result);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [vacation, expenses, defaultCurrency]);
+
+  const handleEditLimit = (category: ExpenseCategory) => {
+    const current = limits?.get(category);
+
+    Alert.prompt(
+      getExpenseCategoryLabel(category),
+      t('report.limit.set'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        ...(current
+          ? [
+              {
+                text: t('common.delete'),
+                style: 'destructive' as const,
+                onPress: async () => {
+                  if (!vacationId) return;
+                  try {
+                    await clearLimit({ vacationId, category });
+                  } catch {
+                    Alert.alert(t('common.error'));
+                  }
+                },
+              },
+            ]
+          : []),
+        {
+          text: t('common.save'),
+          onPress: async (value?: string) => {
+            if (!vacationId) return;
+            const amount = parseAmount(value ?? '');
+            // An unparseable or negative entry is ignored rather than stored as
+            // a zero limit, which would read as "everything is over budget".
+            if (amount === null || amount <= 0) return;
+            try {
+              await setLimit({ vacationId, category, limitAmount: amount });
+            } catch {
+              Alert.alert(t('common.error'));
+            }
+          },
+        },
+      ],
+      'plain-text',
+      current ? String(current.limitAmount) : '',
+      'decimal-pad'
+    );
+  };
+
+  // Forecast: at the current daily rate, does the budget run out before the
+  // trip ends? Only meaningful once the trip is under way and has a budget.
+  const pace = React.useMemo(() => {
+    if (!analysis || analysis.totalBudget <= 0) return null;
+    if (analysis.remainingDays <= 0 || analysis.averageSpentPerDay <= 0) return null;
+
+    const daysCovered = analysis.remainingBudget / analysis.averageSpentPerDay;
+    const shortfall = Math.round(analysis.remainingDays - daysCovered);
+
+    return {
+      shortfall,
+      actual: formatCurrency(analysis.averageSpentPerDay, defaultCurrency),
+      target: formatCurrency(
+        analysis.remainingBudget / analysis.remainingDays,
+        defaultCurrency
+      ),
+    };
+  }, [analysis, defaultCurrency]);
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}
+      style={[styles.container, { backgroundColor: theme.background }]}
       edges={['top']}
     >
-      <AppHeader
-        showBack={true}
-        onBackPress={() => router.push('/(tabs)')}
-      />
+      <AppHeader showBack={true} onBackPress={() => router.push('/(tabs)')} />
 
       <ScrollView
         style={styles.content}
         contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* iOS-style large title in content area */}
-        <View style={styles.titleSection}>
-          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('vacation.tabs.report')}
+        <View style={styles.summary}>
+          <Text style={[styles.summaryMeta, { color: theme.secondaryLabel }]}>
+            {vacation?.destination}
           </Text>
+          <Text style={[styles.summaryAmount, { color: theme.label }]}>
+            {formatCurrency(totalExpenses, defaultCurrency)}
+            {analysis && analysis.totalBudget > 0 && (
+              <Text style={[styles.summaryOf, { color: theme.secondaryLabel }]}>
+                {'  '}
+                {t('report.of_budget', {
+                  budget: formatCurrency(analysis.totalBudget, defaultCurrency),
+                  percent: Math.round(
+                    (totalExpenses / analysis.totalBudget) * 100
+                  ),
+                })}
+              </Text>
+            )}
+          </Text>
+
+          {categoryData.length > 0 && (
+            <SegmentedBar
+              style={styles.segmented}
+              segments={categoryData.map((item) => ({
+                value: item.total,
+                color: categoryColor(theme, item.category),
+              }))}
+            />
+          )}
         </View>
 
-        {/* Total Summary */}
-        <Card style={styles.summaryCard}>
-          <View style={styles.summaryContent}>
-            <Text style={[styles.summaryLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              {t('report.total_expenses')}
-            </Text>
-            <Text style={[styles.summaryAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              {formatCurrency(totalExpenses, defaultCurrency)}
-            </Text>
-            <Text style={[styles.summarySubtext, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              {vacation?.destination}
-            </Text>
-          </View>
-        </Card>
-
-        {/* Category Breakdown */}
         {categoryData.length === 0 ? (
           <Card style={styles.emptyCard}>
-            <Icon name="chart-bar" size={48} color={isDark ? '#8E8E93' : '#6D6D70'} />
-            <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            <Icon name="chart-bar" size={48} color={theme.secondaryLabel} />
+            <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
               {t('report.no_data')}
             </Text>
-            <Text style={[styles.emptySubtext, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            <Text style={[styles.emptySubtext, { color: theme.secondaryLabel }]}>
               {t('report.no_data_subtitle')}
             </Text>
           </Card>
         ) : (
-          categoryData.map((item) => (
-            <Card key={item.category} style={styles.categoryCard}>
-              <View style={styles.categoryHeader}>
-                <View style={styles.categoryInfo}>
-                  <View
-                    style={[
-                      styles.categoryIconContainer,
-                      { backgroundColor: getExpenseCategoryColor(item.category) + '20' }
-                    ]}
-                  >
-                    <Icon
-                      name={getExpenseCategoryIcon(item.category) as any}
-                      size={20}
-                      color={getExpenseCategoryColor(item.category)}
-                    />
-                  </View>
-                  <View style={styles.categoryTextContainer}>
-                    <Text style={[styles.categoryName, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                      {getExpenseCategoryLabel(item.category)}
-                    </Text>
-                    <Text style={[styles.categoryCount, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                      {item.count === 1 ? t('report.expense_count', { count: item.count }) : t('report.expense_count_plural', { count: item.count })}
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.categoryAmountContainer}>
-                  <Text style={[styles.categoryAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                    {formatCurrency(item.total, defaultCurrency)}
-                  </Text>
-                  <Text style={[styles.categoryPercentage, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    {item.percentage.toFixed(1)}%
-                  </Text>
-                </View>
-              </View>
+          <GroupedList>
+            {categoryData.map((item) => (
+              <CategoryRow
+                key={item.category}
+                item={item}
+                limit={limits?.get(item.category)?.limitAmount}
+                currency={defaultCurrency}
+                onEditLimit={() => handleEditLimit(item.category)}
+              />
+            ))}
+          </GroupedList>
+        )}
 
-              {/* Progress bar */}
-              <View style={styles.progressBarContainer}>
-                <View
-                  style={[
-                    styles.progressBarFill,
-                    {
-                      width: `${item.percentage}%`,
-                      backgroundColor: getExpenseCategoryColor(item.category)
-                    }
-                  ]}
-                />
-              </View>
-            </Card>
-          ))
+        {pace && pace.shortfall > 0 && (
+          <View style={[styles.notice, { backgroundColor: theme.warning + '1F' }]}>
+            <View style={[styles.noticeIcon, { backgroundColor: theme.warning }]}>
+              <Text style={styles.noticeMark}>!</Text>
+            </View>
+            <Text style={[styles.noticeText, { color: theme.label }]}>
+              {t('report.pace.warning', {
+                days: pace.shortfall,
+                actual: pace.actual,
+                target: pace.target,
+              })}
+            </Text>
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -216,123 +353,104 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  titleSection: {
-    paddingHorizontal: 16,
-    paddingTop: 4,
-    paddingBottom: 8,
-  },
-  largeTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    fontFamily: 'System',
-    lineHeight: 34,
-  },
   content: {
     flex: 1,
   },
   scrollContent: {
     paddingTop: 0,
+    paddingHorizontal: Spacing.lg,
   },
-  summaryCard: {
-    marginBottom: 24,
-    marginHorizontal: 16,
-    padding: 20,
+  summary: {
+    paddingBottom: Spacing.lg,
   },
-  summaryContent: {
-    alignItems: 'center',
-  },
-  summaryLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    fontFamily: 'System',
-    marginBottom: 8,
+  summaryMeta: {
+    fontSize: Typography.fontSize.subheadline,
   },
   summaryAmount: {
-    fontSize: 32,
-    fontWeight: '700',
-    fontFamily: 'System',
-    marginBottom: 4,
+    fontSize: 28,
+    fontWeight: Typography.fontWeight.bold,
+    marginTop: 2,
   },
-  summarySubtext: {
-    fontSize: 13,
-    fontFamily: 'System',
+  summaryOf: {
+    fontSize: Typography.fontSize.subheadline,
+    fontWeight: Typography.fontWeight.medium,
   },
-  emptyCard: {
-    alignItems: 'center',
-    marginHorizontal: 16,
-    paddingVertical: 48,
-    paddingHorizontal: 24,
+  segmented: {
+    marginTop: Spacing.md,
   },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: '600',
-    fontFamily: 'System',
-    marginTop: 16,
-    marginBottom: 8,
+  categoryRow: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
   },
-  emptySubtext: {
-    fontSize: 14,
-    fontFamily: 'System',
-    textAlign: 'center',
-  },
-  categoryCard: {
-    marginBottom: 12,
-    marginHorizontal: 16,
-    padding: 16,
-  },
-  categoryHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  categoryInfo: {
+  categoryHead: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 10,
+  },
+  swatch: {
+    width: 12,
+    height: 12,
+    borderRadius: 4,
+  },
+  categoryName: {
     flex: 1,
-    gap: 12,
+    fontSize: Typography.fontSize.callout,
   },
-  categoryIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  categoryAmount: {
+    fontSize: Typography.fontSize.callout,
+    fontWeight: Typography.fontWeight.semibold,
+  },
+  limitRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginTop: 7,
+    paddingLeft: 22,
+  },
+  limitBar: {
+    flex: 1,
+  },
+  limitLabel: {
+    fontSize: Typography.fontSize.caption1,
+  },
+  notice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: Spacing.lg,
+    padding: 13,
+    borderRadius: BorderRadius['3xl'],
+  },
+  noticeIcon: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  categoryTextContainer: {
+  noticeMark: {
+    color: '#FFFFFF',
+    fontSize: Typography.fontSize.subheadline,
+    fontWeight: Typography.fontWeight.bold,
+  },
+  noticeText: {
     flex: 1,
+    fontSize: Typography.fontSize.footnote,
+    lineHeight: Typography.fontSize.footnote * 1.35,
   },
-  categoryName: {
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'System',
-    marginBottom: 2,
+  emptyCard: {
+    alignItems: 'center',
+    paddingVertical: 48,
+    paddingHorizontal: Spacing['2xl'],
   },
-  categoryCount: {
-    fontSize: 13,
-    fontFamily: 'System',
-  },
-  categoryAmountContainer: {
-    alignItems: 'flex-end',
-  },
-  categoryAmount: {
+  emptyText: {
     fontSize: 18,
-    fontWeight: '700',
-    fontFamily: 'System',
-    marginBottom: 2,
+    fontWeight: Typography.fontWeight.semibold,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
-  categoryPercentage: {
-    fontSize: 13,
-    fontFamily: 'System',
-  },
-  progressBarContainer: {
-    height: 6,
-    backgroundColor: 'rgba(142, 142, 147, 0.12)',
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: 3,
+  emptySubtext: {
+    fontSize: Typography.fontSize.subheadline,
+    textAlign: 'center',
   },
 });

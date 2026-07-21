@@ -538,7 +538,8 @@
     "pace": {
       "warning": "A este ritmo el presupuesto se agota {{days}} días antes (med. {{actual}}/día, objetivo {{target}}/día).",
       "on_track": "Según lo previsto: med. {{actual}}/día frente a un objetivo de {{target}}/día."
-    }
+    },
+    "of_budget": "de {{budget}} · {{percent}} %"
   },
   "countdown": {
     "title": "Temporizador",
