@@ -13,9 +13,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useVacationId } from '@/contexts/VacationContext';
+import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 
 
 export default function VacationSettingsScreen() {
+  const tabBarPadding = useTabBarPadding();
   const { t } = useTranslation();
   const vacationId = useVacationId();
 
@@ -58,7 +60,7 @@ export default function VacationSettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
@@ -66,7 +68,7 @@ export default function VacationSettingsScreen() {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
         showsVerticalScrollIndicator={false}
       >
         {/* iOS-style large title in content area */}

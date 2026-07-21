@@ -16,8 +16,10 @@ import SwipeableCard from '@/components/ui/SwipeableCard';
 import AppHeader from '@/components/ui/AppHeader';
 import { Icon } from '@/components/design';
 import { useTranslation } from '@/lib/i18n';
+import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 
 export default function VacationChecklistsScreen() {
+  const tabBarPadding = useTabBarPadding();
   const vacationId = useRouteParam('id');
 
   const colorScheme = useColorScheme();
@@ -134,7 +136,7 @@ export default function VacationChecklistsScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
@@ -163,7 +165,7 @@ export default function VacationChecklistsScreen() {
       />
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
         showsVerticalScrollIndicator={false}
       >
         {/* iOS-style large title in content area */}

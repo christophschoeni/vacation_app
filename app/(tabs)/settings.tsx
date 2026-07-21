@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation, type TranslationKey } from '@/lib/i18n';
+import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 
 interface SettingsItem {
   id: string;
@@ -69,6 +70,7 @@ const SETTINGS_ITEMS: SettingsItem[] = [
 ];
 
 export default function SettingsScreen() {
+  const tabBarPadding = useTabBarPadding();
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const isDark = colorScheme === 'dark';
@@ -100,7 +102,7 @@ export default function SettingsScreen() {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
         showsVerticalScrollIndicator={false}
       >
 

@@ -19,8 +19,10 @@ import AppHeader from '@/components/ui/AppHeader';
 import { useVacations, useDeleteVacation, useExpenseTotals } from '@/hooks/queries';
 import { useBudgetSummaries } from '@/hooks/queries/use-budget-summary';
 import { useTranslation } from '@/lib/i18n';
+import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 
 export default function VacationsScreen() {
+  const tabBarPadding = useTabBarPadding();
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const { data: vacations = [], isLoading, refetch: refetchVacations } = useVacations();
@@ -108,7 +110,7 @@ export default function VacationsScreen() {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing || isLoading}

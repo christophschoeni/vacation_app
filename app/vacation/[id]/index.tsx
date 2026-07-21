@@ -22,8 +22,10 @@ import AppHeader from '@/components/ui/AppHeader';
 import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacation, useExpenses, useDeleteExpense } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
+import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 
 export default function VacationBudgetScreen() {
+  const tabBarPadding = useTabBarPadding();
   const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
@@ -63,7 +65,7 @@ export default function VacationBudgetScreen() {
 
   if (!displayVacation && isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
         <AppHeader
           title={t('common.loading')}
           showBack={true}
@@ -80,7 +82,7 @@ export default function VacationBudgetScreen() {
 
   if (!displayVacation) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
         <AppHeader
           title={t('common.error')}
           showBack={true}
@@ -145,7 +147,7 @@ export default function VacationBudgetScreen() {
 
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top']}>
       <AppHeader
         showBack={true}
         onBackPress={() => router.push('/(tabs)')}
@@ -179,7 +181,7 @@ export default function VacationBudgetScreen() {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
         refreshControl={
           <RefreshControl
             refreshing={false}

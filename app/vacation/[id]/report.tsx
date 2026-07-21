@@ -23,6 +23,7 @@ import {
 import { formatCurrency } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { currencyService } from '@/lib/currency';
+import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 
 interface CategoryExpense {
   category: ExpenseCategory;
@@ -32,6 +33,7 @@ interface CategoryExpense {
 }
 
 export default function VacationReportScreen() {
+  const tabBarPadding = useTabBarPadding();
   const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
@@ -109,7 +111,7 @@ export default function VacationReportScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}
-      edges={['top', 'bottom']}
+      edges={['top']}
     >
       <AppHeader
         showBack={true}
@@ -118,7 +120,7 @@ export default function VacationReportScreen() {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
         showsVerticalScrollIndicator={false}
       >
         {/* iOS-style large title in content area */}
