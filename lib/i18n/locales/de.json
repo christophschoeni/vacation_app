@@ -36,11 +36,6 @@
     "checklists": "Checklisten",
     "overview": "Übersicht"
   },
-  "tabs": {
-    "home": "Start",
-    "explore": "Entdecken",
-    "settings": "Einstellungen"
-  },
   "vacation": {
     "title": "Ferien",
     "add": {
@@ -624,69 +619,6 @@
       "invalid": "Die ausgewählte Datei ist kein gültiges Vacation Assist Backup."
     }
   },
-  "validation": {
-    "required": "{{field}} ist erforderlich",
-    "min_length": "{{field}} muss mindestens {{min}} Zeichen lang sein",
-    "max_length": "{{field}} darf maximal {{max}} Zeichen lang sein",
-    "min_value": "{{field}} muss mindestens {{min}} sein",
-    "max_value": "{{field}} darf maximal {{max}} sein",
-    "invalid_format": "Ungültiges Format für {{field}}",
-    "email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
-    "numeric": "{{field}} muss eine Zahl sein",
-    "positive": "{{field}} muss positiv sein",
-    "date_range": "Enddatum muss nach dem Startdatum liegen"
-  },
-  "alerts": {
-    "confirm": "Bestätigen",
-    "are_you_sure": "Sind Sie sicher?",
-    "unsaved_changes": "Nicht gespeicherte Änderungen",
-    "unsaved_changes_message": "Sie haben nicht gespeicherte Änderungen. Möchten Sie fortfahren?",
-    "success": "Erfolgreich",
-    "warning": "Warnung",
-    "info": "Information"
-  },
-  "backup": {
-    "create": "Backup erstellen",
-    "share": "Backup teilen",
-    "import": "Backup importieren",
-    "export": "Daten exportieren",
-    "import_confirm_title": "Backup importieren",
-    "import_confirm_message": "Möchten Sie dieses Backup wirklich importieren?\n\n📅 Erstellt: {{date}}\n📊 Datensätze: {{records}}\n\n⚠️ ACHTUNG: Ihre aktuellen Daten werden überschrieben!",
-    "import_success": "{{records}} Datensätze wurden wiederhergestellt.",
-    "export_success": "Daten erfolgreich exportiert.",
-    "share_unavailable_title": "Teilen nicht verfügbar",
-    "share_unavailable_message": "Backup wurde erstellt, aber Teilen wird auf diesem Gerät nicht unterstützt.",
-    "creating": "Erstelle Backup...",
-    "importing": "Importiere Backup..."
-  },
-  "date": {
-    "today": "Heute",
-    "yesterday": "Gestern",
-    "tomorrow": "Morgen",
-    "days_ago": "vor {{count}} Tag",
-    "days_ago_plural": "vor {{count}} Tagen",
-    "in_days": "in {{count}} Tag",
-    "in_days_plural": "in {{count}} Tagen",
-    "weeks_ago": "vor {{count}} Woche",
-    "weeks_ago_plural": "vor {{count}} Wochen",
-    "months_ago": "vor {{count}} Monat",
-    "months_ago_plural": "vor {{count}} Monaten",
-    "select_date": "Datum auswählen",
-    "start_date": "Startdatum & Uhrzeit",
-    "end_date": "Enddatum & Uhrzeit",
-    "duration": "Dauer",
-    "days": "Tag",
-    "days_plural": "Tage"
-  },
-  "currency": {
-    "chf": "Schweizer Franken",
-    "eur": "Euro",
-    "usd": "US-Dollar",
-    "gbp": "Britisches Pfund",
-    "jpy": "Japanischer Yen",
-    "exchange_rate": "Wechselkurs",
-    "converted": "Umgerechnet"
-  },
   "onboarding": {
     "skip": "Überspringen",
     "next": "Weiter",
@@ -719,13 +651,6 @@
     "try_again": "Erneut versuchen",
     "refresh": "Aktualisieren"
   },
-  "help": {
-    "title": "Hilfe",
-    "faq": "Häufig gestellte Fragen",
-    "contact_support": "Support kontaktieren",
-    "tutorial": "Tutorial",
-    "tips": "Tipps & Tricks"
-  },
   "components": {
     "currency_editor": {
       "title": "Neue Währung",
@@ -743,11 +668,6 @@
       "remaining": "Verbleibend:"
     },
     "budget_overview": {
-      "status": {
-        "upcoming": "Zukünftige Reise",
-        "active": "Aktive Reise",
-        "completed": "Abgeschlossene Reise"
-      },
       "progress": "{{percentage}}% verwendet",
       "total_budget": "Gesamtbudget",
       "spent": "Ausgegeben",

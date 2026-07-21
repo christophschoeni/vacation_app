@@ -33,15 +33,8 @@
     "profile": "Profil",
     "explore": "Explorer",
     "budget": "Budget",
-      "report": "Rapport",
     "checklists": "Listes",
     "overview": "Aperçu"
-  },
-  "tabs": {
-    "home": "Accueil",
-    "explore": "Explorer",
-    "settings": "Paramètres",
-    "report": "Rapport"
   },
   "vacation": {
     "title": "Vacances",
@@ -75,7 +68,6 @@
       "start_date": "Date & Heure de début",
       "end_date": "Date & Heure de fin",
       "budget": "Budget",
-      "report": "Rapport",
       "budget_placeholder": "p.ex. 2000",
       "currency": "Devise",
       "currency_hint": "pour les dépenses",
@@ -119,7 +111,12 @@
       "errors": {
         "create": "Échec de la création de la liste.",
         "create_from_template": "Échec de la création de la liste à partir du modèle.",
-        "delete": "Échec de la suppression de la liste."
+        "delete": "Échec de la suppression de la liste.",
+        "update": "La liste n'a pas pu être mise à jour."
+      },
+      "edit": {
+        "title": "Renommer la liste",
+        "prompt": "Nouveau nom de la liste :"
       }
     },
     "settings_screen": {
@@ -145,8 +142,7 @@
       "budget": "Budget",
       "report": "Rapport",
       "lists": "Listes",
-      "settings": "Paramètres",
-    "report": "Rapport"
+      "settings": "Paramètres"
     }
   },
   "expense": {
@@ -623,69 +619,6 @@
       "invalid": "Le fichier sélectionné n'est pas une sauvegarde Vacation Assist valide."
     }
   },
-  "validation": {
-    "required": "{{field}} est requis",
-    "min_length": "{{field}} doit contenir au moins {{min}} caractères",
-    "max_length": "{{field}} ne doit pas dépasser {{max}} caractères",
-    "min_value": "{{field}} doit être au moins {{min}}",
-    "max_value": "{{field}} ne doit pas dépasser {{max}}",
-    "invalid_format": "Format invalide pour {{field}}",
-    "email": "Veuillez entrer une adresse e-mail valide",
-    "numeric": "{{field}} doit être un nombre",
-    "positive": "{{field}} doit être positif",
-    "date_range": "La date de fin doit être postérieure à la date de début"
-  },
-  "alerts": {
-    "confirm": "Confirmer",
-    "are_you_sure": "Êtes-vous sûr ?",
-    "unsaved_changes": "Modifications non enregistrées",
-    "unsaved_changes_message": "Vous avez des modifications non enregistrées. Voulez-vous continuer ?",
-    "success": "Succès",
-    "warning": "Avertissement",
-    "info": "Information"
-  },
-  "backup": {
-    "create": "Créer une sauvegarde",
-    "share": "Partager la sauvegarde",
-    "import": "Importer une sauvegarde",
-    "export": "Exporter les données",
-    "import_confirm_title": "Importer une sauvegarde",
-    "import_confirm_message": "Êtes-vous sûr de vouloir importer cette sauvegarde ?\n\n📅 Créée : {{date}}\n📊 Enregistrements : {{records}}\n\n⚠️ ATTENTION : Vos données actuelles seront écrasées !",
-    "import_success": "{{records}} enregistrements ont été restaurés.",
-    "export_success": "Données exportées avec succès.",
-    "share_unavailable_title": "Partage non disponible",
-    "share_unavailable_message": "La sauvegarde a été créée, mais le partage n'est pas pris en charge sur cet appareil.",
-    "creating": "Création de la sauvegarde...",
-    "importing": "Importation de la sauvegarde..."
-  },
-  "date": {
-    "today": "Aujourd'hui",
-    "yesterday": "Hier",
-    "tomorrow": "Demain",
-    "days_ago": "il y a {{count}} jour",
-    "days_ago_plural": "il y a {{count}} jours",
-    "in_days": "dans {{count}} jour",
-    "in_days_plural": "dans {{count}} jours",
-    "weeks_ago": "il y a {{count}} semaine",
-    "weeks_ago_plural": "il y a {{count}} semaines",
-    "months_ago": "il y a {{count}} mois",
-    "months_ago_plural": "il y a {{count}} mois",
-    "select_date": "Sélectionner une date",
-    "start_date": "Date & Heure de début",
-    "end_date": "Date & Heure de fin",
-    "duration": "Durée",
-    "days": "Jour",
-    "days_plural": "Jours"
-  },
-  "currency": {
-    "chf": "Franc suisse",
-    "eur": "Euro",
-    "usd": "Dollar américain",
-    "gbp": "Livre sterling",
-    "jpy": "Yen japonais",
-    "exchange_rate": "Taux de change",
-    "converted": "Converti"
-  },
   "onboarding": {
     "skip": "Passer",
     "next": "Suivant",
@@ -718,13 +651,6 @@
     "try_again": "Réessayer",
     "refresh": "Actualiser"
   },
-  "help": {
-    "title": "Aide",
-    "faq": "Foire aux questions",
-    "contact_support": "Contacter le support",
-    "tutorial": "Tutoriel",
-    "tips": "Astuces et conseils"
-  },
   "components": {
     "currency_editor": {
       "title": "Nouvelle devise",
@@ -742,11 +668,6 @@
       "remaining": "Restant:"
     },
     "budget_overview": {
-      "status": {
-        "upcoming": "Voyage à venir",
-        "active": "Voyage actif",
-        "completed": "Voyage terminé"
-      },
       "progress": "{{percentage}}% utilisé",
       "total_budget": "Budget Total",
       "spent": "Dépensé",

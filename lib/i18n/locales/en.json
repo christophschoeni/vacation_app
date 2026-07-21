@@ -33,15 +33,8 @@
     "profile": "Profile",
     "explore": "Explore",
     "budget": "Budget",
-      "report": "Report",
     "checklists": "Checklists",
     "overview": "Overview"
-  },
-  "tabs": {
-    "home": "Home",
-    "explore": "Explore",
-    "settings": "Settings",
-    "report": "Report"
   },
   "vacation": {
     "title": "Vacation",
@@ -75,7 +68,6 @@
       "start_date": "Start Date & Time",
       "end_date": "End Date & Time",
       "budget": "Budget",
-      "report": "Report",
       "budget_placeholder": "e.g. 2000",
       "currency": "Currency",
       "currency_hint": "for expenses",
@@ -119,7 +111,12 @@
       "errors": {
         "create": "Failed to create list.",
         "create_from_template": "Failed to create list from template.",
-        "delete": "Failed to delete list."
+        "delete": "Failed to delete list.",
+        "update": "List could not be updated."
+      },
+      "edit": {
+        "title": "Rename list",
+        "prompt": "New name of the list:"
       }
     },
     "settings_screen": {
@@ -145,8 +142,7 @@
       "budget": "Budget",
       "report": "Report",
       "lists": "Lists",
-      "settings": "Settings",
-    "report": "Report"
+      "settings": "Settings"
     }
   },
   "expense": {
@@ -623,69 +619,6 @@
       "invalid": "The selected file is not a valid Vacation Assist backup."
     }
   },
-  "validation": {
-    "required": "{{field}} is required",
-    "min_length": "{{field}} must be at least {{min}} characters long",
-    "max_length": "{{field}} must not exceed {{max}} characters",
-    "min_value": "{{field}} must be at least {{min}}",
-    "max_value": "{{field}} must not exceed {{max}}",
-    "invalid_format": "Invalid format for {{field}}",
-    "email": "Please enter a valid email address",
-    "numeric": "{{field}} must be a number",
-    "positive": "{{field}} must be positive",
-    "date_range": "End date must be after start date"
-  },
-  "alerts": {
-    "confirm": "Confirm",
-    "are_you_sure": "Are you sure?",
-    "unsaved_changes": "Unsaved Changes",
-    "unsaved_changes_message": "You have unsaved changes. Do you want to continue?",
-    "success": "Success",
-    "warning": "Warning",
-    "info": "Information"
-  },
-  "backup": {
-    "create": "Create Backup",
-    "share": "Share Backup",
-    "import": "Import Backup",
-    "export": "Export Data",
-    "import_confirm_title": "Import Backup",
-    "import_confirm_message": "Are you sure you want to import this backup?\n\n📅 Created: {{date}}\n📊 Records: {{records}}\n\n⚠️ WARNING: Your current data will be overwritten!",
-    "import_success": "{{records}} records have been restored.",
-    "export_success": "Data exported successfully.",
-    "share_unavailable_title": "Sharing Unavailable",
-    "share_unavailable_message": "Backup was created, but sharing is not supported on this device.",
-    "creating": "Creating backup...",
-    "importing": "Importing backup..."
-  },
-  "date": {
-    "today": "Today",
-    "yesterday": "Yesterday",
-    "tomorrow": "Tomorrow",
-    "days_ago": "{{count}} day ago",
-    "days_ago_plural": "{{count}} days ago",
-    "in_days": "in {{count}} day",
-    "in_days_plural": "in {{count}} days",
-    "weeks_ago": "{{count}} week ago",
-    "weeks_ago_plural": "{{count}} weeks ago",
-    "months_ago": "{{count}} month ago",
-    "months_ago_plural": "{{count}} months ago",
-    "select_date": "Select Date",
-    "start_date": "Start Date & Time",
-    "end_date": "End Date & Time",
-    "duration": "Duration",
-    "days": "Day",
-    "days_plural": "Days"
-  },
-  "currency": {
-    "chf": "Swiss Franc",
-    "eur": "Euro",
-    "usd": "US Dollar",
-    "gbp": "British Pound",
-    "jpy": "Japanese Yen",
-    "exchange_rate": "Exchange Rate",
-    "converted": "Converted"
-  },
   "onboarding": {
     "skip": "Skip",
     "next": "Next",
@@ -718,13 +651,6 @@
     "try_again": "Try again",
     "refresh": "Refresh"
   },
-  "help": {
-    "title": "Help",
-    "faq": "Frequently Asked Questions",
-    "contact_support": "Contact Support",
-    "tutorial": "Tutorial",
-    "tips": "Tips & Tricks"
-  },
   "components": {
     "currency_editor": {
       "title": "New Currency",
@@ -742,11 +668,6 @@
       "remaining": "Remaining:"
     },
     "budget_overview": {
-      "status": {
-        "upcoming": "Upcoming Trip",
-        "active": "Active Trip",
-        "completed": "Completed Trip"
-      },
       "progress": "{{percentage}}% used",
       "total_budget": "Total Budget",
       "spent": "Spent",
