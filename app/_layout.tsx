@@ -20,6 +20,7 @@ import { notificationService } from '@/lib/services/notification-service';
 import { migrateExpensesToSQLite } from '@/lib/db/migrate-expenses-to-sqlite';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/query/client';
+import { useWidgetSync } from '@/hooks/use-widget-sync';
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -64,6 +65,10 @@ function RootNavigation({
   const isDark = colorScheme === 'dark';
   const { success, error } = useMigrations(db, migrations);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
+
+  // Keeps the home-screen widgets in step with the app's own data. Mounted
+  // here because it needs the query and currency providers above it.
+  useWidgetSync();
 
   // Check onboarding status and install default data after successful migration
   useEffect(() => {

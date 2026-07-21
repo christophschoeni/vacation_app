@@ -1,0 +1,91 @@
+import type { Vacation } from '@/types';
+import { daysUntil, featuredVacation, vacationStatus } from '@/lib/utils/vacation-status';
+
+/**
+ * The App Group both the app and the widget extension belong to.
+ *
+ * Must stay identical to the value in app.json's ios.entitlements and in each
+ * targets/*\/expo-target.config.js - the shared container is addressed by this
+ * string, and a mismatch fails silently as an empty widget.
+ */
+export const APP_GROUP = 'group.com.vomschoeni.ferien-budget';
+
+/** Key the widget reads its payload from inside the shared defaults. */
+export const SNAPSHOT_KEY = 'widgetSnapshot';
+
+/**
+ * What a home-screen widget renders.
+ *
+ * Deliberately flat and pre-formatted where the widget cannot easily compute a
+ * value itself: the extension gets a few hundred milliseconds to draw and has
+ * no access to the app's SQLite database or its currency conversion, so
+ * everything it needs is resolved here and mirrored across.
+ */
+export interface WidgetSnapshot {
+  /** Absent when there is no trip to show; the widget renders its empty state. */
+  destination: string | null;
+  /** Whole days until departure, or until the end date once under way. */
+  daysRemaining: number;
+  /** True while the trip is running. */
+  inProgress: boolean;
+  /** ISO 8601, so the widget can recompute the day count between refreshes. */
+  targetDate: string | null;
+
+  budget: number;
+  spent: number;
+  /** Currency code the two amounts above are expressed in. */
+  currency: string;
+
+  /** When this snapshot was produced, ISO 8601. */
+  updatedAt: string;
+}
+
+export const EMPTY_SNAPSHOT: WidgetSnapshot = {
+  destination: null,
+  daysRemaining: 0,
+  inProgress: false,
+  targetDate: null,
+  budget: 0,
+  spent: 0,
+  currency: 'CHF',
+  updatedAt: new Date(0).toISOString(),
+};
+
+/**
+ * Build the payload for the featured trip.
+ *
+ * `summaries` carries budget and spend already converted into the display
+ * currency - the same figures the vacation list shows. Passing raw values here
+ * would let the widget disagree with the app, which is the currency trap the
+ * cards already fell into once.
+ */
+export function buildWidgetSnapshot(
+  vacations: Vacation[],
+  summaries: Map<string, { totalBudget: number; totalSpent: number }> | undefined,
+  currency: string,
+  now: Date = new Date()
+): WidgetSnapshot {
+  const vacation = featuredVacation(vacations, now);
+
+  if (!vacation) {
+    return { ...EMPTY_SNAPSHOT, currency, updatedAt: now.toISOString() };
+  }
+
+  const status = vacationStatus(vacation, now);
+  const inProgress = status === 'active';
+
+  // A running trip counts down to its end, matching the timer tab.
+  const target = new Date(inProgress ? vacation.endDate : vacation.startDate);
+  const summary = summaries?.get(vacation.id);
+
+  return {
+    destination: vacation.destination,
+    daysRemaining: Math.max(0, daysUntil(target, now)),
+    inProgress,
+    targetDate: target.toISOString(),
+    budget: summary?.totalBudget ?? 0,
+    spent: summary?.totalSpent ?? 0,
+    currency,
+    updatedAt: now.toISOString(),
+  };
+}
