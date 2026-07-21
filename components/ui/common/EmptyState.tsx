@@ -6,8 +6,13 @@ interface EmptyStateProps {
   icon?: IconName | string;
   title: string;
   subtitle: string;
-  buttonTitle: string;
-  onButtonPress: () => void;
+  /**
+   * Call to action. Both are optional together: some empty states have no
+   * action the user can usefully take, such as a countdown with no upcoming
+   * trip, and would otherwise need a button that goes nowhere.
+   */
+  buttonTitle?: string;
+  onButtonPress?: () => void;
 }
 
 export default function EmptyState({
@@ -45,12 +50,14 @@ export default function EmptyState({
       >
         {subtitle}
       </Text>
-      <Button
-        title={buttonTitle}
-        icon="plus"
-        onPress={onButtonPress}
-        style={styles.button}
-      />
+      {buttonTitle && onButtonPress && (
+        <Button
+          title={buttonTitle}
+          icon="plus"
+          onPress={onButtonPress}
+          style={styles.button}
+        />
+      )}
     </Card>
   );
 }
