@@ -1,8 +1,29 @@
+import NetInfo from '@react-native-community/netinfo';
 import { appSettingsRepository } from '@/lib/db/repositories/app-settings-repository';
 import { exchangeRatesRepository, RateSource } from '@/lib/db/repositories/exchange-rates-repository';
 
 export interface ExchangeRates {
   [currency: string]: number;
+}
+
+/**
+ * Drop any rate that is not a usable positive number.
+ *
+ * The four upstream rate providers are consumed without a contract; a format
+ * change or a partial failure returning null/string values with HTTP 200 would
+ * otherwise be persisted and poison conversions with NaN until the cache
+ * expires.
+ */
+function sanitizeRates(rates: unknown): ExchangeRates {
+  if (!rates || typeof rates !== 'object') return {};
+
+  const clean: ExchangeRates = {};
+  for (const [currency, value] of Object.entries(rates as Record<string, unknown>)) {
+    if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+      clean[currency] = value;
+    }
+  }
+  return clean;
 }
 
 export interface RateWithSource {
@@ -328,7 +349,12 @@ class CurrencyService {
       if (age > maxAge) return null;
 
       const cachedData = await appSettingsRepository.getCachedRates();
-      return cachedData ? JSON.parse(cachedData) : null;
+      if (!cachedData) return null;
+
+      // Also sanitise on read, so a cache written before this validation
+      // existed cannot still poison conversions.
+      const parsed = sanitizeRates(JSON.parse(cachedData));
+      return Object.keys(parsed).length > 0 ? parsed : null;
     } catch {
       return null;
     }
@@ -408,27 +434,29 @@ class CurrencyService {
 
   private async canFetchRates(settings: CurrencyUpdateSettings): Promise<boolean> {
     try {
-      // For Expo managed workflow, we'll use a simpler approach
-      // and always allow fetching unless the policy is manual
       if (settings.updatePolicy === 'manual') {
         return false;
       }
 
-      // Try a simple fetch test to check connectivity
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      // Use NetInfo rather than probing a third-party host: it needs no network
+      // traffic of its own and is the only way to honour the wifi-only and
+      // allowMobileData settings, which were previously declared but ignored.
+      const state = await NetInfo.fetch();
 
-      try {
-        await fetch('https://www.google.com', {
-          method: 'HEAD',
-          signal: controller.signal,
-        });
-        clearTimeout(timeoutId);
-        return true;
-      } catch {
-        clearTimeout(timeoutId);
+      if (!state.isConnected) {
         return false;
       }
+
+      const isWifi = state.type === 'wifi' || state.type === 'ethernet';
+      if (isWifi) {
+        return true;
+      }
+
+      // On a metered connection, respect what the user asked for.
+      if (settings.updatePolicy === 'wifi-only') {
+        return false;
+      }
+      return settings.allowMobileData;
     } catch {
       // If we can't determine network state, be conservative
       return settings.updatePolicy === 'auto';
@@ -534,7 +562,12 @@ class CurrencyService {
         }
 
         const data = await response.json();
-        const rates = config.parser(data);
+        const rawRates = config.parser(data);
+
+        // Third-party responses are not contractually guaranteed. A provider
+        // returning null/string values with HTTP 200 would otherwise be cached
+        // for 24h and produce NaN in every conversion, surviving restarts.
+        const rates = sanitizeRates(rawRates);
 
         if (rates && typeof rates === 'object' && Object.keys(rates).length > 0) {
           allRates.push(rates);
