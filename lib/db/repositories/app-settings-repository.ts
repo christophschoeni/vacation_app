@@ -2,6 +2,16 @@ import { eq } from 'drizzle-orm';
 import { BaseRepository } from './base-repository';
 import * as schema from '../schema';
 
+// Defined here rather than imported from lib/currency to avoid a circular
+// import; lib/currency re-exports this as UpdatePolicy.
+export type UpdatePolicy = 'auto' | 'manual' | 'wifi-only';
+
+const UPDATE_POLICIES: readonly UpdatePolicy[] = ['auto', 'manual', 'wifi-only'];
+
+function isUpdatePolicy(value: string | null): value is UpdatePolicy {
+  return value !== null && (UPDATE_POLICIES as readonly string[]).includes(value);
+}
+
 export interface AppSettings {
   key: string;
   value: string;
@@ -126,12 +136,14 @@ export class AppSettingsRepository extends BaseRepository {
   }
 
   // Currency update settings
-  async getCurrencyUpdatePolicy(): Promise<string> {
+  async getCurrencyUpdatePolicy(): Promise<UpdatePolicy> {
     const value = await this.get('currencyUpdatePolicy');
-    return value || 'auto';
+    // Values come from the DB as plain text; fall back to 'auto' if the stored
+    // value is missing or not a known policy.
+    return isUpdatePolicy(value) ? value : 'auto';
   }
 
-  async setCurrencyUpdatePolicy(policy: string): Promise<void> {
+  async setCurrencyUpdatePolicy(policy: UpdatePolicy): Promise<void> {
     await this.set('currencyUpdatePolicy', policy);
   }
 
@@ -187,7 +199,7 @@ export class AppSettingsRepository extends BaseRepository {
 
   // Currency update settings with detailed options
   async getCurrencySettings(): Promise<{
-    updatePolicy: string;
+    updatePolicy: UpdatePolicy;
     allowMobileData: boolean;
     cacheExpiryHours: number;
     lastUpdate: Date | null;
@@ -206,7 +218,7 @@ export class AppSettingsRepository extends BaseRepository {
   }
 
   async setCurrencySettings(settings: {
-    updatePolicy?: string;
+    updatePolicy?: UpdatePolicy;
     allowMobileData?: boolean;
     cacheExpiryHours?: number;
   }): Promise<void> {

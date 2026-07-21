@@ -1,7 +1,7 @@
 import { Colors, Spacing, Typography } from '@/constants/design';
 import { useColorScheme , StyleSheet, Text, View, ViewStyle, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from './Button';
 import { IconName } from './Icon';
 
@@ -44,11 +44,9 @@ export function Header({
   const titleColor = isDark ? Colors.dark.onBackground : Colors.light.onBackground;
   const subtitleColor = isDark ? Colors.dark.onSurfaceVariant : Colors.light.onSurfaceVariant;
 
-  const HeaderWrapper = compact ? View : SafeAreaView;
-  const wrapperProps = compact ? {} : { edges: ['top'] };
+  const edges: readonly Edge[] = ['top'];
 
-  return (
-    <HeaderWrapper style={[headerStyles, style]} {...wrapperProps}>
+  const content = (
       <View style={[styles.container, compact && styles.compactContainer]}>
         <View style={styles.topRow}>
           <View style={styles.leftSection}>
@@ -103,7 +101,16 @@ export function Header({
           )}
         </View>
       </View>
-    </HeaderWrapper>
+  );
+
+  if (compact) {
+    return <View style={[headerStyles, style]}>{content}</View>;
+  }
+
+  return (
+    <SafeAreaView style={[headerStyles, style]} edges={edges}>
+      {content}
+    </SafeAreaView>
   );
 }
 

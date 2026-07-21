@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Platform , useColorScheme } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { SymbolView } from 'expo-symbols';
+import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type TabItem = {
   name: string;
   title: string;
-  icon: string;
+  icon: SymbolViewProps['name'];
 };
 
 type CustomTabBarProps = {

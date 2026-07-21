@@ -74,15 +74,14 @@ export function useTemplateEditor(templateId: string) {
   const addItem = useCallback((text: string) => {
     if (!text.trim()) return;
 
+    // Draft item held in local state only. checklistId is supplied when the
+    // item is persisted via checklistRepository.addItem below.
     const newItem: ChecklistItem = {
       id: `temp_${Date.now()}`,
-      checklistId: templateId,
       text: text.trim(),
       completed: false,
       priority: 'medium',
       order: items.length,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
 
     setItems(prev => [...prev, newItem]);

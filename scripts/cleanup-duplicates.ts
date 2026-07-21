@@ -1,12 +1,10 @@
 import { checklistRepository } from '../lib/db/repositories/checklist-repository';
-import { initializeDatabase } from '../lib/db/database';
 
 async function cleanupDuplicateChecklists() {
   console.log('🧹 Starting cleanup of duplicate checklists...');
 
   try {
-    // Initialize database first
-    await initializeDatabase();
+    // The database connection is opened on import of lib/db/database.
 
     // Get all checklists
     const allChecklists = await checklistRepository.findAll();

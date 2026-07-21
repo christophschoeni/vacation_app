@@ -1,7 +1,7 @@
 import { Vacation } from '@/types';
 
 // Kräftige Gradienten - getrennt in warme und kalte Farbfamilien
-const VACATION_GRADIENTS = [
+const VACATION_GRADIENTS: readonly [string, string][] = [
   // WARME FARBEN - Rot, Orange, Gelb, Pink, Magenta
   ['#D32F2F', '#F44336'], // Deep Red to Red
   ['#E91E63', '#AD1457'], // Pink to Deep Pink

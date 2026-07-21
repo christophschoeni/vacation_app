@@ -8,8 +8,8 @@ export interface Vacation {
   budget?: number;
   budgetCurrency: string;    // Currency in which budget is specified (system currency)
   currency: string;          // Vacation currency for expenses
-  expenses: Expense[];
-  checklists: string[];
+  expenses: string[];        // Expense IDs; the records are loaded separately
+  checklists: string[];      // Checklist IDs
   imageUrl?: string;
   createdAt: Date;
   updatedAt: Date;

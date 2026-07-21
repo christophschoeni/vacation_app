@@ -26,7 +26,7 @@ export default function EmptyState({
   };
 
   return (
-    <Card variant="clean" style={styles.container} accessible={true} accessibilityRole="region" accessibilityLabel={`${title}. ${subtitle}`}>
+    <Card variant="clean" style={styles.container} accessible={true} accessibilityRole="summary" accessibilityLabel={`${title}. ${subtitle}`}>
       {isIconName(icon) ? (
         <Icon name={icon as IconName} size={48} color={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'} style={styles.iconComponent} />
       ) : (

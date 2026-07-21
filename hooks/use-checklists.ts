@@ -16,8 +16,8 @@ export function useChecklists(vacationId: string) {
       logger.debug('Hook: Loaded', lists.length, 'checklists from database');
 
       // Filter out duplicates by title, keeping the one with most items
-      const deduplicatedLists = [];
-      const titleMap = new Map();
+      const deduplicatedLists: Checklist[] = [];
+      const titleMap = new Map<string, Checklist>();
 
       for (const checklist of lists) {
         const existingChecklist = titleMap.get(checklist.title);

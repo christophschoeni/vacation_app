@@ -3,7 +3,6 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import insights from 'expo-insights';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, useColorScheme } from 'react-native';
@@ -83,12 +82,8 @@ function RootNavigation() {
           // Check onboarding status
           const completed = await onboardingService.hasCompletedOnboarding();
           setOnboardingCompleted(completed);
-
-          if (insights && typeof insights.track === 'function') {
-            insights.track('app_launched');
-          }
         } catch (error) {
-          // Failed to install default data or track app launch
+          // Failed to install default data
           // For new users, still check onboarding status even if initialization fails
           try {
             const completed = await onboardingService.hasCompletedOnboarding();

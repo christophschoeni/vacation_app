@@ -4,7 +4,10 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
- useColorScheme } from 'react-native';
+  useColorScheme,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { Card, Icon } from '@/components/design';
 import { Checklist, ChecklistCategory } from '@/types';
 import { CATEGORY_CONFIG } from '@/lib/constants/categories';
@@ -15,7 +18,7 @@ interface TemplateCardProps {
   showItemCount?: boolean;
   showCategory?: boolean;
   compact?: boolean;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 export default function TemplateCard({
@@ -123,7 +126,6 @@ const styles = StyleSheet.create({
   templateDescription: {
     fontSize: 14,
     marginBottom: 4,
-    numberOfLines: 1,
   },
   templateMeta: {
     flexDirection: 'row',

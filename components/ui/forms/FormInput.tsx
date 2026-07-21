@@ -1,9 +1,24 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet , useColorScheme } from 'react-native';
+import { View, Text, TextInput, TextInputProps, StyleSheet , useColorScheme } from 'react-native';
 import { Card } from '@/components/design';
 
-interface FormInputProps {
-  label: string;
+type PassthroughTextInputProps = Pick<
+  TextInputProps,
+  | 'autoCapitalize'
+  | 'autoCorrect'
+  | 'autoFocus'
+  | 'maxLength'
+  | 'returnKeyType'
+  | 'onSubmitEditing'
+  | 'onBlur'
+  | 'onFocus'
+  | 'editable'
+  | 'secureTextEntry'
+  | 'textContentType'
+>;
+
+interface FormInputProps extends PassthroughTextInputProps {
+  label?: string;
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
@@ -24,6 +39,7 @@ export default function FormInput({
   numberOfLines = 1,
   required = false,
   error,
+  ...textInputProps
 }: FormInputProps) {
   const colorScheme = useColorScheme();
 
@@ -42,6 +58,7 @@ export default function FormInput({
           keyboardType={keyboardType}
           multiline={multiline}
           numberOfLines={numberOfLines}
+          {...textInputProps}
           style={[
             styles.input,
             {

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, useColorScheme } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useSegments } from 'expo-router';
+import { router, useSegments, type Href } from 'expo-router';
 import { Icon } from '@/components/design';
 import { useRouteParam } from '@/hooks/use-route-param';
 import * as Haptics from 'expo-haptics';
@@ -11,7 +11,7 @@ interface TabItem {
   name: string;
   label: string;
   icon: string;
-  route: string;
+  route: Href;
 }
 
 interface CustomTabBarProps {

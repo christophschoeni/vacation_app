@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator , useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, useColorScheme, type StyleProp, type ViewStyle } from 'react-native';
 import { Card } from '@/components/design';
 import { Vacation, Expense } from '@/types';
 import { calculateBudgetAnalysisAsync, formatCurrency, getBudgetStatusColor, BudgetAnalysis } from '@/lib/budget-calculations';
@@ -15,7 +15,7 @@ interface BudgetOverviewProps {
 interface ProgressBarProps {
   progress: number;
   color: string;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 function ProgressBar({ progress, color, style }: ProgressBarProps) {
@@ -83,19 +83,6 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
   }
 
   const progressColor = getBudgetStatusColor(analysis.status, analysis.budgetPercentageUsed);
-
-  const getBudgetStatusText = (status: typeof analysis.status): string => {
-    switch (status) {
-      case 'upcoming':
-        return t('components.budget_overview.status.upcoming');
-      case 'active':
-        return t('components.budget_overview.status.active');
-      case 'completed':
-        return t('components.budget_overview.status.completed');
-      default:
-        return '';
-    }
-  };
 
   return (
     <View style={[styles.container, {

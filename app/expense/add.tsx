@@ -20,6 +20,7 @@ import CategorySelector from '@/components/ui/CategorySelector';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import CurrencyCalculator from '@/components/ui/CurrencyCalculator';
 import { useExpenses } from '@/lib/database';
+import { LocalDatabase } from '@/lib/database/storage';
 import { Expense, ExpenseCategory } from '@/types';
 import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -162,7 +163,9 @@ export default function AddExpenseScreen() {
         return;
       }
 
-      const expenses = await vacationRepository.getExpenses(vacationId);
+      // Expenses live in the AsyncStorage-backed LocalDatabase, not in the
+      // SQLite expenses table (nothing writes to that table yet).
+      const expenses = await LocalDatabase.getExpenses(vacationId);
       const totalSpent = expenses.reduce((sum, exp) => sum + exp.amountCHF, 0);
       const percentageUsed = (totalSpent / vacation.budget) * 100;
 

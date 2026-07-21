@@ -1,21 +1,22 @@
 import React from 'react';
-import { View, ViewStyle , useColorScheme } from 'react-native';
+import { View, ViewProps, ViewStyle, StyleProp , useColorScheme } from 'react-native';
 import { Colors, BorderRadius, Shadow, Spacing } from '@/constants/design';
 
 type CardVariant = 'default' | 'elevated' | 'outlined' | 'clean';
 
-interface CardProps {
+interface CardProps extends Pick<ViewProps, 'accessible' | 'accessibilityRole' | 'accessibilityLabel' | 'accessibilityHint'> {
   children: React.ReactNode;
   variant?: CardVariant;
   padding?: keyof typeof Spacing;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function Card({
   children,
   variant = 'default',
   padding = 'lg',
-  style
+  style,
+  ...accessibilityProps
 }: CardProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -59,7 +60,7 @@ export function Card({
   };
 
   return (
-    <View style={[getCardStyles(), style]}>
+    <View style={[getCardStyles(), style]} {...accessibilityProps}>
       {children}
     </View>
   );

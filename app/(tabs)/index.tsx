@@ -11,7 +11,6 @@ import {
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import insights from 'expo-insights';
 
 import { Colors, Icon } from '@/components/design';
 import SwipeableCard from '@/components/ui/SwipeableCard';
@@ -46,25 +45,11 @@ export default function VacationsScreen() {
 
   const handleAddVacation = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    try {
-      if (insights && typeof insights.track === 'function') {
-        insights.track('vacation_add_started');
-      }
-    } catch (error) {
-      // Analytics tracking failed - silent fail
-    }
     router.push('/vacation/add');
   };
 
   const handleVacationPress = async (id: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    try {
-      if (insights && typeof insights.track === 'function') {
-        insights.track('vacation_viewed');
-      }
-    } catch (error) {
-      // Analytics tracking failed - silent fail
-    }
     router.push(`/vacation/${id}`);
   };
 

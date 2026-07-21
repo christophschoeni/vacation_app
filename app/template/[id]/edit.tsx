@@ -22,6 +22,7 @@ import {
   TemplateCategorySelector,
   CATEGORY_CONFIG,
 } from '@/components/template-editor';
+import { ChecklistCategory } from '@/types';
 
 export default function TemplateEditScreen() {
   const templateId = useRouteId();
@@ -44,7 +45,7 @@ export default function TemplateEditScreen() {
     loadTemplate();
   }, [loadTemplate]);
 
-  const handleCategorySelect = (category: any) => {
+  const handleCategorySelect = (category: ChecklistCategory) => {
     updateFormData({
       category,
       icon: CATEGORY_CONFIG[category]?.icon || formData.icon,

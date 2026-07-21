@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Vacation, Expense, Checklist, ChecklistItem } from '@/types';
+import { Vacation, Expense, Checklist, ChecklistItem, ExpenseCategory, ChecklistCategory } from '@/types';
 
 // Raw data interfaces for storage (with string dates)
 interface RawVacationData {
@@ -10,6 +10,7 @@ interface RawVacationData {
   startDate: string;
   endDate: string;
   budget?: number;
+  budgetCurrency?: string;
   currency: string;
   expenses: string[];
   checklists: string[];
@@ -24,7 +25,7 @@ interface RawExpenseData {
   amount: number;
   currency: string;
   amountCHF: number;
-  category: string;
+  category: ExpenseCategory;
   description: string;
   date: string;
   imageUrl?: string;
@@ -36,7 +37,7 @@ interface RawChecklistItemData {
   text: string;
   completed: boolean;
   notes?: string;
-  priority: string;
+  priority: ChecklistItem['priority'];
   dueDate?: string;
   quantity?: number;
   order: number;
@@ -49,7 +50,7 @@ interface RawChecklistData {
   isTemplate: boolean;
   vacationId?: string;
   templateId?: string;
-  category: string;
+  category: ChecklistCategory;
   icon: string;
   order: number;
   items: RawChecklistItemData[];
@@ -74,6 +75,8 @@ export class LocalDatabase {
       // Convert date strings back to Date objects
       return vacations.map((vacation: RawVacationData) => ({
         ...vacation,
+        // Records written before budgetCurrency existed default to CHF.
+        budgetCurrency: vacation.budgetCurrency ?? 'CHF',
         startDate: new Date(vacation.startDate),
         endDate: new Date(vacation.endDate),
         createdAt: new Date(vacation.createdAt),

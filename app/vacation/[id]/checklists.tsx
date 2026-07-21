@@ -75,7 +75,7 @@ export default function VacationChecklistsScreen() {
         { text: t('common.cancel'), style: 'cancel' },
         {
           text: t('common.create'),
-          onPress: async (title) => {
+          onPress: async (title?: string) => {
             if (title?.trim()) {
               try {
                 await createChecklist(title.trim());
@@ -121,7 +121,7 @@ export default function VacationChecklistsScreen() {
         { text: t('common.cancel'), style: 'cancel' },
         {
           text: t('common.save'),
-          onPress: async (newTitle) => {
+          onPress: async (newTitle?: string) => {
             if (newTitle?.trim() && newTitle.trim() !== checklist.title) {
               try {
                 await saveChecklist({

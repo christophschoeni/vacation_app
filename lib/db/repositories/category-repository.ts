@@ -39,7 +39,8 @@ export class CategoryRepository extends BaseRepository implements IRepository<Ca
       name: row.name,
       icon: row.icon,
       isDefault: Boolean(row.isDefault),
-      type: row.type,
+      // Stored as free text in SQLite; fall back to 'expense' for unknown values.
+      type: row.type === 'checklist' ? 'checklist' : 'expense',
     };
   }
 

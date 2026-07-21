@@ -1,7 +1,7 @@
 import { eq, desc } from 'drizzle-orm';
 import { BaseRepository, IRepository } from './base-repository';
 import * as schema from '../schema';
-import { Vacation, Expense } from '@/types';
+import { Vacation } from '@/types';
 
 // Input types for repository operations
 export interface CreateVacationInput {
@@ -184,26 +184,6 @@ export class VacationRepository extends BaseRepository implements IRepository<Va
   async getTotalBudget(): Promise<number> {
     const vacations = await this.findAll();
     return vacations.reduce((total, vacation) => total + (vacation.budget || 0), 0);
-  }
-
-  async getExpenses(vacationId: string): Promise<Expense[]> {
-    const rows = await this.db
-      .select()
-      .from(schema.expenses)
-      .where(eq(schema.expenses.vacationId, vacationId));
-
-    return rows.map((row) => ({
-      id: row.id,
-      vacationId: row.vacationId,
-      amount: row.amount,
-      currency: row.currency,
-      amountCHF: row.amountCHF,
-      category: row.category as Expense['category'],
-      description: row.description,
-      date: this.stringToDate(row.date),
-      imageUrl: row.imageUrl ?? undefined,
-      createdAt: this.stringToDate(row.createdAt),
-    }));
   }
 }
 
