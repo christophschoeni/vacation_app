@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@/components/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import { useTranslation } from '@/lib/i18n';
 
 interface AppHeaderProps {
@@ -25,13 +26,29 @@ export default function AppHeader({
   onRightPress,
   useSafeAreaPadding = false
 }: AppHeaderProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const theme = useIOSTheme();
+  const isDark = theme.isDark;
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF', paddingTop: useSafeAreaPadding ? insets.top : 0 }]}>
+    // Transparent so the header sits on the screen's own background. A solid
+    // fill here read as a white block on the grey grouped background, which
+    // showed as a line under the header that the design does not have.
+    <View style={[styles.container, { paddingTop: useSafeAreaPadding ? insets.top : 0 }]}>
+      {/*
+        Large variant: the title and the right action share one row, as in the
+        design (padding 70/20/6, space-between). The separate button row below
+        is only for the back/modal variants.
+      */}
+      {variant === 'large' ? (
+        <View style={styles.largeHeaderRow}>
+          <Text style={[styles.largeTitle, styles.largeTitleFlex, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
+            {title}
+          </Text>
+          {rightAction ?? <View style={styles.spacer} />}
+        </View>
+      ) : (
       <View style={styles.header}>
         {/* Left Side */}
         <View style={styles.leftSide}>
@@ -86,14 +103,6 @@ export default function AppHeader({
           )}
         </View>
       </View>
-
-      {/* Large Title */}
-      {variant === 'large' && title && (
-        <View style={styles.largeTitleContainer}>
-          <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {title}
-          </Text>
-        </View>
       )}
     </View>
   );
@@ -163,21 +172,27 @@ const styles = StyleSheet.create({
   spacer: {
     width: 40,
   },
-  largeTitleContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 8,
-  },
-  largeTitleRow: {
+  largeHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    // Reference 1a: title and action share a row inset 20 horizontally; the
+    // 70 top of the mockup is the safe area, applied via paddingTop above.
+    paddingHorizontal: 20,
+    paddingTop: 6,
+    paddingBottom: 6,
+    gap: 12,
   },
   largeTitle: {
     fontSize: 34,
     fontWeight: '700',
     fontFamily: 'System',
     lineHeight: 41,
+  },
+  // flex:1 is safe here because the title sits in a ROW (largeHeaderRow): it
+  // takes the free width and pushes the action to the right. In a column
+  // container the same flex:1 collapsed the title to zero height.
+  largeTitleFlex: {
     flex: 1,
   },
   largeTitleRightAction: {
