@@ -52,11 +52,33 @@ types/                 # TypeScript type definitions
 - Primary color: #007AFF
 - Platform-specific code: Use `Platform.OS` checks sparingly
 
-### 5. Database Operations
-- Use Drizzle ORM for type-safe database queries
-- Database schema in `lib/db/schema.ts`
-- Run migrations before DB operations
-- Use AsyncStorage for simple key-value storage
+### 5. Data Layer
+
+Three layers, strictly one direction: **screens → query hooks → repositories → SQLite**.
+
+- **Screens/components** read and write data ONLY through the hooks in
+  `hooks/queries/`. Never import a repository into a component. The one
+  accepted exception is an imperative post-write read whose result is not
+  rendered (see `checkBudgetAndNotify`); mark such cases with a comment.
+- **Query hooks** (`hooks/queries/`) wrap TanStack Query. Reads use
+  `useQuery`, writes use `useMutation` and invalidate the affected keys in
+  `onSuccess`.
+- **Query keys** live in `lib/query/keys.ts`. Always use the factories, never
+  inline arrays — a typo would silently break invalidation.
+- **Repositories** (`lib/db/repositories/`) own all Drizzle access and map rows
+  to domain types. Schema in `lib/db/schema.ts`.
+- Load one record with `findById`, not `findAll()` plus a client-side filter.
+  For per-row aggregates use a grouped query (see `getTotalsByVacation`)
+  instead of one query per row.
+- AsyncStorage is only for small key-value settings (language, onboarding
+  flag), never for entities.
+
+### 5a. i18n
+- `t()` accepts only keys from the generated `TranslationKey` union. After
+  editing `lib/i18n/locales/de.json` run `npm run i18n:write`.
+- Keys built at runtime use `tDynamic()`.
+- `npm run i18n:check` fails on missing, unknown, empty or unused keys —
+  German is the reference locale.
 
 ### 6. Animations
 - Use React Native Reanimated for smooth animations
