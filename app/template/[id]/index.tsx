@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -15,40 +15,27 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteId } from '@/hooks/use-route-param';
-import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
-import { Checklist } from '@/types';
+import { useChecklist, useDeleteTemplate, useDuplicateTemplate } from '@/hooks/queries';
 import { CATEGORY_CONFIG } from '@/lib/constants/categories';
 
 export default function TemplateDetailScreen() {
   const templateId = useRouteId();
   const colorScheme = useColorScheme();
 
-  const [template, setTemplate] = useState<Checklist | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const { data: template, isLoading, isRefetching, error, refetch } = useChecklist(templateId);
+  const { mutateAsync: deleteTemplate } = useDeleteTemplate();
+  const { mutateAsync: duplicateTemplate } = useDuplicateTemplate();
 
-  const loadTemplate = useCallback(async () => {
-    try {
-      setLoading(true);
-      const templateData = await checklistRepository.findById(templateId);
-      setTemplate(templateData);
-    } catch (error) {
+  React.useEffect(() => {
+    if (error) {
       console.error('Failed to load template:', error);
       Alert.alert('Fehler', 'Standard-Liste konnte nicht geladen werden.');
-    } finally {
-      setLoading(false);
     }
-  }, [templateId]);
+  }, [error]);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await loadTemplate();
-    setRefreshing(false);
+  const handleRefresh = () => {
+    refetch();
   };
-
-  useEffect(() => {
-    loadTemplate();
-  }, [loadTemplate]);
 
   const handleEdit = () => {
     router.push(`/template/${templateId}/edit`);
@@ -67,7 +54,7 @@ export default function TemplateDetailScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await checklistRepository.delete(template.id);
+              await deleteTemplate(template.id);
               router.back();
             } catch {
               Alert.alert('Fehler', 'Standard-Liste konnte nicht gelöscht werden.');
@@ -82,7 +69,7 @@ export default function TemplateDetailScreen() {
     if (!template) return;
 
     try {
-      await checklistRepository.duplicateTemplate(template.id);
+      await duplicateTemplate(template.id);
       Alert.alert('Erfolg', 'Standard-Liste wurde dupliziert.');
       router.back();
     } catch {
@@ -92,7 +79,7 @@ export default function TemplateDetailScreen() {
 
   const isDark = colorScheme === 'dark';
 
-  if (loading) {
+  if (isLoading) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <AppHeader
@@ -149,7 +136,7 @@ export default function TemplateDetailScreen() {
         contentContainerStyle={styles.scrollContent}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={isRefetching}
             onRefresh={handleRefresh}
             tintColor={isDark ? '#fff' : '#000'}
           />

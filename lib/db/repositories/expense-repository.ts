@@ -1,4 +1,4 @@
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, sum } from 'drizzle-orm';
 import { BaseRepository, IRepository } from './base-repository';
 import * as schema from '../schema';
 import { Expense, ExpenseCategory } from '@/types';
@@ -162,8 +162,31 @@ export class ExpenseRepository
   }
 
   async getTotalSpent(vacationId: string): Promise<number> {
-    const expenses = await this.findByVacation(vacationId);
-    return expenses.reduce((total, expense) => total + expense.amountCHF, 0);
+    const rows = await this.db
+      .select({ total: sum(schema.expenses.amountCHF) })
+      .from(schema.expenses)
+      .where(eq(schema.expenses.vacationId, vacationId));
+
+    return Number(rows[0]?.total ?? 0);
+  }
+
+  /**
+   * Totals per vacation in a single grouped query.
+   *
+   * The vacation list needs one total per card. Loading every expense per card
+   * would issue one query per vacation (N+1) and transfer rows that are only
+   * summed and discarded.
+   */
+  async getTotalsByVacation(): Promise<Map<string, number>> {
+    const rows = await this.db
+      .select({
+        vacationId: schema.expenses.vacationId,
+        total: sum(schema.expenses.amountCHF),
+      })
+      .from(schema.expenses)
+      .groupBy(schema.expenses.vacationId);
+
+    return new Map(rows.map(row => [row.vacationId, Number(row.total ?? 0)]));
   }
 }
 

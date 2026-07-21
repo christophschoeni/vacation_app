@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DatePicker, FormInput } from '@/components/ui/forms';
 import CurrencySelector from '@/components/ui/CurrencySelector';
-import { useVacations } from '@/hooks/use-vacations';
+import { useVacation, useUpdateVacation } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 import { parseAmount } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -32,10 +32,10 @@ export default function VacationEditScreen() {
   const { t } = useTranslation();
 
   const colorScheme = useColorScheme();
-  const { vacations, updateVacation, loading } = useVacations();
+  const { data: vacation, isLoading } = useVacation(vacationId);
+  const { mutateAsync: updateVacation } = useUpdateVacation();
   const { defaultCurrency } = useCurrency();
 
-  const vacation = vacations.find(v => v.id === vacationId);
   const isDark = colorScheme === 'dark';
 
 
@@ -68,7 +68,7 @@ export default function VacationEditScreen() {
 
 
   // Show loading state while vacations are being loaded
-  if (loading && !vacation) {
+  if (isLoading && !vacation) {
     return (
       <View style={[styles.container, { backgroundColor: isDark ? '#000' : '#FFFFFF' }]}>
         <View style={styles.loadingContainer}>
@@ -116,15 +116,18 @@ export default function VacationEditScreen() {
 
     try {
       setFormLoading(true);
-      const updatedVacation = await updateVacation(vacation.id, {
-        destination: formData.destination,
-        country: formData.country,
-        hotel: formData.hotel,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        budget: budget,
-        budgetCurrency: vacation.budgetCurrency,  // Keep existing budget currency
-        currency: formData.currency,               // Vacation currency for expenses
+      const updatedVacation = await updateVacation({
+        id: vacation.id,
+        data: {
+          destination: formData.destination,
+          country: formData.country,
+          hotel: formData.hotel,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          budget: budget,
+          budgetCurrency: vacation.budgetCurrency,  // Keep existing budget currency
+          currency: formData.currency,               // Vacation currency for expenses
+        },
       });
 
       if (updatedVacation) {

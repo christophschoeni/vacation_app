@@ -19,24 +19,25 @@ import { FormInput, DatePicker } from '@/components/ui/forms';
 import CategorySelector from '@/components/ui/CategorySelector';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import CurrencyCalculator from '@/components/ui/CurrencyCalculator';
-import { useExpenses } from '@/hooks/use-expenses';
+import { useCreateExpense, useVacation } from '@/hooks/queries';
 import { expenseRepository } from '@/lib/db/repositories/expense-repository';
-import { Expense, ExpenseCategory } from '@/types';
+import { ExpenseCategory } from '@/types';
 import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 import { parseAmount } from '@/lib/utils/formatters';
 import * as Haptics from 'expo-haptics';
 import { notificationService } from '@/lib/services/notification-service';
-import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
 
 export default function AddExpenseScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const { vacationId } = useLocalSearchParams();
-  const { saveExpense } = useExpenses(vacationId as string);
+  const { mutateAsync: createExpense } = useCreateExpense();
   const { defaultCurrency } = useCurrency();
-  const [vacationCurrency, setVacationCurrency] = useState<string | null>(null);
+  const resolvedVacationId = Array.isArray(vacationId) ? undefined : vacationId;
+  const { data: vacation } = useVacation(resolvedVacationId);
+  const vacationCurrency = vacation?.currency ?? null;
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -52,23 +53,15 @@ export default function AddExpenseScreen() {
   const isSavingRef = React.useRef(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
 
-  // Load vacation currency on mount
+  // Apply the vacation's currency as the form default, but only once per
+  // vacation: re-applying it on every render would undo a manual selection.
+  const appliedVacationCurrencyRef = React.useRef<string | null>(null);
   React.useEffect(() => {
-    const loadVacationCurrency = async () => {
-      if (vacationId && !Array.isArray(vacationId)) {
-        try {
-          const vacation = await vacationRepository.findById(vacationId);
-          if (vacation && vacation.currency) {
-            setVacationCurrency(vacation.currency);
-            setFormData(prev => ({ ...prev, currency: vacation.currency }));
-          }
-        } catch {
-          // Failed to load vacation currency - use default
-        }
-      }
-    };
-    loadVacationCurrency();
-  }, [vacationId]);
+    if (!vacationCurrency) return;
+    if (appliedVacationCurrencyRef.current === vacationCurrency) return;
+    appliedVacationCurrencyRef.current = vacationCurrency;
+    setFormData(prev => ({ ...prev, currency: vacationCurrency }));
+  }, [vacationCurrency]);
 
   // Update currency when defaultCurrency is loaded (only if no vacation currency)
   React.useEffect(() => {
@@ -142,25 +135,25 @@ export default function AddExpenseScreen() {
     isSavingRef.current = true;
 
     try {
-      const expense: Expense = {
+      // ?? not ||: a legitimately converted 0 must not fall back to the
+      // unconverted amount.
+      const amountCHF = convertedAmount ?? amount;
+
+      await createExpense({
         id: Date.now().toString(),
         vacationId: vacationId,
         amount: amount,
         currency: formData.currency,
-        // ?? not ||: a legitimately converted 0 must not fall back to the
-        // unconverted amount.
-        amountCHF: convertedAmount ?? amount,
+        amountCHF,
         category: formData.category,
         description: formData.description,
         date: formData.date,
         createdAt: new Date(),
-      };
-
-      await saveExpense(expense);
+      });
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       // Check budget and send notification if needed
-      await checkBudgetAndNotify(vacationId, expense.amountCHF);
+      await checkBudgetAndNotify(vacationId, amountCHF);
 
       // Navigate back to vacation budget screen explicitly
       router.replace(`/vacation/${vacationId}`);
@@ -181,14 +174,17 @@ export default function AddExpenseScreen() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const checkBudgetAndNotify = async (vacationId: string, expenseAmount: number) => {
+  const checkBudgetAndNotify = async (targetVacationId: string, expenseAmount: number) => {
     try {
-      const vacation = await vacationRepository.findById(vacationId);
+      // The vacation is already in the query cache via useVacation above.
       if (!vacation || !vacation.budget) {
         return;
       }
 
-      const totalSpent = await expenseRepository.getTotalSpent(vacationId);
+      // Imperative one-shot read after saving: the freshly written total is not
+      // part of any rendered data flow, so it is read straight from the
+      // repository instead of going through a cached query.
+      const totalSpent = await expenseRepository.getTotalSpent(targetVacationId);
       const percentageUsed = (totalSpent / vacation.budget) * 100;
 
       // Send notification if over budget

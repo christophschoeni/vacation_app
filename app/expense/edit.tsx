@@ -19,8 +19,9 @@ import { FormInput, DatePicker } from '@/components/ui/forms';
 import CategorySelector from '@/components/ui/CategorySelector';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import CurrencyCalculator from '@/components/ui/CurrencyCalculator';
-import { useExpenses } from '@/hooks/use-expenses';
-import { Expense, ExpenseCategory } from '@/types';
+import { useExpense, useUpdateExpense } from '@/hooks/queries';
+import { ExpenseCategory } from '@/types';
+import type { UpdateExpenseInput } from '@/lib/db/repositories/expense-repository';
 import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
@@ -32,7 +33,9 @@ export default function EditExpenseScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
   const { expenseId, vacationId } = useLocalSearchParams();
-  const { updateExpense, expenses } = useExpenses(vacationId as string);
+  const expenseIdParam = Array.isArray(expenseId) ? expenseId[0] : expenseId;
+  const { data: expenseData, isLoading: isExpenseLoading } = useExpense(expenseIdParam);
+  const { mutateAsync: updateExpense } = useUpdateExpense();
   const { defaultCurrency } = useCurrency();
   const [loading, setLoading] = useState(true);
 
@@ -50,11 +53,10 @@ export default function EditExpenseScreen() {
   const isSavingRef = React.useRef(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
 
-  // Load expense data on mount from expenses array
+  // Seed the form once the expense has been fetched.
   React.useEffect(() => {
-    if (!expenseId || Array.isArray(expenseId)) return;
+    if (!expenseIdParam || isExpenseLoading) return;
 
-    const expenseData = expenses.find(e => e.id === expenseId);
     if (expenseData) {
       setFormData({
         amount: expenseData.amount.toString(),
@@ -65,12 +67,12 @@ export default function EditExpenseScreen() {
       });
       setConvertedAmount(expenseData.amountCHF);
       setLoading(false);
-    } else if (expenses.length > 0) {
-      // Expenses loaded but this one not found
+    } else {
+      // Fetch finished but no such expense.
       setLoading(false);
       Alert.alert(t('common.error'), t('errors.not_found', { item: 'Expense' }));
     }
-  }, [expenseId, expenses, t]);
+  }, [expenseIdParam, expenseData, isExpenseLoading, t]);
 
   // Convert to default currency whenever amount or currency changes
   React.useEffect(() => {
@@ -136,7 +138,7 @@ export default function EditExpenseScreen() {
     isSavingRef.current = true;
 
     try {
-      const updatedExpense: Partial<Expense> = {
+      const updatedExpense: UpdateExpenseInput = {
         amount: amount,
         currency: formData.currency,
         // ?? not ||: a legitimately converted 0 must not fall back to the
@@ -155,7 +157,7 @@ export default function EditExpenseScreen() {
         console.log('=========================');
       }
 
-      await updateExpense(expenseId as string, updatedExpense);
+      await updateExpense({ id: expenseId as string, data: updatedExpense });
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       // Navigate back to vacation budget screen explicitly

@@ -1,9 +1,16 @@
-import React, { useEffect, useReducer, useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, useColorScheme, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useFocusEffect } from 'expo-router';
-import { useChecklists } from '@/hooks/use-checklists';
-import { useVacations } from '@/hooks/use-vacations';
+import { router } from 'expo-router';
+import {
+  useChecklists,
+  useTemplates,
+  useCreateChecklist,
+  useCreateChecklistFromTemplate,
+  useUpdateChecklist,
+  useDeleteChecklist,
+} from '@/hooks/queries';
+import { useRouteParam } from '@/hooks/use-route-param';
 import ChecklistCard from '@/components/ui/cards/ChecklistCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import AppHeader from '@/components/ui/AppHeader';
@@ -11,58 +18,19 @@ import { Icon } from '@/components/design';
 import { useTranslation } from '@/lib/i18n';
 
 export default function VacationChecklistsScreen() {
-  // WORKAROUND: NativeTabs in expo-router doesn't pass route params to child screens
-  // We get the vacation from the vacations list - since we're inside /vacation/[id]/
-  // the parent layout has already loaded the vacation
-  const { vacations } = useVacations();
-
-  // Get the first vacation (in a real app with multiple vacations,
-  // we'd need a better way to identify which vacation we're viewing)
-  // But since the parent _layout.tsx filters by ID, we can assume it's the active one
-  const vacation = vacations.length > 0 ? vacations[0] : null;
-  const vacationId = vacation?.id;
+  const vacationId = useRouteParam('id');
 
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
 
-  // Force re-render when checklists change
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
 
-  const {
-    checklists,
-    templates,
-    loadChecklists,
-    loadTemplates,
-    createChecklist,
-    createFromTemplate,
-    saveChecklist,
-    deleteChecklist
-  } = useChecklists(vacationId || '');
-
-  useEffect(() => {
-    if (vacationId) {
-      loadChecklists();
-      loadTemplates();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vacationId]);
-
-  // Reload checklists when screen comes into focus (e.g., when returning from detail view)
-  useFocusEffect(
-    useCallback(() => {
-      if (vacationId) {
-        loadChecklists();
-        loadTemplates();
-      }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [vacationId])
-  );
-
-  // Force re-render when checklists change to ensure ChecklistCard gets updated data
-  useEffect(() => {
-    forceUpdate();
-  }, [checklists]);
+  const { data: checklists = [] } = useChecklists(vacationId || undefined);
+  const { data: templates = [] } = useTemplates();
+  const { mutateAsync: createChecklist } = useCreateChecklist();
+  const { mutateAsync: createFromTemplate } = useCreateChecklistFromTemplate();
+  const { mutateAsync: updateChecklist } = useUpdateChecklist();
+  const { mutateAsync: deleteChecklist } = useDeleteChecklist();
 
   const handleCreateList = () => {
     Alert.prompt(
@@ -75,7 +43,12 @@ export default function VacationChecklistsScreen() {
           onPress: async (title?: string) => {
             if (title?.trim()) {
               try {
-                await createChecklist(title.trim());
+                await createChecklist({
+                  title: title.trim(),
+                  vacationId,
+                  category: 'general',
+                  icon: 'check',
+                });
               } catch {
                 Alert.alert(t('common.error'), t('vacation.checklists.errors.create'));
               }
@@ -100,7 +73,7 @@ export default function VacationChecklistsScreen() {
   const handleSelectTemplate = async (templateId: string) => {
     setShowTemplateModal(false);
     try {
-      await createFromTemplate(templateId);
+      await createFromTemplate({ templateId, vacationId });
     } catch {
       Alert.alert(t('common.error'), t('vacation.checklists.errors.create_from_template'));
     }
@@ -120,8 +93,8 @@ export default function VacationChecklistsScreen() {
           onPress: async (newTitle?: string) => {
             if (newTitle?.trim() && newTitle.trim() !== checklist.title) {
               try {
-                await saveChecklist({
-                  ...checklist,
+                await updateChecklist({
+                  id: checklist.id,
                   title: newTitle.trim(),
                 });
               } catch {

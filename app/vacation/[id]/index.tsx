@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   useColorScheme,
 } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
@@ -20,19 +20,16 @@ import { Card, Icon } from '@/components/design';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteParam } from '@/hooks/use-route-param';
-import { useVacations } from '@/hooks/use-vacations';
-import { useExpenses } from '@/hooks/use-expenses';
+import { useVacation, useExpenses, useDeleteExpense } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
-import { Vacation } from '@/types';
 
 export default function VacationBudgetScreen() {
   const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
-  const { vacations, loading, refreshVacations } = useVacations();
-  const { expenses, refresh: refreshExpenses, deleteExpense } = useExpenses(vacationId || '');
-  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
-  const [cachedVacation, setCachedVacation] = React.useState<Vacation | null>(null);
+  const { data: vacation, isLoading } = useVacation(vacationId);
+  const { data: expenses = [], refetch: refetchExpenses } = useExpenses(vacationId || '');
+  const { mutateAsync: deleteExpense } = useDeleteExpense();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   // Load sort preference from AsyncStorage
@@ -51,17 +48,6 @@ export default function VacationBudgetScreen() {
     loadSortPreference();
   }, [vacationId]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      refreshVacations();
-      refreshExpenses();
-    }, [refreshVacations, refreshExpenses])
-  );
-
-  const vacation = vacations.find(v => v.id === vacationId);
-
-  // Expense data is filtered by vacationId in the hook
-
   // Sort expenses by date
   const sortedExpenses = useMemo(() => {
     return [...expenses].sort((a, b) => {
@@ -71,19 +57,11 @@ export default function VacationBudgetScreen() {
     });
   }, [expenses, sortOrder]);
 
-  // Cache the vacation to prevent flickering during refresh
-  React.useEffect(() => {
-    if (vacation) {
-      setCachedVacation(vacation);
-      setIsInitialLoad(false);
-    }
-  }, [vacation]);
+  // The query cache keeps the previous vacation available across refetches, so
+  // the local mirror that used to prevent flickering is no longer needed.
+  const displayVacation = vacation;
 
-  // Use cached vacation if current vacation is undefined but we have a cache
-  const displayVacation = vacation || cachedVacation;
-
-  // Only show loading if we don't have any vacation data (not even cached)
-  if (!displayVacation && (loading || isInitialLoad)) {
+  if (!displayVacation && isLoading) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <AppHeader
@@ -98,12 +76,6 @@ export default function VacationBudgetScreen() {
         </View>
       </SafeAreaView>
     );
-  }
-
-  // If we have cached vacation but loading, show the cached data
-  // This prevents the "loading" screen from showing after navigation
-  if (!vacation && cachedVacation && loading) {
-    // Continue rendering with cachedVacation below
   }
 
   if (!displayVacation) {
@@ -211,7 +183,7 @@ export default function VacationBudgetScreen() {
         refreshControl={
           <RefreshControl
             refreshing={false}
-            onRefresh={refreshExpenses}
+            onRefresh={() => refetchExpenses()}
             tintColor={colorScheme === 'dark' ? '#fff' : '#000'}
           />
         }

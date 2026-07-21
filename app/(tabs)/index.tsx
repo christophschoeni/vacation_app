@@ -7,7 +7,7 @@ import {
   View,
   TouchableOpacity,
  useColorScheme } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
@@ -16,30 +16,27 @@ import SwipeableCard from '@/components/ui/SwipeableCard';
 import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
 import AppHeader from '@/components/ui/AppHeader';
-import { useVacations } from '@/hooks/use-vacations';
+import { useVacations, useDeleteVacation, useExpenseTotals } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 
 export default function VacationsScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
-  const { vacations, loading, refreshVacations, deleteVacation } = useVacations();
+  const { data: vacations = [], isLoading, refetch: refetchVacations } = useVacations();
+  // One aggregated query for every card's spend, instead of one query per card.
+  const { data: expenseTotals, refetch: refetchTotals } = useExpenseTotals();
+  const { mutateAsync: deleteVacation } = useDeleteVacation();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      refreshVacations();
-    }, [refreshVacations])
-  );
 
   const handleRefresh = React.useCallback(async () => {
     setIsRefreshing(true);
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
-      await refreshVacations();
+      await Promise.all([refetchVacations(), refetchTotals()]);
     } finally {
       setIsRefreshing(false);
     }
-  }, [refreshVacations]);
+  }, [refetchVacations, refetchTotals]);
 
   const handleAddVacation = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -110,7 +107,7 @@ export default function VacationsScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
         refreshControl={
           <RefreshControl
-            refreshing={isRefreshing || loading}
+            refreshing={isRefreshing || isLoading}
             onRefresh={handleRefresh}
             tintColor={isDark ? '#fff' : '#000'}
             colors={[Colors.primary[500]]}
@@ -141,6 +138,7 @@ export default function VacationsScreen() {
             >
               <VacationCard
                 vacation={vacation}
+                totalSpent={expenseTotals?.get(vacation.id) ?? 0}
               />
             </SwipeableCard>
           ))

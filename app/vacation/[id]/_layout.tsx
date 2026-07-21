@@ -1,12 +1,12 @@
-import { router, useFocusEffect } from 'expo-router';
+import { router } from 'expo-router';
 import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
 import { useRouteParam } from '@/hooks/use-route-param';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, DynamicColorIOS , useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
-import { useVacations } from '@/hooks/use-vacations';
+import { useVacation } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 import { VacationProvider, useVacationContext } from '@/contexts/VacationContext';
 
@@ -16,9 +16,7 @@ function VacationDetailContent() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { t } = useTranslation();
-  const { vacations, refreshVacations } = useVacations();
-
-  const vacation = vacations.find(v => v.id === vacationId);
+  const { data: vacation, isLoading } = useVacation(vacationId);
 
   // Set vacation ID in context whenever it changes
   useEffect(() => {
@@ -27,19 +25,12 @@ function VacationDetailContent() {
     }
   }, [vacationId, setCurrentVacationId]);
 
-  // Refresh vacation data when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      refreshVacations();
-    }, [refreshVacations])
-  );
-
-  // Force refresh if vacation not found
-  useEffect(() => {
-    if (vacationId && !vacation) {
-      refreshVacations();
-    }
-  }, [vacationId, vacation, refreshVacations]);
+  // The tabs mount only once the vacation exists; while the first fetch is in
+  // flight nothing is rendered, matching the previous behaviour where the
+  // client-side lookup came up empty until the list had loaded.
+  if (isLoading) {
+    return null;
+  }
 
   if (!vacation) {
     return (

@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
 import CurrencySelector from '@/components/ui/CurrencySelector';
-import { useVacations } from '@/hooks/use-vacations';
+import { useCreateVacation } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 import { parseAmount } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -23,7 +23,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 export default function AddVacationScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
-  const { createVacation } = useVacations();
+  const { mutateAsync: createVacation } = useCreateVacation();
   const { defaultCurrency } = useCurrency();
   const [formData, setFormData] = useState({
     destination: '',

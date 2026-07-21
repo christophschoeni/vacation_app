@@ -7,13 +7,12 @@ import {
   useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, router } from 'expo-router';
+import { router } from 'expo-router';
 
 import AppHeader from '@/components/ui/AppHeader';
 import { Card, Icon } from '@/components/design';
 import { useRouteParam } from '@/hooks/use-route-param';
-import { useVacations } from '@/hooks/use-vacations';
-import { useExpenses } from '@/hooks/use-expenses';
+import { useVacation, useExpenses } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 import { ExpenseCategory } from '@/types';
 import {
@@ -36,21 +35,13 @@ export default function VacationReportScreen() {
   const vacationId = useRouteParam('id');
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
-  const { vacations, refreshVacations } = useVacations();
-  const { expenses, refresh: refreshExpenses } = useExpenses(vacationId || '');
+  const { data: vacation } = useVacation(vacationId);
+  const { data: expenses = [] } = useExpenses(vacationId || '');
   const { defaultCurrency } = useCurrency();
   const [categoryData, setCategoryData] = useState<CategoryExpense[]>([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
 
   const isDark = colorScheme === 'dark';
-  const vacation = vacations.find(v => v.id === vacationId);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      refreshVacations();
-      refreshExpenses();
-    }, [refreshVacations, refreshExpenses])
-  );
 
   // Calculate category expenses for this vacation
   React.useEffect(() => {

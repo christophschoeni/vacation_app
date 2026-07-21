@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -17,10 +17,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteId } from '@/hooks/use-route-param';
-import { useChecklists } from '@/hooks/use-checklists';
+import {
+  useChecklist,
+  useAddChecklistItem,
+  useToggleChecklistItem,
+  useDeleteChecklistItem,
+  useUpdateChecklist,
+} from '@/hooks/queries';
 import { ChecklistItem } from '@/types';
-import { checklistServiceSQLite } from '@/lib/checklist-service-sqlite';
-import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
 
 export default function ChecklistDetailScreen() {
@@ -32,51 +36,11 @@ export default function ChecklistDetailScreen() {
   const [newItemText, setNewItemText] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
 
-  // Extract vacation ID from the checklist to initialize the hook
-  const [vacationId, setVacationId] = useState<string>('');
-  const [checklist, setChecklist] = useState<any>(null);
-
-  const {
-    checklists,
-    loadChecklists,
-    addItem,
-    toggleItem,
-    deleteItem,
-    saveChecklist,
-  } = useChecklists(vacationId);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Load checklist directly from SQLite using the service
-        const currentChecklist = await checklistServiceSQLite.getChecklistById(checklistId);
-        if (currentChecklist) {
-          setVacationId(currentChecklist.vacationId || '');
-          setChecklist(currentChecklist);
-        } else {
-          logger.warn('Checklist not found:', checklistId);
-        }
-      } catch (error) {
-        logger.error('Failed to load checklist:', error);
-      }
-    };
-    loadData();
-  }, [checklistId]);
-
-  useEffect(() => {
-    if (vacationId) {
-      loadChecklists();
-    }
-  }, [vacationId, loadChecklists]);
-
-  useEffect(() => {
-    if (checklists.length > 0) {
-      const currentChecklist = checklists.find(c => c.id === checklistId);
-      if (currentChecklist) {
-        setChecklist(currentChecklist);
-      }
-    }
-  }, [checklists, checklistId]);
+  const { data: checklist } = useChecklist(checklistId);
+  const { mutateAsync: addItem } = useAddChecklistItem();
+  const { mutateAsync: toggleItem } = useToggleChecklistItem();
+  const { mutateAsync: deleteItem } = useDeleteChecklistItem();
+  const { mutateAsync: updateChecklist } = useUpdateChecklist();
 
   if (!checklist) {
     return (
@@ -107,11 +71,9 @@ export default function ChecklistDetailScreen() {
     if (!newItemText.trim()) return;
 
     try {
-      await addItem(checklistId, newItemText.trim());
+      await addItem({ checklistId, text: newItemText.trim() });
       setNewItemText('');
       setIsAddingItem(false);
-      // Reload checklists to update the view
-      await loadChecklists();
     } catch {
       Alert.alert(t('common.error'), t('checklist.errors.add_item'));
     }
@@ -119,9 +81,7 @@ export default function ChecklistDetailScreen() {
 
   const handleToggleItem = async (itemId: string) => {
     try {
-      await toggleItem(checklistId, itemId);
-      // Reload checklists to update the view
-      await loadChecklists();
+      await toggleItem({ checklistId, itemId });
     } catch {
       Alert.alert(t('common.error'), t('checklist.errors.update_item'));
     }
@@ -138,9 +98,7 @@ export default function ChecklistDetailScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await deleteItem(checklistId, item.id);
-              // Reload checklists to update the view
-              await loadChecklists();
+              await deleteItem({ checklistId, itemId: item.id });
             } catch {
               Alert.alert(t('common.error'), t('checklist.errors.delete_item'));
             }
@@ -161,13 +119,10 @@ export default function ChecklistDetailScreen() {
           onPress: async (newTitle?: string) => {
             if (newTitle?.trim() && newTitle !== checklist.title) {
               try {
-                await saveChecklist({
-                  ...checklist,
+                await updateChecklist({
+                  id: checklistId,
                   title: newTitle.trim(),
-                  updatedAt: new Date(),
                 });
-                // Reload checklists to update the view
-                await loadChecklists();
               } catch {
                 Alert.alert(t('common.error'), t('checklist.errors.update_title'));
               }

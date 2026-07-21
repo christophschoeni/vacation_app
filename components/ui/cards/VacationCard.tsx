@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from '@/components/design';
-import { useExpenses } from '@/hooks/use-expenses';
 import {
   getVacationGradient,
   getVacationTextColor,
@@ -16,14 +15,21 @@ import type { Vacation } from '@/types';
 
 interface VacationCardProps {
   vacation: Vacation;
+  /**
+   * Spend for this vacation, supplied by the parent.
+   *
+   * The card used to query its own expenses, which meant one query per rendered
+   * card. The list now aggregates all totals in a single query and passes the
+   * relevant one down.
+   */
+  totalSpent: number;
 }
 
-export default function VacationCard({ vacation }: VacationCardProps) {
+export default function VacationCard({ vacation, totalSpent }: VacationCardProps) {
   const { t } = useTranslation();
-  const { expenses } = useExpenses(vacation.id);
   const { defaultCurrency } = useCurrency();
 
-  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amountCHF, 0);
+  const totalExpenses = totalSpent;
   const remainingBudget = vacation.budget ? vacation.budget - totalExpenses : 0;
   const budgetStatus = vacation.budget && remainingBudget < 0 ? 'over' : 'normal';
 

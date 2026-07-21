@@ -18,6 +18,8 @@ import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
 import { migrateExpensesToSQLite } from '@/lib/db/migrate-expenses-to-sqlite';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/lib/query/client';
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -355,16 +357,18 @@ export default function RootLayout() {
 
   return (
     <ErrorBoundary>
-      <SafeAreaProvider>
-        <CurrencyProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <RootNavigation
-              key={migrationAttempt}
-              onRetryMigration={() => setMigrationAttempt(attempt => attempt + 1)}
-            />
-          </GestureHandlerRootView>
-        </CurrencyProvider>
-      </SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <CurrencyProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <RootNavigation
+                key={migrationAttempt}
+                onRetryMigration={() => setMigrationAttempt(attempt => attempt + 1)}
+              />
+            </GestureHandlerRootView>
+          </CurrencyProvider>
+        </SafeAreaProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 }

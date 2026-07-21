@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,12 @@ import {
   Alert,
   useColorScheme,
 } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
-import { ensureDefaultTemplates } from '@/lib/seed-templates';
+import { useTemplates } from '@/hooks/queries';
 import { Checklist } from '@/types';
 import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
@@ -21,50 +20,19 @@ import { useTranslation } from '@/lib/i18n';
 export default function TemplatesScreen() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();
-  const [templates, setTemplates] = useState<Checklist[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadTemplates = useCallback(async () => {
-    try {
-      setLoading(true);
-      let templateList = await checklistRepository.findTemplates();
-      logger.debug(`Found ${templateList.length} templates`);
-
-      // Smart auto-creation: If no templates found, try to create defaults
-      if (templateList.length === 0) {
-        logger.info('No templates found, attempting to create defaults...');
-        try {
-          await ensureDefaultTemplates();
-          templateList = await checklistRepository.findTemplates();
-          logger.info(`After auto-creation: ${templateList.length} templates`);
-        } catch (createError) {
-          logger.error('Failed to auto-create templates:', createError);
-          // Continue with empty list, fallback button will be available
-        }
-      }
-
-      setTemplates(templateList);
-    } catch (error) {
-      logger.error('Failed to load templates:', error);
-      Alert.alert(t('common.error'), t('settings.templates.error_load'));
-    } finally {
-      setLoading(false);
-    }
-  // `t` from useTranslation is re-bound on every render; including it would recreate this
-  // callback each render and make the calling effect loop forever. Translations are only
-  // read at call time, so omitting it is safe.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useTemplates() seeds the defaults itself when none exist, so the screen
+  // only has to render what the query returns.
+  const { data: templates = [], isLoading, error, refetch } = useTemplates();
+  const [recreating, setRecreating] = useState(false);
 
   useEffect(() => {
-    loadTemplates();
-  }, [loadTemplates]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      loadTemplates();
-    }, [loadTemplates])
-  );
+    if (error) {
+      logger.error('Failed to load templates:', error);
+      Alert.alert(t('common.error'), t('settings.templates.error_load'));
+    }
+    // `t` is re-bound on every render; the alert only depends on the error.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
   const handleTemplatePress = (template: Checklist) => {
     router.push(`/template/${template.id}`);
@@ -76,21 +44,24 @@ export default function TemplatesScreen() {
 
   const createDefaultTemplates = async () => {
     try {
-      setLoading(true);
+      setRecreating(true);
       logger.info('Manually creating default templates...');
 
-      await ensureDefaultTemplates();
+      // The query re-runs its own seeding step when it finds no templates.
+      const { data, error: refetchError } = await refetch();
+      if (refetchError) throw refetchError;
 
+      logger.info(`After manual creation: ${data?.length ?? 0} templates`);
       Alert.alert(t('common.success'), t('settings.templates.created_success'));
-      await loadTemplates();
-
-    } catch (error) {
-      logger.error('Failed to create default templates:', error);
+    } catch (createError) {
+      logger.error('Failed to create default templates:', createError);
       Alert.alert(t('common.error'), t('settings.templates.created_error'));
     } finally {
-      setLoading(false);
+      setRecreating(false);
     }
   };
+
+  const loading = isLoading || recreating;
 
   const isDark = colorScheme === 'dark';
 
