@@ -131,9 +131,7 @@
       "date": "Date & Heure",
       "converted_amount": "Converti",
       "converting": "Conversion...",
-      "currency_calculator": "Convertisseur de devises",
-      "converted": "≈ {{amount}}",
-      "rate_info": "1 {{from}} = {{rate}} {{to}}"
+      "currency_calculator": "Convertisseur de devises"
     },
     "empty": {
       "title": "Aucune dépense enregistrée",
@@ -420,8 +418,7 @@
         "manual": "Manuel",
         "api": "API",
         "fallback": "Par défaut",
-        "unknown": "Inconnu",
-        "auto": "Auto"
+        "unknown": "Inconnu"
       },
       "delete": {
         "title": "Supprimer le taux",
@@ -446,12 +443,7 @@
         "invalid_rate": "Veuillez entrer un taux de change valide (supérieur à 0)",
         "cannot_delete_title": "Impossible de supprimer",
         "cannot_delete_message": "Seuls les taux de change manuels peuvent être supprimés"
-      },
-      "auto_update": "Mettre à jour les taux automatiquement",
-      "last_updated": "Dernière mise à jour",
-      "never": "Jamais",
-      "manual_note": "Les taux définis manuellement sont prioritaires et ne sont pas écrasés.",
-      "update_failed": "Impossible de mettre à jour les taux."
+      }
     }
   },
   "errors": {

@@ -131,9 +131,7 @@
       "date": "Datum & Uhrzeit",
       "converted_amount": "Umgerechnet",
       "converting": "Umrechnung...",
-      "currency_calculator": "Währungsrechner",
-      "converted": "≈ {{amount}}",
-      "rate_info": "1 {{from}} = {{rate}} {{to}}"
+      "currency_calculator": "Währungsrechner"
     },
     "empty": {
       "title": "Noch keine Ausgaben erfasst",
@@ -420,8 +418,7 @@
         "manual": "Manuell",
         "api": "API",
         "fallback": "Standard",
-        "unknown": "Unbekannt",
-        "auto": "Auto"
+        "unknown": "Unbekannt"
       },
       "delete": {
         "title": "Kurs löschen",
@@ -446,12 +443,7 @@
         "invalid_rate": "Bitte geben Sie einen gültigen Wechselkurs ein (größer als 0)",
         "cannot_delete_title": "Kann nicht gelöscht werden",
         "cannot_delete_message": "Nur manuelle Wechselkurse können gelöscht werden"
-      },
-      "auto_update": "Kurse automatisch aktualisieren",
-      "last_updated": "Zuletzt aktualisiert",
-      "never": "Nie",
-      "manual_note": "Manuell gesetzte Kurse haben Vorrang und werden nicht überschrieben.",
-      "update_failed": "Kurse konnten nicht aktualisiert werden."
+      }
     }
   },
   "errors": {

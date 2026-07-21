@@ -131,9 +131,7 @@
       "date": "Fecha y hora",
       "converted_amount": "Convertido",
       "converting": "Convirtiendo...",
-      "currency_calculator": "Conversor de moneda",
-      "converted": "≈ {{amount}}",
-      "rate_info": "1 {{from}} = {{rate}} {{to}}"
+      "currency_calculator": "Conversor de moneda"
     },
     "empty": {
       "title": "Aún no hay gastos",
@@ -420,8 +418,7 @@
         "manual": "Manual",
         "api": "API",
         "fallback": "Predeterminado",
-        "unknown": "Desconocido",
-        "auto": "Auto"
+        "unknown": "Desconocido"
       },
       "delete": {
         "title": "Eliminar tipo",
@@ -446,12 +443,7 @@
         "invalid_rate": "Introduzca un tipo de cambio válido (mayor que 0)",
         "cannot_delete_title": "No se puede eliminar",
         "cannot_delete_message": "Solo se pueden eliminar los tipos de cambio manuales"
-      },
-      "auto_update": "Actualizar tasas automáticamente",
-      "last_updated": "Última actualización",
-      "never": "Nunca",
-      "manual_note": "Las tasas definidas manualmente tienen prioridad y no se sobrescriben.",
-      "update_failed": "No se pudieron actualizar las tasas."
+      }
     }
   },
   "errors": {

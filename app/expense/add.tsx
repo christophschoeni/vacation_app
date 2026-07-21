@@ -15,7 +15,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { FormInput, DatePicker } from '@/components/ui/forms';
+import { FormInput, DatePicker, AmountHero } from '@/components/ui/forms';
+import { useIOSTheme } from '@/constants/ios-theme';
 import CategorySelector from '@/components/ui/CategorySelector';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import CurrencyCalculator from '@/components/ui/CurrencyCalculator';
@@ -31,6 +32,7 @@ import { notificationService } from '@/lib/services/notification-service';
 
 export default function AddExpenseScreen() {
   const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
   const { vacationId } = useLocalSearchParams();
   const { mutateAsync: createExpense } = useCreateExpense();
@@ -52,6 +54,7 @@ export default function AddExpenseScreen() {
   // Guards against a double tap saving the same expense twice.
   const isSavingRef = React.useRef(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
+  const [isCurrencyPickerVisible, setIsCurrencyPickerVisible] = useState(false);
 
   // Apply the vacation's currency as the form default, but only once per
   // vacation: re-applying it on every render would undo a manual selection.
@@ -226,7 +229,7 @@ export default function AddExpenseScreen() {
   const isDark = colorScheme === 'dark';
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top', 'bottom']}>
       <AppHeader
         variant="modal"
         showBack={true}
@@ -245,40 +248,30 @@ export default function AddExpenseScreen() {
         >
           {/* iOS-style large title in content area */}
           <View style={styles.titleSection}>
-            <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            <Text style={[styles.largeTitle, { color: theme.label }]}>
               {t('expense.add.title')}
             </Text>
           </View>
 
           <View style={styles.formContainer}>
-            <View style={styles.row}>
-              <View style={styles.halfWidth}>
-                <FormInput
-                  label={t('expense.form.amount')}
-                  value={formData.amount}
-                  onChangeText={(value) => updateField('amount', value)}
-                  placeholder={t('expense.form.amount_placeholder')}
-                  keyboardType="numeric"
-                  required
-                />
-              </View>
-              <View style={styles.halfWidth}>
-                <CurrencySelector
-                  selectedCurrency={formData.currency}
-                  onSelect={(currency) => updateField('currency', currency)}
-                />
-              </View>
-            </View>
+            <AmountHero
+              amount={formData.amount}
+              onAmountChange={(value) => updateField('amount', value)}
+              currency={formData.currency}
+              displayCurrency={defaultCurrency}
+              onCurrencyPress={() => setIsCurrencyPickerVisible((v) => !v)}
+              convertedAmount={convertedAmount}
+              converting={converting}
+            />
 
-            {convertedAmount !== null && formData.currency !== defaultCurrency && (
-              <View style={styles.conversionDisplay}>
-                <Text style={[styles.conversionLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                  {t('expense.form.converted_amount')}:
-                </Text>
-                <Text style={[styles.conversionAmount, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  {converting ? t('expense.form.converting') : `${defaultCurrency} ${convertedAmount.toFixed(2)}`}
-                </Text>
-              </View>
+            {isCurrencyPickerVisible && (
+              <CurrencySelector
+                selectedCurrency={formData.currency}
+                onSelect={(currency) => {
+                  updateField('currency', currency);
+                  setIsCurrencyPickerVisible(false);
+                }}
+              />
             )}
 
             {/* Calculator Button */}
@@ -292,7 +285,7 @@ export default function AddExpenseScreen() {
             >
               <View style={styles.calculatorButtonContent}>
                 <Icon name="calculator" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-                <Text style={[styles.calculatorButtonText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                <Text style={[styles.calculatorButtonText, { color: theme.label }]}>
                   {t('expense.form.currency_calculator')}
                 </Text>
                 <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
@@ -370,24 +363,6 @@ const styles = StyleSheet.create({
   },
   halfWidth: {
     flex: 1,
-  },
-  conversionDisplay: {
-    backgroundColor: 'rgba(0, 122, 255, 0.1)',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-    borderLeftWidth: 3,
-    borderLeftColor: '#007AFF',
-  },
-  conversionLabel: {
-    fontSize: 14,
-    fontFamily: 'System',
-    marginBottom: 4,
-  },
-  conversionAmount: {
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'System',
   },
   buttonContainer: {
     marginTop: 32,

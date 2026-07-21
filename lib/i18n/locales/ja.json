@@ -131,9 +131,7 @@
       "date": "日時",
       "converted_amount": "換算後",
       "converting": "換算中…",
-      "currency_calculator": "通貨換算",
-      "converted": "≈ {{amount}}",
-      "rate_info": "1 {{from}} = {{rate}} {{to}}"
+      "currency_calculator": "通貨換算"
     },
     "empty": {
       "title": "支出はまだありません",
@@ -420,8 +418,7 @@
         "manual": "手動",
         "api": "API",
         "fallback": "標準",
-        "unknown": "不明",
-        "auto": "自動"
+        "unknown": "不明"
       },
       "delete": {
         "title": "レートを削除",
@@ -446,12 +443,7 @@
         "invalid_rate": "有効な為替レートを入力してください（0より大きい値）",
         "cannot_delete_title": "削除できません",
         "cannot_delete_message": "削除できるのは手動の為替レートのみです"
-      },
-      "auto_update": "レートを自動更新",
-      "last_updated": "最終更新",
-      "never": "未更新",
-      "manual_note": "手動設定したレートが優先され、上書きされません。",
-      "update_failed": "レートを更新できませんでした。"
+      }
     }
   },
   "errors": {

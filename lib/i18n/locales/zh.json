@@ -131,9 +131,7 @@
       "date": "日期和时间",
       "converted_amount": "已换算",
       "converting": "换算中…",
-      "currency_calculator": "货币换算器",
-      "converted": "≈ {{amount}}",
-      "rate_info": "1 {{from}} = {{rate}} {{to}}"
+      "currency_calculator": "货币换算器"
     },
     "empty": {
       "title": "还没有记录支出",
@@ -420,8 +418,7 @@
         "manual": "手动",
         "api": "API",
         "fallback": "默认",
-        "unknown": "未知",
-        "auto": "自动"
+        "unknown": "未知"
       },
       "delete": {
         "title": "删除汇率",
@@ -446,12 +443,7 @@
         "invalid_rate": "请输入有效的汇率（需大于 0）",
         "cannot_delete_title": "无法删除",
         "cannot_delete_message": "只能删除手动汇率"
-      },
-      "auto_update": "自动更新汇率",
-      "last_updated": "最后更新",
-      "never": "从未",
-      "manual_note": "手动设置的汇率优先，不会被覆盖。",
-      "update_failed": "无法更新汇率。"
+      }
     }
   },
   "errors": {
