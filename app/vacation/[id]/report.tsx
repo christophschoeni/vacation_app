@@ -13,7 +13,7 @@ import AppHeader from '@/components/ui/AppHeader';
 import { Card, Icon } from '@/components/design';
 import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacations } from '@/hooks/use-vacations';
-import { useExpenses } from '@/lib/database';
+import { useExpenses } from '@/hooks/use-expenses';
 import { useTranslation } from '@/lib/i18n';
 import { ExpenseCategory } from '@/types';
 import {

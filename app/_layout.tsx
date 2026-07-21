@@ -17,8 +17,7 @@ import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
-import { LocalDatabase } from '@/lib/database/storage';
-import { vacationRepository } from '@/lib/db/repositories/vacation-repository';
+import { migrateExpensesToSQLite } from '@/lib/db/migrate-expenses-to-sqlite';
 
 const slideFromRight = {
   cardStyleInterpolator: ({ current, layouts }: any) => {
@@ -78,12 +77,10 @@ function RootNavigation({
           // Always ensure templates exist (independent of migration flag)
           await ensureDefaultTemplates();
 
-          // Cleanup any orphaned expenses/checklists from deleted vacations.
-          // The valid IDs come from SQLite, where vacations are stored.
-          const existingVacations = await vacationRepository.findAll();
-          await LocalDatabase.cleanupOrphanedData(
-            new Set(existingVacations.map(v => String(v.id)))
-          );
+          // One-time move of expenses from the legacy AsyncStorage store into
+          // SQLite. Idempotent; a no-op on fresh installs and after the first
+          // successful run.
+          await migrateExpensesToSQLite();
 
           // Initialize notification service
           await notificationService.initialize();

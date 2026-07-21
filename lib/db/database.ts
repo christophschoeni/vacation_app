@@ -6,6 +6,12 @@ const DATABASE_NAME = 'vacation_assist_v2.db'; // Changed database name to force
 
 // Initialize SQLite database with Drizzle
 export const expo = openDatabaseSync(DATABASE_NAME);
+
+// SQLite disables foreign key enforcement per connection by default, which
+// would make the ON DELETE CASCADE constraints in schema.ts inert. Enabling it
+// is what actually removes a vacation's expenses and checklists on delete.
+expo.execSync('PRAGMA foreign_keys = ON;');
+
 export const db = drizzle(expo, { schema });
 
 // Get database instance (for direct queries if needed)

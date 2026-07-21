@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Vacation } from '@/types';
 import { vacationRepository, type CreateVacationInput } from '@/lib/db/repositories/vacation-repository';
+import { expenseRepository } from '@/lib/db/repositories/expense-repository';
 import { logger } from '@/lib/utils/logger';
 
 export interface UseVacationsReturn {
@@ -89,18 +90,10 @@ export function useVacations(): UseVacationsReturn {
 
       logger.debug('🏖️ Deleting vacation from SQLite...', id);
 
-      // CASCADE DELETE: Delete all expenses associated with this vacation from AsyncStorage
-      // This is necessary because Vacations are in SQLite but Expenses are still in AsyncStorage
-      logger.debug('🗑️ Deleting associated expenses from AsyncStorage...', id);
-      const { LocalDatabase } = await import('@/lib/database/storage');
-      const allExpenses = await LocalDatabase.getExpenses(); // Get ALL expenses
-      const expensesToKeep = allExpenses.filter(expense =>
-        String(expense.vacationId) !== String(id)
-      );
-      await import('@react-native-async-storage/async-storage').then(module =>
-        module.default.setItem('@vacation_assist:expenses', JSON.stringify(expensesToKeep))
-      );
-      logger.debug(`✅ Deleted ${allExpenses.length - expensesToKeep.length} expenses from AsyncStorage`);
+      // Cascade delete the vacation's expenses. Both live in SQLite now, so
+      // this no longer has to reconcile two separate stores.
+      const deletedExpenses = await expenseRepository.deleteByVacation(id);
+      logger.debug(`Deleted ${deletedExpenses} associated expenses`);
 
       // Delete vacation from SQLite
       const success = await vacationRepository.delete(id);

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from '@/components/design';
-import { useExpenses } from '@/lib/database';
+import { useExpenses } from '@/hooks/use-expenses';
 import {
   getVacationGradient,
   getVacationTextColor,

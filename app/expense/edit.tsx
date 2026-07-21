@@ -19,7 +19,7 @@ import { FormInput, DatePicker } from '@/components/ui/forms';
 import CategorySelector from '@/components/ui/CategorySelector';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import CurrencyCalculator from '@/components/ui/CurrencyCalculator';
-import { useExpenses } from '@/lib/database';
+import { useExpenses } from '@/hooks/use-expenses';
 import { Expense, ExpenseCategory } from '@/types';
 import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
