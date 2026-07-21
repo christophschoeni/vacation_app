@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Card, Icon } from '@/components/design';
 import AppHeader from '@/components/ui/AppHeader';
-import { currencyService } from '@/lib/currency';
+import { currencyService, type CurrencyUpdateSettings, type UpdatePolicy } from '@/lib/currency';
 import { formatRelativeTime } from '@/lib/utils/formatters';
 import { ErrorHandler } from '@/lib/utils/error-handler';
 import { useTranslation } from '@/lib/i18n';
@@ -28,12 +28,9 @@ interface CacheStatus {
   lastUpdate: Date | null;
 }
 
-interface CurrencySettings {
-  updatePolicy: string;
-  allowMobileData: boolean;
-  cacheExpiryHours: number;
-  lastUpdate: Date | null;
-}
+// Canonical shape lives in lib/currency; the local duplicate widened
+// updatePolicy to string and broke assignability.
+type CurrencySettings = CurrencyUpdateSettings;
 
 export default function CurrencyDataScreen() {
   const colorScheme = useColorScheme();
@@ -44,7 +41,7 @@ export default function CurrencyDataScreen() {
     { value: 'auto', label: t('settings.currency.data.update_policy.auto'), description: t('settings.currency.data.update_policy.auto_description') },
     { value: 'wifi-only', label: t('settings.currency.data.update_policy.wifi_only'), description: t('settings.currency.data.update_policy.wifi_only_description') },
     { value: 'manual', label: t('settings.currency.data.update_policy.manual'), description: t('settings.currency.data.update_policy.manual_description') },
-  ];
+  ] satisfies { value: UpdatePolicy; label: string; description: string }[];
 
   const CACHE_EXPIRY_OPTIONS = [
     { value: 1, label: t('settings.currency.data.cache_expiry.1_hour') },
@@ -83,7 +80,10 @@ export default function CurrencyDataScreen() {
       const currentSettings = await currencyService.getUpdateSettings();
       setSettings(currentSettings);
     } catch (error) {
-      await ErrorHandler.handleError(error, 'load currency settings', false);
+      await ErrorHandler.handleAsyncError(error, {
+        context: 'load currency settings',
+        showAlert: false,
+      });
     }
   };
 
@@ -92,7 +92,10 @@ export default function CurrencyDataScreen() {
       const status = await currencyService.getCacheStatus();
       setCacheStatus(status);
     } catch (error) {
-      await ErrorHandler.handleError(error, 'load cache status', false);
+      await ErrorHandler.handleAsyncError(error, {
+        context: 'load cache status',
+        showAlert: false,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -103,7 +106,10 @@ export default function CurrencyDataScreen() {
       await currencyService.updateSettings(newSettings);
       setSettings(prev => ({ ...prev, ...newSettings }));
     } catch (error) {
-      await ErrorHandler.handleError(error, 'update currency settings', true);
+      await ErrorHandler.handleAsyncError(error, {
+        context: 'update currency settings',
+        showAlert: true,
+      });
     }
   };
 
@@ -128,7 +134,10 @@ export default function CurrencyDataScreen() {
         );
       }
     } catch (error) {
-      await ErrorHandler.handleError(error, 'manual currency update', true);
+      await ErrorHandler.handleAsyncError(error, {
+        context: 'manual currency update',
+        showAlert: true,
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -153,7 +162,10 @@ export default function CurrencyDataScreen() {
                 [{ text: t('common.ok'), style: 'default' }]
               );
             } catch (error) {
-              await ErrorHandler.handleError(error, 'clear cache', true);
+              await ErrorHandler.handleAsyncError(error, {
+        context: 'clear cache',
+        showAlert: true,
+      });
             }
           },
         },
@@ -185,7 +197,10 @@ export default function CurrencyDataScreen() {
       setManualRate('');
       await loadCacheStatus();
     } catch (error) {
-      await ErrorHandler.handleError(error, 'set manual rate', true);
+      await ErrorHandler.handleAsyncError(error, {
+        context: 'set manual rate',
+        showAlert: true,
+      });
     }
   };
 
@@ -671,5 +686,20 @@ const styles = StyleSheet.create({
   headerButton: {
     fontSize: 17,
     fontFamily: 'System',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  backButton: {
+    minWidth: 60,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontFamily: 'System',
+    fontWeight: '600',
   },
 });
