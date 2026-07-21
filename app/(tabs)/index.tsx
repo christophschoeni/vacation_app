@@ -17,6 +17,7 @@ import VacationCard from '@/components/ui/cards/VacationCard';
 import EmptyState from '@/components/ui/common/EmptyState';
 import AppHeader from '@/components/ui/AppHeader';
 import { useVacations, useDeleteVacation, useExpenseTotals } from '@/hooks/queries';
+import { useBudgetSummaries } from '@/hooks/queries/use-budget-summary';
 import { useTranslation } from '@/lib/i18n';
 
 export default function VacationsScreen() {
@@ -25,6 +26,9 @@ export default function VacationsScreen() {
   const { data: vacations = [], isLoading, refetch: refetchVacations } = useVacations();
   // One aggregated query for every card's spend, instead of one query per card.
   const { data: expenseTotals, refetch: refetchTotals } = useExpenseTotals();
+  // Budget and spend converted into the display currency, using the same
+  // conversion the detail screen applies - otherwise the two disagree.
+  const { data: budgetSummaries } = useBudgetSummaries(vacations, expenseTotals);
   const { mutateAsync: deleteVacation } = useDeleteVacation();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
@@ -138,7 +142,8 @@ export default function VacationsScreen() {
             >
               <VacationCard
                 vacation={vacation}
-                totalSpent={expenseTotals?.get(vacation.id) ?? 0}
+                totalBudget={budgetSummaries?.get(vacation.id)?.totalBudget ?? 0}
+                totalSpent={budgetSummaries?.get(vacation.id)?.totalSpent ?? 0}
               />
             </SwipeableCard>
           ))

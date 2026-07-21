@@ -1,0 +1,507 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "back": "戻る",
+    "ok": "OK",
+    "loading": "読み込み中…",
+    "error": "エラー",
+    "success": "成功しました",
+    "add": "追加",
+    "create": "作成"
+  },
+  "navigation": {
+    "vacations": "旅行",
+    "settings": "設定"
+  },
+  "vacation": {
+    "add": {
+      "title": "新しい旅行",
+      "button": "旅行を作成"
+    },
+    "delete": {
+      "title": "旅行を削除",
+      "message": "旅行「{{destination}}」を削除してもよろしいですか？関連するデータ（支出、チェックリスト）もすべて削除されます。",
+      "error": "旅行を削除できませんでした"
+    },
+    "detail": {
+      "loading": "旅行データを読み込み中…",
+      "not_found": "旅行が見つかりません"
+    },
+    "form": {
+      "destination": "目的地",
+      "destination_placeholder": "例：アンタルヤ",
+      "country": "国",
+      "country_placeholder": "例：トルコ",
+      "hotel": "ホテル",
+      "hotel_placeholder": "例：Club Hotel Sera",
+      "start_date": "開始日時",
+      "end_date": "終了日時",
+      "budget": "予算",
+      "budget_placeholder": "例：2000",
+      "currency": "通貨",
+      "currency_hint": "支出用"
+    },
+    "empty": {
+      "title": "旅行が見つかりません",
+      "subtitle": "最初の旅行を作成しましょう",
+      "button": "新しい旅行を作成"
+    },
+    "checklists": {
+      "title": "リスト",
+      "create": {
+        "title": "新しいリストを作成",
+        "prompt": "リスト名："
+      },
+      "edit": {
+        "title": "リスト名を変更",
+        "prompt": "新しいリスト名："
+      },
+      "delete": {
+        "title": "リストを削除",
+        "message": "リスト「{{title}}」を削除してもよろしいですか？"
+      },
+      "templates": {
+        "title": "テンプレート",
+        "empty": "利用できるテンプレートがありません。",
+        "select_title": "テンプレートを選択",
+        "select_prompt": "テンプレートを選んでください："
+      },
+      "empty": {
+        "title": "リストがありません",
+        "description": "プラスボタンで最初のリストを作成してください。\n\nまたはテンプレートボタンからテンプレートを選択してください。"
+      },
+      "errors": {
+        "create": "リストを作成できませんでした。",
+        "create_from_template": "テンプレートからリストを作成できませんでした。",
+        "update": "リストを更新できませんでした。",
+        "delete": "リストを削除できませんでした。"
+      }
+    },
+    "settings_screen": {
+      "title": "設定",
+      "general": "一般",
+      "vacation_details": {
+        "title": "旅行の詳細",
+        "subtitle": "目的地、ホテル、日付、予算を編集します"
+      }
+    },
+    "edit_screen": {
+      "title": "旅行を編集",
+      "subtitle": "ここで旅行の詳細を変更できます",
+      "loading": "旅行を読み込み中…",
+      "errors": {
+        "not_found": "旅行が見つかりません。",
+        "required_fields": "必須項目をすべて入力してください。",
+        "invalid_dates": "終了日は開始日より後に設定してください。",
+        "update_failed": "旅行を更新できませんでした。"
+      }
+    },
+    "tabs": {
+      "budget": "予算",
+      "report": "レポート",
+      "lists": "リスト",
+      "settings": "設定"
+    }
+  },
+  "expense": {
+    "add": {
+      "title": "新しい支出"
+    },
+    "edit": {
+      "title": "支出を編集"
+    },
+    "delete": {
+      "title": "支出を削除",
+      "message": "支出「{{description}}」を削除してもよろしいですか？",
+      "error": "支出を削除できませんでした"
+    },
+    "form": {
+      "amount": "金額",
+      "amount_placeholder": "52.50",
+      "description": "説明",
+      "description_placeholder": "例：空港の売店",
+      "date": "日時",
+      "converted_amount": "換算後",
+      "converting": "換算中…",
+      "currency_calculator": "通貨換算"
+    },
+    "empty": {
+      "title": "支出はまだありません",
+      "subtitle": "➕ をタップして最初の支出を追加してください"
+    }
+  },
+  "categories": {
+    "label": "カテゴリ",
+    "food": "食事",
+    "transport": "交通",
+    "accommodation": "宿泊",
+    "entertainment": "娯楽",
+    "shopping": "買い物",
+    "other": "その他",
+    "unknown": "不明"
+  },
+  "budget": {
+    "overview": {
+      "title": "予算の概要"
+    }
+  },
+  "checklist": {
+    "loading": "リストを読み込み中…",
+    "add_item_placeholder": "新しい項目を追加…",
+    "categories": {
+      "packing": "荷造り",
+      "shopping": "買い物",
+      "bucket": "やりたいことリスト",
+      "todo": "タスク",
+      "planning": "計画",
+      "general": "一般",
+      "custom": "カスタム"
+    },
+    "delete_item": {
+      "title": "項目を削除",
+      "message": "「{{text}}」を削除してもよろしいですか？"
+    },
+    "rename": {
+      "title": "リスト名を変更",
+      "prompt": "新しい名前："
+    },
+    "empty": {
+      "title": "リストは空です",
+      "description": "最初の項目を追加して始めましょう。"
+    },
+    "errors": {
+      "add_item": "項目を追加できませんでした。",
+      "update_item": "項目を更新できませんでした。",
+      "delete_item": "項目を削除できませんでした。",
+      "update_title": "タイトルを変更できませんでした。"
+    }
+  },
+  "template": {
+    "add": {
+      "button": "テンプレートを作成"
+    },
+    "empty": {
+      "title": "標準リストがありません",
+      "subtitle": "旅行用の標準リストを作成しましょう",
+      "create_defaults": "標準リストを4件作成"
+    }
+  },
+  "settings": {
+    "title": "設定",
+    "notifications": {
+      "title": "通知",
+      "subtitle": "通知を管理します",
+      "note_title": "ご注意",
+      "note_message": "通知はお使いの端末のシステム設定で有効にする必要があります。",
+      "budget_alerts": "予算の警告",
+      "budget_alerts_subtitle": "予算超過時に通知します",
+      "expense_reminders": "支出のリマインダー",
+      "expense_reminders_subtitle": "未記録の支出をお知らせします"
+    },
+    "currency": {
+      "title": "通貨",
+      "subtitle": "ご希望の通貨を選択してください",
+      "add_aria": "新しい通貨を追加",
+      "delete_aria": "通貨 {{name}} を削除",
+      "search_placeholder": "通貨を検索…",
+      "search_results": "検索結果（{{count}}）",
+      "all_currencies": "すべての通貨（{{count}}）",
+      "popular_currencies": "よく使う通貨",
+      "label": "通貨",
+      "select_currency": "通貨を選択",
+      "delete": {
+        "title": "通貨を削除",
+        "message": "通貨「{{name}}」を削除してもよろしいですか？"
+      },
+      "errors": {
+        "popular_title": "よく使う通貨",
+        "popular_message": "よく使う通貨は削除できません。",
+        "duplicate_title": "通貨は既に存在します",
+        "duplicate_message": "このコードの通貨は既に存在します。"
+      },
+      "calculator": {
+        "title": "通貨換算",
+        "loading": "設定を読み込み中…",
+        "sections": {
+          "update_policy": "更新",
+          "exchange_rates": "為替レート",
+          "cache": "キャッシュ"
+        },
+        "exchange_rates": {
+          "title": "為替レートを管理",
+          "subtitle": "手動レートの設定と表示"
+        },
+        "update_policy": {
+          "title": "更新ポリシー",
+          "message": "為替レートの更新方法を選択してください：",
+          "auto": "自動",
+          "wifi_only": "Wi-Fiのみ",
+          "manual": "手動"
+        },
+        "mobile_data": {
+          "title": "モバイルデータを使用",
+          "subtitle": "モバイル回線で為替レートを更新します"
+        },
+        "cache_status": {
+          "title": "キャッシュの状態",
+          "expired": "期限切れ",
+          "current": "最新",
+          "no_cache": "キャッシュがありません"
+        },
+        "cache_age_hours": "{{hours}}時間{{minutes}}分前",
+        "cache_age_minutes": "{{minutes}}分前",
+        "last_update": "最終更新：{{date}} {{time}}",
+        "update_now": {
+          "title": "今すぐ更新",
+          "subtitle": "為替レートを手動で取得します"
+        },
+        "clear_cache_button": {
+          "title": "キャッシュを削除",
+          "subtitle": "保存された為替レートを削除します"
+        },
+        "clear_cache": {
+          "title": "キャッシュを削除",
+          "message": "為替レートのキャッシュを削除してもよろしいですか？",
+          "success": "キャッシュを削除しました。"
+        },
+        "update_success": "為替レートを更新しました。",
+        "errors": {
+          "save_failed": "設定を保存できませんでした。",
+          "update_failed": "更新に失敗しました。",
+          "clear_cache_failed": "キャッシュを削除できませんでした。"
+        }
+      },
+      "data": {
+        "title": "通貨データ",
+        "loading": "設定を読み込み中…",
+        "sections": {
+          "cache_status": "キャッシュの状態",
+          "manual_correction": "レートの手動修正",
+          "update_policy": "更新ポリシー",
+          "data_usage": "データ通信",
+          "cache_expiry": "キャッシュの有効期間"
+        },
+        "cache_status": {
+          "label": "状態",
+          "no_cache": "キャッシュがありません",
+          "expired": "期限切れ",
+          "current": "最新",
+          "age": "経過：{{age}}",
+          "last_update": "最終更新：{{time}}"
+        },
+        "actions": {
+          "update_rates": "為替レートを更新",
+          "clear_cache": "キャッシュを削除",
+          "set_manual_rate": "手動レートを設定"
+        },
+        "manual_correction": {
+          "title": "レートを手動で修正",
+          "description": "自動取得したレートが正確でない場合は、手動で上書きできます。\n例：Googleでは100 CHF = 5'218.40 TRYですが、アプリでは異なる値が表示されます。"
+        },
+        "update_policy": {
+          "auto": "自動",
+          "auto_description": "利用可能なときに為替レートを自動更新します",
+          "wifi_only": "Wi-Fiのみ",
+          "wifi_only_description": "Wi-Fi接続時のみ更新します",
+          "manual": "手動",
+          "manual_description": "リクエストがあったときのみ更新します"
+        },
+        "mobile_data": {
+          "title": "モバイルデータを使用",
+          "description": "モバイルデータ通信でも為替レートを更新します"
+        },
+        "cache_expiry": {
+          "1_hour": "1時間",
+          "6_hours": "6時間",
+          "12_hours": "12時間",
+          "1_day": "1日",
+          "2_days": "2日",
+          "1_week": "1週間"
+        },
+        "update": {
+          "success_title": "更新しました",
+          "success_message": "為替レートを正常に更新しました。",
+          "failed_title": "更新に失敗しました",
+          "failed_message": "為替レートの更新中に不明なエラーが発生しました。"
+        },
+        "clear_cache": {
+          "title": "キャッシュを削除",
+          "message": "為替レートのキャッシュを削除してもよろしいですか？保存されたレートデータはすべて削除されます。",
+          "button": "削除",
+          "success_title": "キャッシュを削除しました",
+          "success_message": "為替レートのキャッシュを正常に削除しました。"
+        },
+        "manual_rate": {
+          "invalid_title": "無効な値",
+          "invalid_message": "有効な為替レートを入力してください。",
+          "success_title": "レートを設定しました",
+          "success_message": "手動の為替レート {{from}}/{{to}} = {{rate}} を保存しました。"
+        },
+        "manual_rate_editor": {
+          "title": "手動レート",
+          "section_title": "為替レートを修正",
+          "example_title": "TRY（トルコリラ）の例",
+          "example_description": "Google：100 CHF = 5'218.40 TRY\n52.184と入力してください（1 CHF = 52.184 TRYの場合）",
+          "from_label": "変換元",
+          "to_label": "変換先",
+          "rate_label": "為替レート（1 {{from}} = ? {{to}}）",
+          "rate_placeholder": "例：52.184"
+        }
+      }
+    },
+    "language": {
+      "title": "言語",
+      "subtitle": "ご希望の言語を選択してください",
+      "restart_required": "すべての変更を反映するには、アプリの再起動が必要です。"
+    },
+    "about": {
+      "title": "このアプリについて",
+      "version": "バージョン",
+      "website": "ウェブサイト"
+    },
+    "categories": {
+      "title": "カテゴリ",
+      "subtitle": "カテゴリをタップすると編集できます",
+      "loading": "カテゴリを読み込み中…",
+      "add_aria": "新しいカテゴリを追加",
+      "delete_aria": "カテゴリ {{name}} を削除",
+      "delete": {
+        "title": "カテゴリを削除",
+        "message": "カテゴリ「{{name}}」を削除してもよろしいですか？"
+      },
+      "errors": {
+        "save_title": "保存エラー",
+        "save_message": "カテゴリを保存できませんでした。もう一度お試しください。",
+        "invalid_name_title": "無効な名前",
+        "invalid_name_message": "有効なカテゴリ名を入力してください。",
+        "duplicate_title": "名前は既に存在します",
+        "duplicate_message": "この名前のカテゴリは既に存在します。",
+        "cannot_delete_title": "カテゴリを削除できません",
+        "cannot_delete_message": "カテゴリは少なくとも1つ必要です。"
+      }
+    },
+    "templates": {
+      "title": "標準リスト",
+      "subtitle": "チェックリストのテンプレートを管理します",
+      "description": "ここで旅行用の標準リストを管理できます。リストをタップすると表示・編集できます。",
+      "error_load": "標準リストを読み込めませんでした。",
+      "created_success": "標準リストを4件作成しました！",
+      "created_error": "標準リストを作成できませんでした。"
+    },
+    "exchange_rates": {
+      "title": "為替レート",
+      "subtitle": "手動レートを管理します",
+      "loading": "為替レートを読み込み中…",
+      "info": "手動レートは自動レートより優先されます。これにより、より正確な現地の為替レートを利用できます。",
+      "base_currency": "基準通貨",
+      "rates_title": "為替レート",
+      "delete_all_button": "手動をすべて",
+      "rate_updated": "為替レートを更新しました",
+      "update_success": "為替レートを更新しました",
+      "update_button_aria": "為替レートを更新",
+      "no_results": "通貨が見つかりません",
+      "no_rates": "利用できる為替レートがありません",
+      "no_manual_rates_title": "手動レートがありません",
+      "no_manual_rates_message": "手動の為替レートはまだ設定されていません。",
+      "source": {
+        "manual": "手動",
+        "api": "API",
+        "fallback": "標準",
+        "unknown": "不明"
+      },
+      "delete": {
+        "title": "レートを削除",
+        "message": "手動レート {{from}}/{{to}} を削除してもよろしいですか？"
+      },
+      "delete_all": {
+        "title": "手動レートをすべて削除",
+        "message": "{{count}}件の手動為替レートをすべて削除してもよろしいですか？",
+        "success": "手動レートをすべて削除しました"
+      },
+      "edit_modal": {
+        "title": "為替レートを編集",
+        "subtitle": "1 {{from}} = ? {{to}}",
+        "placeholder": "例：52.184"
+      },
+      "errors": {
+        "load_failed": "為替レートを読み込めませんでした",
+        "save_failed": "為替レートを保存できませんでした",
+        "delete_failed": "為替レートを削除できませんでした",
+        "delete_all_failed": "手動レートを削除できませんでした",
+        "update_failed": "為替レートの更新に失敗しました",
+        "invalid_rate": "有効な為替レートを入力してください（0より大きい値）",
+        "cannot_delete_title": "削除できません",
+        "cannot_delete_message": "削除できるのは手動の為替レートのみです"
+      }
+    }
+  },
+  "errors": {
+    "generic": "エラーが発生しました。もう一度お試しください。",
+    "storage": "データの保存中にエラーが発生しました。もう一度お試しください。",
+    "required_field": "必須項目をすべて入力してください。",
+    "invalid_amount": "無効な金額です",
+    "not_found": "{{item}} が見つかりません"
+  },
+  "onboarding": {
+    "skip": "スキップ",
+    "next": "次へ",
+    "getStarted": "はじめる",
+    "slide1": {
+      "title": "旅行予算へようこそ",
+      "text": "ストレスのない旅行計画と賢い予算管理のためのデジタルパートナーです。最初のアイデアから最後の支出まで、すべてを把握できます。"
+    },
+    "slide2": {
+      "title": "夢の旅行を計画しましょう",
+      "text": "旅行を作成し、目的地やホテルを集め、写真を保存して、地図ですべてを見渡せます。"
+    },
+    "slide3": {
+      "title": "予算をいつでも把握",
+      "text": "支出をカテゴリ別に記録し、リアルタイムの為替レートによる多通貨対応を活用して、予算をその場で確認できます。"
+    },
+    "slide4": {
+      "title": "もう忘れ物はありません",
+      "text": "既製のテンプレート付きの持ち物リスト、タスク、やりたいことリストを活用できます。ドラッグ＆ドロップで簡単に整理できます。"
+    },
+    "slide5": {
+      "title": "あなたに最適化",
+      "text": "ダーク／ライトモード、オフライン対応、複数言語に対応しています。旅行データは端末内に安全に保管されます。"
+    }
+  },
+  "empty_states": {
+    "refresh": "更新"
+  },
+  "components": {
+    "currency_editor": {
+      "title": "新しい通貨",
+      "code_label": "通貨コード（例：USD、TRY）",
+      "code_placeholder": "USD",
+      "name_label": "正式名称",
+      "name_placeholder": "米ドル",
+      "symbol_label": "記号（例：$、€、¥）",
+      "symbol_placeholder": "$",
+      "flag_label": "国旗（例：🇺🇸、🇩🇪、🇨🇭）",
+      "flag_placeholder": "🇺🇸"
+    },
+    "vacation_card": {
+      "over_budget": "超過：",
+      "remaining": "残り："
+    },
+    "budget_overview": {
+      "progress": "{{percentage}}% 使用済み",
+      "total_budget": "総予算",
+      "spent": "支出済み",
+      "remaining": "残り",
+      "per_day": "1日あたりの残り（{{days}}）",
+      "vacation_ended": "旅行終了"
+    }
+  },
+  "report": {
+    "total_expenses": "支出合計",
+    "no_data": "データがありません",
+    "no_data_subtitle": "支出を追加するとレポートが表示されます",
+    "expense_count": "{{count}} 件の支出",
+    "expense_count_plural": "{{count}} 件の支出"
+  }
+}

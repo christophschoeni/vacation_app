@@ -15,11 +15,13 @@ import { useTranslation } from '@/lib/i18n';
 
 export default function LanguageScreen() {
   const colorScheme = useColorScheme();
-  const { t, getCurrentLanguage, setLanguage, getSupportedLanguages } = useTranslation();
+  // `locale` is reactive state; calling getCurrentLanguage() during render
+  // instead would read the service directly, which React Compiler is free to
+  // memoise away - the check mark then never moved.
+  const { t, locale, setLanguage, getSupportedLanguages } = useTranslation();
   const isDark = colorScheme === 'dark';
 
-  // Call these inside the render to ensure they update when language changes
-  const currentLanguage = getCurrentLanguage();
+  const currentLanguage = locale;
   const supportedLanguages = getSupportedLanguages();
 
   const handleLanguageSelect = async (languageCode: string) => {

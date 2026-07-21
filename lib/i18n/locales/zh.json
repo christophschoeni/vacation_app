@@ -1,0 +1,507 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "back": "返回",
+    "ok": "确定",
+    "loading": "加载中…",
+    "error": "错误",
+    "success": "成功",
+    "add": "添加",
+    "create": "创建"
+  },
+  "navigation": {
+    "vacations": "旅行",
+    "settings": "设置"
+  },
+  "vacation": {
+    "add": {
+      "title": "新建旅行",
+      "button": "创建旅行"
+    },
+    "delete": {
+      "title": "删除旅行",
+      "message": "确定要删除旅行“{{destination}}”吗？所有相关数据（支出、清单）也将被删除。",
+      "error": "无法删除旅行"
+    },
+    "detail": {
+      "loading": "正在加载旅行数据…",
+      "not_found": "未找到旅行"
+    },
+    "form": {
+      "destination": "目的地",
+      "destination_placeholder": "例如：安塔利亚",
+      "country": "国家",
+      "country_placeholder": "例如：土耳其",
+      "hotel": "酒店",
+      "hotel_placeholder": "例如：Club Hotel Sera",
+      "start_date": "开始日期和时间",
+      "end_date": "结束日期和时间",
+      "budget": "预算",
+      "budget_placeholder": "例如：2000",
+      "currency": "货币",
+      "currency_hint": "用于支出"
+    },
+    "empty": {
+      "title": "未找到旅行",
+      "subtitle": "创建您的第一次旅行",
+      "button": "创建新旅行"
+    },
+    "checklists": {
+      "title": "清单",
+      "create": {
+        "title": "创建新清单",
+        "prompt": "清单名称："
+      },
+      "edit": {
+        "title": "重命名清单",
+        "prompt": "新的清单名称："
+      },
+      "delete": {
+        "title": "删除清单",
+        "message": "确定要删除清单“{{title}}”吗？"
+      },
+      "templates": {
+        "title": "模板",
+        "empty": "暂无可用模板。",
+        "select_title": "选择模板",
+        "select_prompt": "请选择一个模板："
+      },
+      "empty": {
+        "title": "还没有清单",
+        "description": "使用加号按钮创建您的第一个清单。\n\n或通过模板按钮选择一个模板。"
+      },
+      "errors": {
+        "create": "无法创建清单。",
+        "create_from_template": "无法从模板创建清单。",
+        "update": "无法更新清单。",
+        "delete": "无法删除清单。"
+      }
+    },
+    "settings_screen": {
+      "title": "设置",
+      "general": "常规",
+      "vacation_details": {
+        "title": "旅行详情",
+        "subtitle": "编辑目的地、酒店、日期和预算"
+      }
+    },
+    "edit_screen": {
+      "title": "编辑旅行",
+      "subtitle": "在此修改您的旅行详情",
+      "loading": "正在加载旅行…",
+      "errors": {
+        "not_found": "未找到旅行。",
+        "required_fields": "请填写所有必填项。",
+        "invalid_dates": "结束日期必须晚于开始日期。",
+        "update_failed": "无法更新旅行。"
+      }
+    },
+    "tabs": {
+      "budget": "预算",
+      "report": "报告",
+      "lists": "清单",
+      "settings": "设置"
+    }
+  },
+  "expense": {
+    "add": {
+      "title": "新建支出"
+    },
+    "edit": {
+      "title": "编辑支出"
+    },
+    "delete": {
+      "title": "删除支出",
+      "message": "确定要删除支出“{{description}}”吗？",
+      "error": "无法删除支出"
+    },
+    "form": {
+      "amount": "金额",
+      "amount_placeholder": "52.50",
+      "description": "描述",
+      "description_placeholder": "例如：机场商店",
+      "date": "日期和时间",
+      "converted_amount": "已换算",
+      "converting": "换算中…",
+      "currency_calculator": "货币换算器"
+    },
+    "empty": {
+      "title": "还没有记录支出",
+      "subtitle": "点击 ➕ 添加第一笔支出"
+    }
+  },
+  "categories": {
+    "label": "类别",
+    "food": "餐饮",
+    "transport": "交通",
+    "accommodation": "住宿",
+    "entertainment": "娱乐",
+    "shopping": "购物",
+    "other": "其他",
+    "unknown": "未知"
+  },
+  "budget": {
+    "overview": {
+      "title": "预算概览"
+    }
+  },
+  "checklist": {
+    "loading": "正在加载清单…",
+    "add_item_placeholder": "添加新条目…",
+    "categories": {
+      "packing": "行李打包",
+      "shopping": "购物",
+      "bucket": "愿望清单",
+      "todo": "待办事项",
+      "planning": "计划",
+      "general": "常规",
+      "custom": "自定义"
+    },
+    "delete_item": {
+      "title": "删除条目",
+      "message": "确定要删除“{{text}}”吗？"
+    },
+    "rename": {
+      "title": "重命名清单",
+      "prompt": "新名称："
+    },
+    "empty": {
+      "title": "清单为空",
+      "description": "添加第一个条目即可开始。"
+    },
+    "errors": {
+      "add_item": "无法添加条目。",
+      "update_item": "无法更新条目。",
+      "delete_item": "无法删除条目。",
+      "update_title": "无法修改标题。"
+    }
+  },
+  "template": {
+    "add": {
+      "button": "创建模板"
+    },
+    "empty": {
+      "title": "没有默认清单",
+      "subtitle": "为您的旅行创建默认清单",
+      "create_defaults": "创建 4 个默认清单"
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "notifications": {
+      "title": "通知",
+      "subtitle": "管理您的通知",
+      "note_title": "提示",
+      "note_message": "必须在设备的系统设置中启用通知。",
+      "budget_alerts": "预算提醒",
+      "budget_alerts_subtitle": "超出预算时通知",
+      "expense_reminders": "支出提醒",
+      "expense_reminders_subtitle": "提醒记录未录入的支出"
+    },
+    "currency": {
+      "title": "货币",
+      "subtitle": "选择您偏好的货币",
+      "add_aria": "添加新货币",
+      "delete_aria": "删除货币 {{name}}",
+      "search_placeholder": "搜索货币…",
+      "search_results": "搜索结果（{{count}}）",
+      "all_currencies": "全部货币（{{count}}）",
+      "popular_currencies": "常用货币",
+      "label": "货币",
+      "select_currency": "选择货币",
+      "delete": {
+        "title": "删除货币",
+        "message": "确定要删除货币“{{name}}”吗？"
+      },
+      "errors": {
+        "popular_title": "常用货币",
+        "popular_message": "常用货币无法删除。",
+        "duplicate_title": "货币已存在",
+        "duplicate_message": "已存在使用该代码的货币。"
+      },
+      "calculator": {
+        "title": "货币换算器",
+        "loading": "正在加载设置…",
+        "sections": {
+          "update_policy": "更新",
+          "exchange_rates": "汇率",
+          "cache": "缓存"
+        },
+        "exchange_rates": {
+          "title": "管理汇率",
+          "subtitle": "设置并查看手动汇率"
+        },
+        "update_policy": {
+          "title": "更新策略",
+          "message": "请选择汇率的更新方式：",
+          "auto": "自动",
+          "wifi_only": "仅 WiFi",
+          "manual": "手动"
+        },
+        "mobile_data": {
+          "title": "使用移动数据",
+          "subtitle": "通过移动网络更新汇率"
+        },
+        "cache_status": {
+          "title": "缓存状态",
+          "expired": "已过期",
+          "current": "最新",
+          "no_cache": "没有缓存"
+        },
+        "cache_age_hours": "{{hours}} 小时 {{minutes}} 分钟前",
+        "cache_age_minutes": "{{minutes}} 分钟前",
+        "last_update": "上次更新：{{date}} {{time}}",
+        "update_now": {
+          "title": "立即更新",
+          "subtitle": "手动加载汇率"
+        },
+        "clear_cache_button": {
+          "title": "清除缓存",
+          "subtitle": "移除已保存的汇率"
+        },
+        "clear_cache": {
+          "title": "清除缓存",
+          "message": "确定要清除汇率缓存吗？",
+          "success": "缓存已清空。"
+        },
+        "update_success": "汇率已更新。",
+        "errors": {
+          "save_failed": "无法保存设置。",
+          "update_failed": "更新失败。",
+          "clear_cache_failed": "无法清空缓存。"
+        }
+      },
+      "data": {
+        "title": "货币数据",
+        "loading": "正在加载设置…",
+        "sections": {
+          "cache_status": "缓存状态",
+          "manual_correction": "手动修正汇率",
+          "update_policy": "更新策略",
+          "data_usage": "流量使用",
+          "cache_expiry": "缓存有效期"
+        },
+        "cache_status": {
+          "label": "状态",
+          "no_cache": "没有缓存",
+          "expired": "已过期",
+          "current": "最新",
+          "age": "时长：{{age}}",
+          "last_update": "上次更新：{{time}}"
+        },
+        "actions": {
+          "update_rates": "更新汇率",
+          "clear_cache": "清空缓存",
+          "set_manual_rate": "设置手动汇率"
+        },
+        "manual_correction": {
+          "title": "手动修正汇率",
+          "description": "如果自动汇率不准确，您可以手动覆盖。\n例如：谷歌显示 100 CHF = 5'218.40 TRY，但应用显示的数值不同。"
+        },
+        "update_policy": {
+          "auto": "自动",
+          "auto_description": "在可用时自动更新汇率",
+          "wifi_only": "仅 WLAN",
+          "wifi_only_description": "仅通过 WLAN 连接更新",
+          "manual": "手动",
+          "manual_description": "仅在请求时更新"
+        },
+        "mobile_data": {
+          "title": "使用移动数据",
+          "description": "也通过移动数据连接更新汇率"
+        },
+        "cache_expiry": {
+          "1_hour": "1 小时",
+          "6_hours": "6 小时",
+          "12_hours": "12 小时",
+          "1_day": "1 天",
+          "2_days": "2 天",
+          "1_week": "1 周"
+        },
+        "update": {
+          "success_title": "更新成功",
+          "success_message": "汇率已成功更新。",
+          "failed_title": "更新失败",
+          "failed_message": "更新汇率时发生未知错误。"
+        },
+        "clear_cache": {
+          "title": "清空缓存",
+          "message": "确定要清空汇率缓存吗？这将删除所有已保存的汇率数据。",
+          "button": "清空",
+          "success_title": "缓存已清空",
+          "success_message": "汇率缓存已成功清空。"
+        },
+        "manual_rate": {
+          "invalid_title": "数值无效",
+          "invalid_message": "请输入有效的汇率。",
+          "success_title": "汇率已设置",
+          "success_message": "手动汇率 {{from}}/{{to}} = {{rate}} 已保存。"
+        },
+        "manual_rate_editor": {
+          "title": "手动汇率",
+          "section_title": "修正汇率",
+          "example_title": "TRY（土耳其里拉）示例",
+          "example_description": "谷歌：100 CHF = 5'218.40 TRY\n请输入 52.184（即 1 CHF = 52.184 TRY）",
+          "from_label": "从",
+          "to_label": "到",
+          "rate_label": "汇率（1 {{from}} = ? {{to}}）",
+          "rate_placeholder": "例如：52.184"
+        }
+      }
+    },
+    "language": {
+      "title": "语言",
+      "subtitle": "选择您偏好的语言",
+      "restart_required": "需要重启应用，所有更改才会生效。"
+    },
+    "about": {
+      "title": "关于",
+      "version": "版本",
+      "website": "网站"
+    },
+    "categories": {
+      "title": "类别",
+      "subtitle": "点击类别即可编辑",
+      "loading": "正在加载类别…",
+      "add_aria": "添加新类别",
+      "delete_aria": "删除类别 {{name}}",
+      "delete": {
+        "title": "删除类别",
+        "message": "确定要删除类别“{{name}}”吗？"
+      },
+      "errors": {
+        "save_title": "保存错误",
+        "save_message": "无法保存类别。请重试。",
+        "invalid_name_title": "名称无效",
+        "invalid_name_message": "请输入有效的类别名称。",
+        "duplicate_title": "名称已存在",
+        "duplicate_message": "已存在同名类别。",
+        "cannot_delete_title": "无法删除类别",
+        "cannot_delete_message": "至少需要保留一个类别。"
+      }
+    },
+    "templates": {
+      "title": "默认清单",
+      "subtitle": "管理清单模板",
+      "description": "在此管理旅行用的默认清单。点击某个清单即可查看或编辑。",
+      "error_load": "无法加载默认清单。",
+      "created_success": "已创建 4 个默认清单！",
+      "created_error": "无法创建默认清单。"
+    },
+    "exchange_rates": {
+      "title": "汇率",
+      "subtitle": "管理手动汇率",
+      "loading": "正在加载汇率…",
+      "info": "手动汇率优先于自动汇率。这样您可以使用更精确的本地汇率。",
+      "base_currency": "基准货币",
+      "rates_title": "汇率",
+      "delete_all_button": "全部手动",
+      "rate_updated": "汇率已更新",
+      "update_success": "汇率已更新",
+      "update_button_aria": "更新汇率",
+      "no_results": "未找到货币",
+      "no_rates": "没有可用汇率",
+      "no_manual_rates_title": "没有手动汇率",
+      "no_manual_rates_message": "您还没有设置任何手动汇率。",
+      "source": {
+        "manual": "手动",
+        "api": "API",
+        "fallback": "默认",
+        "unknown": "未知"
+      },
+      "delete": {
+        "title": "删除汇率",
+        "message": "确定要删除手动汇率 {{from}}/{{to}} 吗？"
+      },
+      "delete_all": {
+        "title": "删除所有手动汇率",
+        "message": "确定要删除全部 {{count}} 条手动汇率吗？",
+        "success": "所有手动汇率已删除"
+      },
+      "edit_modal": {
+        "title": "编辑汇率",
+        "subtitle": "1 {{from}} = ? {{to}}",
+        "placeholder": "例如：52.184"
+      },
+      "errors": {
+        "load_failed": "无法加载汇率",
+        "save_failed": "无法保存汇率",
+        "delete_failed": "无法删除汇率",
+        "delete_all_failed": "无法删除手动汇率",
+        "update_failed": "汇率更新失败",
+        "invalid_rate": "请输入有效的汇率（需大于 0）",
+        "cannot_delete_title": "无法删除",
+        "cannot_delete_message": "只能删除手动汇率"
+      }
+    }
+  },
+  "errors": {
+    "generic": "发生错误。请重试。",
+    "storage": "保存数据时出错。请重试。",
+    "required_field": "请填写所有必填项。",
+    "invalid_amount": "金额无效",
+    "not_found": "未找到 {{item}}"
+  },
+  "onboarding": {
+    "skip": "跳过",
+    "next": "下一步",
+    "getStarted": "开始使用",
+    "slide1": {
+      "title": "欢迎使用旅行预算",
+      "text": "您的数字助手，让假期规划轻松无忧、预算管理更聪明。从最初的想法到最后一笔支出，一切尽在掌握。"
+    },
+    "slide2": {
+      "title": "规划您的梦想之旅",
+      "text": "创建旅行，收藏目的地和酒店，保存照片，并在地图上一览全局。"
+    },
+    "slide3": {
+      "title": "预算始终在掌控中",
+      "text": "按类别记录支出，使用支持实时汇率的多货币功能，实时查看您的预算。"
+    },
+    "slide4": {
+      "title": "再也不会遗漏",
+      "text": "使用智能行李清单、待办事项和愿望清单，并有现成模板可用。拖放即可轻松整理。"
+    },
+    "slide5": {
+      "title": "为您而优化",
+      "text": "深色/浅色模式，支持离线使用，提供多种语言。您的旅行数据安全地保存在设备上。"
+    }
+  },
+  "empty_states": {
+    "refresh": "刷新"
+  },
+  "components": {
+    "currency_editor": {
+      "title": "新建货币",
+      "code_label": "货币代码（例如 USD、TRY）",
+      "code_placeholder": "USD",
+      "name_label": "完整名称",
+      "name_placeholder": "美元",
+      "symbol_label": "符号（例如 $、€、¥）",
+      "symbol_placeholder": "$",
+      "flag_label": "国旗（例如 🇺🇸、🇩🇪、🇨🇭）",
+      "flag_placeholder": "🇺🇸"
+    },
+    "vacation_card": {
+      "over_budget": "超支：",
+      "remaining": "剩余："
+    },
+    "budget_overview": {
+      "progress": "已使用 {{percentage}}%",
+      "total_budget": "总预算",
+      "spent": "已支出",
+      "remaining": "剩余",
+      "per_day": "每日剩余（{{days}}）",
+      "vacation_ended": "旅行已结束"
+    }
+  },
+  "report": {
+    "total_expenses": "支出总额",
+    "no_data": "暂无数据",
+    "no_data_subtitle": "添加支出后即可查看报告",
+    "expense_count": "{{count}} 笔支出",
+    "expense_count_plural": "{{count}} 笔支出"
+  }
+}

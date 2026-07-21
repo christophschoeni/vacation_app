@@ -19,6 +19,7 @@ import { useVacation, useUpdateVacation } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 import { parseAmount } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { currencyService } from '@/lib/currency';
 import { useVacationId } from '@/contexts/VacationContext';
 
 export default function VacationEditScreen() {
@@ -53,17 +54,50 @@ export default function VacationEditScreen() {
   const [, setFormLoading] = useState(false);
 
   useEffect(() => {
-    if (vacation) {
+    if (!vacation) return;
+    let cancelled = false;
+
+    const fillForm = async () => {
+      // The budget field is labelled with defaultCurrency, so a value stored in
+      // a different budgetCurrency has to be converted before it is shown -
+      // otherwise the form displays e.g. a CHF amount under an EUR label and
+      // saving it back would silently change the budget.
+      const storedCurrency = vacation.budgetCurrency || 'CHF';
+      const targetCurrency = defaultCurrency || 'CHF';
+      let budgetForDisplay = vacation.budget ?? null;
+
+      if (budgetForDisplay !== null && storedCurrency !== targetCurrency) {
+        try {
+          budgetForDisplay = await currencyService.convertCurrency(
+            budgetForDisplay,
+            storedCurrency,
+            targetCurrency
+          );
+        } catch {
+          // Keep the stored value if no rate is available; better a slightly
+          // off number than an empty field.
+        }
+      }
+
+      if (cancelled) return;
       setFormData({
         destination: vacation.destination,
         country: vacation.country,
         hotel: vacation.hotel,
         startDate: vacation.startDate,
         endDate: vacation.endDate,
-        budget: vacation.budget ? vacation.budget.toString() : '',
+        budget:
+          budgetForDisplay !== null
+            ? String(Math.round(budgetForDisplay * 100) / 100)
+            : '',
         currency: vacation.currency || defaultCurrency || 'CHF',
       });
-    }
+    };
+
+    fillForm();
+    return () => {
+      cancelled = true;
+    };
   }, [vacation, defaultCurrency]);
 
 
@@ -125,7 +159,12 @@ export default function VacationEditScreen() {
           startDate: formData.startDate,
           endDate: formData.endDate,
           budget: budget,
-          budgetCurrency: vacation.budgetCurrency,  // Keep existing budget currency
+          // The input is labelled with defaultCurrency, so the value the user
+          // typed is in that currency. Keeping the record's previous
+          // budgetCurrency here made the app reinterpret e.g. "1500" as the old
+          // currency and convert it, so the amount shown afterwards was not the
+          // amount entered.
+          budgetCurrency: defaultCurrency || 'CHF',
           currency: formData.currency,               // Vacation currency for expenses
         },
       });

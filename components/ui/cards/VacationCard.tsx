@@ -16,22 +16,26 @@ import type { Vacation } from '@/types';
 interface VacationCardProps {
   vacation: Vacation;
   /**
-   * Spend for this vacation, supplied by the parent.
+   * Budget and spend, both already converted into the display currency by the
+   * parent via useBudgetSummaries.
    *
-   * The card used to query its own expenses, which meant one query per rendered
-   * card. The list now aggregates all totals in a single query and passes the
-   * relevant one down.
+   * The card must not do this itself: it used to compare a CHF expense total
+   * against a budget held in the vacation's own currency and label both with
+   * the display currency, so its figures disagreed with the detail screen.
+   * It also used to query its own expenses, which meant one query per card.
    */
   totalSpent: number;
+  totalBudget: number;
 }
 
-export default function VacationCard({ vacation, totalSpent }: VacationCardProps) {
+export default function VacationCard({ vacation, totalSpent, totalBudget }: VacationCardProps) {
   const { t } = useTranslation();
   const { defaultCurrency } = useCurrency();
 
   const totalExpenses = totalSpent;
-  const remainingBudget = vacation.budget ? vacation.budget - totalExpenses : 0;
-  const budgetStatus = vacation.budget && remainingBudget < 0 ? 'over' : 'normal';
+  const hasBudget = totalBudget > 0;
+  const remainingBudget = hasBudget ? totalBudget - totalExpenses : 0;
+  const budgetStatus = hasBudget && remainingBudget < 0 ? 'over' : 'normal';
 
   // Gradient colors for this vacation
   const gradientColors = getVacationGradient(vacation);
@@ -47,7 +51,7 @@ export default function VacationCard({ vacation, totalSpent }: VacationCardProps
       style={styles.gradientCard}
       accessible={true}
       accessibilityRole="button"
-      accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${vacation.budget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(vacation.budget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
+      accessibilityLabel={`Ferien nach ${vacation.destination}, ${vacation.country}. ${formatDateRange(vacation.startDate, vacation.endDate)}. Hotel: ${vacation.hotel}${hasBudget ? `. Budget: ${formatCurrencyCompact(totalExpenses, defaultCurrency)} von ${formatCurrencyCompact(totalBudget, defaultCurrency)} ausgegeben. ${budgetStatus === 'over' ? `Überschreitung: ${formatCurrencyCompact(Math.abs(remainingBudget), defaultCurrency)}` : `Verbleibend: ${formatCurrencyCompact(remainingBudget, defaultCurrency)}`}` : ''}`}
       accessibilityHint="Doppeltippen zum Öffnen der Feriendetails"
     >
         <View style={styles.cardHeader}>
@@ -72,12 +76,12 @@ export default function VacationCard({ vacation, totalSpent }: VacationCardProps
             </Text>
           </View>
 
-          {vacation.budget && (
+          {hasBudget && (
             <View style={styles.budgetContainer}>
               <Icon name="budget" size={16} color={iconColor} />
               <View style={styles.budgetInfo}>
                 <Text style={[styles.budgetText, { color: textColor }]}>
-                  {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(vacation.budget, defaultCurrency)}
+                  {formatCurrencyCompact(totalExpenses, defaultCurrency)} / {formatCurrencyCompact(totalBudget, defaultCurrency)}
                 </Text>
                 <Text style={[
                   styles.remainingText,

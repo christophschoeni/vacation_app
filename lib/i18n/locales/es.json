@@ -1,0 +1,507 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "back": "Atrás",
+    "ok": "OK",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Correcto",
+    "add": "Añadir",
+    "create": "Crear"
+  },
+  "navigation": {
+    "vacations": "Viajes",
+    "settings": "Ajustes"
+  },
+  "vacation": {
+    "add": {
+      "title": "Nuevo viaje",
+      "button": "Crear viaje"
+    },
+    "delete": {
+      "title": "Eliminar viaje",
+      "message": "¿Realmente desea eliminar el viaje \"{{destination}}\"? También se eliminarán todos los datos asociados (gastos, listas).",
+      "error": "No se pudo eliminar el viaje"
+    },
+    "detail": {
+      "loading": "Cargando datos del viaje...",
+      "not_found": "Viaje no encontrado"
+    },
+    "form": {
+      "destination": "Destino",
+      "destination_placeholder": "p. ej. Antalya",
+      "country": "País",
+      "country_placeholder": "p. ej. Turquía",
+      "hotel": "Hotel",
+      "hotel_placeholder": "p. ej. Club Hotel Sera",
+      "start_date": "Fecha y hora de inicio",
+      "end_date": "Fecha y hora de fin",
+      "budget": "Presupuesto",
+      "budget_placeholder": "p. ej. 2000",
+      "currency": "Moneda",
+      "currency_hint": "para los gastos"
+    },
+    "empty": {
+      "title": "No hay viajes",
+      "subtitle": "Cree su primer viaje",
+      "button": "Crear nuevo viaje"
+    },
+    "checklists": {
+      "title": "Listas",
+      "create": {
+        "title": "Crear nueva lista",
+        "prompt": "Nombre de la lista:"
+      },
+      "edit": {
+        "title": "Renombrar lista",
+        "prompt": "Nuevo nombre de la lista:"
+      },
+      "delete": {
+        "title": "Eliminar lista",
+        "message": "¿Realmente desea eliminar la lista \"{{title}}\"?"
+      },
+      "templates": {
+        "title": "Plantillas",
+        "empty": "No hay plantillas disponibles.",
+        "select_title": "Seleccionar plantilla",
+        "select_prompt": "Elija una plantilla:"
+      },
+      "empty": {
+        "title": "Aún no hay listas",
+        "description": "Cree su primera lista con el botón más.\n\nO elija una plantilla desde el botón de plantillas."
+      },
+      "errors": {
+        "create": "No se pudo crear la lista.",
+        "create_from_template": "No se pudo crear la lista a partir de la plantilla.",
+        "update": "No se pudo actualizar la lista.",
+        "delete": "No se pudo eliminar la lista."
+      }
+    },
+    "settings_screen": {
+      "title": "Ajustes",
+      "general": "General",
+      "vacation_details": {
+        "title": "Detalles del viaje",
+        "subtitle": "Editar destino, hotel, fechas y presupuesto"
+      }
+    },
+    "edit_screen": {
+      "title": "Editar viaje",
+      "subtitle": "Modifique aquí los detalles de su viaje",
+      "loading": "Cargando viaje...",
+      "errors": {
+        "not_found": "Viaje no encontrado.",
+        "required_fields": "Complete todos los campos obligatorios.",
+        "invalid_dates": "La fecha de fin debe ser posterior a la de inicio.",
+        "update_failed": "No se pudo actualizar el viaje."
+      }
+    },
+    "tabs": {
+      "budget": "Presupuesto",
+      "report": "Informe",
+      "lists": "Listas",
+      "settings": "Ajustes"
+    }
+  },
+  "expense": {
+    "add": {
+      "title": "Nuevo gasto"
+    },
+    "edit": {
+      "title": "Editar gasto"
+    },
+    "delete": {
+      "title": "Eliminar gasto",
+      "message": "¿Realmente desea eliminar el gasto \"{{description}}\"?",
+      "error": "No se pudo eliminar el gasto"
+    },
+    "form": {
+      "amount": "Importe",
+      "amount_placeholder": "52.50",
+      "description": "Descripción",
+      "description_placeholder": "p. ej. tienda del aeropuerto",
+      "date": "Fecha y hora",
+      "converted_amount": "Convertido",
+      "converting": "Convirtiendo...",
+      "currency_calculator": "Conversor de moneda"
+    },
+    "empty": {
+      "title": "Aún no hay gastos",
+      "subtitle": "Pulsa ➕ para añadir tu primer gasto"
+    }
+  },
+  "categories": {
+    "label": "Categoría",
+    "food": "Comida",
+    "transport": "Transporte",
+    "accommodation": "Alojamiento",
+    "entertainment": "Ocio",
+    "shopping": "Compras",
+    "other": "Otros",
+    "unknown": "Desconocido"
+  },
+  "budget": {
+    "overview": {
+      "title": "Resumen del presupuesto"
+    }
+  },
+  "checklist": {
+    "loading": "Cargando lista...",
+    "add_item_placeholder": "Añadir nuevo elemento...",
+    "categories": {
+      "packing": "Equipaje",
+      "shopping": "Compras",
+      "bucket": "Lista de deseos",
+      "todo": "Tareas",
+      "planning": "Planificación",
+      "general": "General",
+      "custom": "Personalizada"
+    },
+    "delete_item": {
+      "title": "Eliminar elemento",
+      "message": "¿Realmente desea eliminar \"{{text}}\"?"
+    },
+    "rename": {
+      "title": "Renombrar lista",
+      "prompt": "Nuevo nombre:"
+    },
+    "empty": {
+      "title": "La lista está vacía",
+      "description": "Añada su primer elemento para empezar."
+    },
+    "errors": {
+      "add_item": "No se pudo añadir el elemento.",
+      "update_item": "No se pudo actualizar el elemento.",
+      "delete_item": "No se pudo eliminar el elemento.",
+      "update_title": "No se pudo cambiar el título."
+    }
+  },
+  "template": {
+    "add": {
+      "button": "Crear plantilla"
+    },
+    "empty": {
+      "title": "No hay plantillas",
+      "subtitle": "Cree plantillas de listas para sus viajes",
+      "create_defaults": "Crear 4 plantillas"
+    }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "notifications": {
+      "title": "Notificaciones",
+      "subtitle": "Gestione sus notificaciones",
+      "note_title": "Aviso",
+      "note_message": "Las notificaciones deben estar activadas en los ajustes del sistema de su dispositivo.",
+      "budget_alerts": "Avisos de presupuesto",
+      "budget_alerts_subtitle": "Notificación al superar el presupuesto",
+      "expense_reminders": "Recordatorios de gastos",
+      "expense_reminders_subtitle": "Recordatorio de gastos sin registrar"
+    },
+    "currency": {
+      "title": "Moneda",
+      "subtitle": "Elija su moneda preferida",
+      "add_aria": "Añadir nueva moneda",
+      "delete_aria": "Eliminar la moneda {{name}}",
+      "search_placeholder": "Buscar moneda...",
+      "search_results": "Resultados ({{count}})",
+      "all_currencies": "Todas las monedas ({{count}})",
+      "popular_currencies": "Monedas populares",
+      "label": "Moneda",
+      "select_currency": "Seleccionar moneda",
+      "delete": {
+        "title": "Eliminar moneda",
+        "message": "¿Realmente desea eliminar la moneda \"{{name}}\"?"
+      },
+      "errors": {
+        "popular_title": "Moneda popular",
+        "popular_message": "Las monedas populares no se pueden eliminar.",
+        "duplicate_title": "La moneda ya existe",
+        "duplicate_message": "Ya existe una moneda con este código."
+      },
+      "calculator": {
+        "title": "Conversor de moneda",
+        "loading": "Cargando ajustes...",
+        "sections": {
+          "update_policy": "Actualización",
+          "exchange_rates": "Tipos de cambio",
+          "cache": "Caché"
+        },
+        "exchange_rates": {
+          "title": "Gestionar tipos de cambio",
+          "subtitle": "Definir y ver tipos manuales"
+        },
+        "update_policy": {
+          "title": "Política de actualización",
+          "message": "Elija cómo deben actualizarse los tipos de cambio:",
+          "auto": "Automática",
+          "wifi_only": "Solo wifi",
+          "manual": "Manual"
+        },
+        "mobile_data": {
+          "title": "Usar datos móviles",
+          "subtitle": "Actualizar tipos de cambio por red móvil"
+        },
+        "cache_status": {
+          "title": "Estado de la caché",
+          "expired": "Caducada",
+          "current": "Actual",
+          "no_cache": "No hay caché disponible"
+        },
+        "cache_age_hours": "hace {{hours}} h {{minutes}} min",
+        "cache_age_minutes": "hace {{minutes}} min",
+        "last_update": "Última actualización: {{date}} a las {{time}}",
+        "update_now": {
+          "title": "Actualizar ahora",
+          "subtitle": "Cargar tipos de cambio manualmente"
+        },
+        "clear_cache_button": {
+          "title": "Borrar caché",
+          "subtitle": "Eliminar los tipos de cambio guardados"
+        },
+        "clear_cache": {
+          "title": "Borrar caché",
+          "message": "¿Realmente desea borrar la caché de tipos de cambio?",
+          "success": "La caché se ha vaciado."
+        },
+        "update_success": "Los tipos de cambio se han actualizado.",
+        "errors": {
+          "save_failed": "No se pudieron guardar los ajustes.",
+          "update_failed": "Error en la actualización.",
+          "clear_cache_failed": "No se pudo vaciar la caché."
+        }
+      },
+      "data": {
+        "title": "Datos de moneda",
+        "loading": "Cargando ajustes...",
+        "sections": {
+          "cache_status": "Estado de la caché",
+          "manual_correction": "Corrección manual de tipos",
+          "update_policy": "Política de actualización",
+          "data_usage": "Uso de datos",
+          "cache_expiry": "Validez de la caché"
+        },
+        "cache_status": {
+          "label": "Estado",
+          "no_cache": "No hay caché disponible",
+          "expired": "Caducada",
+          "current": "Actual",
+          "age": "Antigüedad: {{age}}",
+          "last_update": "Última actualización: {{time}}"
+        },
+        "actions": {
+          "update_rates": "Actualizar tipos de cambio",
+          "clear_cache": "Vaciar caché",
+          "set_manual_rate": "Definir tipo manual"
+        },
+        "manual_correction": {
+          "title": "Corregir tipos manualmente",
+          "description": "Si los tipos automáticos son imprecisos, puede sobrescribirlos manualmente.\nEjemplo: Google muestra 100 CHF = 5218,40 TRY, pero la app muestra otro valor."
+        },
+        "update_policy": {
+          "auto": "Automática",
+          "auto_description": "Actualiza los tipos de cambio automáticamente cuando es posible",
+          "wifi_only": "Solo wifi",
+          "wifi_only_description": "Actualiza solo con conexiones wifi",
+          "manual": "Manual",
+          "manual_description": "Actualizar solo a petición"
+        },
+        "mobile_data": {
+          "title": "Usar datos móviles",
+          "description": "Actualizar los tipos de cambio también con datos móviles"
+        },
+        "cache_expiry": {
+          "1_hour": "1 hora",
+          "6_hours": "6 horas",
+          "12_hours": "12 horas",
+          "1_day": "1 día",
+          "2_days": "2 días",
+          "1_week": "1 semana"
+        },
+        "update": {
+          "success_title": "Actualizado correctamente",
+          "success_message": "Los tipos de cambio se han actualizado correctamente.",
+          "failed_title": "Error en la actualización",
+          "failed_message": "Error desconocido al actualizar los tipos de cambio."
+        },
+        "clear_cache": {
+          "title": "Vaciar caché",
+          "message": "¿Realmente desea vaciar la caché de tipos de cambio? Se eliminarán todos los datos de tipos guardados.",
+          "button": "Vaciar",
+          "success_title": "Caché vaciada",
+          "success_message": "La caché de tipos de cambio se ha vaciado correctamente."
+        },
+        "manual_rate": {
+          "invalid_title": "Valor no válido",
+          "invalid_message": "Introduzca un tipo de cambio válido.",
+          "success_title": "Tipo definido",
+          "success_message": "Se ha guardado el tipo de cambio manual {{from}}/{{to}} = {{rate}}."
+        },
+        "manual_rate_editor": {
+          "title": "Tipo manual",
+          "section_title": "Corregir tipo de cambio",
+          "example_title": "Ejemplo para TRY (lira turca)",
+          "example_description": "Google: 100 CHF = 5218,40 TRY\nIntroduzca 52.184 (para 1 CHF = 52.184 TRY)",
+          "from_label": "De",
+          "to_label": "A",
+          "rate_label": "Tipo de cambio (1 {{from}} = ? {{to}})",
+          "rate_placeholder": "p. ej. 52.184"
+        }
+      }
+    },
+    "language": {
+      "title": "Idioma",
+      "subtitle": "Elija su idioma preferido",
+      "restart_required": "Debe reiniciar la app para que todos los cambios surtan efecto."
+    },
+    "about": {
+      "title": "Acerca de",
+      "version": "Versión",
+      "website": "Sitio web"
+    },
+    "categories": {
+      "title": "Categorías",
+      "subtitle": "Pulse una categoría para editarla",
+      "loading": "Cargando categorías...",
+      "add_aria": "Añadir nueva categoría",
+      "delete_aria": "Eliminar la categoría {{name}}",
+      "delete": {
+        "title": "Eliminar categoría",
+        "message": "¿Realmente desea eliminar la categoría \"{{name}}\"?"
+      },
+      "errors": {
+        "save_title": "Error al guardar",
+        "save_message": "No se pudieron guardar las categorías. Inténtelo de nuevo.",
+        "invalid_name_title": "Nombre no válido",
+        "invalid_name_message": "Introduzca un nombre de categoría válido.",
+        "duplicate_title": "El nombre ya existe",
+        "duplicate_message": "Ya existe una categoría con este nombre.",
+        "cannot_delete_title": "No se puede eliminar la categoría",
+        "cannot_delete_message": "Debe tener al menos una categoría."
+      }
+    },
+    "templates": {
+      "title": "Plantillas",
+      "subtitle": "Gestione las plantillas de listas",
+      "description": "Gestione aquí sus plantillas de listas para viajes. Pulse una lista para verla o editarla.",
+      "error_load": "No se pudieron cargar las plantillas.",
+      "created_success": "¡Se han creado 4 plantillas!",
+      "created_error": "No se pudieron crear las plantillas."
+    },
+    "exchange_rates": {
+      "title": "Tipos de cambio",
+      "subtitle": "Gestionar tipos manuales",
+      "loading": "Cargando tipos de cambio...",
+      "info": "Los tipos manuales tienen prioridad sobre los automáticos. Así puede usar tipos de cambio nacionales más precisos.",
+      "base_currency": "Moneda base",
+      "rates_title": "Tipos de cambio",
+      "delete_all_button": "Todos manuales",
+      "rate_updated": "Tipo de cambio actualizado",
+      "update_success": "Tipos de cambio actualizados",
+      "update_button_aria": "Actualizar tipos de cambio",
+      "no_results": "No se encontraron monedas",
+      "no_rates": "No hay tipos de cambio disponibles",
+      "no_manual_rates_title": "Sin tipos manuales",
+      "no_manual_rates_message": "Aún no ha definido ningún tipo de cambio manual.",
+      "source": {
+        "manual": "Manual",
+        "api": "API",
+        "fallback": "Predeterminado",
+        "unknown": "Desconocido"
+      },
+      "delete": {
+        "title": "Eliminar tipo",
+        "message": "¿Realmente desea eliminar el tipo manual {{from}}/{{to}}?"
+      },
+      "delete_all": {
+        "title": "Eliminar todos los tipos manuales",
+        "message": "¿Realmente desea eliminar los {{count}} tipos de cambio manuales?",
+        "success": "Se han eliminado todos los tipos manuales"
+      },
+      "edit_modal": {
+        "title": "Editar tipo de cambio",
+        "subtitle": "1 {{from}} = ? {{to}}",
+        "placeholder": "p. ej. 52.184"
+      },
+      "errors": {
+        "load_failed": "No se pudieron cargar los tipos de cambio",
+        "save_failed": "No se pudo guardar el tipo de cambio",
+        "delete_failed": "No se pudo eliminar el tipo de cambio",
+        "delete_all_failed": "No se pudieron eliminar los tipos manuales",
+        "update_failed": "Error al actualizar los tipos de cambio",
+        "invalid_rate": "Introduzca un tipo de cambio válido (mayor que 0)",
+        "cannot_delete_title": "No se puede eliminar",
+        "cannot_delete_message": "Solo se pueden eliminar los tipos de cambio manuales"
+      }
+    }
+  },
+  "errors": {
+    "generic": "Se ha producido un error. Inténtelo de nuevo.",
+    "storage": "Error al guardar los datos. Inténtelo de nuevo.",
+    "required_field": "Complete todos los campos obligatorios.",
+    "invalid_amount": "Importe no válido",
+    "not_found": "{{item}} no encontrado"
+  },
+  "onboarding": {
+    "skip": "Omitir",
+    "next": "Siguiente",
+    "getStarted": "Empezar",
+    "slide1": {
+      "title": "Bienvenido a Ferien Budget",
+      "text": "Tu compañero digital para planificar viajes sin estrés y gestionar el presupuesto con inteligencia. Todo bajo control, desde la primera idea hasta el último gasto."
+    },
+    "slide2": {
+      "title": "Planifica el viaje de tus sueños",
+      "text": "Crea viajes, reúne destinos y hoteles, guarda fotos y tenlo todo a la vista en el mapa."
+    },
+    "slide3": {
+      "title": "Presupuesto siempre bajo control",
+      "text": "Registra gastos por categorías, usa el soporte multidivisa con tipos de cambio en vivo y consulta tu presupuesto en tiempo real."
+    },
+    "slide4": {
+      "title": "No olvides nada más",
+      "text": "Usa listas de equipaje, tareas y listas de deseos con plantillas ya preparadas. Organízalo todo arrastrando y soltando."
+    },
+    "slide5": {
+      "title": "Optimizada para ti",
+      "text": "Modo claro y oscuro, funciona sin conexión y está disponible en varios idiomas. Tus datos de viaje se quedan seguros en tu dispositivo."
+    }
+  },
+  "empty_states": {
+    "refresh": "Actualizar"
+  },
+  "components": {
+    "currency_editor": {
+      "title": "Nueva moneda",
+      "code_label": "Código de moneda (p. ej. USD, TRY)",
+      "code_placeholder": "USD",
+      "name_label": "Nombre completo",
+      "name_placeholder": "Dólar estadounidense",
+      "symbol_label": "Símbolo (p. ej. $, €, ¥)",
+      "symbol_placeholder": "$",
+      "flag_label": "Bandera (p. ej. 🇺🇸, 🇩🇪, 🇨🇭)",
+      "flag_placeholder": "🇺🇸"
+    },
+    "vacation_card": {
+      "over_budget": "Exceso:",
+      "remaining": "Restante:"
+    },
+    "budget_overview": {
+      "progress": "{{percentage}}% usado",
+      "total_budget": "Presupuesto total",
+      "spent": "Gastado",
+      "remaining": "Restante",
+      "per_day": "Restante por día ({{days}})",
+      "vacation_ended": "Viaje finalizado"
+    }
+  },
+  "report": {
+    "total_expenses": "Gastos totales",
+    "no_data": "No hay datos disponibles",
+    "no_data_subtitle": "Añada gastos para ver el informe",
+    "expense_count": "{{count}} gasto",
+    "expense_count_plural": "{{count}} gastos"
+  }
+}

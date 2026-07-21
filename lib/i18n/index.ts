@@ -12,11 +12,14 @@ import de from './locales/de.json';
 import en from './locales/en.json';
 import fr from './locales/fr.json';
 import it from './locales/it.json';
+import es from './locales/es.json';
+import zh from './locales/zh.json';
+import ja from './locales/ja.json';
 
 const LANGUAGE_STORAGE_KEY = '@vacation_assist_language';
 
 // Supported languages
-export const SUPPORTED_LOCALES = ['de', 'en', 'fr', 'it'] as const;
+export const SUPPORTED_LOCALES = ['de', 'en', 'fr', 'it', 'es', 'zh', 'ja'] as const;
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
 
 class TranslationService {
@@ -30,6 +33,9 @@ class TranslationService {
       en,
       fr,
       it,
+      es,
+      zh,
+      ja,
     });
 
     // Set default locale and fallback
@@ -132,6 +138,9 @@ class TranslationService {
       { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
       { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
       { code: 'it', name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
+      { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
+      { code: 'zh', name: 'Chinese', nativeName: '简体中文', flag: '🇨🇳' },
+      { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
     ];
   }
 }
