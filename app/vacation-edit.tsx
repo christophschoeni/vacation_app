@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DatePicker, FormInput } from '@/components/ui/forms';
+import { ImagePickerField } from '@/components/ui/forms/ImagePickerField';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useVacation, useUpdateVacation } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
@@ -48,6 +49,7 @@ export default function VacationEditScreen() {
     endDate: new Date(),
     budget: '',
     currency: defaultCurrency || 'CHF',
+    imageUrl: null as string | null,
   });
 
   // Only the setter is consumed today; the value is not yet surfaced in the UI.
@@ -92,6 +94,7 @@ export default function VacationEditScreen() {
             ? String(Math.round(budgetForDisplay * 100) / 100)
             : '',
         currency: tripCurrency,
+        imageUrl: vacation.imageUrl ?? null,
       });
     };
 
@@ -167,6 +170,7 @@ export default function VacationEditScreen() {
           // to the trip currency on the next save, with the number converted.
           budgetCurrency: formData.currency,
           currency: formData.currency,               // Vacation currency for expenses
+          imageUrl: formData.imageUrl ?? undefined,
         },
       });
 
@@ -212,6 +216,12 @@ export default function VacationEditScreen() {
             <Text style={[styles.subtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
               {t('vacation.edit_screen.subtitle')}
             </Text>
+
+            <ImagePickerField
+              label={t('vacation.form.image.label')}
+              value={formData.imageUrl}
+              onChange={(uri) => setFormData((prev) => ({ ...prev, imageUrl: uri }))}
+            />
 
             <FormInput
               label={t('vacation.form.destination')}

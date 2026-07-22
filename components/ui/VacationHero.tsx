@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 
@@ -11,6 +11,7 @@ import type { Vacation } from '@/types';
 interface VacationHeroProps {
   vacation: Pick<Vacation, 'destination' | 'startDate' | 'endDate' | 'imageUrl' | 'country'>;
   height?: number;
+  style?: ViewStyle;
 }
 
 /**
@@ -18,14 +19,14 @@ interface VacationHeroProps {
  * report. A dark scrim under the text keeps it legible over any photo. The
  * gradient stands in when no photo is set.
  */
-export function VacationHero({ vacation, height = 150 }: VacationHeroProps) {
+export function VacationHero({ vacation, height = 150, style }: VacationHeroProps) {
   const dateRange = formatDateRange(
     new Date(vacation.startDate),
     new Date(vacation.endDate)
   );
 
   return (
-    <View style={[styles.container, { height }]}>
+    <View style={[styles.container, { height }, style]}>
       {vacation.imageUrl ? (
         <Image source={{ uri: vacation.imageUrl }} style={StyleSheet.absoluteFill} contentFit="cover" />
       ) : (

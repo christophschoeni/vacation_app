@@ -19,6 +19,7 @@ import SwipeableCard from '@/components/ui/SwipeableCard';
 import { Card, Icon, GroupedList } from '@/components/design';
 import { useIOSTheme } from '@/constants/ios-theme';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
+import { VacationHero } from '@/components/ui/VacationHero';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacation, useExpenses, useDeleteExpense } from '@/hooks/queries';
@@ -182,9 +183,11 @@ export default function VacationBudgetScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[styles.destinationTitle, { color: theme.label }]}>
-          {displayVacation.destination}
-        </Text>
+        {/*
+          The hero carries the destination name, so no separate title above it -
+          it read as "Khao Lak" twice otherwise.
+        */}
+        <VacationHero vacation={displayVacation} height={140} style={styles.detailHero} />
 
         <BudgetOverview vacation={displayVacation} expenses={expenses} />
 
@@ -243,12 +246,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  destinationTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    fontFamily: 'System',
-    lineHeight: 34,
-    paddingBottom: 8,
+  detailHero: {
+    marginBottom: 16,
   },
   sectionHeader: {
     flexDirection: 'row',
