@@ -11,6 +11,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
@@ -164,7 +165,7 @@ export default function EditExpenseScreen() {
       if (vacationId && !Array.isArray(vacationId)) {
         router.replace(`/vacation/${vacationId}`);
       } else {
-        router.back();
+        goBack('/(tabs)');
       }
     } catch {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

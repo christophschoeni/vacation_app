@@ -9,6 +9,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon, GroupedList, GroupedListHeader, StatusBadge } from '@/components/design';
@@ -54,7 +55,7 @@ export default function TemplateDetailScreen() {
           onPress: async () => {
             try {
               await deleteTemplate(template.id);
-              router.back();
+              goBack('/settings/templates');
             } catch {
               Alert.alert(t('common.error'), t('template.delete.error'));
             }
@@ -69,7 +70,7 @@ export default function TemplateDetailScreen() {
     try {
       await duplicateTemplate(template.id);
       Alert.alert(t('common.success'), t('template.duplicate.success'));
-      router.back();
+      goBack('/settings/templates');
     } catch {
       Alert.alert(t('common.error'), t('template.duplicate.error'));
     }
@@ -78,7 +79,7 @@ export default function TemplateDetailScreen() {
   if (isLoading) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top', 'bottom']}>
-        <AppHeader title={t('template.detail.title')} showBack onBackPress={() => router.back()} />
+        <AppHeader title={t('template.detail.title')} showBack onBackPress={() => goBack('/settings/templates')} />
         <View style={styles.emptyState}>
           <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
             {t('template.detail.loading')}
@@ -91,7 +92,7 @@ export default function TemplateDetailScreen() {
   if (!template) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top', 'bottom']}>
-        <AppHeader title={t('template.detail.title')} showBack onBackPress={() => router.back()} />
+        <AppHeader title={t('template.detail.title')} showBack onBackPress={() => goBack('/settings/templates')} />
         <View style={styles.emptyState}>
           <Icon name="alert-circle" size={48} color={theme.secondaryLabel} />
           <Text style={[styles.emptyTitle, { color: theme.label }]}>
@@ -111,7 +112,7 @@ export default function TemplateDetailScreen() {
         variant="large"
         title={template.title}
         showBack
-        onBackPress={() => router.back()}
+        onBackPress={() => goBack('/settings/templates')}
         rightAction={
           <TouchableOpacity
             onPress={handleEdit}

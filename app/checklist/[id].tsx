@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon, GroupedList, ProgressBar } from '@/components/design';
@@ -51,7 +51,7 @@ export default function ChecklistDetailScreen() {
         <AppHeader
           title={t('checklist.loading')}
           showBack={true}
-          onBackPress={() => router.back()}
+          onBackPress={() => goBack('/(tabs)')}
         />
       </SafeAreaView>
     );
@@ -143,7 +143,7 @@ export default function ChecklistDetailScreen() {
         title={checklist.title}
         variant="default"
         showBack={true}
-        onBackPress={() => router.back()}
+        onBackPress={() => goBack('/(tabs)')}
         leftAction={
           <TouchableOpacity onPress={handleEditTitle}>
             <Icon name="edit" size={20} color={theme.label} />

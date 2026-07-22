@@ -1,5 +1,6 @@
 import AppHeader from '@/components/ui/AppHeader';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -126,7 +127,7 @@ export default function VacationEditScreen() {
   };
 
   const handleCancel = () => {
-    router.back();
+    goBack(vacationId ? `/vacation/${vacationId}` : '/(tabs)');
   };
 
   const handleSave = async () => {
@@ -175,7 +176,7 @@ export default function VacationEditScreen() {
       });
 
       if (updatedVacation) {
-        router.back();
+        goBack(vacationId ? `/vacation/${vacationId}` : '/(tabs)');
       } else {
         Alert.alert(t('common.error'), t('vacation.edit_screen.errors.update_failed'));
       }

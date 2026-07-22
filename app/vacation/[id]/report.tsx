@@ -12,7 +12,6 @@ import { goBack } from '@/lib/utils/navigation';
 
 import AppHeader from '@/components/ui/AppHeader';
 import { PromptModal } from '@/components/ui/PromptModal';
-import { VacationHero } from '@/components/ui/VacationHero';
 import {
   Card,
   Icon,
@@ -262,26 +261,21 @@ export default function VacationReportScreen() {
   }, [analysis, defaultCurrency]);
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.background }]}
-      edges={['top']}
-    >
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
+      {/* Compact header to match the vacation detail screen — no full-bleed hero. */}
       <AppHeader
+        title={vacation?.destination ?? t('report.title')}
         variant="large"
-        title={t('report.title')}
         showBack={true}
         onBackPress={() => goBack('/(tabs)')}
       />
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
+        contentContainerStyle={{ paddingBottom: tabBarPadding }}
         showsVerticalScrollIndicator={false}
       >
-        {vacation && (
-          <VacationHero vacation={vacation} height={140} />
-        )}
-
+        <View style={styles.body}>
         <View style={styles.summary}>
           <Text style={[styles.summaryAmount, { color: theme.label }]}>
             {formatCurrency(totalExpenses, defaultCurrency)}
@@ -347,6 +341,7 @@ export default function VacationReportScreen() {
             </Text>
           </View>
         )}
+        </View>
       </ScrollView>
 
       <PromptModal
@@ -374,8 +369,8 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  scrollContent: {
-    paddingTop: 0,
+  // Content below the full-bleed hero header keeps the horizontal inset.
+  body: {
     paddingHorizontal: Spacing.lg,
   },
   summary: {

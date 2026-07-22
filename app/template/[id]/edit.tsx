@@ -7,7 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AppHeader from '@/components/ui/AppHeader';
@@ -67,7 +67,7 @@ export default function TemplateEditScreen() {
         <AppHeader
           variant="modal"
           showBack={true}
-          onBackPress={() => router.back()}
+          onBackPress={() => goBack('/settings/templates')}
         />
         <View style={styles.emptyState}>
           <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
@@ -86,7 +86,7 @@ export default function TemplateEditScreen() {
       <AppHeader
         variant="modal"
         showBack={true}
-        onBackPress={() => router.back()}
+        onBackPress={() => goBack('/settings/templates')}
         onRightPress={saving ? undefined : saveTemplate}
       />
 

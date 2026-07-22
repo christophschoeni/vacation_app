@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
-import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { checklistRepository } from '@/lib/db/repositories/checklist-repository';
 import { Checklist, ChecklistCategory, ChecklistItem } from '@/types';
 import { logger } from '@/lib/utils/logger';
@@ -45,7 +45,7 @@ export function useTemplateEditor(templateId: string) {
         const templateData = await checklistRepository.findById(templateId);
         if (!templateData) {
           Alert.alert('Fehler', 'Standard-Liste nicht gefunden.');
-          router.back();
+          goBack('/settings/templates');
           return;
         }
 
@@ -61,7 +61,7 @@ export function useTemplateEditor(templateId: string) {
     } catch (error) {
       logger.error('Failed to load template:', error);
       Alert.alert('Fehler', 'Standard-Liste konnte nicht geladen werden.');
-      router.back();
+      goBack('/settings/templates');
     } finally {
       setLoading(false);
     }
@@ -85,7 +85,7 @@ export function useTemplateEditor(templateId: string) {
     };
 
     setItems(prev => [...prev, newItem]);
-  }, [items.length, templateId]);
+  }, [items.length]);
 
   const updateItem = useCallback((itemId: string, text: string) => {
     if (!text.trim()) return;
@@ -179,7 +179,7 @@ export function useTemplateEditor(templateId: string) {
         Alert.alert('Erfolg', 'Standard-Liste wurde aktualisiert.');
       }
 
-      router.back();
+      goBack('/settings/templates');
       return true;
     } catch (error) {
       logger.error('Failed to save template:', error);

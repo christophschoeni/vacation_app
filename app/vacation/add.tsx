@@ -10,6 +10,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AppHeader from '@/components/ui/AppHeader';
@@ -83,7 +84,7 @@ export default function AddVacationScreen() {
   };
 
   const handleCancel = () => {
-    router.back();
+    goBack('/(tabs)');
   };
 
   const updateField = (field: string, value: string | Date) => {

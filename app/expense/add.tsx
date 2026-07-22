@@ -11,6 +11,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/design';
@@ -170,7 +171,8 @@ export default function AddExpenseScreen() {
 
   const handleCancel = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.back();
+    // Back to the vacation this expense belongs to, or the list if unknown.
+    goBack(resolvedVacationId ? `/vacation/${resolvedVacationId}` : '/(tabs)');
   };
 
   const updateField = (field: string, value: string | Date | ExpenseCategory) => {
