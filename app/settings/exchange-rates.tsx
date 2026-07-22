@@ -9,11 +9,11 @@ import {
   TextInput,
   Modal,
   ActivityIndicator,
-  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Card, Icon } from '@/components/design';
+import { Card, Icon, GroupedList, StatusBadge } from '@/components/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import { currencyService, POPULAR_CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
 import { RateSource } from '@/lib/db/repositories/exchange-rates-repository';
@@ -29,8 +29,8 @@ interface RateDisplay {
 }
 
 export default function ExchangeRatesScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const theme = useIOSTheme();
+  const isDark = theme.isDark;
   const { t } = useTranslation();
   const { defaultCurrency } = useCurrency();
 
@@ -216,19 +216,6 @@ export default function ExchangeRatesScreen() {
     );
   };
 
-  const getSourceIcon = (source: RateSource) => {
-    switch (source) {
-      case 'manual':
-        return '✏️';
-      case 'api':
-        return '🌐';
-      case 'fallback':
-        return '📦';
-      default:
-        return '❓';
-    }
-  };
-
   const getSourceLabel = (source: RateSource) => {
     switch (source) {
       case 'manual':
@@ -244,7 +231,7 @@ export default function ExchangeRatesScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['bottom']}>
         <AppHeader
           title={t('settings.exchange_rates.title')}
           variant="large"
@@ -254,7 +241,7 @@ export default function ExchangeRatesScreen() {
         />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#007AFF'} />
-          <Text style={[styles.loadingText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          <Text style={[styles.loadingText, { color: theme.label }]}>
             {t('settings.exchange_rates.loading')}
           </Text>
         </View>
@@ -263,7 +250,7 @@ export default function ExchangeRatesScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.exchange_rates.title')}
         variant="large"
@@ -280,7 +267,7 @@ export default function ExchangeRatesScreen() {
             {isUpdating ? (
               <ActivityIndicator size="small" color={isDark ? '#FFFFFF' : '#007AFF'} />
             ) : (
-              <Icon name="refresh" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+              <Icon name="refresh" size={24} color={theme.label} />
             )}
           </TouchableOpacity>
         }
@@ -292,12 +279,12 @@ export default function ExchangeRatesScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Search Bar */}
-        <View style={[styles.searchContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
-          <Icon name="search" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+        <View style={[styles.searchContainer, { backgroundColor: theme.tile }]}>
+          <Icon name="search" size={16} color={theme.secondaryLabel} />
           <TextInput
-            style={[styles.searchInput, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}
+            style={[styles.searchInput, { color: theme.label }]}
             placeholder={t('settings.currency.search_placeholder')}
-            placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
+            placeholderTextColor={theme.secondaryLabel}
             value={searchQuery}
             onChangeText={setSearchQuery}
             autoCapitalize="none"
@@ -305,16 +292,16 @@ export default function ExchangeRatesScreen() {
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Icon name="close" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+              <Icon name="close" size={16} color={theme.secondaryLabel} />
             </TouchableOpacity>
           )}
         </View>
 
         {/* Info Card */}
-        <Card variant="clean" style={[styles.infoCard, { backgroundColor: isDark ? '#1C1C1E' : '#F2F2F7' }]}>
+        <Card variant="clean" style={[styles.infoCard, { backgroundColor: theme.tile }]}>
           <View style={styles.infoContent}>
-            <Icon name="info" size={20} color={isDark ? '#0A84FF' : '#007AFF'} />
-            <Text style={[styles.infoText, { color: isDark ? '#EBEBF5' : '#3C3C43' }]}>
+            <Icon name="info" size={20} color={theme.accent} />
+            <Text style={[styles.infoText, { color: theme.secondaryLabel }]}>
               {t('settings.exchange_rates.info')}
             </Text>
           </View>
@@ -322,7 +309,7 @@ export default function ExchangeRatesScreen() {
 
         {/* Base Currency Display */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          <Text style={[styles.sectionTitle, { color: theme.label }]}>
             {t('settings.exchange_rates.base_currency')}
           </Text>
           <Card variant="clean" style={styles.baseCurrencyCard}>
@@ -330,7 +317,7 @@ export default function ExchangeRatesScreen() {
               <Text style={styles.baseCurrencyFlag}>
                 {POPULAR_CURRENCIES.find(c => c.code === defaultCurrency)?.flag || '🌍'}
               </Text>
-              <Text style={[styles.baseCurrencyText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+              <Text style={[styles.baseCurrencyText, { color: theme.label }]}>
                 {defaultCurrency}
               </Text>
             </View>
@@ -340,7 +327,7 @@ export default function ExchangeRatesScreen() {
         {/* Rates List */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            <Text style={[styles.sectionTitle, { color: theme.label }]}>
               {t('settings.exchange_rates.rates_title')}
             </Text>
             <TouchableOpacity onPress={handleDeleteAllManualRates}>
@@ -352,46 +339,41 @@ export default function ExchangeRatesScreen() {
 
           {filteredRates.length === 0 ? (
             <Card variant="clean" style={styles.rateCard}>
-              <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
                 {searchQuery ? t('settings.exchange_rates.no_results') : t('settings.exchange_rates.no_rates')}
               </Text>
             </Card>
           ) : (
-            filteredRates.map((rate) => (
-            <Card key={rate.targetCurrency} variant="clean" style={styles.rateCard}>
-              <View style={styles.rateRow}>
-                <View style={styles.rateInfo}>
+            <GroupedList>
+              {filteredRates.map((rate) => (
+                <View key={rate.targetCurrency} style={styles.rateRow}>
                   <Text style={styles.rateFlag}>
                     {rate.currencyInfo?.flag || '🌍'}
                   </Text>
                   <View style={styles.rateDetails}>
-                    <Text style={[styles.rateCurrency, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                    <Text style={[styles.rateCurrency, { color: theme.label }]}>
                       {rate.targetCurrency}
                     </Text>
-                    <Text style={[styles.rateValue, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                    <Text style={[styles.rateValue, { color: theme.secondaryLabel }]}>
                       1 {defaultCurrency} = {rate.rate.toFixed(4)} {rate.targetCurrency}
                     </Text>
-                    <View style={styles.sourceContainer}>
-                      <Text style={styles.sourceIcon}>{getSourceIcon(rate.source)}</Text>
-                      <Text style={[styles.sourceLabel, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                        {getSourceLabel(rate.source)}
-                      </Text>
-                    </View>
                   </View>
-                </View>
-                <View style={styles.rateActions}>
+                  <StatusBadge
+                    label={getSourceLabel(rate.source)}
+                    tone={rate.source === 'manual' ? 'warning' : rate.source === 'api' ? 'success' : 'neutral'}
+                  />
                   <TouchableOpacity onPress={() => handleEditRate(rate)} style={styles.actionButton}>
-                    <Icon name="edit" size={18} color={isDark ? '#0A84FF' : '#007AFF'} />
+                    <Icon name="edit" size={18} color={theme.accent} />
                   </TouchableOpacity>
                   {rate.source === 'manual' && (
                     <TouchableOpacity onPress={() => handleDeleteRate(rate)} style={styles.actionButton}>
-                      <Icon name="delete" size={18} color="#FF3B30" />
+                      <Icon name="delete" size={18} color={theme.danger} />
                     </TouchableOpacity>
                   )}
                 </View>
-              </View>
-            </Card>
-          )))}
+              ))}
+            </GroupedList>
+          )}
         </View>
       </ScrollView>
 
@@ -404,13 +386,13 @@ export default function ExchangeRatesScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
-            <Text style={[styles.modalTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+            <Text style={[styles.modalTitle, { color: theme.label }]}>
               {t('settings.exchange_rates.edit_modal.title')}
             </Text>
 
             {selectedRate && (
               <>
-                <Text style={[styles.modalSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                <Text style={[styles.modalSubtitle, { color: theme.secondaryLabel }]}>
                   {t('settings.exchange_rates.edit_modal.subtitle', {
                     from: defaultCurrency,
                     to: selectedRate.targetCurrency
@@ -429,7 +411,7 @@ export default function ExchangeRatesScreen() {
                   onChangeText={setEditValue}
                   keyboardType="decimal-pad"
                   placeholder={t('settings.exchange_rates.edit_modal.placeholder')}
-                  placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
+                  placeholderTextColor={theme.secondaryLabel}
                 />
 
                 <View style={styles.modalButtons}>
@@ -437,7 +419,7 @@ export default function ExchangeRatesScreen() {
                     style={[styles.modalButton, styles.cancelButton, { backgroundColor: isDark ? '#2C2C2E' : '#E5E5EA' }]}
                     onPress={() => setEditModalVisible(false)}
                   >
-                    <Text style={[styles.buttonText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                    <Text style={[styles.buttonText, { color: theme.label }]}>
                       {t('common.cancel')}
                     </Text>
                   </TouchableOpacity>
@@ -558,14 +540,10 @@ const styles = StyleSheet.create({
   },
   rateRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  rateInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: 12,
+    gap: 10,
+    paddingVertical: 11,
+    paddingHorizontal: 16,
   },
   rateFlag: {
     fontSize: 24,
