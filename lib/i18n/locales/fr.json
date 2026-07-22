@@ -230,6 +230,31 @@
     "quantity": "Quantité : {{count}}",
     "actions": {
       "duplicate": "Dupliquer"
+    },
+    "editor": {
+      "new_title": "Nouvelle liste standard",
+      "edit_title": "Modifier la liste standard",
+      "loading": "Chargement...",
+      "basic_info_title": "Informations de base",
+      "name_label": "Titre",
+      "name_placeholder": "Nom de la liste standard",
+      "description_label": "Description",
+      "description_placeholder": "Description facultative",
+      "basic_info_footer": "Nom et description de votre liste standard",
+      "category_symbol_title": "Catégorie et symbole",
+      "category_label": "Catégorie",
+      "symbol_label": "Symbole",
+      "category_symbol_footer": "Choisissez une catégorie et un symbole pour votre liste standard",
+      "items_title": "Éléments ({{count}})",
+      "add_item_placeholder": "Ajouter un nouvel élément...",
+      "empty_title": "Aucun élément ajouté pour l'instant.",
+      "empty_subtitle": "Ajoutez des éléments qui apparaîtront dans chaque nouvelle checklist créée à partir de ce modèle.",
+      "delete_item": {
+        "title": "Supprimer l'élément",
+        "message": "Supprimer vraiment « {{name}} » ?",
+        "cancel": "Annuler",
+        "confirm": "Supprimer"
+      }
     }
   },
   "settings": {

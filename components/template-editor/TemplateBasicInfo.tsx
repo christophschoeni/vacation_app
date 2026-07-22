@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { FormInput } from '@/components/ui/forms';
 import { GroupedList, GroupedListHeader, GroupedListFooter } from '@/components/design';
 import { Spacing } from '@/constants/design';
+import { useTranslation } from '@/lib/i18n';
 
 interface TemplateBasicInfoProps {
   title: string;
@@ -17,38 +18,34 @@ export function TemplateBasicInfo({
   onTitleChange,
   onDescriptionChange,
 }: TemplateBasicInfoProps) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.section}>
-      {/* TODO i18n: GRUNDINFORMATIONEN */}
-      <GroupedListHeader title="Grundinformationen" />
+      <GroupedListHeader title={t('template.editor.basic_info_title')} />
 
       <GroupedList style={styles.group}>
         <View style={styles.inputWrapper}>
           <FormInput
-            // TODO i18n: Titel
-            label="Titel"
+            label={t('template.editor.name_label')}
             value={title}
             onChangeText={onTitleChange}
-            // TODO i18n: Name der Standard-Liste
-            placeholder="Name der Standard-Liste"
+            placeholder={t('template.editor.name_placeholder')}
             required
           />
 
           <FormInput
-            // TODO i18n: Beschreibung
-            label="Beschreibung"
+            label={t('template.editor.description_label')}
             value={description}
             onChangeText={onDescriptionChange}
-            // TODO i18n: Optionale Beschreibung
-            placeholder="Optionale Beschreibung"
+            placeholder={t('template.editor.description_placeholder')}
             multiline
             numberOfLines={3}
           />
         </View>
       </GroupedList>
 
-      {/* TODO i18n: Name und Beschreibung Ihrer Standard-Liste */}
-      <GroupedListFooter text="Name und Beschreibung Ihrer Standard-Liste" />
+      <GroupedListFooter text={t('template.editor.basic_info_footer')} />
     </View>
   );
 }

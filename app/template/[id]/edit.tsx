@@ -22,10 +22,12 @@ import {
   CATEGORY_CONFIG,
 } from '@/components/template-editor';
 import { ChecklistCategory } from '@/types';
+import { useTranslation } from '@/lib/i18n';
 
 export default function TemplateEditScreen() {
   const templateId = useRouteId();
   const theme = useIOSTheme();
+  const { t } = useTranslation();
 
   const {
     loading,
@@ -51,9 +53,10 @@ export default function TemplateEditScreen() {
     });
   };
 
-  // TODO i18n: Neue Standard-Liste / Standard-Liste bearbeiten
   const screenTitle =
-    templateId === 'new' ? 'Neue Standard-Liste' : 'Standard-Liste bearbeiten';
+    templateId === 'new'
+      ? t('template.editor.new_title')
+      : t('template.editor.edit_title');
 
   if (loading) {
     return (
@@ -67,9 +70,8 @@ export default function TemplateEditScreen() {
           onBackPress={() => router.back()}
         />
         <View style={styles.emptyState}>
-          {/* TODO i18n: Lade... */}
           <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
-            Lade...
+            {t('template.editor.loading')}
           </Text>
         </View>
       </SafeAreaView>

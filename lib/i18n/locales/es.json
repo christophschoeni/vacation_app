@@ -230,6 +230,31 @@
     "quantity": "Cantidad: {{count}}",
     "actions": {
       "duplicate": "Duplicar"
+    },
+    "editor": {
+      "new_title": "Nueva lista estándar",
+      "edit_title": "Editar lista estándar",
+      "loading": "Cargando...",
+      "basic_info_title": "Información básica",
+      "name_label": "Título",
+      "name_placeholder": "Nombre de la lista estándar",
+      "description_label": "Descripción",
+      "description_placeholder": "Descripción opcional",
+      "basic_info_footer": "Nombre y descripción de su lista estándar",
+      "category_symbol_title": "Categoría y símbolo",
+      "category_label": "Categoría",
+      "symbol_label": "Símbolo",
+      "category_symbol_footer": "Elija una categoría y un símbolo para su lista estándar",
+      "items_title": "Elementos ({{count}})",
+      "add_item_placeholder": "Añadir un nuevo elemento...",
+      "empty_title": "Aún no se han añadido elementos.",
+      "empty_subtitle": "Añada elementos que aparecerán en cada nueva lista creada a partir de esta plantilla.",
+      "delete_item": {
+        "title": "Eliminar elemento",
+        "message": "¿Eliminar realmente «{{name}}»?",
+        "cancel": "Cancelar",
+        "confirm": "Eliminar"
+      }
     }
   },
   "settings": {

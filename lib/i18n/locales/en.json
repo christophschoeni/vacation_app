@@ -230,6 +230,31 @@
     "quantity": "Quantity: {{count}}",
     "actions": {
       "duplicate": "Duplicate"
+    },
+    "editor": {
+      "new_title": "New Default List",
+      "edit_title": "Edit Default List",
+      "loading": "Loading...",
+      "basic_info_title": "Basic Information",
+      "name_label": "Title",
+      "name_placeholder": "Name of the default list",
+      "description_label": "Description",
+      "description_placeholder": "Optional description",
+      "basic_info_footer": "Name and description of your default list",
+      "category_symbol_title": "Category & Symbol",
+      "category_label": "Category",
+      "symbol_label": "Symbol",
+      "category_symbol_footer": "Choose a category and a symbol for your default list",
+      "items_title": "Items ({{count}})",
+      "add_item_placeholder": "Add a new item...",
+      "empty_title": "No items added yet.",
+      "empty_subtitle": "Add items that should appear in every new checklist created from this template.",
+      "delete_item": {
+        "title": "Delete item",
+        "message": "Really delete \"{{name}}\"?",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      }
     }
   },
   "settings": {

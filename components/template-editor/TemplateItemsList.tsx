@@ -4,6 +4,7 @@ import { Icon, GroupedListHeader } from '@/components/design';
 import { FormInput } from '@/components/ui/forms';
 import { BorderRadius, Spacing, Typography } from '@/constants/design';
 import { useIOSTheme } from '@/constants/ios-theme';
+import { useTranslation } from '@/lib/i18n';
 import { ChecklistItem } from '@/types';
 
 interface TemplateItemsListProps {
@@ -20,6 +21,7 @@ export function TemplateItemsList({
   onDeleteItem,
 }: TemplateItemsListProps) {
   const theme = useIOSTheme();
+  const { t } = useTranslation();
   const [newItemText, setNewItemText] = useState('');
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingItemText, setEditingItemText] = useState('');
@@ -51,16 +53,12 @@ export function TemplateItemsList({
 
   const handleDeleteItem = (item: ChecklistItem) => {
     Alert.alert(
-      // TODO i18n: Element löschen
-      'Element löschen',
-      // TODO i18n: Möchten Sie "..." wirklich löschen?
-      `Möchten Sie "${item.text}" wirklich löschen?`,
+      t('template.editor.delete_item.title'),
+      t('template.editor.delete_item.message', { name: item.text }),
       [
-        // TODO i18n: Abbrechen
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('template.editor.delete_item.cancel'), style: 'cancel' },
         {
-          // TODO i18n: Löschen
-          text: 'Löschen',
+          text: t('template.editor.delete_item.confirm'),
           style: 'destructive',
           onPress: () => onDeleteItem(item.id),
         },
@@ -70,8 +68,9 @@ export function TemplateItemsList({
 
   return (
     <View style={styles.section}>
-      {/* TODO i18n: ELEMENTE (n) */}
-      <GroupedListHeader title={`Elemente (${items.length})`} />
+      <GroupedListHeader
+        title={t('template.editor.items_title', { count: items.length })}
+      />
 
       <View style={[styles.itemsContainer, { backgroundColor: theme.groupedBackground }]}>
         {/* Add new item */}
@@ -80,8 +79,7 @@ export function TemplateItemsList({
             <FormInput
               value={newItemText}
               onChangeText={setNewItemText}
-              // TODO i18n: Neues Element hinzufügen...
-              placeholder="Neues Element hinzufügen..."
+              placeholder={t('template.editor.add_item_placeholder')}
               onSubmitEditing={handleAddItem}
               returnKeyType="done"
             />
@@ -169,13 +167,11 @@ export function TemplateItemsList({
           </View>
         ) : (
           <View style={styles.emptyState}>
-            {/* TODO i18n: Noch keine Elemente hinzugefügt. */}
             <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
-              Noch keine Elemente hinzugefügt.
+              {t('template.editor.empty_title')}
             </Text>
-            {/* TODO i18n: Fügen Sie Elemente hinzu, die in jeder neuen Checklist aus dieser Vorlage erscheinen sollen. */}
             <Text style={[styles.emptySubtext, { color: theme.tertiaryLabel }]}>
-              Fügen Sie Elemente hinzu, die in jeder neuen Checklist aus dieser Vorlage erscheinen sollen.
+              {t('template.editor.empty_subtitle')}
             </Text>
           </View>
         )}

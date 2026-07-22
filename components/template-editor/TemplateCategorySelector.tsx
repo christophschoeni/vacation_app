@@ -4,6 +4,7 @@ import { ChecklistCategory } from '@/types';
 import { GroupedListHeader, GroupedListFooter } from '@/components/design';
 import { BorderRadius, Spacing, Typography } from '@/constants/design';
 import { useIOSTheme } from '@/constants/ios-theme';
+import { useTranslation } from '@/lib/i18n';
 import { CATEGORY_CONFIG, TEMPLATE_ICONS } from './constants';
 
 interface TemplateCategorySelectorProps {
@@ -20,18 +21,17 @@ export function TemplateCategorySelector({
   onIconChange,
 }: TemplateCategorySelectorProps) {
   const theme = useIOSTheme();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.section}>
-      {/* TODO i18n: KATEGORIE & SYMBOL */}
-      <GroupedListHeader title="Kategorie & Symbol" />
+      <GroupedListHeader title={t('template.editor.category_symbol_title')} />
 
       <View style={[styles.selectorContainer, { backgroundColor: theme.groupedBackground }]}>
         {/* Category Selection */}
         <View style={styles.subsection}>
-          {/* TODO i18n: Kategorie */}
           <Text style={[styles.subsectionTitle, { color: theme.label }]}>
-            Kategorie
+            {t('template.editor.category_label')}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
             <View style={styles.categoryGrid}>
@@ -68,9 +68,8 @@ export function TemplateCategorySelector({
 
         {/* Icon Selection */}
         <View style={styles.subsection}>
-          {/* TODO i18n: Symbol */}
           <Text style={[styles.subsectionTitle, { color: theme.label }]}>
-            Symbol
+            {t('template.editor.symbol_label')}
           </Text>
           <View style={styles.iconGrid}>
             {TEMPLATE_ICONS.map((icon) => {
@@ -100,8 +99,7 @@ export function TemplateCategorySelector({
         </View>
       </View>
 
-      {/* TODO i18n: Wählen Sie eine Kategorie und ein Symbol für Ihre Standard-Liste */}
-      <GroupedListFooter text="Wählen Sie eine Kategorie und ein Symbol für Ihre Standard-Liste" />
+      <GroupedListFooter text={t('template.editor.category_symbol_footer')} />
     </View>
   );
 }

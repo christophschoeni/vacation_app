@@ -230,6 +230,31 @@
     "quantity": "Anzahl: {{count}}",
     "actions": {
       "duplicate": "Duplizieren"
+    },
+    "editor": {
+      "new_title": "Neue Standard-Liste",
+      "edit_title": "Standard-Liste bearbeiten",
+      "loading": "Lade...",
+      "basic_info_title": "Grundinformationen",
+      "name_label": "Titel",
+      "name_placeholder": "Name der Standard-Liste",
+      "description_label": "Beschreibung",
+      "description_placeholder": "Optionale Beschreibung",
+      "basic_info_footer": "Name und Beschreibung Ihrer Standard-Liste",
+      "category_symbol_title": "Kategorie & Symbol",
+      "category_label": "Kategorie",
+      "symbol_label": "Symbol",
+      "category_symbol_footer": "Wählen Sie eine Kategorie und ein Symbol für Ihre Standard-Liste",
+      "items_title": "Elemente ({{count}})",
+      "add_item_placeholder": "Neues Element hinzufügen...",
+      "empty_title": "Noch keine Elemente hinzugefügt.",
+      "empty_subtitle": "Fügen Sie Elemente hinzu, die in jeder neuen Checklist aus dieser Vorlage erscheinen sollen.",
+      "delete_item": {
+        "title": "Element löschen",
+        "message": "Möchten Sie \"{{name}}\" wirklich löschen?",
+        "cancel": "Abbrechen",
+        "confirm": "Löschen"
+      }
     }
   },
   "settings": {

@@ -230,6 +230,31 @@
     "quantity": "数量：{{count}}",
     "actions": {
       "duplicate": "复制"
+    },
+    "editor": {
+      "new_title": "新建默认清单",
+      "edit_title": "编辑默认清单",
+      "loading": "加载中...",
+      "basic_info_title": "基本信息",
+      "name_label": "标题",
+      "name_placeholder": "默认清单名称",
+      "description_label": "描述",
+      "description_placeholder": "可选描述",
+      "basic_info_footer": "默认清单的名称和描述",
+      "category_symbol_title": "类别和图标",
+      "category_label": "类别",
+      "symbol_label": "图标",
+      "category_symbol_footer": "为您的默认清单选择类别和图标",
+      "items_title": "项目（{{count}}）",
+      "add_item_placeholder": "添加新项目...",
+      "empty_title": "尚未添加任何项目。",
+      "empty_subtitle": "添加将出现在由此模板创建的每个新清单中的项目。",
+      "delete_item": {
+        "title": "删除项目",
+        "message": "确定要删除“{{name}}”吗？",
+        "cancel": "取消",
+        "confirm": "删除"
+      }
     }
   },
   "settings": {
