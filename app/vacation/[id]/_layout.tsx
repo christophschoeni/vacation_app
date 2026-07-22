@@ -19,17 +19,23 @@ function VacationDetailContent() {
   const { t } = useTranslation();
   const { data: vacation, isLoading } = useVacation(vacationId);
 
-  // Set vacation ID in context whenever it changes
+  // Publish the id for the inner tab screens, and clear it when this detail
+  // layout unmounts. Without the reset, closing a trip leaves the last id in the
+  // context; reopening the SAME trip then sets the id to a value it already
+  // holds, so the effect doesn't re-run and the screen can come up stale/empty -
+  // the "reopen does nothing" bug.
   useEffect(() => {
     if (vacationId) {
       setCurrentVacationId(vacationId);
     }
+    return () => setCurrentVacationId(null);
   }, [vacationId, setCurrentVacationId]);
 
-  // The tabs mount only once the vacation exists; while the first fetch is in
-  // flight nothing is rendered, matching the previous behaviour where the
-  // client-side lookup came up empty until the list had loaded.
-  if (isLoading) {
+  // The tabs mount only once the vacation exists. Render nothing while the id is
+  // still resolving or the first fetch is in flight - otherwise a momentarily
+  // missing id (which disables the query, so isLoading is false) would fall
+  // through to the "not found" dead-end and the trip would appear to not open.
+  if (!vacationId || isLoading) {
     return null;
   }
 

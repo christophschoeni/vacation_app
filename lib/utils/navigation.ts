@@ -1,18 +1,24 @@
 import { router, type Href } from 'expo-router';
 
 /**
- * Go back to the previous screen, falling back to a known route.
+ * Navigate "back" to a known destination.
  *
- * `router.back()` alone does nothing when a screen was reached without a
- * navigation stack to pop - e.g. via a deep link, or as a tab destination -
- * which made several back buttons appear dead. Conversely, always pushing a
- * fixed route inflates the stack and animates the wrong way. This picks the
- * right one: pop when possible, otherwise navigate to `fallback`.
+ * We do NOT rely on router.back() / router.canGoBack(): with nested navigators
+ * (this app's NativeTabs) canGoBack() returns true even when back() does
+ * nothing, and after a deep link or reload there is no history at all - both
+ * left the back buttons dead (expo/expo#38536, #35140).
+ *
+ * `dismissTo` unwinds the stack down to `fallback`, *removing* the screens above
+ * it. This matters over `navigate`: `navigate` to an ancestor leaves the detail
+ * route lingering in the stack, so pushing the SAME route again is treated as a
+ * no-op and the trip won't reopen after being closed. Falling back to
+ * `navigate` keeps back working when there is nothing to dismiss (fresh deep
+ * link, no history).
  */
 export function goBack(fallback: Href): void {
-  if (router.canGoBack()) {
-    router.back();
+  if (router.canDismiss()) {
+    router.dismissTo(fallback);
   } else {
-    router.replace(fallback);
+    router.navigate(fallback);
   }
 }
