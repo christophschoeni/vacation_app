@@ -224,24 +224,6 @@ function RootNavigation({
           }}
         />
         <Stack.Screen
-          name="settings/currency-calculator"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="settings/currency-data"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
           name="settings/language"
           options={{
             headerShown: false,
