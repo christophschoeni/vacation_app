@@ -2,7 +2,7 @@ import { Icon, IconName, GroupedList, GroupedListHeader } from '@/components/des
 import { Spacing, Typography } from '@/constants/design';
 import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import React from 'react';
 import * as Haptics from 'expo-haptics';
 import {
@@ -22,7 +22,7 @@ interface SettingsItem {
   titleKey: TranslationKey;
   subtitleKey: TranslationKey;
   icon: IconName;
-  route: string;
+  route: Href;
 }
 
 const SETTINGS_ITEMS: SettingsItem[] = [
@@ -111,20 +111,11 @@ export default function SettingsScreen() {
   const theme = useIOSTheme();
   const { t } = useTranslation();
 
-  const handleSettingsItemPress = async (route: string) => {
+  const handleSettingsItemPress = async (route: Href) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    try {
-      // Use push for reliable navigation from settings
-      router.push(route as any);
-    } catch {
-      // Fallback to navigate if push fails
-      try {
-        router.navigate(route as any);
-      } catch {
-        // Navigation failed - silent fail
-      }
-    }
+    // route is a typed Href, so a mistyped path is now a compile error rather
+    // than a dead button — no `as any` and no silent try/catch needed.
+    router.push(route);
   };
 
 

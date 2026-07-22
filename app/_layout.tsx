@@ -22,40 +22,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/query/client';
 import { useWidgetSync } from '@/hooks/use-widget-sync';
 
-const slideFromRight = {
-  cardStyleInterpolator: ({ current, layouts }: any) => {
-    return {
-      cardStyle: {
-        transform: [
-          {
-            translateX: current.progress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [layouts.screen.width, 0],
-            }),
-          },
-        ],
-      },
-    };
-  },
-};
-
-const modalSlideUp = {
-  cardStyleInterpolator: ({ current, layouts }: any) => {
-    return {
-      cardStyle: {
-        transform: [
-          {
-            translateY: current.progress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [layouts.screen.height, 0],
-            }),
-          },
-        ],
-      },
-    };
-  },
-};
-
 function RootNavigation({
   onRetryMigration,
 }: {
@@ -169,168 +135,30 @@ function RootNavigation({
 
   return (
     <>
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }}>
+      {/*
+        Expo Router registers every file under app/ as a route automatically, so
+        card/push screens (the default) need no explicit <Stack.Screen>. Only
+        screens that deviate from the defaults are listed:
+          - (tabs) enters without an animation (it's the root surface)
+          - the modal group slides up instead of pushing
+        On iOS the native stack's default push already is the slide-from-right
+        transition, so no custom interpolator is needed.
+      */}
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: 'transparent' },
+        }}
+      >
         <Stack.Screen
           name="(tabs)"
-          options={{
-            headerShown: false,
-            presentation: 'transparentModal',
-            animation: 'none',
-          }}
+          options={{ presentation: 'transparentModal', animation: 'none' }}
         />
-        <Stack.Screen
-          name="debug"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="settings/categories"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="settings/currency"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="settings/notifications"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="settings/templates"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="settings/language"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="settings/exchange-rates"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="settings/currency-add"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="template/[id]/index"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="template/[id]/edit"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="vacation/[id]"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="vacation/add"
-          options={{
-            headerShown: false,
-            presentation: 'modal',
-            animationDuration: 350,
-            ...modalSlideUp,
-          }}
-        />
-        <Stack.Screen
-          name="expense/add"
-          options={{
-            headerShown: false,
-            presentation: 'modal',
-            animationDuration: 350,
-            ...modalSlideUp,
-          }}
-        />
-        <Stack.Screen
-          name="expense/edit"
-          options={{
-            headerShown: false,
-            presentation: 'modal',
-            animationDuration: 350,
-            ...modalSlideUp,
-          }}
-        />
-        <Stack.Screen
-          name="checklist/[id]"
-          options={{
-            headerShown: false,
-            presentation: 'card',
-            animationDuration: 300,
-            ...slideFromRight,
-          }}
-        />
-        <Stack.Screen
-          name="vacation-edit"
-          options={{
-            headerShown: false,
-            presentation: 'modal',
-            animationDuration: 350,
-            ...modalSlideUp,
-          }}
-        />
-        <Stack.Screen
-          name="modal"
-          options={{
-            headerShown: false,
-            presentation: 'modal',
-            animationDuration: 350,
-            ...modalSlideUp,
-          }}
-        />
+        <Stack.Screen name="vacation/add" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="expense/add" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="expense/edit" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="vacation-edit" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
       <StatusBar style="auto" />
     </>
