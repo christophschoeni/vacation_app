@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import AppHeader from '@/components/ui/AppHeader';
+import { VacationHero } from '@/components/ui/VacationHero';
 import {
   Card,
   Icon,
@@ -281,10 +282,11 @@ export default function VacationReportScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
         showsVerticalScrollIndicator={false}
       >
+        {vacation && (
+          <VacationHero vacation={vacation} height={140} />
+        )}
+
         <View style={styles.summary}>
-          <Text style={[styles.summaryMeta, { color: theme.secondaryLabel }]}>
-            {vacation?.destination}
-          </Text>
           <Text style={[styles.summaryAmount, { color: theme.label }]}>
             {formatCurrency(totalExpenses, defaultCurrency)}
             {analysis && analysis.totalBudget > 0 && (
@@ -366,10 +368,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
   },
   summary: {
+    paddingTop: Spacing.lg,
     paddingBottom: Spacing.lg,
-  },
-  summaryMeta: {
-    fontSize: Typography.fontSize.subheadline,
   },
   summaryAmount: {
     fontSize: 28,
