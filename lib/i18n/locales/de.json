@@ -204,7 +204,8 @@
       "title": "Keine Standard-Listen",
       "subtitle": "Erstellen Sie Standard-Listen für Ihre Reisen",
       "create_defaults": "4 Standard-Listen erstellen"
-    }
+    },
+    "items_count": "{{count}} Einträge"
   },
   "settings": {
     "title": "Einstellungen",

@@ -204,7 +204,8 @@
       "title": "没有默认清单",
       "subtitle": "为您的旅行创建默认清单",
       "create_defaults": "创建 4 个默认清单"
-    }
+    },
+    "items_count": "{{count}} 项"
   },
   "settings": {
     "title": "设置",

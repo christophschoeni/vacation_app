@@ -204,7 +204,8 @@
       "title": "No Templates",
       "subtitle": "Create templates for your trips",
       "create_defaults": "Create 4 Default Templates"
-    }
+    },
+    "items_count": "{{count}} items"
   },
   "settings": {
     "title": "Settings",

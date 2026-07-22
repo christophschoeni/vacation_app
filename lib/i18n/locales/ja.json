@@ -204,7 +204,8 @@
       "title": "標準リストがありません",
       "subtitle": "旅行用の標準リストを作成しましょう",
       "create_defaults": "標準リストを4件作成"
-    }
+    },
+    "items_count": "{{count}}件"
   },
   "settings": {
     "title": "設定",

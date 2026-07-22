@@ -204,7 +204,8 @@
       "title": "Aucun modèle",
       "subtitle": "Créez des modèles pour vos voyages",
       "create_defaults": "Créer 4 modèles par défaut"
-    }
+    },
+    "items_count": "{{count}} entrées"
   },
   "settings": {
     "title": "Paramètres",

@@ -3,14 +3,16 @@ import {
   View,
   Text,
   StyleSheet,
+  ScrollView,
   TouchableOpacity,
   Alert,
-  useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Card, Icon } from '@/components/design';
+import { Icon, GroupedList, GroupedListFooter } from '@/components/design';
+import { Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import { useTemplates } from '@/hooks/queries';
 import { Checklist } from '@/types';
@@ -18,7 +20,7 @@ import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n';
 
 export default function TemplatesScreen() {
-  const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
   // useTemplates() seeds the defaults itself when none exist, so the screen
   // only has to render what the query returns.
@@ -61,10 +63,8 @@ export default function TemplatesScreen() {
 
   const loading = isLoading || recreating;
 
-  const isDark = colorScheme === 'dark';
-
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.templates.title')}
         variant="large"
@@ -77,29 +77,30 @@ export default function TemplatesScreen() {
             style={styles.headerButton}
             accessibilityLabel={t('template.add.button')}
           >
-            <Icon name="plus" size={20} color={isDark ? '#FFFFFF' : '#007AFF'} />
+            <View style={[styles.headerButtonInner, { backgroundColor: theme.groupedBackground }]}>
+              <Icon name="plus" size={18} color={theme.accent} />
+            </View>
           </TouchableOpacity>
         }
       />
 
-
       {loading ? (
         <View style={styles.emptyState}>
-          <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+          <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
             {t('common.loading')}
           </Text>
         </View>
       ) : templates.length === 0 ? (
         <View style={styles.emptyState}>
-          <Icon name="check-square" size={48} color={isDark ? '#8E8E93' : '#6D6D70'} />
-          <Text style={[styles.emptyTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          <Icon name="check-square" size={48} color={theme.secondaryLabel} />
+          <Text style={[styles.emptyTitle, { color: theme.label }]}>
             {t('template.empty.title')}
           </Text>
-          <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+          <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
             {t('template.empty.subtitle')}
           </Text>
           <TouchableOpacity
-            style={[styles.createButton, { backgroundColor: '#007AFF' }]}
+            style={[styles.createButton, { backgroundColor: theme.accent }]}
             onPress={createDefaultTemplates}
             disabled={loading}
           >
@@ -109,46 +110,36 @@ export default function TemplatesScreen() {
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.content}>
-          <Text style={[styles.pageTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('settings.templates.title')}
-          </Text>
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <GroupedList>
+            {templates.map((template) => (
+              <TouchableOpacity
+                key={template.id}
+                onPress={() => handleTemplatePress(template)}
+                style={styles.row}
+                accessibilityRole="button"
+                accessibilityLabel={template.title}
+              >
+                <Text style={styles.templateIcon}>{template.icon}</Text>
+                <View style={styles.templateText}>
+                  <Text style={[styles.templateTitle, { color: theme.label }]} numberOfLines={1}>
+                    {template.title}
+                  </Text>
+                  <Text style={[styles.templateItems, { color: theme.secondaryLabel }]}>
+                    {t('template.items_count', { count: template.items.length })}
+                  </Text>
+                </View>
+                <Icon name="chevron-right" size={16} color={theme.tertiaryLabel} />
+              </TouchableOpacity>
+            ))}
+          </GroupedList>
 
-          <View style={styles.descriptionContainer}>
-            <Text style={[styles.descriptionText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-              {t('settings.templates.description')}
-            </Text>
-          </View>
-
-          {templates.map((template, index) => (
-            <View key={template.id} style={styles.templateItem}>
-              <Card variant="clean" style={styles.templateCard}>
-                <TouchableOpacity
-                  onPress={() => handleTemplatePress(template)}
-                  style={styles.templateContent}
-                >
-                  <View style={styles.templateInfo}>
-                    <Text style={styles.templateIcon}>{template.icon}</Text>
-                    <View style={styles.templateText}>
-                      <Text style={[styles.templateTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                        {template.title}
-                      </Text>
-                      {template.description && (
-                        <Text style={[styles.templateDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                          {template.description}
-                        </Text>
-                      )}
-                      <Text style={[styles.templateItems, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                        {template.items.length} Einträge
-                      </Text>
-                    </View>
-                  </View>
-                  <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
-                </TouchableOpacity>
-              </Card>
-            </View>
-          ))}
-        </View>
+          <GroupedListFooter text={t('settings.templates.description')} />
+        </ScrollView>
       )}
     </SafeAreaView>
   );
@@ -158,57 +149,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
-  },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    fontFamily: 'System',
-  },
   headerButton: {
-    padding: 8,
     marginRight: -8,
+  },
+  headerButtonInner: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  pageTitle: {
-    fontSize: 34,
-    fontWeight: '700',
-    fontFamily: 'System',
-    marginBottom: 16,
-  },
-  descriptionContainer: {
-    marginBottom: 16,
-  },
-  descriptionText: {
-    fontSize: 14,
-    fontFamily: 'System',
-    lineHeight: 20,
-    textAlign: 'left',
   },
   scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 32,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: 120,
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 64,
+    paddingHorizontal: Spacing.lg,
   },
   emptyTitle: {
     fontSize: 20,
@@ -232,44 +195,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  templateItem: {
-    marginBottom: 8,
-  },
-  templateCard: {
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
     paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  templateContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dragHandle: {
-    paddingRight: 12,
-    paddingVertical: 4,
-  },
-  templateInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
+    paddingHorizontal: Spacing.lg,
   },
   templateIcon: {
     fontSize: 24,
-    marginRight: 12,
   },
   templateText: {
     flex: 1,
   },
   templateTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 2,
-  },
-  templateDescription: {
-    fontSize: 14,
-    marginBottom: 4,
+    fontSize: Typography.fontSize.callout,
   },
   templateItems: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: Typography.fontSize.caption1,
+    marginTop: 1,
   },
 });

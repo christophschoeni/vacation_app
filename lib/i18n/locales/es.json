@@ -204,7 +204,8 @@
       "title": "No hay plantillas",
       "subtitle": "Cree plantillas de listas para sus viajes",
       "create_defaults": "Crear 4 plantillas"
-    }
+    },
+    "items_count": "{{count}} entradas"
   },
   "settings": {
     "title": "Ajustes",

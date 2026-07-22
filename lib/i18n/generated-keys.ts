@@ -305,6 +305,7 @@ export type TranslationKey =
   | 'template.empty.create_defaults'
   | 'template.empty.subtitle'
   | 'template.empty.title'
+  | 'template.items_count'
   | 'vacation.add.button'
   | 'vacation.add.title'
   | 'vacation.checklists.create.prompt'

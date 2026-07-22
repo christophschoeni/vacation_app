@@ -204,7 +204,8 @@
       "title": "Nessun modello",
       "subtitle": "Crea modelli per i tuoi viaggi",
       "create_defaults": "Crea 4 modelli predefiniti"
-    }
+    },
+    "items_count": "{{count}} voci"
   },
   "settings": {
     "title": "Impostazioni",
