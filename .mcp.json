@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "expo-mcp": {
+      "type": "http",
+      "url": "https://mcp.expo.dev/mcp"
+    },
+    "ios-simulator": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "ios-simulator-mcp"]
+    }
+  }
+}

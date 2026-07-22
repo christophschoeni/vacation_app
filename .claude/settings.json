@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(npm ci:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx jest:*)",
+      "Bash(npx expo:*)",
+      "Bash(npx eslint:*)",
+      "Bash(node scripts/:*)",
+      "Bash(git:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(xcrun simctl:*)",
+      "Bash(sqlite3:*)",
+      "Bash(kill:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/*.p8)",
+      "Read(**/*.p12)",
+      "Read(**/*.mobileprovision)"
+    ],
+    "ask": []
+  }
+}
