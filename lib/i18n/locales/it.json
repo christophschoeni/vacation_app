@@ -9,7 +9,8 @@
     "error": "Errore",
     "success": "Successo",
     "add": "Aggiungi",
-    "create": "Crea"
+    "create": "Crea",
+    "edit": "Modifica"
   },
   "navigation": {
     "vacations": "Vacanze",
@@ -205,7 +206,31 @@
       "subtitle": "Crea modelli per i tuoi viaggi",
       "create_defaults": "Crea 4 modelli predefiniti"
     },
-    "items_count": "{{count}} voci"
+    "items_count": "{{count}} voci",
+    "detail": {
+      "title": "Modello",
+      "not_found": "Modello non trovato",
+      "loading": "Caricamento del modello …",
+      "load_error": "Impossibile caricare il modello."
+    },
+    "delete": {
+      "title": "Elimina modello",
+      "message": "Eliminare davvero il modello \"{{title}}\"?",
+      "error": "Impossibile eliminare il modello."
+    },
+    "duplicate": {
+      "success": "Modello duplicato.",
+      "error": "Impossibile duplicare il modello."
+    },
+    "items_title": "Voci",
+    "priority": {
+      "high": "Alta",
+      "low": "Bassa"
+    },
+    "quantity": "Quantità: {{count}}",
+    "actions": {
+      "duplicate": "Duplica"
+    }
   },
   "settings": {
     "title": "Impostazioni",

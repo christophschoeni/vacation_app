@@ -9,7 +9,8 @@
     "error": "Error",
     "success": "Correcto",
     "add": "Añadir",
-    "create": "Crear"
+    "create": "Crear",
+    "edit": "Editar"
   },
   "navigation": {
     "vacations": "Viajes",
@@ -205,7 +206,31 @@
       "subtitle": "Cree plantillas de listas para sus viajes",
       "create_defaults": "Crear 4 plantillas"
     },
-    "items_count": "{{count}} entradas"
+    "items_count": "{{count}} entradas",
+    "detail": {
+      "title": "Plantilla",
+      "not_found": "Plantilla no encontrada",
+      "loading": "Cargando plantilla …",
+      "load_error": "No se pudo cargar la plantilla."
+    },
+    "delete": {
+      "title": "Eliminar plantilla",
+      "message": "¿Eliminar realmente la plantilla «{{title}}»?",
+      "error": "No se pudo eliminar la plantilla."
+    },
+    "duplicate": {
+      "success": "Plantilla duplicada.",
+      "error": "No se pudo duplicar la plantilla."
+    },
+    "items_title": "Entradas",
+    "priority": {
+      "high": "Alta",
+      "low": "Baja"
+    },
+    "quantity": "Cantidad: {{count}}",
+    "actions": {
+      "duplicate": "Duplicar"
+    }
   },
   "settings": {
     "title": "Ajustes",

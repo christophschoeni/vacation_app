@@ -9,7 +9,8 @@
     "error": "Erreur",
     "success": "Succès",
     "add": "Ajouter",
-    "create": "Créer"
+    "create": "Créer",
+    "edit": "Modifier"
   },
   "navigation": {
     "vacations": "Vacances",
@@ -205,7 +206,31 @@
       "subtitle": "Créez des modèles pour vos voyages",
       "create_defaults": "Créer 4 modèles par défaut"
     },
-    "items_count": "{{count}} entrées"
+    "items_count": "{{count}} entrées",
+    "detail": {
+      "title": "Modèle",
+      "not_found": "Modèle introuvable",
+      "loading": "Chargement du modèle …",
+      "load_error": "Impossible de charger le modèle."
+    },
+    "delete": {
+      "title": "Supprimer le modèle",
+      "message": "Supprimer vraiment le modèle « {{title}} » ?",
+      "error": "Impossible de supprimer le modèle."
+    },
+    "duplicate": {
+      "success": "Modèle dupliqué.",
+      "error": "Impossible de dupliquer le modèle."
+    },
+    "items_title": "Entrées",
+    "priority": {
+      "high": "Haute",
+      "low": "Basse"
+    },
+    "quantity": "Quantité : {{count}}",
+    "actions": {
+      "duplicate": "Dupliquer"
+    }
   },
   "settings": {
     "title": "Paramètres",

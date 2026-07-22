@@ -7,20 +7,23 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
-  useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Card, Icon } from '@/components/design';
+import { Icon, GroupedList, GroupedListHeader, StatusBadge } from '@/components/design';
+import { BorderRadius, Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteId } from '@/hooks/use-route-param';
 import { useChecklist, useDeleteTemplate, useDuplicateTemplate } from '@/hooks/queries';
 import { CATEGORY_CONFIG } from '@/lib/constants/categories';
+import { useTranslation } from '@/lib/i18n';
 
 export default function TemplateDetailScreen() {
   const templateId = useRouteId();
-  const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
+  const { t } = useTranslation();
 
   const { data: template, isLoading, isRefetching, error, refetch } = useChecklist(templateId);
   const { mutateAsync: deleteTemplate } = useDeleteTemplate();
@@ -29,13 +32,9 @@ export default function TemplateDetailScreen() {
   React.useEffect(() => {
     if (error) {
       console.error('Failed to load template:', error);
-      Alert.alert('Fehler', 'Standard-Liste konnte nicht geladen werden.');
+      Alert.alert(t('common.error'), t('template.detail.load_error'));
     }
-  }, [error]);
-
-  const handleRefresh = () => {
-    refetch();
-  };
+  }, [error, t]);
 
   const handleEdit = () => {
     router.push(`/template/${templateId}/edit`);
@@ -45,19 +44,19 @@ export default function TemplateDetailScreen() {
     if (!template) return;
 
     Alert.alert(
-      'Standard-Liste löschen',
-      `Möchten Sie die Standard-Liste "${template.title}" wirklich löschen?`,
+      t('template.delete.title'),
+      t('template.delete.message', { title: template.title }),
       [
-        { text: 'Abbrechen', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Löschen',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteTemplate(template.id);
               router.back();
             } catch {
-              Alert.alert('Fehler', 'Standard-Liste konnte nicht gelöscht werden.');
+              Alert.alert(t('common.error'), t('template.delete.error'));
             }
           },
         },
@@ -67,29 +66,22 @@ export default function TemplateDetailScreen() {
 
   const handleDuplicate = async () => {
     if (!template) return;
-
     try {
       await duplicateTemplate(template.id);
-      Alert.alert('Erfolg', 'Standard-Liste wurde dupliziert.');
+      Alert.alert(t('common.success'), t('template.duplicate.success'));
       router.back();
     } catch {
-      Alert.alert('Fehler', 'Standard-Liste konnte nicht dupliziert werden.');
+      Alert.alert(t('common.error'), t('template.duplicate.error'));
     }
   };
 
-  const isDark = colorScheme === 'dark';
-
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
-        <AppHeader
-          title="Standard-Liste"
-          showBack={true}
-          onBackPress={() => router.back()}
-        />
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top', 'bottom']}>
+        <AppHeader title={t('template.detail.title')} showBack onBackPress={() => router.back()} />
         <View style={styles.emptyState}>
-          <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            Lade Standard-Liste...
+          <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
+            {t('template.detail.loading')}
           </Text>
         </View>
       </SafeAreaView>
@@ -98,35 +90,37 @@ export default function TemplateDetailScreen() {
 
   if (!template) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
-        <AppHeader
-          title="Standard-Liste"
-          showBack={true}
-          onBackPress={() => router.back()}
-        />
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top', 'bottom']}>
+        <AppHeader title={t('template.detail.title')} showBack onBackPress={() => router.back()} />
         <View style={styles.emptyState}>
-          <Icon name="alert-circle" size={48} color={isDark ? '#8E8E93' : '#6D6D70'} />
-          <Text style={[styles.emptyTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Standard-Liste nicht gefunden
+          <Icon name="alert-circle" size={48} color={theme.secondaryLabel} />
+          <Text style={[styles.emptyTitle, { color: theme.label }]}>
+            {t('template.detail.not_found')}
           </Text>
         </View>
       </SafeAreaView>
     );
   }
 
+  const categoryLabel = CATEGORY_CONFIG[template.category]?.label || template.category;
+  const categoryIcon = CATEGORY_CONFIG[template.category]?.icon || '📝';
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top', 'bottom']}>
       <AppHeader
+        variant="large"
         title={template.title}
-        showBack={true}
+        showBack
         onBackPress={() => router.back()}
         rightAction={
           <TouchableOpacity
             onPress={handleEdit}
             style={styles.headerButton}
-            accessibilityLabel="Bearbeiten"
+            accessibilityLabel={t('common.edit')}
           >
-            <Icon name="edit" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+            <View style={[styles.headerButtonInner, { backgroundColor: theme.groupedBackground }]}>
+              <Icon name="edit" size={18} color={theme.accent} />
+            </View>
           </TouchableOpacity>
         }
       />
@@ -137,123 +131,98 @@ export default function TemplateDetailScreen() {
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
-            onRefresh={handleRefresh}
-            tintColor={isDark ? '#fff' : '#000'}
+            onRefresh={refetch}
+            tintColor={theme.isDark ? '#fff' : '#000'}
           />
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* Template Header */}
-        <Card variant="clean" style={styles.headerCard}>
-          <View style={styles.templateHeader}>
-            <View style={styles.templateIcon}>
-              <Text style={styles.iconText}>{template.icon}</Text>
-            </View>
-            <View style={styles.templateInfo}>
-              <Text style={[styles.templateTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                {template.title}
+        {/* Template summary */}
+        <View style={[styles.summaryCard, { backgroundColor: theme.groupedBackground }]}>
+          <View style={[styles.templateIcon, { backgroundColor: theme.tile }]}>
+            <Text style={styles.iconText}>{template.icon}</Text>
+          </View>
+          <View style={styles.templateInfo}>
+            <Text style={[styles.templateTitle, { color: theme.label }]}>{template.title}</Text>
+            {template.description ? (
+              <Text style={[styles.templateDescription, { color: theme.secondaryLabel }]}>
+                {template.description}
               </Text>
-              {template.description && (
-                <Text style={[styles.templateDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                  {template.description}
-                </Text>
-              )}
-              <View style={styles.templateMeta}>
-                <View style={styles.categoryBadge}>
-                  <Text style={styles.categoryEmoji}>
-                    {CATEGORY_CONFIG[template.category]?.icon || '📝'}
-                  </Text>
-                  <Text style={[styles.categoryText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                    {CATEGORY_CONFIG[template.category]?.label || template.category}
-                  </Text>
-                </View>
-                <Text style={[styles.itemCount, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                  {template.items.length} Einträge
-                </Text>
-              </View>
+            ) : null}
+            <View style={styles.templateMeta}>
+              <Text style={[styles.categoryText, { color: theme.secondaryLabel }]}>
+                {categoryIcon} {categoryLabel}
+              </Text>
+              <Text style={[styles.itemCount, { color: theme.secondaryLabel }]}>
+                {t('template.items_count', { count: template.items.length })}
+              </Text>
             </View>
           </View>
-        </Card>
+        </View>
 
-        {/* Template Items */}
+        {/* Items */}
         {template.items.length > 0 && (
-          <View style={styles.itemsSection}>
-            <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-              Einträge
-            </Text>
-            {template.items.map((item, index) => (
-              <Card key={item.id} variant="clean" style={styles.itemCard}>
-                <View style={styles.itemContent}>
-                  <View style={[
-                    styles.itemNumber,
-                    { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }
-                  ]}>
-                    <Text style={[styles.itemNumberText, { color: isDark ? '#FFFFFF' : '#6D6D70' }]}>
+          <>
+            <GroupedListHeader title={t('template.items_title')} />
+            <GroupedList>
+              {template.items.map((item, index) => (
+                <View key={item.id} style={styles.itemRow}>
+                  <View style={[styles.itemNumber, { backgroundColor: theme.tile }]}>
+                    <Text style={[styles.itemNumberText, { color: theme.secondaryLabel }]}>
                       {index + 1}
                     </Text>
                   </View>
                   <View style={styles.itemDetails}>
-                    <Text style={[styles.itemText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                      {item.text}
-                    </Text>
-                    {item.notes && (
-                      <Text style={[styles.itemNotes, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                    <Text style={[styles.itemText, { color: theme.label }]}>{item.text}</Text>
+                    {item.notes ? (
+                      <Text style={[styles.itemNotes, { color: theme.secondaryLabel }]}>
                         {item.notes}
                       </Text>
-                    )}
-                    <View style={styles.itemMeta}>
-                      {item.priority !== 'medium' && (
-                        <View style={[styles.priorityBadge, {
-                          backgroundColor: item.priority === 'high' ? '#FF3B30' : '#8E8E93'
-                        }]}>
-                          <Text style={styles.priorityText}>
-                            {item.priority === 'high' ? 'Hoch' : 'Niedrig'}
+                    ) : null}
+                    {(item.priority !== 'medium' || item.quantity) && (
+                      <View style={styles.itemMeta}>
+                        {item.priority !== 'medium' && (
+                          <StatusBadge
+                            label={item.priority === 'high' ? t('template.priority.high') : t('template.priority.low')}
+                            tone={item.priority === 'high' ? 'danger' : 'neutral'}
+                          />
+                        )}
+                        {item.quantity ? (
+                          <Text style={[styles.quantity, { color: theme.secondaryLabel }]}>
+                            {t('template.quantity', { count: item.quantity })}
                           </Text>
-                        </View>
-                      )}
-                      {item.quantity && (
-                        <Text style={[styles.quantity, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                          Anzahl: {item.quantity}
-                        </Text>
-                      )}
-                    </View>
+                        ) : null}
+                      </View>
+                    )}
                   </View>
                 </View>
-              </Card>
-            ))}
-          </View>
+              ))}
+            </GroupedList>
+          </>
         )}
 
-        {/* Action Buttons */}
+        {/* Actions */}
         <View style={styles.actionsSection}>
           <TouchableOpacity
             onPress={handleDuplicate}
-            style={styles.actionButton}
+            style={[styles.actionButton, { backgroundColor: theme.groupedBackground }]}
             activeOpacity={0.7}
           >
-            <Card variant="clean" style={styles.actionButtonCard}>
-              <View style={styles.actionButtonContent}>
-                <Icon name="copy" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-                <Text style={[styles.actionButtonText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                  Duplizieren
-                </Text>
-              </View>
-            </Card>
+            <Icon name="copy" size={20} color={theme.label} />
+            <Text style={[styles.actionButtonText, { color: theme.label }]}>
+              {t('template.actions.duplicate')}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleDelete}
-            style={styles.actionButton}
+            style={[styles.actionButton, { backgroundColor: theme.danger }]}
             activeOpacity={0.7}
           >
-            <Card variant="clean" style={[styles.actionButtonCard, { backgroundColor: '#FF3B30', borderColor: '#FF3B30' }]}>
-              <View style={styles.actionButtonContent}>
-                <Icon name="trash-2" size={20} color="#FFFFFF" />
-                <Text style={[styles.actionButtonText, { color: '#FFFFFF' }]}>
-                  Löschen
-                </Text>
-              </View>
-            </Card>
+            <Icon name="trash-2" size={20} color="#FFFFFF" />
+            <Text style={[styles.actionButtonText, { color: '#FFFFFF' }]}>
+              {t('common.delete')}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -265,38 +234,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
-  },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    fontFamily: 'System',
-  },
   headerButton: {
-    padding: 8,
     marginRight: -8,
   },
-  headerSpacer: {
-    width: 40,
+  headerButtonInner: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 32,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing['3xl'],
   },
   emptyState: {
     flex: 1,
@@ -314,145 +267,104 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
-  headerCard: {
-    marginBottom: 24,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-  },
-  templateHeader: {
+  summaryCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    gap: Spacing.lg,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.card,
+    marginBottom: Spacing.lg,
   },
   templateIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
-    backgroundColor: '#F2F2F7',
+    width: 56,
+    height: 56,
+    borderRadius: BorderRadius.tile,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16,
   },
   iconText: {
-    fontSize: 32,
+    fontSize: 28,
   },
   templateInfo: {
     flex: 1,
   },
   templateTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginBottom: 8,
+    fontSize: Typography.fontSize.title3,
+    fontWeight: Typography.fontWeight.semibold,
+    marginBottom: 4,
   },
   templateDescription: {
-    fontSize: 16,
-    marginBottom: 12,
-    lineHeight: 22,
+    fontSize: Typography.fontSize.subheadline,
+    lineHeight: 20,
+    marginBottom: Spacing.sm,
   },
   templateMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  categoryBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  categoryEmoji: {
-    fontSize: 16,
-    marginRight: 6,
+    marginTop: 4,
   },
   categoryText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: Typography.fontSize.footnote,
+    fontWeight: Typography.fontWeight.medium,
   },
   itemCount: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: Typography.fontSize.footnote,
+    fontWeight: Typography.fontWeight.medium,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 16,
-  },
-  itemsSection: {
-    marginBottom: 32,
-  },
-  itemCard: {
-    marginBottom: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  itemContent: {
+  itemRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    gap: Spacing.md,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
   },
   itemNumber: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#F2F2F7',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginTop: 1,
   },
   itemNumberText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: Typography.fontSize.caption1,
+    fontWeight: Typography.fontWeight.semibold,
   },
   itemDetails: {
     flex: 1,
   },
   itemText: {
-    fontSize: 16,
-    fontWeight: '400',
-    marginBottom: 4,
+    fontSize: Typography.fontSize.callout,
   },
   itemNotes: {
-    fontSize: 14,
-    marginBottom: 6,
+    fontSize: Typography.fontSize.footnote,
+    marginTop: 2,
   },
   itemMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  priorityBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  priorityText: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#FFFFFF',
+    gap: Spacing.sm,
+    marginTop: 6,
   },
   quantity: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: Typography.fontSize.caption1,
+    fontWeight: Typography.fontWeight.medium,
   },
   actionsSection: {
-    gap: 12,
+    gap: Spacing.md,
+    marginTop: Spacing.xl,
   },
   actionButton: {
-    marginBottom: 12,
-  },
-  actionButtonCard: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(60, 60, 67, 0.12)',
-  },
-  actionButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: Spacing.sm,
+    paddingVertical: Spacing.lg,
+    borderRadius: BorderRadius.tile,
   },
   actionButtonText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  deleteButton: {
-    borderColor: '#FF3B30',
+    fontSize: Typography.fontSize.callout,
+    fontWeight: Typography.fontWeight.medium,
   },
 });

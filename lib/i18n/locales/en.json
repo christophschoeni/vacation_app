@@ -9,7 +9,8 @@
     "error": "Error",
     "success": "Success",
     "add": "Add",
-    "create": "Create"
+    "create": "Create",
+    "edit": "Edit"
   },
   "navigation": {
     "vacations": "Vacations",
@@ -205,7 +206,31 @@
       "subtitle": "Create templates for your trips",
       "create_defaults": "Create 4 Default Templates"
     },
-    "items_count": "{{count}} items"
+    "items_count": "{{count}} items",
+    "detail": {
+      "title": "Template",
+      "not_found": "Template not found",
+      "loading": "Loading template …",
+      "load_error": "Could not load the template."
+    },
+    "delete": {
+      "title": "Delete template",
+      "message": "Really delete the template \"{{title}}\"?",
+      "error": "Could not delete the template."
+    },
+    "duplicate": {
+      "success": "Template duplicated.",
+      "error": "Could not duplicate the template."
+    },
+    "items_title": "Items",
+    "priority": {
+      "high": "High",
+      "low": "Low"
+    },
+    "quantity": "Quantity: {{count}}",
+    "actions": {
+      "duplicate": "Duplicate"
+    }
   },
   "settings": {
     "title": "Settings",

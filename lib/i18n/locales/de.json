@@ -9,7 +9,8 @@
     "error": "Fehler",
     "success": "Erfolgreich",
     "add": "Hinzufügen",
-    "create": "Erstellen"
+    "create": "Erstellen",
+    "edit": "Bearbeiten"
   },
   "navigation": {
     "vacations": "Reisen",
@@ -205,7 +206,31 @@
       "subtitle": "Erstellen Sie Standard-Listen für Ihre Reisen",
       "create_defaults": "4 Standard-Listen erstellen"
     },
-    "items_count": "{{count}} Einträge"
+    "items_count": "{{count}} Einträge",
+    "detail": {
+      "title": "Vorlage",
+      "not_found": "Vorlage nicht gefunden",
+      "loading": "Vorlage wird geladen …",
+      "load_error": "Vorlage konnte nicht geladen werden."
+    },
+    "delete": {
+      "title": "Vorlage löschen",
+      "message": "Möchten Sie die Vorlage „{{title}}\" wirklich löschen?",
+      "error": "Vorlage konnte nicht gelöscht werden."
+    },
+    "duplicate": {
+      "success": "Vorlage wurde dupliziert.",
+      "error": "Vorlage konnte nicht dupliziert werden."
+    },
+    "items_title": "Einträge",
+    "priority": {
+      "high": "Hoch",
+      "low": "Niedrig"
+    },
+    "quantity": "Anzahl: {{count}}",
+    "actions": {
+      "duplicate": "Duplizieren"
+    }
   },
   "settings": {
     "title": "Einstellungen",

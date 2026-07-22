@@ -9,7 +9,8 @@
     "error": "エラー",
     "success": "成功しました",
     "add": "追加",
-    "create": "作成"
+    "create": "作成",
+    "edit": "編集"
   },
   "navigation": {
     "vacations": "旅行",
@@ -205,7 +206,31 @@
       "subtitle": "旅行用の標準リストを作成しましょう",
       "create_defaults": "標準リストを4件作成"
     },
-    "items_count": "{{count}}件"
+    "items_count": "{{count}}件",
+    "detail": {
+      "title": "テンプレート",
+      "not_found": "テンプレートが見つかりません",
+      "loading": "テンプレートを読み込み中…",
+      "load_error": "テンプレートを読み込めませんでした。"
+    },
+    "delete": {
+      "title": "テンプレートを削除",
+      "message": "テンプレート「{{title}}」を削除しますか？",
+      "error": "テンプレートを削除できませんでした。"
+    },
+    "duplicate": {
+      "success": "テンプレートを複製しました。",
+      "error": "テンプレートを複製できませんでした。"
+    },
+    "items_title": "項目",
+    "priority": {
+      "high": "高",
+      "low": "低"
+    },
+    "quantity": "数量：{{count}}",
+    "actions": {
+      "duplicate": "複製"
+    }
   },
   "settings": {
     "title": "設定",
