@@ -65,7 +65,10 @@ export default function AddVacationScreen() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: budget,
-        budgetCurrency: defaultCurrency || 'CHF',  // Budget is in system currency
+        // The budget is entered in the currency the user picked for the trip
+        // (labelled with it above), so store that as budgetCurrency rather than
+        // the system default - otherwise "1500" in EUR would persist as CHF.
+        budgetCurrency: formData.currency,
         currency: formData.currency,                // Vacation currency for expenses
       });
       // Use replace instead of dismiss to trigger useFocusEffect and refresh vacation list
@@ -148,18 +151,23 @@ export default function AddVacationScreen() {
               mode="datetime"
             />
 
-            <FormInput
-              label={`${t('vacation.form.budget')} (${defaultCurrency || 'CHF'})`}
-              value={formData.budget}
-              onChangeText={(value) => updateField('budget', value)}
-              placeholder={t('vacation.form.budget_placeholder')}
-              keyboardType="numeric"
-            />
-
+            {/*
+              Currency first, then budget: the budget is entered in the trip's
+              chosen currency, so the picker precedes it and its label reflects
+              the current selection.
+            */}
             <CurrencySelector
               label={`${t('vacation.form.currency')} (${t('vacation.form.currency_hint')})`}
               selectedCurrency={formData.currency}
               onSelect={(value) => updateField('currency', value)}
+            />
+
+            <FormInput
+              label={`${t('vacation.form.budget')} (${formData.currency})`}
+              value={formData.budget}
+              onChangeText={(value) => updateField('budget', value)}
+              placeholder={t('vacation.form.budget_placeholder')}
+              keyboardType="numeric"
             />
           </View>
         </ScrollView>

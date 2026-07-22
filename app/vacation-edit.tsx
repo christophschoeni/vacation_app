@@ -58,20 +58,21 @@ export default function VacationEditScreen() {
     let cancelled = false;
 
     const fillForm = async () => {
-      // The budget field is labelled with defaultCurrency, so a value stored in
-      // a different budgetCurrency has to be converted before it is shown -
+      // The budget field is labelled with the trip currency, so a value stored
+      // under a different budgetCurrency (older records saved it in the system
+      // currency) is converted into the trip currency before it is shown -
       // otherwise the form displays e.g. a CHF amount under an EUR label and
       // saving it back would silently change the budget.
+      const tripCurrency = vacation.currency || defaultCurrency || 'CHF';
       const storedCurrency = vacation.budgetCurrency || 'CHF';
-      const targetCurrency = defaultCurrency || 'CHF';
       let budgetForDisplay = vacation.budget ?? null;
 
-      if (budgetForDisplay !== null && storedCurrency !== targetCurrency) {
+      if (budgetForDisplay !== null && storedCurrency !== tripCurrency) {
         try {
           budgetForDisplay = await currencyService.convertCurrency(
             budgetForDisplay,
             storedCurrency,
-            targetCurrency
+            tripCurrency
           );
         } catch {
           // Keep the stored value if no rate is available; better a slightly
@@ -90,7 +91,7 @@ export default function VacationEditScreen() {
           budgetForDisplay !== null
             ? String(Math.round(budgetForDisplay * 100) / 100)
             : '',
-        currency: vacation.currency || defaultCurrency || 'CHF',
+        currency: tripCurrency,
       });
     };
 
@@ -159,12 +160,12 @@ export default function VacationEditScreen() {
           startDate: formData.startDate,
           endDate: formData.endDate,
           budget: budget,
-          // The input is labelled with defaultCurrency, so the value the user
-          // typed is in that currency. Keeping the record's previous
-          // budgetCurrency here made the app reinterpret e.g. "1500" as the old
-          // currency and convert it, so the amount shown afterwards was not the
-          // amount entered.
-          budgetCurrency: defaultCurrency || 'CHF',
+          // The input is labelled with the trip currency and prefilled in it,
+          // so the value the user typed is in that currency - store it as
+          // budgetCurrency. This is consistent with the create form; older
+          // records that stored the budget in the system currency are migrated
+          // to the trip currency on the next save, with the number converted.
+          budgetCurrency: formData.currency,
           currency: formData.currency,               // Vacation currency for expenses
         },
       });
@@ -252,19 +253,20 @@ export default function VacationEditScreen() {
               required
             />
 
+            {/* Currency first, then budget in that currency - as in create. */}
+            <CurrencySelector
+              label={`${t('vacation.form.currency')} (${t('vacation.form.currency_hint')})`}
+              selectedCurrency={formData.currency}
+              onSelect={(value) => updateField('currency', value)}
+            />
+
             <FormInput
-              label={`${t('vacation.form.budget')} (${defaultCurrency || 'CHF'})`}
+              label={`${t('vacation.form.budget')} (${formData.currency})`}
               value={formData.budget}
               onChangeText={(value) => updateField('budget', value)}
               placeholder={t('vacation.form.budget_placeholder')}
               keyboardType="numeric"
               required
-            />
-
-            <CurrencySelector
-              label={`${t('vacation.form.currency')} (${t('vacation.form.currency_hint')})`}
-              selectedCurrency={formData.currency}
-              onSelect={(value) => updateField('currency', value)}
             />
 
           </View>
