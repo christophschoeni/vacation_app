@@ -5,21 +5,22 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Card, Icon } from '@/components/design';
+
+import { Icon, GroupedList, GroupedListFooter } from '@/components/design';
+import { Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import { useTranslation } from '@/lib/i18n';
 
 export default function LanguageScreen() {
-  const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   // `locale` is reactive state; calling getCurrentLanguage() during render
   // instead would read the service directly, which React Compiler is free to
   // memoise away - the check mark then never moved.
   const { t, locale, setLanguage, getSupportedLanguages } = useTranslation();
-  const isDark = colorScheme === 'dark';
 
   const currentLanguage = locale;
   const supportedLanguages = getSupportedLanguages();
@@ -29,7 +30,7 @@ export default function LanguageScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.language.title')}
         variant="large"
@@ -43,54 +44,34 @@ export default function LanguageScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {t('settings.language.subtitle')}
-          </Text>
-
+        <GroupedList>
           {supportedLanguages.map((language) => (
             <TouchableOpacity
               key={language.code}
               onPress={() => handleLanguageSelect(language.code)}
               activeOpacity={0.7}
+              style={styles.row}
+              accessibilityRole="button"
+              accessibilityLabel={`${language.nativeName}, ${language.name}`}
+              accessibilityState={{ selected: currentLanguage === language.code }}
             >
-              <Card variant="clean" style={styles.languageCard}>
-                <View style={styles.languageRow}>
-                  <View style={styles.languageInfo}>
-                    <View style={styles.languageFlag}>
-                      <Text style={[styles.flagText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                        {language.flag || '🌐'}
-                      </Text>
-                    </View>
-                    <View style={styles.languageText}>
-                      <Text style={[styles.languageName, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                        {language.nativeName}
-                      </Text>
-                      <Text style={[styles.languageEnglishName, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                        {language.name}
-                      </Text>
-                    </View>
-                  </View>
-                  {currentLanguage === language.code && (
-                    <Icon name="check" size={20} color="#007AFF" />
-                  )}
-                </View>
-              </Card>
+              <Text style={styles.flag}>{language.flag || '🌐'}</Text>
+              <View style={styles.text}>
+                <Text style={[styles.name, { color: theme.label }]}>
+                  {language.nativeName}
+                </Text>
+                <Text style={[styles.englishName, { color: theme.secondaryLabel }]}>
+                  {language.name}
+                </Text>
+              </View>
+              {currentLanguage === language.code && (
+                <Icon name="check" size={20} color={theme.accent} />
+              )}
             </TouchableOpacity>
           ))}
-        </View>
+        </GroupedList>
 
-        <View style={styles.section}>
-          <Card variant="clean" style={styles.infoCard}>
-            <View style={styles.infoContent}>
-              <Icon name="info" size={20} color={isDark ? '#8E8E93' : '#6D6D70'} />
-              <Text style={[styles.infoText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                {t('settings.language.restart_required')}
-              </Text>
-            </View>
-          </Card>
-        </View>
+        <GroupedListFooter text={t('settings.language.restart_required')} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -100,94 +81,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  titleSection: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  largeTitle: {
-    fontSize: 34,
-    fontWeight: '700',
-    fontFamily: 'System',
-    lineHeight: 41,
-  },
   content: {
     flex: 1,
   },
   scrollContent: {
+    paddingHorizontal: Spacing.lg,
     paddingBottom: 120,
   },
-  section: {
-    marginBottom: 24,
-    paddingHorizontal: 16,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    marginBottom: 16,
-    fontFamily: 'System',
-  },
-  sectionSubtitle: {
-    fontSize: 15,
-    fontWeight: '400',
-    marginBottom: 16,
-    fontFamily: 'System',
-  },
-  languageCard: {
-    marginBottom: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  languageRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  languageInfo: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
-    gap: 16,
+    gap: Spacing.md,
+    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
   },
-  languageFlag: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 122, 255, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
+  flag: {
+    fontSize: 24,
   },
-  flagText: {
-    fontSize: 20,
-  },
-  languageText: {
+  text: {
     flex: 1,
   },
-  languageName: {
-    fontSize: 17,
-    fontWeight: '400',
-    fontFamily: 'System',
-    marginBottom: 2,
+  name: {
+    fontSize: Typography.fontSize.callout,
   },
-  languageEnglishName: {
-    fontSize: 13,
-    fontWeight: '400',
-    fontFamily: 'System',
-  },
-  infoCard: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  infoContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-  },
-  infoText: {
-    fontSize: 15,
-    fontWeight: '400',
-    fontFamily: 'System',
-    lineHeight: 20,
-    flex: 1,
+  englishName: {
+    fontSize: Typography.fontSize.caption1,
+    marginTop: 1,
   },
 });
