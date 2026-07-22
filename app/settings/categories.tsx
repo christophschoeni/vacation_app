@@ -6,11 +6,12 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Card, Icon, IconName } from '@/components/design';
+import { Icon, IconName, GroupedList, GroupedListFooter } from '@/components/design';
+import { Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import CategoryEditor, { Category } from '@/components/ui/forms/CategoryEditor';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,7 +29,7 @@ const DEFAULT_CATEGORIES: Category[] = [
 const CATEGORIES_STORAGE_KEY = '@vacation_assist_categories';
 
 export default function CategoriesScreen() {
-  const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
   const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
   const [showEditor, setShowEditor] = useState(false);
@@ -155,18 +156,18 @@ export default function CategoriesScreen() {
     );
   };
 
-  const isDark = colorScheme === 'dark';
-
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         <AppHeader
           title={t('settings.categories.title')}
+          variant="large"
           showBack={true}
           onBackPress={() => router.push('/(tabs)/settings')}
+          useSafeAreaPadding={true}
         />
         <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+          <Text style={[styles.loadingText, { color: theme.secondaryLabel }]}>
             {t('settings.categories.loading')}
           </Text>
         </View>
@@ -175,7 +176,7 @@ export default function CategoriesScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.categories.title')}
         variant="large"
@@ -188,7 +189,9 @@ export default function CategoriesScreen() {
             style={styles.headerButton}
             accessibilityLabel={t('settings.categories.add_aria')}
           >
-            <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+            <View style={[styles.headerButtonInner, { backgroundColor: theme.groupedBackground }]}>
+              <Icon name="plus" size={18} color={theme.accent} />
+            </View>
           </TouchableOpacity>
         }
       />
@@ -198,45 +201,38 @@ export default function CategoriesScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.section}>
-          <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {t('settings.categories.subtitle')}
-          </Text>
+        <GroupedList>
           {categories.map((category) => (
             <TouchableOpacity
               key={category.id}
               onPress={() => handleEditCategory(category)}
               activeOpacity={0.7}
+              style={styles.row}
+              accessibilityRole="button"
+              accessibilityLabel={category.name}
             >
-              <Card variant="clean" style={styles.categoryCard}>
-                <View style={styles.categoryRow}>
-                  <View style={styles.categoryInfo}>
-                    <Icon name={category.icon} size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-                    <Text style={[styles.categoryName, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                      {category.name}
-                    </Text>
-                  </View>
-                  <View style={styles.categoryActions}>
-                    {categories.length > 1 && (
-                      <TouchableOpacity
-                        onPress={(e) => {
-                          e.stopPropagation();
-                          handleDeleteCategory(category.id);
-                        }}
-                        style={styles.deleteButton}
-                        accessibilityLabel={t('settings.categories.delete_aria', { name: category.name })}
-                      >
-                        <Icon name="delete" size={18} color="#FF3B30" />
-                      </TouchableOpacity>
-                    )}
-                    <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
-                  </View>
-                </View>
-              </Card>
+              <Icon name={category.icon} size={22} color={theme.accent} />
+              <Text style={[styles.categoryName, { color: theme.label }]} numberOfLines={1}>
+                {category.name}
+              </Text>
+              {categories.length > 1 && (
+                <TouchableOpacity
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleDeleteCategory(category.id);
+                  }}
+                  style={styles.deleteButton}
+                  accessibilityLabel={t('settings.categories.delete_aria', { name: category.name })}
+                >
+                  <Icon name="delete" size={18} color={theme.danger} />
+                </TouchableOpacity>
+              )}
+              <Icon name="chevron-right" size={16} color={theme.tertiaryLabel} />
             </TouchableOpacity>
           ))}
+        </GroupedList>
 
-        </View>
+        <GroupedListFooter text={t('settings.categories.subtitle')} />
       </ScrollView>
 
       <CategoryEditor
@@ -257,8 +253,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerButton: {
-    padding: 8,
     marginRight: -8,
+  },
+  headerButtonInner: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loadingContainer: {
     flex: 1,
@@ -271,49 +273,23 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 16,
+    paddingHorizontal: Spacing.lg,
     paddingBottom: 120,
   },
-  section: {
-    marginBottom: 24,
-  },
-  sectionSubtitle: {
-    fontSize: 15,
-    fontWeight: '400',
-    marginBottom: 16,
-    fontFamily: 'System',
-  },
-  categoryCard: {
-    marginBottom: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  categoryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  categoryInfo: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
-    gap: 12,
+    gap: Spacing.md,
+    paddingVertical: 14,
+    paddingHorizontal: Spacing.lg,
   },
   categoryName: {
-    fontSize: 17,
-    fontWeight: '400',
-    fontFamily: 'System',
-  },
-  categoryActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    flex: 1,
+    fontSize: Typography.fontSize.callout,
   },
   deleteButton: {
-    padding: 8,
-    marginRight: -8,
+    padding: 4,
   },
 });
