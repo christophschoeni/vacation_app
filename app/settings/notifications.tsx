@@ -5,11 +5,12 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
-  useColorScheme,
  Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Card, Icon, IconName } from '@/components/design';
+import { Icon, IconName, GroupedList, GroupedListFooter } from '@/components/design';
+import { Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import { logger } from '@/lib/utils/logger';
 import { useTranslation, type TranslationKey } from '@/lib/i18n';
@@ -24,9 +25,8 @@ interface NotificationSetting {
 }
 
 export default function NotificationsScreen() {
-  const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
-  const isDark = colorScheme === 'dark';
   const [hasPermissions, setHasPermissions] = useState(false);
 
   const [settings, setSettings] = useState<NotificationSetting[]>([
@@ -131,7 +131,7 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.notifications.title')}
         variant="large"
@@ -145,53 +145,30 @@ export default function NotificationsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.section}>
-          <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {t('settings.notifications.subtitle')}
-          </Text>
-
+        <GroupedList>
           {settings.map((setting) => (
-            <Card key={setting.id} variant="clean" style={styles.settingCard}>
-              <View style={styles.settingRow}>
-                <View style={styles.settingInfo}>
-                  <Icon name={setting.icon} size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-                  <View style={styles.settingText}>
-                    <Text style={[styles.settingTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                      {t(setting.titleKey)}
-                    </Text>
-                    <Text style={[styles.settingSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                      {t(setting.subtitleKey)}
-                    </Text>
-                  </View>
-                </View>
-                <Switch
-                  value={setting.enabled}
-                  onValueChange={() => handleToggle(setting.id)}
-                  trackColor={{
-                    false: isDark ? '#3A3A3C' : '#E5E5EA',
-                    true: '#007AFF',
-                  }}
-                  thumbColor={isDark ? '#FFFFFF' : '#FFFFFF'}
-                  ios_backgroundColor={isDark ? '#3A3A3C' : '#E5E5EA'}
-                />
+            <View key={setting.id} style={styles.row}>
+              <Icon name={setting.icon} size={22} color={theme.accent} />
+              <View style={styles.rowText}>
+                <Text style={[styles.rowTitle, { color: theme.label }]}>
+                  {t(setting.titleKey)}
+                </Text>
+                <Text style={[styles.rowSubtitle, { color: theme.secondaryLabel }]}>
+                  {t(setting.subtitleKey)}
+                </Text>
               </View>
-            </Card>
-          ))}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {t('settings.notifications.note_title')}
-          </Text>
-          <Card variant="clean" style={styles.infoCard}>
-            <View style={styles.infoContent}>
-              <Icon name="info" size={20} color={isDark ? '#8E8E93' : '#6D6D70'} />
-              <Text style={[styles.infoText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                {t('settings.notifications.note_message')}
-              </Text>
+              <Switch
+                value={setting.enabled}
+                onValueChange={() => handleToggle(setting.id)}
+                trackColor={{ false: theme.isDark ? '#3A3A3C' : '#E5E5EA', true: theme.success }}
+                thumbColor="#FFFFFF"
+                ios_backgroundColor={theme.isDark ? '#3A3A3C' : '#E5E5EA'}
+              />
             </View>
-          </Card>
-        </View>
+          ))}
+        </GroupedList>
+
+        <GroupedListFooter text={t('settings.notifications.note_message')} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -203,71 +180,26 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 16,
+    paddingHorizontal: Spacing.lg,
     paddingBottom: 120,
   },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    marginBottom: 16,
-    fontFamily: 'System',
-  },
-  sectionSubtitle: {
-    fontSize: 15,
-    fontWeight: '400',
-    marginBottom: 16,
-    fontFamily: 'System',
-  },
-  settingCard: {
-    marginBottom: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  settingInfo: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.md,
+    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+  },
+  rowText: {
     flex: 1,
-    gap: 16,
   },
-  settingText: {
-    flex: 1,
+  rowTitle: {
+    fontSize: Typography.fontSize.callout,
   },
-  settingTitle: {
-    fontSize: 17,
-    fontWeight: '400',
-    fontFamily: 'System',
-    marginBottom: 2,
-  },
-  settingSubtitle: {
-    fontSize: 13,
-    fontWeight: '400',
-    fontFamily: 'System',
-  },
-  infoCard: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  infoContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-  },
-  infoText: {
-    fontSize: 15,
-    fontWeight: '400',
-    fontFamily: 'System',
-    lineHeight: 20,
-    flex: 1,
+  rowSubtitle: {
+    fontSize: Typography.fontSize.caption1,
+    marginTop: 1,
   },
 });
