@@ -14,6 +14,7 @@ import { useRouteParam } from '@/hooks/use-route-param';
 import ChecklistCard from '@/components/ui/cards/ChecklistCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import AppHeader from '@/components/ui/AppHeader';
+import { PromptModal } from '@/components/ui/PromptModal';
 import { Icon } from '@/components/design';
 import { useIOSTheme } from '@/constants/ios-theme';
 import { useTranslation } from '@/lib/i18n';
@@ -28,6 +29,12 @@ export default function VacationChecklistsScreen() {
   const { t } = useTranslation();
 
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  // Cross-platform prompt (Alert.prompt is iOS-only). Holds which flow is open.
+  const [prompt, setPrompt] = useState<
+    | { mode: 'create'; title: string; message: string; initialValue: string; confirmLabel: string }
+    | { mode: 'rename'; checklistId: string; title: string; message: string; initialValue: string; confirmLabel: string }
+    | null
+  >(null);
 
   const { data: checklists = [] } = useChecklists(vacationId || undefined);
   const { data: templates = [] } = useTemplates();
@@ -37,31 +44,27 @@ export default function VacationChecklistsScreen() {
   const { mutateAsync: deleteChecklist } = useDeleteChecklist();
 
   const handleCreateList = () => {
-    Alert.prompt(
-      t('vacation.checklists.create.title'),
-      t('vacation.checklists.create.prompt'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.create'),
-          onPress: async (title?: string) => {
-            if (title?.trim()) {
-              try {
-                await createChecklist({
-                  title: title.trim(),
-                  vacationId,
-                  category: 'general',
-                  icon: 'check',
-                });
-              } catch {
-                Alert.alert(t('common.error'), t('vacation.checklists.errors.create'));
-              }
-            }
-          },
-        },
-      ],
-      'plain-text'
-    );
+    setPrompt({
+      mode: 'create',
+      title: t('vacation.checklists.create.title'),
+      message: t('vacation.checklists.create.prompt'),
+      initialValue: '',
+      confirmLabel: t('common.create'),
+    });
+  };
+
+  const submitCreateList = async (title: string) => {
+    if (!title.trim()) return;
+    try {
+      await createChecklist({
+        title: title.trim(),
+        vacationId,
+        category: 'general',
+        icon: 'check',
+      });
+    } catch {
+      Alert.alert(t('common.error'), t('vacation.checklists.errors.create'));
+    }
   };
 
 
@@ -87,30 +90,26 @@ export default function VacationChecklistsScreen() {
     const checklist = checklists.find(c => c.id === checklistId);
     if (!checklist) return;
 
-    Alert.prompt(
-      t('vacation.checklists.edit.title'),
-      t('vacation.checklists.edit.prompt'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.save'),
-          onPress: async (newTitle?: string) => {
-            if (newTitle?.trim() && newTitle.trim() !== checklist.title) {
-              try {
-                await updateChecklist({
-                  id: checklist.id,
-                  title: newTitle.trim(),
-                });
-              } catch {
-                Alert.alert(t('common.error'), t('vacation.checklists.errors.update'));
-              }
-            }
-          },
-        },
-      ],
-      'plain-text',
-      checklist.title
-    );
+    setPrompt({
+      mode: 'rename',
+      checklistId: checklist.id,
+      title: t('vacation.checklists.edit.title'),
+      message: t('vacation.checklists.edit.prompt'),
+      initialValue: checklist.title,
+      confirmLabel: t('common.save'),
+    });
+  };
+
+  const submitRename = async (checklistId: string, newTitle: string) => {
+    const checklist = checklists.find(c => c.id === checklistId);
+    if (!checklist) return;
+    if (newTitle.trim() && newTitle.trim() !== checklist.title) {
+      try {
+        await updateChecklist({ id: checklist.id, title: newTitle.trim() });
+      } catch {
+        Alert.alert(t('common.error'), t('vacation.checklists.errors.update'));
+      }
+    }
   };
 
   const handleDeleteChecklist = (checklistId: string) => {
@@ -248,6 +247,21 @@ export default function VacationChecklistsScreen() {
           </View>
         </TouchableOpacity>
       </Modal>
+
+      <PromptModal
+        visible={prompt !== null}
+        title={prompt?.title ?? ''}
+        message={prompt?.message}
+        initialValue={prompt?.initialValue}
+        confirmLabel={prompt?.confirmLabel}
+        onCancel={() => setPrompt(null)}
+        onConfirm={(value) => {
+          const current = prompt;
+          setPrompt(null);
+          if (current?.mode === 'create') submitCreateList(value);
+          else if (current?.mode === 'rename') submitRename(current.checklistId, value);
+        }}
+      />
 
     </SafeAreaView>
   );
