@@ -1,0 +1,40 @@
+name: CI
+
+# Runs the same gates as the local pre-commit hook so "green on my machine" is
+# reproducible and nothing that bypasses the hook (e.g. --no-verify) slips
+# through review.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # The RN/Expo dependency tree needs legacy peer resolution (react vs.
+      # react-test-renderer peer ranges), matching how the repo is installed.
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Lint
+        run: npm run lint
+
+      # typecheck regenerates the typed-routes contract first (gen:routes), so
+      # navigation is checked against the real route list even though .expo/ is
+      # gitignored and no dev server runs in CI.
+      - name: Type check
+        run: npm run typecheck
+
+      - name: i18n drift guard
+        run: npm run i18n:check
+
+      - name: Tests
+        run: npm test

@@ -1,0 +1,16 @@
+# Quality gates that must pass before a commit lands. These are the three
+# checks that already existed in the project but were only ever run by hand;
+# the hook makes them non-optional so type errors and i18n drift can no longer
+# accumulate silently (see commit 8f95711, which had to clear 87 at once).
+
+# 1. Lint only the staged .ts/.tsx files (fast).
+npx lint-staged
+
+# 2. Project-wide type check. Regenerates the typed-routes contract first so
+#    navigation is checked against the real route list even without a running
+#    dev server — this is what turns "the link works sometimes" into a compile
+#    error at commit time.
+npm run typecheck
+
+# 3. Translation drift guard across the 7 locales.
+npm run i18n:check
