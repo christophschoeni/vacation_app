@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 
 import { Icon, GroupedList, GroupedListFooter } from '@/components/design';
 import { Spacing, Typography } from '@/constants/design';
@@ -35,7 +35,7 @@ export default function LanguageScreen() {
         title={t('settings.language.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.push('/(tabs)/settings')}
+        onBackPress={() => goBack('/(tabs)/settings')}
         useSafeAreaPadding={true}
       />
 

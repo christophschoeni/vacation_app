@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Icon, GroupedList } from '@/components/design';
 import { Spacing, Typography } from '@/constants/design';
@@ -150,7 +151,7 @@ export default function CurrencyScreen() {
         title={t('settings.currency.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.push('/(tabs)/settings')}
+        onBackPress={() => goBack('/(tabs)/settings')}
         useSafeAreaPadding={true}
         rightAction={
           <TouchableOpacity

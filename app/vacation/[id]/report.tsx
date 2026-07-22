@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 
 import AppHeader from '@/components/ui/AppHeader';
 import { PromptModal } from '@/components/ui/PromptModal';
@@ -267,7 +267,7 @@ export default function VacationReportScreen() {
         variant="large"
         title={t('report.title')}
         showBack={true}
-        onBackPress={() => router.push('/(tabs)')}
+        onBackPress={() => goBack('/(tabs)')}
       />
 
       <ScrollView

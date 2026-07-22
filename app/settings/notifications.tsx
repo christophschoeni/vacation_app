@@ -7,7 +7,7 @@ import {
   Switch,
  Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { Icon, IconName, GroupedList, GroupedListFooter } from '@/components/design';
 import { Spacing, Typography } from '@/constants/design';
 import { useIOSTheme } from '@/constants/ios-theme';
@@ -136,7 +136,7 @@ export default function NotificationsScreen() {
         title={t('settings.notifications.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.push('/(tabs)/settings')}
+        onBackPress={() => goBack('/(tabs)/settings')}
         useSafeAreaPadding={true}
       />
 

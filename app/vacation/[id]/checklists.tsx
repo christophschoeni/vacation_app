@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, useColorScheme, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import {
   useChecklists,
   useTemplates,
@@ -140,7 +141,7 @@ export default function VacationChecklistsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
       <AppHeader
         showBack={true}
-        onBackPress={() => router.push('/(tabs)')}
+        onBackPress={() => goBack('/(tabs)')}
         rightAction={
           <View style={styles.headerButtonGroup}>
             <TouchableOpacity

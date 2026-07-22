@@ -10,6 +10,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
@@ -72,7 +73,7 @@ export default function VacationBudgetScreen() {
         <AppHeader
           title={t('common.loading')}
           showBack={true}
-          onBackPress={() => router.push('/(tabs)')}
+          onBackPress={() => goBack('/(tabs)')}
         />
         <View style={styles.content}>
           <Text style={{ color: theme.label, textAlign: 'center', marginTop: 50 }}>
@@ -89,7 +90,7 @@ export default function VacationBudgetScreen() {
         <AppHeader
           title={t('common.error')}
           showBack={true}
-          onBackPress={() => router.push('/(tabs)')}
+          onBackPress={() => goBack('/(tabs)')}
         />
         <View style={styles.content}>
           <Text style={{ color: theme.label, textAlign: 'center', marginTop: 50 }}>
@@ -153,7 +154,7 @@ export default function VacationBudgetScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
       <AppHeader
         showBack={true}
-        onBackPress={() => router.push('/(tabs)')}
+        onBackPress={() => goBack('/(tabs)')}
         rightAction={
           <View style={styles.headerActions}>
             <TouchableOpacity

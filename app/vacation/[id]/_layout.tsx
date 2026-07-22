@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
 import { NativeTabs, Icon as TabIcon, Label } from 'expo-router/unstable-native-tabs';
+import { goBack } from '@/lib/utils/navigation';
 import { useRouteParam } from '@/hooks/use-route-param';
 import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
@@ -38,14 +38,14 @@ function VacationDetailContent() {
       <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => router.push('/(tabs)')}
+            onPress={() => goBack('/(tabs)')}
             style={styles.backButton}
-            accessibilityLabel="Zurück"
+            accessibilityLabel={t('common.back')}
           >
             <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            Ferien nicht gefunden
+            {t('vacation.detail.not_found')}
           </Text>
           <View style={styles.headerSpacer} />
         </View>

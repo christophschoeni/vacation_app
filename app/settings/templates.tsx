@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon, GroupedList, GroupedListFooter } from '@/components/design';
@@ -70,7 +71,7 @@ export default function TemplatesScreen() {
         variant="large"
         useSafeAreaPadding={true}
         showBack={true}
-        onBackPress={() => router.push('/(tabs)/settings')}
+        onBackPress={() => goBack('/(tabs)/settings')}
         rightAction={
           <TouchableOpacity
             onPress={handleAddTemplate}

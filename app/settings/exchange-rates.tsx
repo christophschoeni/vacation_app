@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { Card, Icon, GroupedList, GroupedListHeader, GroupedListFooter, StatusBadge } from '@/components/design';
 import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
@@ -237,7 +237,7 @@ export default function ExchangeRatesScreen() {
           variant="large"
           useSafeAreaPadding={true}
           showBack={true}
-          onBackPress={() => router.push('/(tabs)/settings')}
+          onBackPress={() => goBack('/(tabs)/settings')}
         />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#007AFF'} />
@@ -256,7 +256,7 @@ export default function ExchangeRatesScreen() {
         variant="large"
         useSafeAreaPadding={true}
         showBack={true}
-        onBackPress={() => router.push('/(tabs)/settings')}
+        onBackPress={() => goBack('/(tabs)/settings')}
         rightAction={
           <TouchableOpacity
             onPress={handleManualUpdate}

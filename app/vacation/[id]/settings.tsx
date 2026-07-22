@@ -3,6 +3,7 @@ import { Spacing, Typography } from '@/constants/design';
 import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import { router } from 'expo-router';
+import { goBack } from '@/lib/utils/navigation';
 import { useTranslation } from '@/lib/i18n';
 import React from 'react';
 import {
@@ -47,7 +48,7 @@ export default function VacationSettingsScreen() {
         variant="large"
         title={t('vacation.settings_screen.title')}
         showBack={true}
-        onBackPress={() => router.push('/(tabs)')}
+        onBackPress={() => goBack('/(tabs)')}
       />
 
       <ScrollView
