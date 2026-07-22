@@ -137,16 +137,18 @@ function RootNavigation({
     <>
       {/*
         Expo Router registers every file under app/ as a route automatically, so
-        card/push screens (the default) need no explicit <Stack.Screen>. Only
-        screens that deviate from the defaults are listed:
-          - (tabs) enters without an animation (it's the root surface)
-          - the modal group slides up instead of pushing
+        push screens need no explicit <Stack.Screen>. But `presentation: 'card'`
+        must be the DEFAULT: without it, screens pushed on top of the
+        transparentModal `(tabs)` surface inherit a modal presentation instead of
+        a normal push — which turned the vacation detail (itself a tabs group)
+        into a modal. Only the screens that genuinely deviate are listed below.
         On iOS the native stack's default push already is the slide-from-right
         transition, so no custom interpolator is needed.
       */}
       <Stack
         screenOptions={{
           headerShown: false,
+          presentation: 'card',
           contentStyle: { backgroundColor: 'transparent' },
         }}
       >
