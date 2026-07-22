@@ -12,6 +12,7 @@ import {
   useDeleteChecklist,
 } from '@/hooks/queries';
 import { useRouteParam } from '@/hooks/use-route-param';
+import { useVacationId } from '@/contexts/VacationContext';
 import ChecklistCard from '@/components/ui/cards/ChecklistCard';
 import SwipeableCard from '@/components/ui/SwipeableCard';
 import AppHeader from '@/components/ui/AppHeader';
@@ -23,7 +24,9 @@ import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 
 export default function VacationChecklistsScreen() {
   const tabBarPadding = useTabBarPadding();
-  const vacationId = useRouteParam('id');
+  const routeId = useRouteParam('id');
+  const contextId = useVacationId();
+  const vacationId = contextId || routeId;
 
   const theme = useIOSTheme();
   const { t } = useTranslation();

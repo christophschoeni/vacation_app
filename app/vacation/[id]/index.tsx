@@ -23,13 +23,20 @@ import BudgetOverview from '@/components/ui/budget/BudgetOverview';
 import { VacationHero } from '@/components/ui/VacationHero';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteParam } from '@/hooks/use-route-param';
+import { useVacationId } from '@/contexts/VacationContext';
 import { useVacation, useExpenses, useDeleteExpense } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
 import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 
 export default function VacationBudgetScreen() {
   const tabBarPadding = useTabBarPadding();
-  const vacationId = useRouteParam('id');
+  // Prefer the id from the vacation layout's context: inside NativeTabs,
+  // useLocalSearchParams (via useRouteParam) returns the focused tab's params,
+  // which go empty when switching tabs and back - leaving this screen blank.
+  // The route param is the fallback for the very first mount.
+  const routeId = useRouteParam('id');
+  const contextId = useVacationId();
+  const vacationId = contextId || routeId;
   const colorScheme = useColorScheme();
   const theme = useIOSTheme();
   const { t } = useTranslation();

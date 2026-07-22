@@ -23,6 +23,7 @@ import {
 import { BorderRadius, Spacing, Typography } from '@/constants/design';
 import { categoryColor, useIOSTheme } from '@/constants/ios-theme';
 import { useRouteParam } from '@/hooks/use-route-param';
+import { useVacationId } from '@/contexts/VacationContext';
 import {
   useVacation,
   useExpenses,
@@ -127,7 +128,9 @@ function CategoryRow({
 
 export default function VacationReportScreen() {
   const tabBarPadding = useTabBarPadding();
-  const vacationId = useRouteParam('id');
+  const routeId = useRouteParam('id');
+  const contextId = useVacationId();
+  const vacationId = contextId || routeId;
   const theme = useIOSTheme();
   const { t } = useTranslation();
   const { data: vacation } = useVacation(vacationId);
