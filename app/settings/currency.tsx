@@ -150,7 +150,7 @@ export default function CurrencyScreen() {
         title={t('settings.currency.title')}
         variant="large"
         showBack={true}
-        onBackPress={() => router.back()}
+        onBackPress={() => router.push('/(tabs)/settings')}
         useSafeAreaPadding={true}
         rightAction={
           <TouchableOpacity

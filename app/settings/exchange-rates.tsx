@@ -237,7 +237,7 @@ export default function ExchangeRatesScreen() {
           variant="large"
           useSafeAreaPadding={true}
           showBack={true}
-          onBackPress={() => router.back()}
+          onBackPress={() => router.push('/(tabs)/settings')}
         />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#007AFF'} />
@@ -256,7 +256,7 @@ export default function ExchangeRatesScreen() {
         variant="large"
         useSafeAreaPadding={true}
         showBack={true}
-        onBackPress={() => router.back()}
+        onBackPress={() => router.push('/(tabs)/settings')}
         rightAction={
           <TouchableOpacity
             onPress={handleManualUpdate}
