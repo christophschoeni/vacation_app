@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   Alert,
   TextInput,
-  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Card, Icon } from '@/components/design';
+import { Icon, GroupedList } from '@/components/design';
+import { Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import { ErrorHandler } from '@/lib/utils/error-handler';
 import { POPULAR_CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
@@ -24,7 +25,7 @@ const CURRENCIES_STORAGE_KEY = '@vacation_assist_currencies';
 // Use the CurrencyInfo interface from lib/currency.ts instead of local Currency interface
 
 export default function CurrencyScreen() {
-  const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
   const { t } = useTranslation();
   const { defaultCurrency, setDefaultCurrency } = useCurrency();
   const [currencies, setCurrencies] = useState<CurrencyInfo[]>(ALL_CURRENCIES);
@@ -32,7 +33,6 @@ export default function CurrencyScreen() {
   const [, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const isDark = colorScheme === 'dark';
 
   // Load currencies from storage on mount
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function CurrencyScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['bottom']}>
       <AppHeader
         title={t('settings.currency.title')}
         variant="large"
@@ -158,7 +158,9 @@ export default function CurrencyScreen() {
             style={styles.headerButton}
             accessibilityLabel={t('settings.currency.add_aria')}
           >
-            <Icon name="plus" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+            <View style={[styles.headerButtonInner, { backgroundColor: theme.groupedBackground }]}>
+              <Icon name="plus" size={18} color={theme.accent} />
+            </View>
           </TouchableOpacity>
         }
       />
@@ -169,12 +171,12 @@ export default function CurrencyScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Search Bar */}
-        <View style={[styles.searchContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
-          <Icon name="search" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+        <View style={[styles.searchContainer, { backgroundColor: theme.tile }]}>
+          <Icon name="search" size={16} color={theme.secondaryLabel} />
           <TextInput
-            style={[styles.searchInput, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}
+            style={[styles.searchInput, { color: theme.label }]}
             placeholder={t('settings.currency.search_placeholder')}
-            placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
+            placeholderTextColor={theme.secondaryLabel}
             value={searchQuery}
             onChangeText={setSearchQuery}
             autoCapitalize="none"
@@ -182,57 +184,49 @@ export default function CurrencyScreen() {
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Icon name="close" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+              <Icon name="close" size={16} color={theme.secondaryLabel} />
             </TouchableOpacity>
           )}
         </View>
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionSubtitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-            {searchQuery.trim() ? t('settings.currency.search_results', { count: getFilteredCurrencies().length }) : t('settings.currency.all_currencies', { count: getFilteredCurrencies().length })}
-          </Text>
-
+        <GroupedList>
           {getFilteredCurrencies().map((currency) => (
             <TouchableOpacity
               key={currency.code}
               onPress={() => handleCurrencySelect(currency.code)}
               activeOpacity={0.7}
+              style={styles.row}
+              accessibilityRole="button"
+              accessibilityLabel={`${currency.name}, ${currency.code}`}
+              accessibilityState={{ selected: defaultCurrency === currency.code }}
             >
-              <Card variant="clean" style={styles.currencyCard}>
-                <View style={styles.currencyRow}>
-                  <View style={styles.currencyInfo}>
-                    <Text style={styles.flag}>{currency.flag}</Text>
-                    <View style={styles.currencyText}>
-                      <Text style={[styles.currencyName, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-                        {currency.name}
-                      </Text>
-                      <Text style={[styles.currencyCode, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-                        {currency.code} • {currency.symbol}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={styles.currencyActions}>
-                    {!isPopularCurrency(currency.code) && (
-                      <TouchableOpacity
-                        onPress={(e) => {
-                          e.stopPropagation();
-                          handleDeleteCurrency(currency.code);
-                        }}
-                        style={styles.deleteButton}
-                        accessibilityLabel={t('settings.currency.delete_aria', { name: currency.name })}
-                      >
-                        <Icon name="delete" size={18} color="#FF3B30" />
-                      </TouchableOpacity>
-                    )}
-                    {defaultCurrency === currency.code && (
-                      <Icon name="check" size={20} color="#007AFF" />
-                    )}
-                  </View>
-                </View>
-              </Card>
+              <Text style={styles.flag}>{currency.flag}</Text>
+              <View style={styles.currencyText}>
+                <Text style={[styles.currencyName, { color: theme.label }]} numberOfLines={1}>
+                  {currency.name}
+                </Text>
+                <Text style={[styles.currencyCode, { color: theme.secondaryLabel }]}>
+                  {currency.code} • {currency.symbol}
+                </Text>
+              </View>
+              {!isPopularCurrency(currency.code) && (
+                <TouchableOpacity
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleDeleteCurrency(currency.code);
+                  }}
+                  style={styles.deleteButton}
+                  accessibilityLabel={t('settings.currency.delete_aria', { name: currency.name })}
+                >
+                  <Icon name="delete" size={18} color={theme.danger} />
+                </TouchableOpacity>
+              )}
+              {defaultCurrency === currency.code && (
+                <Icon name="check" size={20} color={theme.accent} />
+              )}
             </TouchableOpacity>
           ))}
-        </View>
+        </GroupedList>
       </ScrollView>
     </SafeAreaView>
   );
@@ -243,82 +237,58 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerButton: {
-    padding: 8,
     marginRight: -8,
+  },
+  headerButtonInner: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   scrollContent: {
-    paddingTop: 16,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
     paddingBottom: 120,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 0,
-    marginBottom: 16,
-    paddingHorizontal: 12,
+    marginBottom: Spacing.lg,
+    paddingHorizontal: Spacing.md,
     paddingVertical: 10,
     borderRadius: 10,
-    gap: 8,
+    gap: Spacing.sm,
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
     fontFamily: 'System',
   },
-  section: {
-    marginBottom: 24,
-  },
-  sectionSubtitle: {
-    fontSize: 15,
-    fontWeight: '400',
-    marginBottom: 16,
-    fontFamily: 'System',
-  },
-  currencyCard: {
-    marginBottom: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  currencyRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  currencyInfo: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
-    gap: 16,
+    gap: Spacing.md,
+    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
   },
   flag: {
     fontSize: 24,
-    marginRight: 0,
   },
   currencyText: {
     flex: 1,
   },
   currencyName: {
-    fontSize: 17,
-    fontWeight: '400',
-    fontFamily: 'System',
-    marginBottom: 2,
+    fontSize: Typography.fontSize.callout,
   },
   currencyCode: {
-    fontSize: 13,
-    fontWeight: '400',
-    fontFamily: 'System',
-  },
-  currencyActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    fontSize: Typography.fontSize.caption1,
+    marginTop: 1,
   },
   deleteButton: {
-    padding: 8,
-    marginRight: -8,
+    padding: 4,
   },
 });
