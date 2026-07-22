@@ -4,15 +4,15 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Icon } from '@/components/design';
+import AppHeader from '@/components/ui/AppHeader';
+import { Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import { useRouteId } from '@/hooks/use-route-param';
 import { useTemplateEditor } from '@/hooks/use-template-editor';
 import {
@@ -25,7 +25,7 @@ import { ChecklistCategory } from '@/types';
 
 export default function TemplateEditScreen() {
   const templateId = useRouteId();
-  const colorScheme = useColorScheme();
+  const theme = useIOSTheme();
 
   const {
     loading,
@@ -51,26 +51,24 @@ export default function TemplateEditScreen() {
     });
   };
 
-  const isDark = colorScheme === 'dark';
+  // TODO i18n: Neue Standard-Liste / Standard-Liste bearbeiten
+  const screenTitle =
+    templateId === 'new' ? 'Neue Standard-Liste' : 'Standard-Liste bearbeiten';
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-            accessibilityLabel="Zurück"
-          >
-            <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-            {templateId === 'new' ? 'Neue Standard-Liste' : 'Standard-Liste bearbeiten'}
-          </Text>
-          <View style={styles.headerSpacer} />
-        </View>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.background }]}
+        edges={['top', 'bottom']}
+      >
+        <AppHeader
+          variant="modal"
+          showBack={true}
+          onBackPress={() => router.back()}
+        />
         <View style={styles.emptyState}>
-          <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+          {/* TODO i18n: Lade... */}
+          <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
             Lade...
           </Text>
         </View>
@@ -79,32 +77,16 @@ export default function TemplateEditScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-          accessibilityLabel="Zurück"
-        >
-          <Icon name="arrow-left" size={24} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          {templateId === 'new' ? 'Neue Standard-Liste' : 'Bearbeiten'}
-        </Text>
-        <TouchableOpacity
-          onPress={saveTemplate}
-          style={styles.headerButton}
-          disabled={saving}
-          accessibilityLabel="Speichern"
-        >
-          <Icon
-            name="check"
-            size={20}
-            color={saving ? (isDark ? '#8E8E93' : '#6D6D70') : '#007AFF'}
-            style={{ opacity: saving ? 0.5 : 1 }}
-          />
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      edges={['top', 'bottom']}
+    >
+      <AppHeader
+        variant="modal"
+        showBack={true}
+        onBackPress={() => router.back()}
+        onRightPress={saving ? undefined : saveTemplate}
+      />
 
       <KeyboardAvoidingView
         style={styles.keyboardView}
@@ -115,13 +97,19 @@ export default function TemplateEditScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* iOS-style large title in content area */}
+          <View style={styles.titleSection}>
+            <Text style={[styles.largeTitle, { color: theme.label }]}>
+              {screenTitle}
+            </Text>
+          </View>
+
           {/* Basic Information */}
           <TemplateBasicInfo
             title={formData.title}
             description={formData.description}
             onTitleChange={(text) => updateFormData({ title: text })}
             onDescriptionChange={(text) => updateFormData({ description: text })}
-            isDark={isDark}
           />
 
           {/* Category & Icon Selection */}
@@ -130,7 +118,6 @@ export default function TemplateEditScreen() {
             selectedIcon={formData.icon}
             onCategoryChange={handleCategorySelect}
             onIconChange={(icon) => updateFormData({ icon })}
-            isDark={isDark}
           />
 
           {/* Items List */}
@@ -139,7 +126,6 @@ export default function TemplateEditScreen() {
             onAddItem={addItem}
             onUpdateItem={updateItem}
             onDeleteItem={deleteItem}
-            isDark={isDark}
           />
 
           {/* Bottom padding for keyboard */}
@@ -154,32 +140,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 0.5,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+  titleSection: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.lg,
   },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: 16,
-  },
-  headerButton: {
-    padding: 8,
-    marginRight: -8,
-  },
-  headerSpacer: {
-    width: 40,
+  largeTitle: {
+    fontSize: Typography.fontSize.largeTitle,
+    fontWeight: '700',
+    fontFamily: 'System',
+    lineHeight: 41,
   },
   keyboardView: {
     flex: 1,
@@ -188,7 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
+    paddingHorizontal: Spacing.lg,
     paddingBottom: 100,
   },
   emptyState: {
@@ -197,7 +167,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: Typography.fontSize.callout,
   },
   bottomPadding: {
     height: 50,

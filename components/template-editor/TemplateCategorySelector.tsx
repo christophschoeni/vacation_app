@@ -1,6 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { ChecklistCategory } from '@/types';
+import { GroupedListHeader, GroupedListFooter } from '@/components/design';
+import { BorderRadius, Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import { CATEGORY_CONFIG, TEMPLATE_ICONS } from './constants';
 
 interface TemplateCategorySelectorProps {
@@ -8,7 +11,6 @@ interface TemplateCategorySelectorProps {
   selectedIcon: string;
   onCategoryChange: (category: ChecklistCategory) => void;
   onIconChange: (icon: string) => void;
-  isDark: boolean;
 }
 
 export function TemplateCategorySelector({
@@ -16,132 +18,110 @@ export function TemplateCategorySelector({
   selectedIcon,
   onCategoryChange,
   onIconChange,
-  isDark,
 }: TemplateCategorySelectorProps) {
+  const theme = useIOSTheme();
+
   return (
     <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          KATEGORIE & SYMBOL
-        </Text>
-        <Text style={[styles.sectionDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-          Wählen Sie eine Kategorie und ein Symbol für Ihre Standard-Liste
-        </Text>
-      </View>
+      {/* TODO i18n: KATEGORIE & SYMBOL */}
+      <GroupedListHeader title="Kategorie & Symbol" />
 
-      <View style={[styles.selectorContainer, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
+      <View style={[styles.selectorContainer, { backgroundColor: theme.groupedBackground }]}>
         {/* Category Selection */}
         <View style={styles.subsection}>
-          <Text style={[styles.subsectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          {/* TODO i18n: Kategorie */}
+          <Text style={[styles.subsectionTitle, { color: theme.label }]}>
             Kategorie
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
             <View style={styles.categoryGrid}>
-              {Object.entries(CATEGORY_CONFIG).map(([category, config]) => (
-                <TouchableOpacity
-                  key={category}
-                  style={[
-                    styles.categoryOption,
-                    {
-                      backgroundColor: selectedCategory === category
-                        ? (isDark ? '#2C2C2E' : '#F2F2F7')
-                        : 'transparent',
-                      borderColor: selectedCategory === category
-                        ? '#007AFF'
-                        : (isDark ? '#2C2C2E' : '#E5E5E5'),
-                    },
-                  ]}
-                  onPress={() => onCategoryChange(category as ChecklistCategory)}
-                >
-                  <Text style={styles.categoryIcon}>{config.icon}</Text>
-                  <Text style={[
-                    styles.categoryLabel,
-                    {
-                      color: selectedCategory === category
-                        ? '#007AFF'
-                        : (isDark ? '#FFFFFF' : '#1C1C1E'),
-                      fontWeight: selectedCategory === category ? '600' : '400',
-                    },
-                  ]}>
-                    {config.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {Object.entries(CATEGORY_CONFIG).map(([category, config]) => {
+                const selected = selectedCategory === category;
+                return (
+                  <TouchableOpacity
+                    key={category}
+                    style={[
+                      styles.categoryOption,
+                      {
+                        backgroundColor: selected ? theme.tile : 'transparent',
+                        borderColor: selected ? theme.accent : theme.separator,
+                      },
+                    ]}
+                    onPress={() => onCategoryChange(category as ChecklistCategory)}
+                  >
+                    <Text style={styles.categoryIcon}>{config.icon}</Text>
+                    <Text style={[
+                      styles.categoryLabel,
+                      {
+                        color: selected ? theme.accent : theme.label,
+                        fontWeight: selected ? '600' : '400',
+                      },
+                    ]}>
+                      {config.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </ScrollView>
         </View>
 
         {/* Icon Selection */}
         <View style={styles.subsection}>
-          <Text style={[styles.subsectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          {/* TODO i18n: Symbol */}
+          <Text style={[styles.subsectionTitle, { color: theme.label }]}>
             Symbol
           </Text>
           <View style={styles.iconGrid}>
-            {TEMPLATE_ICONS.map((icon) => (
-              <TouchableOpacity
-                key={icon}
-                style={[
-                  styles.iconOption,
-                  {
-                    backgroundColor: selectedIcon === icon
-                      ? '#007AFF'
-                      : (isDark ? '#2C2C2E' : '#F2F2F7'),
-                    borderColor: selectedIcon === icon
-                      ? '#007AFF'
-                      : (isDark ? '#3A3A3C' : '#E5E5E5'),
-                  },
-                ]}
-                onPress={() => onIconChange(icon)}
-              >
-                <Text style={[
-                  styles.iconText,
-                  { opacity: selectedIcon === icon ? 1 : 0.7 }
-                ]}>
-                  {icon}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {TEMPLATE_ICONS.map((icon) => {
+              const selected = selectedIcon === icon;
+              return (
+                <TouchableOpacity
+                  key={icon}
+                  style={[
+                    styles.iconOption,
+                    {
+                      backgroundColor: selected ? theme.accent : theme.tile,
+                      borderColor: selected ? theme.accent : theme.separator,
+                    },
+                  ]}
+                  onPress={() => onIconChange(icon)}
+                >
+                  <Text style={[
+                    styles.iconText,
+                    { opacity: selected ? 1 : 0.7 }
+                  ]}>
+                    {icon}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
       </View>
+
+      {/* TODO i18n: Wählen Sie eine Kategorie und ein Symbol für Ihre Standard-Liste */}
+      <GroupedListFooter text="Wählen Sie eine Kategorie und ein Symbol für Ihre Standard-Liste" />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 32,
-  },
-  sectionHeader: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  sectionDescription: {
-    fontSize: 15,
-    lineHeight: 20,
+    marginBottom: Spacing.md,
   },
   selectorContainer: {
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
+    borderRadius: BorderRadius.card,
+    padding: Spacing.xl,
+    marginTop: Spacing.xs,
   },
   subsection: {
-    marginBottom: 24,
+    marginBottom: Spacing['2xl'],
   },
   subsectionTitle: {
-    fontSize: 16,
+    fontSize: Typography.fontSize.callout,
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: Spacing.md,
   },
   categoryScroll: {
     marginHorizontal: -4,
@@ -152,10 +132,10 @@ const styles = StyleSheet.create({
   },
   categoryOption: {
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     marginHorizontal: 4,
-    borderRadius: 12,
+    borderRadius: BorderRadius.tile,
     borderWidth: 1,
     minWidth: 90,
   },
@@ -164,7 +144,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   categoryLabel: {
-    fontSize: 12,
+    fontSize: Typography.fontSize.caption1,
     textAlign: 'center',
     lineHeight: 16,
   },
@@ -179,7 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     margin: 4,
-    borderRadius: 12,
+    borderRadius: BorderRadius.tile,
     borderWidth: 1,
   },
   iconText: {

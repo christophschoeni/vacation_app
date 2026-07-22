@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { Icon } from '@/components/design';
+import { Icon, GroupedListHeader } from '@/components/design';
 import { FormInput } from '@/components/ui/forms';
+import { BorderRadius, Spacing, Typography } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import { ChecklistItem } from '@/types';
 
 interface TemplateItemsListProps {
@@ -9,7 +11,6 @@ interface TemplateItemsListProps {
   onAddItem: (text: string) => void;
   onUpdateItem: (itemId: string, text: string) => void;
   onDeleteItem: (itemId: string) => void;
-  isDark: boolean;
 }
 
 export function TemplateItemsList({
@@ -17,8 +18,8 @@ export function TemplateItemsList({
   onAddItem,
   onUpdateItem,
   onDeleteItem,
-  isDark,
 }: TemplateItemsListProps) {
+  const theme = useIOSTheme();
   const [newItemText, setNewItemText] = useState('');
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingItemText, setEditingItemText] = useState('');
@@ -50,11 +51,15 @@ export function TemplateItemsList({
 
   const handleDeleteItem = (item: ChecklistItem) => {
     Alert.alert(
+      // TODO i18n: Element löschen
       'Element löschen',
+      // TODO i18n: Möchten Sie "..." wirklich löschen?
       `Möchten Sie "${item.text}" wirklich löschen?`,
       [
+        // TODO i18n: Abbrechen
         { text: 'Abbrechen', style: 'cancel' },
         {
+          // TODO i18n: Löschen
           text: 'Löschen',
           style: 'destructive',
           onPress: () => onDeleteItem(item.id),
@@ -65,25 +70,22 @@ export function TemplateItemsList({
 
   return (
     <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
-          ELEMENTE ({items.length})
-        </Text>
-        <Text style={[styles.sectionDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
-          Erstellen Sie Elemente für Ihre Standard-Liste
-        </Text>
-      </View>
+      {/* TODO i18n: ELEMENTE (n) */}
+      <GroupedListHeader title={`Elemente (${items.length})`} />
 
-      <View style={[styles.itemsContainer, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
+      <View style={[styles.itemsContainer, { backgroundColor: theme.groupedBackground }]}>
         {/* Add new item */}
         <View style={styles.addItemContainer}>
-          <FormInput
-            value={newItemText}
-            onChangeText={setNewItemText}
-            placeholder="Neues Element hinzufügen..."
-            onSubmitEditing={handleAddItem}
-            returnKeyType="done"
-          />
+          <View style={styles.addInput}>
+            <FormInput
+              value={newItemText}
+              onChangeText={setNewItemText}
+              // TODO i18n: Neues Element hinzufügen...
+              placeholder="Neues Element hinzufügen..."
+              onSubmitEditing={handleAddItem}
+              returnKeyType="done"
+            />
+          </View>
           <TouchableOpacity
             style={[
               styles.addButton,
@@ -92,7 +94,7 @@ export function TemplateItemsList({
             onPress={handleAddItem}
             disabled={!newItemText.trim()}
           >
-            <Icon name="plus" size={20} color="#007AFF" />
+            <Icon name="plus" size={20} color={theme.accent} />
           </TouchableOpacity>
         </View>
 
@@ -104,11 +106,11 @@ export function TemplateItemsList({
                 key={item.id}
                 style={[
                   styles.itemRow,
-                  { borderBottomColor: isDark ? '#2C2C2E' : '#E5E5E5' }
+                  { borderBottomColor: theme.separator }
                 ]}
               >
                 <View style={styles.itemNumber}>
-                  <Text style={[styles.itemNumberText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+                  <Text style={[styles.itemNumberText, { color: theme.secondaryLabel }]}>
                     {index + 1}
                   </Text>
                 </View>
@@ -116,19 +118,21 @@ export function TemplateItemsList({
                 <View style={styles.itemContent}>
                   {editingItemId === item.id ? (
                     <View style={styles.editingContainer}>
-                      <FormInput
-                        value={editingItemText}
-                        onChangeText={setEditingItemText}
-                        onSubmitEditing={handleSaveEdit}
-                        autoFocus
-                        returnKeyType="done"
-                      />
+                      <View style={styles.editInput}>
+                        <FormInput
+                          value={editingItemText}
+                          onChangeText={setEditingItemText}
+                          onSubmitEditing={handleSaveEdit}
+                          autoFocus
+                          returnKeyType="done"
+                        />
+                      </View>
                       <View style={styles.editingActions}>
                         <TouchableOpacity onPress={handleSaveEdit} style={styles.editAction}>
-                          <Icon name="check" size={16} color="#34C759" />
+                          <Icon name="check" size={16} color={theme.success} />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={handleCancelEdit} style={styles.editAction}>
-                          <Icon name="x" size={16} color="#FF3B30" />
+                          <Icon name="x" size={16} color={theme.danger} />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -137,7 +141,7 @@ export function TemplateItemsList({
                       style={styles.itemTextContainer}
                       onPress={() => handleEditItem(item)}
                     >
-                      <Text style={[styles.itemText, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+                      <Text style={[styles.itemText, { color: theme.label }]}>
                         {item.text}
                       </Text>
                     </TouchableOpacity>
@@ -150,13 +154,13 @@ export function TemplateItemsList({
                       onPress={() => handleEditItem(item)}
                       style={styles.actionButton}
                     >
-                      <Icon name="edit-2" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+                      <Icon name="edit-2" size={16} color={theme.secondaryLabel} />
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => handleDeleteItem(item)}
                       style={styles.actionButton}
                     >
-                      <Icon name="trash-2" size={16} color="#FF3B30" />
+                      <Icon name="trash-2" size={16} color={theme.danger} />
                     </TouchableOpacity>
                   </View>
                 )}
@@ -165,10 +169,12 @@ export function TemplateItemsList({
           </View>
         ) : (
           <View style={styles.emptyState}>
-            <Text style={[styles.emptyText, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+            {/* TODO i18n: Noch keine Elemente hinzugefügt. */}
+            <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
               Noch keine Elemente hinzugefügt.
             </Text>
-            <Text style={[styles.emptySubtext, { color: isDark ? '#6D6D70' : '#8E8E93' }]}>
+            {/* TODO i18n: Fügen Sie Elemente hinzu, die in jeder neuen Checklist aus dieser Vorlage erscheinen sollen. */}
+            <Text style={[styles.emptySubtext, { color: theme.tertiaryLabel }]}>
               Fügen Sie Elemente hinzu, die in jeder neuen Checklist aus dieser Vorlage erscheinen sollen.
             </Text>
           </View>
@@ -180,99 +186,87 @@ export function TemplateItemsList({
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 32,
-  },
-  sectionHeader: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  sectionDescription: {
-    fontSize: 15,
-    lineHeight: 20,
+    marginBottom: Spacing.md,
   },
   itemsContainer: {
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
+    borderRadius: BorderRadius.card,
+    padding: Spacing.xl,
+    marginTop: Spacing.xs,
   },
   addItemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+  },
+  addInput: {
+    flex: 1,
   },
   addButton: {
-    marginLeft: 12,
-    padding: 8,
+    marginLeft: Spacing.md,
+    marginBottom: Spacing.xl,
+    padding: Spacing.sm,
   },
   itemsList: {
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   itemNumber: {
     width: 32,
     alignItems: 'center',
   },
   itemNumberText: {
-    fontSize: 14,
+    fontSize: Typography.fontSize.footnote,
     fontWeight: '500',
   },
   itemContent: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: Spacing.md,
   },
   itemTextContainer: {
     flex: 1,
   },
   itemText: {
-    fontSize: 16,
+    fontSize: Typography.fontSize.callout,
     lineHeight: 22,
   },
   itemActions: {
     flexDirection: 'row',
-    marginLeft: 12,
+    marginLeft: Spacing.md,
   },
   actionButton: {
-    padding: 8,
-    marginLeft: 4,
+    padding: Spacing.sm,
+    marginLeft: Spacing.xs,
   },
   editingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  editInput: {
+    flex: 1,
+  },
   editingActions: {
     flexDirection: 'row',
-    marginLeft: 12,
+    marginLeft: Spacing.md,
   },
   editAction: {
-    padding: 8,
-    marginLeft: 4,
+    padding: Spacing.sm,
+    marginLeft: Spacing.xs,
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: 32,
+    paddingVertical: Spacing['3xl'],
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: Typography.fontSize.callout,
     fontWeight: '500',
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   emptySubtext: {
-    fontSize: 14,
+    fontSize: Typography.fontSize.footnote,
     textAlign: 'center',
     lineHeight: 20,
   },
