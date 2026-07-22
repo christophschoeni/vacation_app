@@ -17,21 +17,27 @@ import CategoryEditor, { Category } from '@/components/ui/forms/CategoryEditor';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from '@/lib/i18n';
 
-// Default categories for expenses
-const DEFAULT_CATEGORIES: Category[] = [
-  { id: '1', name: 'Essen', icon: 'restaurant' as IconName },
-  { id: '2', name: 'Transport', icon: 'car' as IconName },
-  { id: '3', name: 'Hotel', icon: 'hotel' as IconName },
-  { id: '4', name: 'Shopping', icon: 'shopping' as IconName },
-  { id: '5', name: 'Sonstiges', icon: 'other' as IconName },
-];
-
 const CATEGORIES_STORAGE_KEY = '@vacation_assist_categories';
 
 export default function CategoriesScreen() {
   const theme = useIOSTheme();
   const { t } = useTranslation();
-  const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
+
+  // Seeded from the shared expense-category translations, so the default names
+  // are localized rather than hardcoded German. Once the user edits and saves a
+  // category, the stored (possibly renamed) value takes over.
+  const defaultCategories = React.useMemo<Category[]>(
+    () => [
+      { id: '1', name: t('categories.food'), icon: 'restaurant' as IconName },
+      { id: '2', name: t('categories.transport'), icon: 'car' as IconName },
+      { id: '3', name: t('categories.accommodation'), icon: 'hotel' as IconName },
+      { id: '4', name: t('categories.shopping'), icon: 'shopping' as IconName },
+      { id: '5', name: t('categories.other'), icon: 'other' as IconName },
+    ],
+    [t]
+  );
+
+  const [categories, setCategories] = useState<Category[]>(defaultCategories);
   const [showEditor, setShowEditor] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | undefined>();
   const [isLoading, setIsLoading] = useState(true);
@@ -39,6 +45,9 @@ export default function CategoriesScreen() {
   // Load categories from storage on mount
   useEffect(() => {
     loadCategories();
+    // defaultCategories is derived from t (stable per locale); the stored
+    // categories win once present, so this only needs to run on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadCategories = async () => {
@@ -48,7 +57,11 @@ export default function CategoriesScreen() {
         const parsed = JSON.parse(storedCategories) as Category[];
         if (Array.isArray(parsed) && parsed.length > 0) {
           setCategories(parsed);
+        } else {
+          setCategories(defaultCategories);
         }
+      } else {
+        setCategories(defaultCategories);
       }
     } catch (error) {
       console.warn('Failed to load categories:', error);

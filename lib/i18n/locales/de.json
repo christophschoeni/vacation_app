@@ -267,7 +267,8 @@
       "budget_alerts": "Budget-Warnungen",
       "budget_alerts_subtitle": "Benachrichtigung bei Budgetüberschreitung",
       "expense_reminders": "Ausgaben-Erinnerungen",
-      "expense_reminders_subtitle": "Erinnerung für nicht erfasste Ausgaben"
+      "expense_reminders_subtitle": "Erinnerung für nicht erfasste Ausgaben",
+      "test_trip": "Testreise"
     },
     "currency": {
       "title": "Währung",

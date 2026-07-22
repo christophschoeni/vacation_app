@@ -267,7 +267,8 @@
       "budget_alerts": "予算の警告",
       "budget_alerts_subtitle": "予算超過時に通知します",
       "expense_reminders": "支出のリマインダー",
-      "expense_reminders_subtitle": "未記録の支出をお知らせします"
+      "expense_reminders_subtitle": "未記録の支出をお知らせします",
+      "test_trip": "テスト旅行"
     },
     "currency": {
       "title": "通貨",

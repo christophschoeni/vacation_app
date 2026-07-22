@@ -267,7 +267,8 @@
       "budget_alerts": "预算提醒",
       "budget_alerts_subtitle": "超出预算时通知",
       "expense_reminders": "支出提醒",
-      "expense_reminders_subtitle": "提醒记录未录入的支出"
+      "expense_reminders_subtitle": "提醒记录未录入的支出",
+      "test_trip": "测试旅行"
     },
     "currency": {
       "title": "货币",

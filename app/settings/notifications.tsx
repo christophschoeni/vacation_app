@@ -122,10 +122,10 @@ export default function NotificationsScreen() {
   const sendTestNotification = async (settingId: string) => {
     switch (settingId) {
       case 'budget_alerts':
-        await notificationService.sendBudgetAlert('Test Reise', 80, false);
+        await notificationService.sendBudgetAlert(t('settings.notifications.test_trip'), 80, false);
         break;
       case 'expense_reminders':
-        await notificationService.sendExpenseReminder('Test Reise');
+        await notificationService.sendExpenseReminder(t('settings.notifications.test_trip'));
         break;
     }
   };

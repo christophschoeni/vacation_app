@@ -267,7 +267,8 @@
       "budget_alerts": "Avisos de presupuesto",
       "budget_alerts_subtitle": "Notificación al superar el presupuesto",
       "expense_reminders": "Recordatorios de gastos",
-      "expense_reminders_subtitle": "Recordatorio de gastos sin registrar"
+      "expense_reminders_subtitle": "Recordatorio de gastos sin registrar",
+      "test_trip": "Viaje de prueba"
     },
     "currency": {
       "title": "Moneda",

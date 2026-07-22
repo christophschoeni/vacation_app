@@ -295,6 +295,7 @@ export type TranslationKey =
   | 'settings.notifications.note_message'
   | 'settings.notifications.note_title'
   | 'settings.notifications.subtitle'
+  | 'settings.notifications.test_trip'
   | 'settings.notifications.title'
   | 'settings.templates.created_error'
   | 'settings.templates.created_success'

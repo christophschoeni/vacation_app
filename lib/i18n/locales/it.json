@@ -267,7 +267,8 @@
       "budget_alerts": "Avvisi Budget",
       "budget_alerts_subtitle": "Notifica quando il budget viene superato",
       "expense_reminders": "Promemoria Spese",
-      "expense_reminders_subtitle": "Promemoria per spese non registrate"
+      "expense_reminders_subtitle": "Promemoria per spese non registrate",
+      "test_trip": "Viaggio di prova"
     },
     "currency": {
       "title": "Valuta",
