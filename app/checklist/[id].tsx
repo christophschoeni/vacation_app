@@ -9,13 +9,15 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  useColorScheme,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Icon } from '@/components/design';
+import { Icon, GroupedList, ProgressBar } from '@/components/design';
+import { Spacing, Typography, BorderRadius } from '@/constants/design';
+import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
+import { PromptModal } from '@/components/ui/PromptModal';
 import { useRouteId } from '@/hooks/use-route-param';
 import {
   useChecklist,
@@ -29,12 +31,13 @@ import { useTranslation } from '@/lib/i18n';
 
 export default function ChecklistDetailScreen() {
   const checklistId = useRouteId();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const theme = useIOSTheme();
   const { t } = useTranslation();
 
   const [newItemText, setNewItemText] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
+  // Cross-platform prompt (Alert.prompt is iOS-only). Null when closed.
+  const [renamePrompt, setRenamePrompt] = useState<{ initialValue: string } | null>(null);
 
   const { data: checklist } = useChecklist(checklistId);
   const { mutateAsync: addItem } = useAddChecklistItem();
@@ -44,7 +47,7 @@ export default function ChecklistDetailScreen() {
 
   if (!checklist) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top', 'bottom']}>
         <AppHeader
           title={t('checklist.loading')}
           showBack={true}
@@ -109,38 +112,33 @@ export default function ChecklistDetailScreen() {
   };
 
   const handleEditTitle = () => {
-    Alert.prompt(
-      t('checklist.rename.title'),
-      t('checklist.rename.prompt'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.save'),
-          onPress: async (newTitle?: string) => {
-            if (newTitle?.trim() && newTitle !== checklist.title) {
-              try {
-                await updateChecklist({
-                  id: checklistId,
-                  title: newTitle.trim(),
-                });
-              } catch {
-                Alert.alert(t('common.error'), t('checklist.errors.update_title'));
-              }
-            }
-          },
-        },
-      ],
-      'plain-text',
-      checklist.title
-    );
+    setRenamePrompt({ initialValue: checklist.title });
+  };
+
+  const submitRename = async (newTitle: string) => {
+    if (newTitle?.trim() && newTitle.trim() !== checklist.title) {
+      try {
+        await updateChecklist({
+          id: checklistId,
+          title: newTitle.trim(),
+        });
+      } catch {
+        Alert.alert(t('common.error'), t('checklist.errors.update_title'));
+      }
+    }
   };
 
   const completedItems = checklist.items.filter((item: ChecklistItem) => item.completed).length;
   const totalItems = checklist.items.length;
-  const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+  const progress = totalItems > 0 ? completedItems / totalItems : 0;
+  const categoryColor = getCategoryColor(checklist.category);
+
+  const sortedItems = [...checklist.items].sort(
+    (a: ChecklistItem, b: ChecklistItem) => a.order - b.order
+  );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top', 'bottom']}>
       <AppHeader
         title={checklist.title}
         variant="default"
@@ -148,13 +146,13 @@ export default function ChecklistDetailScreen() {
         onBackPress={() => router.back()}
         leftAction={
           <TouchableOpacity onPress={handleEditTitle}>
-            <Icon name="edit" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+            <Icon name="edit" size={20} color={theme.label} />
           </TouchableOpacity>
         }
         rightAction={
           <TouchableOpacity
             onPress={() => setIsAddingItem(!isAddingItem)}
-            style={[styles.addButton, { backgroundColor: getCategoryColor(checklist.category) }]}
+            style={[styles.addButton, { backgroundColor: categoryColor }]}
           >
             <Icon name="plus" size={20} color="#FFFFFF" />
           </TouchableOpacity>
@@ -164,17 +162,7 @@ export default function ChecklistDetailScreen() {
       {/* Progress Bar */}
       {totalItems > 0 && (
         <View style={styles.progressContainer}>
-          <View style={[styles.progressBar, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
-            <View
-              style={[
-                styles.progressFill,
-                {
-                  width: `${progressPercent}%`,
-                  backgroundColor: getCategoryColor(checklist.category),
-                },
-              ]}
-            />
-          </View>
+          <ProgressBar progress={progress} color={categoryColor} height={4} />
         </View>
       )}
 
@@ -189,17 +177,18 @@ export default function ChecklistDetailScreen() {
         >
           {/* Add Item Input */}
           {isAddingItem && (
-            <View style={[styles.addItemContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F2F2F7' }]}>
+            <View style={[styles.addItemContainer, { backgroundColor: theme.groupedBackground }]}>
               <TextInput
                 style={[
                   styles.addItemInput,
                   {
-                    color: isDark ? '#FFFFFF' : '#1C1C1E',
-                    backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF',
+                    color: theme.label,
+                    backgroundColor: theme.tile,
+                    borderColor: theme.separator,
                   },
                 ]}
                 placeholder={t('checklist.add_item_placeholder')}
-                placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
+                placeholderTextColor={theme.tertiaryLabel}
                 value={newItemText}
                 onChangeText={setNewItemText}
                 autoFocus
@@ -212,13 +201,13 @@ export default function ChecklistDetailScreen() {
                     setIsAddingItem(false);
                     setNewItemText('');
                   }}
-                  style={[styles.actionButton, { backgroundColor: isDark ? '#48484A' : '#E5E5EA' }]}
+                  style={[styles.actionButton, { backgroundColor: theme.tile }]}
                 >
-                  <Icon name="close" size={16} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                  <Icon name="close" size={16} color={theme.label} />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={handleAddItem}
-                  style={[styles.actionButton, { backgroundColor: '#34C759' }]}
+                  style={[styles.actionButton, { backgroundColor: theme.success }]}
                 >
                   <Icon name="plus" size={16} color="#FFFFFF" />
                 </TouchableOpacity>
@@ -227,19 +216,18 @@ export default function ChecklistDetailScreen() {
           )}
 
           {/* Items List */}
-          <View style={styles.itemsList}>
-            {checklist.items
-              .sort((a: ChecklistItem, b: ChecklistItem) => a.order - b.order)
-              .map((item: ChecklistItem) => (
+          {sortedItems.length > 0 && (
+            <GroupedList>
+              {sortedItems.map((item: ChecklistItem) => (
                 <View key={item.id} style={styles.itemContainer}>
                   <TouchableOpacity
                     onPress={() => handleToggleItem(item.id)}
                     style={[
                       styles.itemCheckbox,
                       {
-                        backgroundColor: item.completed ? '#34C759' : 'transparent',
-                        borderColor: item.completed ? '#34C759' : (isDark ? '#3A3A3C' : '#E5E5EA'),
-                      }
+                        backgroundColor: item.completed ? theme.success : 'transparent',
+                        borderColor: item.completed ? theme.success : theme.separator,
+                      },
                     ]}
                   >
                     <Icon
@@ -252,9 +240,7 @@ export default function ChecklistDetailScreen() {
                     style={[
                       styles.itemText,
                       {
-                        color: item.completed
-                          ? (isDark ? '#8E8E93' : '#6D6D70')
-                          : (isDark ? '#FFFFFF' : '#1C1C1E'),
+                        color: item.completed ? theme.secondaryLabel : theme.label,
                         textDecorationLine: item.completed ? 'line-through' : 'none',
                       },
                     ]}
@@ -265,26 +251,40 @@ export default function ChecklistDetailScreen() {
                     onPress={() => handleDeleteItem(item)}
                     style={styles.deleteButton}
                   >
-                    <Icon name="close" size={14} color={isDark ? '#8E8E93' : '#6D6D70'} />
+                    <Icon name="close" size={14} color={theme.secondaryLabel} />
                   </TouchableOpacity>
                 </View>
               ))}
-          </View>
+            </GroupedList>
+          )}
 
           {/* Empty State */}
           {checklist.items.length === 0 && (
             <View style={styles.emptyState}>
-              <Icon name={checklist.icon as any} size={48} color={isDark ? '#3A3A3C' : '#E5E5EA'} />
-              <Text style={[styles.emptyTitle, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              <Icon name={checklist.icon as any} size={48} color={theme.tertiaryLabel} />
+              <Text style={[styles.emptyTitle, { color: theme.secondaryLabel }]}>
                 {t('checklist.empty.title')}
               </Text>
-              <Text style={[styles.emptyDescription, { color: isDark ? '#8E8E93' : '#6D6D70' }]}>
+              <Text style={[styles.emptyDescription, { color: theme.secondaryLabel }]}>
                 {t('checklist.empty.description')}
               </Text>
             </View>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <PromptModal
+        visible={renamePrompt !== null}
+        title={t('checklist.rename.title')}
+        message={t('checklist.rename.prompt')}
+        initialValue={renamePrompt?.initialValue}
+        confirmLabel={t('common.save')}
+        onCancel={() => setRenamePrompt(null)}
+        onConfirm={(value) => {
+          setRenamePrompt(null);
+          submitRename(value);
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -292,37 +292,6 @@ export default function ChecklistDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(60, 60, 67, 0.12)',
-  },
-  backButton: {
-    padding: 8,
-    marginLeft: -8,
-  },
-  titleContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    fontFamily: 'System',
-  },
-  headerSubtitle: {
-    fontSize: 13,
-    fontWeight: '400',
-    fontFamily: 'System',
-    marginTop: 2,
-  },
-  headerSpacer: {
-    width: 40,
   },
   addButton: {
     width: 32,
@@ -332,17 +301,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  progressBar: {
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 2,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
   },
   content: {
     flex: 1,
@@ -351,27 +311,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    paddingHorizontal: Spacing.lg,
     paddingBottom: 20,
   },
   addItemContainer: {
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
-    gap: 12,
+    marginTop: Spacing.lg,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.card,
+    gap: Spacing.md,
   },
   addItemInput: {
-    fontSize: 16,
-    fontFamily: 'System',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    fontSize: Typography.fontSize.callout,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.lg,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(60, 60, 67, 0.12)',
   },
   addItemActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: 8,
+    gap: Spacing.sm,
   },
   actionButton: {
     width: 32,
@@ -380,16 +339,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  itemsList: {
-    paddingHorizontal: 16,
-    gap: 2,
-  },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 4,
-    gap: 12,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.md,
   },
   itemCheckbox: {
     width: 24,
@@ -401,29 +356,26 @@ const styles = StyleSheet.create({
   },
   itemText: {
     flex: 1,
-    fontSize: 16,
-    fontFamily: 'System',
+    fontSize: Typography.fontSize.callout,
   },
   deleteButton: {
-    padding: 8,
+    padding: Spacing.sm,
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 60,
-    paddingHorizontal: 32,
+    paddingHorizontal: Spacing['3xl'],
   },
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    fontFamily: 'System',
-    marginTop: 16,
-    marginBottom: 8,
+    fontSize: Typography.fontSize.title3,
+    fontWeight: Typography.fontWeight.semibold,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   emptyDescription: {
-    fontSize: 16,
-    fontFamily: 'System',
+    fontSize: Typography.fontSize.callout,
     textAlign: 'center',
     lineHeight: 22,
   },
