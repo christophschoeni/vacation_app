@@ -1,4 +1,4 @@
-import { parseAmount } from '../formatters';
+import { parseAmount, formatRelativeTime } from '../formatters';
 
 // parseAmount guards the whole budget pipeline: a NaN that reaches the DB
 // poisons every downstream calculation and can't be fixed from the UI. These
@@ -45,5 +45,28 @@ describe('parseAmount', () => {
   // function exists to prevent.
   it('does not truncate the way parseFloat would', () => {
     expect(parseAmount('1.200,50')).not.toBe(1.2);
+  });
+});
+
+describe('formatRelativeTime', () => {
+  // Default locale in tests is 'de'. The point of the fix is that this goes
+  // through Intl.RelativeTimeFormat with the ACTIVE locale instead of the old
+  // hard-coded German strings — so the special-cased wording is real, localised
+  // output, not a literal we typed.
+  it('uses localised "in N days" wording for larger offsets', () => {
+    const inFiveDays = new Date();
+    inFiveDays.setDate(inFiveDays.getDate() + 6); // ceil() lands on +6 → "in 6 Tagen"
+    // German ICU output for far-out days is "in N Tagen"; assert it is
+    // Intl-shaped rather than the old hard-coded literal.
+    expect(formatRelativeTime(inFiveDays)).toMatch(/tag/i);
+  });
+
+  it('collapses ±1/±2 and 0 to the locale\'s single-word forms', () => {
+    // numeric:'auto' is exactly what makes this localised: 0 → "heute",
+    // -1 → "gestern" etc., instead of the old German-only string table.
+    expect(formatRelativeTime(new Date())).toBe('heute');
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    expect(formatRelativeTime(yesterday)).toBe('gestern');
   });
 });

@@ -4,6 +4,7 @@
 
 import { currencyService } from '@/lib/currency';
 import { staticDefaultCurrency } from '@/contexts/CurrencyContext';
+import { translationService } from '@/lib/i18n';
 
 /**
  * Parse a user-entered monetary amount.
@@ -119,24 +120,22 @@ export function formatDateWithDay(date: Date): string {
 }
 
 /**
- * Get relative time string (e.g., "2 days ago", "in 3 days")
+ * Get relative time string (e.g. "in 3 days", "yesterday") in the active
+ * language.
+ *
+ * Uses Intl.RelativeTimeFormat with numeric: 'auto', which renders the special
+ * "today"/"tomorrow"/"yesterday" wording per locale instead of the hard-coded
+ * German strings this used to return in all 7 languages.
  */
 export function formatRelativeTime(date: Date): string {
   const now = new Date();
   const diffTime = date.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) {
-    return 'Heute';
-  } else if (diffDays === 1) {
-    return 'Morgen';
-  } else if (diffDays === -1) {
-    return 'Gestern';
-  } else if (diffDays > 0) {
-    return `in ${diffDays} Tagen`;
-  } else {
-    return `vor ${Math.abs(diffDays)} Tagen`;
-  }
+  const rtf = new Intl.RelativeTimeFormat(translationService.getCurrentLanguage(), {
+    numeric: 'auto',
+  });
+  return rtf.format(diffDays, 'day');
 }
 
 /**
