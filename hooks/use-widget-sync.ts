@@ -7,8 +7,11 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import {
   APP_GROUP,
   SNAPSHOT_KEY,
+  SNAPSHOT_KEY_V2,
   buildWidgetSnapshot,
+  buildWidgetSnapshots,
 } from '@/lib/widgets/widget-snapshot';
+import { setItem, reloadAll, isAvailable } from '@/modules/widget-storage';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -29,6 +32,9 @@ export function useWidgetSync() {
   // Writing the same payload again would reload the widget timeline for no
   // reason, so the last one written is compared first.
   const lastWritten = React.useRef<string | null>(null);
+  // isAvailable being false is worth surfacing, but only once - the effect runs
+  // on every query invalidation and a warning per run would drown the log.
+  const warnedUnavailable = React.useRef(false);
 
   React.useEffect(() => {
     // The shared container and WidgetKit are iOS-only; Android widgets read
@@ -38,27 +44,45 @@ export function useWidgetSync() {
     // and the widget flashes an empty bar before correcting itself.
     if (!budgetSummaries) return;
 
+    // The featured trip drives the legacy single-snapshot key; the V2 list
+    // carries every trip plus which one to feature by default.
     const snapshot = buildWidgetSnapshot(
       vacations,
       budgetSummaries,
       defaultCurrency
     );
+    const snapshotV2 = buildWidgetSnapshots(
+      vacations,
+      budgetSummaries,
+      defaultCurrency
+    );
 
-    // updatedAt changes on every build, so compare everything else.
-    const { updatedAt, ...stable } = snapshot;
-    const fingerprint = JSON.stringify(stable);
+    // updatedAt changes on every build, so compare everything else - across
+    // both payloads, so a change in any trip still triggers a write.
+    const { updatedAt: _legacyAt, ...stable } = snapshot;
+    const stableV2 = {
+      featuredId: snapshotV2.featuredId,
+      trips: snapshotV2.trips.map(({ updatedAt: _at, ...rest }) => rest),
+    };
+    const fingerprint = JSON.stringify({ stable, stableV2 });
     if (fingerprint === lastWritten.current) return;
 
     try {
-      // Required lazily: the module reaches for a native view that does not
-      // exist on Android or in a bare JS test environment.
-      const {
-        ExtensionStorage,
-      } = require('@bacons/apple-targets/build/ExtensionStorage');
+      // A missing native module must be loud, not a silent no-op - the whole
+      // point of the bridge is that the widget gets its data.
+      if (!isAvailable) {
+        if (!warnedUnavailable.current) {
+          warnedUnavailable.current = true;
+          logger.warn(
+            'Widget storage native module unavailable; skipping widget sync'
+          );
+        }
+        return;
+      }
 
-      const storage = new ExtensionStorage(APP_GROUP);
-      storage.set(SNAPSHOT_KEY, JSON.stringify(snapshot));
-      ExtensionStorage.reloadWidget();
+      setItem(SNAPSHOT_KEY, JSON.stringify(snapshot), APP_GROUP);
+      setItem(SNAPSHOT_KEY_V2, JSON.stringify(snapshotV2), APP_GROUP);
+      reloadAll();
 
       lastWritten.current = fingerprint;
     } catch (error) {

@@ -1,0 +1,7 @@
+{
+  "name": "widget-storage",
+  "version": "0.1.0",
+  "description": "Local Expo module: write JSON into an App Group and reload widget timelines.",
+  "main": "index.ts",
+  "private": true
+}

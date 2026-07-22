@@ -1,5 +1,6 @@
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 // MARK: - Shared payload
 
@@ -52,9 +53,51 @@ struct WidgetSnapshot: Codable {
     }
 }
 
+/// Mirror of WidgetSnapshotV2 in lib/widgets/widget-snapshot.ts.
+///
+/// Unlike the legacy `WidgetSnapshot`, this is the per-trip list form used by
+/// the configurable widget: it carries a stable `id` (the vacation id, which is
+/// also the intent's selection key) and a non-optional `destination`.
+struct WidgetSnapshotV2: Codable {
+    var id: String
+    var destination: String
+    var daysRemaining: Int
+    var inProgress: Bool
+    var targetDate: String
+    var budget: Double
+    var spent: Double
+    var currency: String
+    var updatedAt: String
+
+    /// Adapt a V2 trip into the view model the SwiftUI views already consume.
+    var asLegacy: WidgetSnapshot {
+        WidgetSnapshot(
+            destination: destination,
+            daysRemaining: daysRemaining,
+            inProgress: inProgress,
+            targetDate: targetDate,
+            budget: budget,
+            spent: spent,
+            currency: currency,
+            updatedAt: updatedAt
+        )
+    }
+}
+
+/// Container written under the V2 key: the list of trips plus the id of the
+/// trip the app considers "featured" (used as the fallback selection).
+struct WidgetSnapshotV2Container: Codable {
+    var featuredId: String?
+    var trips: [WidgetSnapshotV2]
+
+    static let empty = WidgetSnapshotV2Container(featuredId: nil, trips: [])
+}
+
 private let appGroup = "group.com.vomschoeni.ferien-budget"
 private let snapshotKey = "widgetSnapshot"
+private let snapshotV2Key = "widgetSnapshotV2"
 
+/// Legacy single-snapshot read (kept as the last fallback).
 private func readSnapshot() -> WidgetSnapshot {
     guard
         let defaults = UserDefaults(suiteName: appGroup),
@@ -66,6 +109,41 @@ private func readSnapshot() -> WidgetSnapshot {
     return decoded
 }
 
+/// V2 container read (the per-trip list plus the featured id).
+private func readSnapshotV2() -> WidgetSnapshotV2Container {
+    guard
+        let defaults = UserDefaults(suiteName: appGroup),
+        let raw = defaults.string(forKey: snapshotV2Key),
+        let data = raw.data(using: .utf8),
+        let decoded = try? JSONDecoder().decode(WidgetSnapshotV2Container.self, from: data)
+    else { return .empty }
+
+    return decoded
+}
+
+/// Resolve the trip to display for a given intent selection.
+///
+/// Preference order: the intent's selected trip, then the container's
+/// `featuredId`, then the first trip, then the legacy single snapshot.
+private func resolveSnapshot(selectedId: String?) -> WidgetSnapshot {
+    let container = readSnapshotV2()
+
+    if !container.trips.isEmpty {
+        if let selectedId, let match = container.trips.first(where: { $0.id == selectedId }) {
+            return match.asLegacy
+        }
+        if let featuredId = container.featuredId,
+           let match = container.trips.first(where: { $0.id == featuredId }) {
+            return match.asLegacy
+        }
+        if let first = container.trips.first {
+            return first.asLegacy
+        }
+    }
+
+    return readSnapshot()
+}
+
 private func formatAmount(_ value: Double, currency: String) -> String {
     let formatter = NumberFormatter()
     formatter.numberStyle = .decimal
@@ -75,6 +153,50 @@ private func formatAmount(_ value: Double, currency: String) -> String {
     return "\(number) \(currency)"
 }
 
+// MARK: - App Intent configuration
+
+/// One selectable trip, backed by the V2 trip list in the App Group.
+struct TripEntity: AppEntity {
+    let id: String
+    let destination: String
+
+    static var typeDisplayRepresentation: TypeDisplayRepresentation {
+        TypeDisplayRepresentation(name: "Reise")
+    }
+
+    var displayRepresentation: DisplayRepresentation {
+        DisplayRepresentation(title: "\(destination)")
+    }
+
+    static var defaultQuery = TripEntityQuery()
+}
+
+/// Reads the V2 trips from the App Group so the widget configuration sheet can
+/// list the destinations the user can pin the widget to.
+struct TripEntityQuery: EntityQuery {
+    private func allTrips() -> [TripEntity] {
+        readSnapshotV2().trips.map { TripEntity(id: $0.id, destination: $0.destination) }
+    }
+
+    func entities(for identifiers: [TripEntity.ID]) async throws -> [TripEntity] {
+        let byId = Dictionary(allTrips().map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return identifiers.compactMap { byId[$0] }
+    }
+
+    func suggestedEntities() async throws -> [TripEntity] {
+        allTrips()
+    }
+}
+
+/// Widget configuration intent: lets the user pick which trip the widget shows.
+struct SelectTripIntent: WidgetConfigurationIntent {
+    static var title: LocalizedStringResource = "Reise auswählen"
+    static var description = IntentDescription("Wähle die Reise, die im Widget angezeigt wird.")
+
+    @Parameter(title: "Reise")
+    var trip: TripEntity?
+}
+
 // MARK: - Timeline
 
 struct SnapshotEntry: TimelineEntry {
@@ -82,18 +204,21 @@ struct SnapshotEntry: TimelineEntry {
     let snapshot: WidgetSnapshot
 }
 
-struct Provider: TimelineProvider {
+struct Provider: AppIntentTimelineProvider {
+    typealias Intent = SelectTripIntent
+    typealias Entry = SnapshotEntry
+
     func placeholder(in context: Context) -> SnapshotEntry {
         SnapshotEntry(date: Date(), snapshot: .empty)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (SnapshotEntry) -> Void) {
-        completion(SnapshotEntry(date: Date(), snapshot: readSnapshot()))
+    func snapshot(for configuration: SelectTripIntent, in context: Context) async -> SnapshotEntry {
+        SnapshotEntry(date: Date(), snapshot: resolveSnapshot(selectedId: configuration.trip?.id))
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<SnapshotEntry>) -> Void) {
+    func timeline(for configuration: SelectTripIntent, in context: Context) async -> Timeline<SnapshotEntry> {
         let now = Date()
-        let snapshot = readSnapshot()
+        let snapshot = resolveSnapshot(selectedId: configuration.trip?.id)
 
         // The day count only changes at midnight, so refresh then rather than
         // on an interval. The app also reloads the timeline directly whenever
@@ -104,11 +229,9 @@ struct Provider: TimelineProvider {
             matchingPolicy: .nextTime
         ) ?? now.addingTimeInterval(3600)
 
-        completion(
-            Timeline(
-                entries: [SnapshotEntry(date: now, snapshot: snapshot)],
-                policy: .after(nextMidnight)
-            )
+        return Timeline(
+            entries: [SnapshotEntry(date: now, snapshot: snapshot)],
+            policy: .after(nextMidnight)
         )
     }
 }
@@ -257,7 +380,11 @@ struct FerienBudgetWidget: Widget {
     let kind = "FerienBudgetWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+        AppIntentConfiguration(
+            kind: kind,
+            intent: SelectTripIntent.self,
+            provider: Provider()
+        ) { entry in
             FerienBudgetWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Ferien Budget")

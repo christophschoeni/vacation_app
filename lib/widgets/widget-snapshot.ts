@@ -14,6 +14,14 @@ export const APP_GROUP = 'group.com.vomschoeni.ferien-budget';
 export const SNAPSHOT_KEY = 'widgetSnapshot';
 
 /**
+ * Key the V2 widget reads from: the full trip list plus which one is featured.
+ *
+ * Written alongside SNAPSHOT_KEY, never in place of it - an older widget build
+ * still reading the single snapshot must keep working after the app updates.
+ */
+export const SNAPSHOT_KEY_V2 = 'widgetSnapshotV2';
+
+/**
  * What a home-screen widget renders.
  *
  * Deliberately flat and pre-formatted where the widget cannot easily compute a
@@ -87,5 +95,79 @@ export function buildWidgetSnapshot(
     spent: summary?.totalSpent ?? 0,
     currency,
     updatedAt: now.toISOString(),
+  };
+}
+
+/**
+ * One trip in the V2 payload.
+ *
+ * Unlike the single {@link WidgetSnapshot}, every field is always present: the
+ * list form carries a real trip per entry, so `destination` is never null and
+ * `id` - the key the widget's configuration intent selects a trip by - is
+ * required. Otherwise the day and budget maths mirror the single snapshot.
+ */
+export interface WidgetSnapshotV2 {
+  /** Vacation id; the selection key the widget's intent picks a trip by. */
+  id: string;
+  /** Always a real destination in the list form. */
+  destination: string;
+  /** Whole days until departure, or until the end date once under way. */
+  daysRemaining: number;
+  /** True while the trip is running. */
+  inProgress: boolean;
+  /** ISO 8601, so the widget can recompute the day count between refreshes. */
+  targetDate: string;
+
+  budget: number;
+  spent: number;
+  /** Currency code the two amounts above are expressed in. */
+  currency: string;
+
+  /** When this entry was produced, ISO 8601. */
+  updatedAt: string;
+}
+
+/**
+ * Build the V2 payload: one entry per trip plus the id of the featured one.
+ *
+ * The widget renders whichever trip the user selected in its configuration
+ * intent, falling back to `featuredId` when none is chosen. Each entry uses the
+ * same day and budget maths as {@link buildWidgetSnapshot}, applied per trip.
+ *
+ * `summaries` carries budget and spend already converted into the display
+ * currency - the same figures the vacation list shows - so the widget cannot
+ * disagree with the app.
+ */
+export function buildWidgetSnapshots(
+  vacations: Vacation[],
+  summaries: Map<string, { totalBudget: number; totalSpent: number }> | undefined,
+  currency: string,
+  now: Date = new Date()
+): { featuredId: string | null; trips: WidgetSnapshotV2[] } {
+  const updatedAt = now.toISOString();
+
+  const trips = vacations.map((vacation) => {
+    const inProgress = vacationStatus(vacation, now) === 'active';
+
+    // A running trip counts down to its end, matching the timer tab.
+    const target = new Date(inProgress ? vacation.endDate : vacation.startDate);
+    const summary = summaries?.get(vacation.id);
+
+    return {
+      id: vacation.id,
+      destination: vacation.destination,
+      daysRemaining: Math.max(0, daysUntil(target, now)),
+      inProgress,
+      targetDate: target.toISOString(),
+      budget: summary?.totalBudget ?? 0,
+      spent: summary?.totalSpent ?? 0,
+      currency,
+      updatedAt,
+    };
+  });
+
+  return {
+    featuredId: featuredVacation(vacations, now)?.id ?? null,
+    trips,
   };
 }
