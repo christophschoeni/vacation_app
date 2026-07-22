@@ -535,7 +535,8 @@
       "label": "上限 {{limit}} · {{percent}}%",
       "exceeded": "上限 {{limit}} を超過",
       "none": "上限なし",
-      "set": "上限を設定"
+      "set": "上限を設定",
+      "set_hint": "空にすると上限を削除します。"
     },
     "pace": {
       "warning": "このペースだと予算は{{days}}日早く尽きます（平均{{actual}}/日、目標{{target}}/日）。",

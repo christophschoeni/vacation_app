@@ -535,7 +535,8 @@
       "label": "Limit {{limit}} · {{percent}}%",
       "exceeded": "Limit {{limit}} überschritten",
       "none": "kein Limit",
-      "set": "Limit festlegen"
+      "set": "Limit festlegen",
+      "set_hint": "Leer lassen, um das Limit zu entfernen."
     },
     "pace": {
       "warning": "Bei gleichem Tempo ist das Budget {{days}} Tage vor Ende aufgebraucht (Ø {{actual}}/Tag, Ziel {{target}}/Tag).",

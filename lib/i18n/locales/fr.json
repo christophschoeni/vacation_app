@@ -535,7 +535,8 @@
       "label": "Limite {{limit}} · {{percent}} %",
       "exceeded": "Limite {{limit}} dépassée",
       "none": "aucune limite",
-      "set": "Définir une limite"
+      "set": "Définir une limite",
+      "set_hint": "Laisser vide pour retirer la limite."
     },
     "pace": {
       "warning": "À ce rythme, le budget sera épuisé {{days}} jours avant la fin (moy. {{actual}}/jour, cible {{target}}/jour).",

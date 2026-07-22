@@ -535,7 +535,8 @@
       "label": "Límite {{limit}} · {{percent}} %",
       "exceeded": "Límite {{limit}} superado",
       "none": "sin límite",
-      "set": "Definir límite"
+      "set": "Definir límite",
+      "set_hint": "Déjalo vacío para quitar el límite."
     },
     "pace": {
       "warning": "A este ritmo el presupuesto se agota {{days}} días antes (med. {{actual}}/día, objetivo {{target}}/día).",

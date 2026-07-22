@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import AppHeader from '@/components/ui/AppHeader';
+import { PromptModal } from '@/components/ui/PromptModal';
 import { VacationHero } from '@/components/ui/VacationHero';
 import {
   Card,
@@ -138,6 +139,10 @@ export default function VacationReportScreen() {
   const [categoryData, setCategoryData] = useState<CategoryExpense[]>([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [analysis, setAnalysis] = useState<BudgetAnalysis | null>(null);
+  // Category-limit prompt (cross-platform; Alert.prompt is iOS-only).
+  const [limitPrompt, setLimitPrompt] = useState<
+    { category: ExpenseCategory; initialValue: string } | null
+  >(null);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -202,48 +207,36 @@ export default function VacationReportScreen() {
 
   const handleEditLimit = (category: ExpenseCategory) => {
     const current = limits?.get(category);
+    setLimitPrompt({
+      category,
+      initialValue: current ? String(current.limitAmount) : '',
+    });
+  };
 
-    Alert.prompt(
-      getExpenseCategoryLabel(category),
-      t('report.limit.set'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        ...(current
-          ? [
-              {
-                text: t('common.delete'),
-                style: 'destructive' as const,
-                onPress: async () => {
-                  if (!vacationId) return;
-                  try {
-                    await clearLimit({ vacationId, category });
-                  } catch {
-                    Alert.alert(t('common.error'));
-                  }
-                },
-              },
-            ]
-          : []),
-        {
-          text: t('common.save'),
-          onPress: async (value?: string) => {
-            if (!vacationId) return;
-            const amount = parseAmount(value ?? '');
-            // An unparseable or negative entry is ignored rather than stored as
-            // a zero limit, which would read as "everything is over budget".
-            if (amount === null || amount <= 0) return;
-            try {
-              await setLimit({ vacationId, category, limitAmount: amount });
-            } catch {
-              Alert.alert(t('common.error'));
-            }
-          },
-        },
-      ],
-      'plain-text',
-      current ? String(current.limitAmount) : '',
-      'decimal-pad'
-    );
+  const submitLimit = async (category: ExpenseCategory, value: string) => {
+    if (!vacationId) return;
+    const trimmed = value.trim();
+
+    // An empty entry clears the limit (returns the category to "kein Limit");
+    // this is the cross-platform stand-in for the old delete button.
+    if (trimmed === '') {
+      try {
+        await clearLimit({ vacationId, category });
+      } catch {
+        Alert.alert(t('common.error'));
+      }
+      return;
+    }
+
+    const amount = parseAmount(trimmed);
+    // An unparseable or negative entry is ignored rather than stored as a zero
+    // limit, which would read as "everything is over budget".
+    if (amount === null || amount <= 0) return;
+    try {
+      await setLimit({ vacationId, category, limitAmount: amount });
+    } catch {
+      Alert.alert(t('common.error'));
+    }
   };
 
   // Forecast: at the current daily rate, does the budget run out before the
@@ -352,6 +345,21 @@ export default function VacationReportScreen() {
           </View>
         )}
       </ScrollView>
+
+      <PromptModal
+        visible={limitPrompt !== null}
+        title={limitPrompt ? getExpenseCategoryLabel(limitPrompt.category) : ''}
+        message={t('report.limit.set_hint')}
+        initialValue={limitPrompt?.initialValue}
+        keyboardType="decimal-pad"
+        confirmLabel={t('common.save')}
+        onCancel={() => setLimitPrompt(null)}
+        onConfirm={(value) => {
+          const current = limitPrompt;
+          setLimitPrompt(null);
+          if (current) submitLimit(current.category, value);
+        }}
+      />
     </SafeAreaView>
   );
 }

@@ -535,7 +535,8 @@
       "label": "上限 {{limit}} · {{percent}}%",
       "exceeded": "已超出上限 {{limit}}",
       "none": "无上限",
-      "set": "设置上限"
+      "set": "设置上限",
+      "set_hint": "留空以移除上限。"
     },
     "pace": {
       "warning": "按此速度，预算将提前 {{days}} 天用完（日均 {{actual}}，目标 {{target}}）。",

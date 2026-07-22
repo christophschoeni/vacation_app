@@ -123,6 +123,7 @@ export type TranslationKey =
   | 'report.limit.label'
   | 'report.limit.none'
   | 'report.limit.set'
+  | 'report.limit.set_hint'
   | 'report.no_data'
   | 'report.no_data_subtitle'
   | 'report.of_budget'
