@@ -20,7 +20,6 @@ import SwipeableCard from '@/components/ui/SwipeableCard';
 import { Card, Icon, GroupedList } from '@/components/design';
 import { useIOSTheme } from '@/constants/ios-theme';
 import BudgetOverview from '@/components/ui/budget/BudgetOverview';
-import { VacationHero } from '@/components/ui/VacationHero';
 import AppHeader from '@/components/ui/AppHeader';
 import { useRouteParam } from '@/hooks/use-route-param';
 import { useVacationId } from '@/contexts/VacationContext';
@@ -159,29 +158,34 @@ export default function VacationBudgetScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
+      {/*
+        Compact header instead of a full-bleed photo: the hero image ate the top
+        third of the screen, so the destination is a plain large title with the
+        budget summary right below it, keeping the expenses list in view.
+      */}
       <AppHeader
+        title={displayVacation.destination}
+        variant="large"
         showBack={true}
         onBackPress={() => goBack('/(tabs)')}
         rightAction={
-          <View style={styles.headerActions}>
-            <TouchableOpacity
-              style={styles.headerButton}
-              onPress={() => router.push(`/expense/add?vacationId=${vacationId}`)}
-              activeOpacity={0.8}
-              accessibilityRole="button"
-              accessibilityLabel={t('expense.add.title')}
-            >
-              <View style={[styles.headerButtonInner, { backgroundColor: theme.groupedBackground }]}>
-                <Icon name="plus" size={18} color={theme.accent} />
-              </View>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => router.push(`/expense/add?vacationId=${vacationId}`)}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={t('expense.add.title')}
+          >
+            <View style={[styles.headerButtonInner, { backgroundColor: theme.groupedBackground }]}>
+              <Icon name="plus" size={18} color={theme.accent} />
+            </View>
+          </TouchableOpacity>
         }
       />
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarPadding }]}
+        contentContainerStyle={{ paddingBottom: tabBarPadding }}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -191,13 +195,8 @@ export default function VacationBudgetScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        {/*
-          The hero carries the destination name, so no separate title above it -
-          it read as "Khao Lak" twice otherwise.
-        */}
-        <VacationHero vacation={displayVacation} height={140} style={styles.detailHero} />
-
-        <BudgetOverview vacation={displayVacation} expenses={expenses} />
+        <View style={styles.body}>
+          <BudgetOverview vacation={displayVacation} expenses={expenses} />
 
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: theme.label }]}>
@@ -245,6 +244,7 @@ export default function VacationBudgetScreen() {
             ))}
           </GroupedList>
         )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -254,8 +254,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  detailHero: {
-    marginBottom: 16,
+  // Content below the full-bleed hero header keeps the horizontal inset; the
+  // hero itself is edge to edge, so the padding lives here rather than on the
+  // scroll container.
+  body: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   sectionHeader: {
     flexDirection: 'row',
