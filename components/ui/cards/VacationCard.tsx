@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 
 import { ProgressBar, StatusBadge } from '@/components/design';
 import { BorderRadius, Spacing, Typography } from '@/constants/design';
@@ -81,12 +82,17 @@ export default function VacationCard({
           : ''
       }`}
     >
-      <LinearGradient
-        colors={getVacationGradient(vacation)}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.hero}
-      />
+      {/* The trip photo when set, otherwise the generated gradient. */}
+      {vacation.imageUrl ? (
+        <Image source={{ uri: vacation.imageUrl }} style={styles.hero} contentFit="cover" />
+      ) : (
+        <LinearGradient
+          colors={getVacationGradient(vacation)}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.hero}
+        />
+      )}
 
       <View style={styles.body}>
         <View style={styles.titleRow}>
