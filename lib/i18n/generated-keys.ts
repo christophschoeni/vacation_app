@@ -128,6 +128,7 @@ export type TranslationKey =
   | 'report.of_budget'
   | 'report.pace.on_track'
   | 'report.pace.warning'
+  | 'report.title'
   | 'report.total_expenses'
   | 'settings.about.title'
   | 'settings.about.version'

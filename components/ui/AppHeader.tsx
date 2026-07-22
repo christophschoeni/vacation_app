@@ -37,17 +37,40 @@ export default function AppHeader({
     // showed as a line under the header that the design does not have.
     <View style={[styles.container, { paddingTop: useSafeAreaPadding ? insets.top : 0 }]}>
       {/*
-        Large variant: the title and the right action share one row, as in the
-        design (padding 70/20/6, space-between). The separate button row below
-        is only for the back/modal variants.
+        Large variant, two forms from the design:
+        - tab roots (no back): title and right action share one row (1a, 1g).
+        - pushed screens (showBack): a row of round back + action buttons, then
+          the large title on the line below (1b, 1d, 1e).
       */}
       {variant === 'large' ? (
-        <View style={styles.largeHeaderRow}>
-          <Text style={[styles.largeTitle, styles.largeTitleFlex, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
-            {title}
-          </Text>
-          {rightAction ?? <View style={styles.spacer} />}
-        </View>
+        showBack ? (
+          <View style={styles.largeStack}>
+            <View style={styles.largeButtonRow}>
+              {onBackPress ? (
+                <TouchableOpacity
+                  onPress={onBackPress}
+                  style={[styles.roundButton, { backgroundColor: theme.groupedBackground }]}
+                  accessibilityLabel={t('common.back')}
+                >
+                  <Icon name="arrow-left" size={20} color={isDark ? '#FFFFFF' : '#1C1C1E'} />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.roundButton} />
+              )}
+              {rightAction ?? <View style={styles.roundButton} />}
+            </View>
+            <Text style={[styles.largeTitle, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
+              {title}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.largeHeaderRow}>
+            <Text style={[styles.largeTitle, styles.largeTitleFlex, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]} numberOfLines={1}>
+              {title}
+            </Text>
+            {rightAction ?? <View style={styles.spacer} />}
+          </View>
+        )
       ) : (
       <View style={styles.header}>
         {/* Left Side */}
@@ -182,6 +205,24 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 6,
     gap: 12,
+  },
+  // Pushed screens (1b/1d/1e): round-button row, then the title below it.
+  largeStack: {
+    paddingHorizontal: 20,
+    paddingTop: 6,
+    gap: 10,
+  },
+  largeButtonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  roundButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   largeTitle: {
     fontSize: 34,

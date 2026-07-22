@@ -534,7 +534,8 @@
       "warning": "このペースだと予算は{{days}}日早く尽きます（平均{{actual}}/日、目標{{target}}/日）。",
       "on_track": "順調：平均{{actual}}/日（目標{{target}}/日）。"
     },
-    "of_budget": "{{budget}} 中 · {{percent}}%"
+    "of_budget": "{{budget}} 中 · {{percent}}%",
+    "title": "分析"
   },
   "countdown": {
     "title": "タイマー",

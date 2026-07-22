@@ -534,7 +534,8 @@
       "warning": "Bei gleichem Tempo ist das Budget {{days}} Tage vor Ende aufgebraucht (Ø {{actual}}/Tag, Ziel {{target}}/Tag).",
       "on_track": "Im Rahmen: Ø {{actual}}/Tag bei einem Ziel von {{target}}/Tag."
     },
-    "of_budget": "von {{budget}} · {{percent}}%"
+    "of_budget": "von {{budget}} · {{percent}}%",
+    "title": "Auswertung"
   },
   "countdown": {
     "title": "Timer",

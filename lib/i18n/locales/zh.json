@@ -534,7 +534,8 @@
       "warning": "按此速度，预算将提前 {{days}} 天用完（日均 {{actual}}，目标 {{target}}）。",
       "on_track": "进度正常：日均 {{actual}}，目标 {{target}}。"
     },
-    "of_budget": "共 {{budget}} · {{percent}}%"
+    "of_budget": "共 {{budget}} · {{percent}}%",
+    "title": "分析"
   },
   "countdown": {
     "title": "倒计时",

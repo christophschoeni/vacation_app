@@ -269,7 +269,12 @@ export default function VacationReportScreen() {
       style={[styles.container, { backgroundColor: theme.background }]}
       edges={['top']}
     >
-      <AppHeader showBack={true} onBackPress={() => router.push('/(tabs)')} />
+      <AppHeader
+        variant="large"
+        title={t('report.title')}
+        showBack={true}
+        onBackPress={() => router.push('/(tabs)')}
+      />
 
       <ScrollView
         style={styles.content}

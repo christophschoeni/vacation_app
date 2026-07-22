@@ -138,7 +138,9 @@ const styles = StyleSheet.create({
     opacity: 0.65,
   },
   hero: {
-    height: 96,
+    // Reference 1a: 108 for the featured card. A fixed height is essential -
+    // the gradient has no intrinsic size and stretches to fill otherwise.
+    height: 108,
   },
   body: {
     padding: Spacing.lg,
