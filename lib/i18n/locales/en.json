@@ -47,7 +47,13 @@
       "budget": "Budget",
       "budget_placeholder": "e.g. 2000",
       "currency": "Currency",
-      "currency_hint": "for expenses"
+      "currency_hint": "for expenses",
+      "image": {
+        "label": "Photo",
+        "add": "Add photo",
+        "change": "Change",
+        "remove": "Remove"
+      }
     },
     "empty": {
       "title": "No Vacations Found",

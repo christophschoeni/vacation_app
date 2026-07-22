@@ -47,7 +47,13 @@
       "budget": "予算",
       "budget_placeholder": "例：2000",
       "currency": "通貨",
-      "currency_hint": "支出用"
+      "currency_hint": "支出用",
+      "image": {
+        "label": "写真",
+        "add": "写真を追加",
+        "change": "変更",
+        "remove": "削除"
+      }
     },
     "empty": {
       "title": "旅行が見つかりません",

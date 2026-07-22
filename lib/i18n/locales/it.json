@@ -47,7 +47,13 @@
       "budget": "Budget",
       "budget_placeholder": "ad es. 2000",
       "currency": "Valuta",
-      "currency_hint": "per le spese"
+      "currency_hint": "per le spese",
+      "image": {
+        "label": "Foto",
+        "add": "Aggiungi foto",
+        "change": "Cambia",
+        "remove": "Rimuovi"
+      }
     },
     "empty": {
       "title": "Nessuna vacanza trovata",

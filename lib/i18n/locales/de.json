@@ -47,7 +47,13 @@
       "budget": "Budget",
       "budget_placeholder": "z.B. 2000",
       "currency": "Währung",
-      "currency_hint": "für Ausgaben"
+      "currency_hint": "für Ausgaben",
+      "image": {
+        "label": "Foto",
+        "add": "Foto hinzufügen",
+        "change": "Ändern",
+        "remove": "Entfernen"
+      }
     },
     "empty": {
       "title": "Keine Ferien gefunden",

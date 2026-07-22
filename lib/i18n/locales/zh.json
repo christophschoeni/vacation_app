@@ -47,7 +47,13 @@
       "budget": "预算",
       "budget_placeholder": "例如：2000",
       "currency": "货币",
-      "currency_hint": "用于支出"
+      "currency_hint": "用于支出",
+      "image": {
+        "label": "照片",
+        "add": "添加照片",
+        "change": "更换",
+        "remove": "移除"
+      }
     },
     "empty": {
       "title": "未找到旅行",

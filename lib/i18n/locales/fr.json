@@ -47,7 +47,13 @@
       "budget": "Budget",
       "budget_placeholder": "p.ex. 2000",
       "currency": "Devise",
-      "currency_hint": "pour les dépenses"
+      "currency_hint": "pour les dépenses",
+      "image": {
+        "label": "Photo",
+        "add": "Ajouter une photo",
+        "change": "Modifier",
+        "remove": "Supprimer"
+      }
     },
     "empty": {
       "title": "Aucunes vacances trouvées",

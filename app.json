@@ -68,7 +68,13 @@
       ],
       "expo-font",
       "expo-sqlite",
-      "@bacons/apple-targets"
+      "@bacons/apple-targets",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Erlaube den Zugriff auf deine Fotos, um ein Bild für deine Reise auszuwählen."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

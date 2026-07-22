@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AppHeader from '@/components/ui/AppHeader';
 import { FormInput, DatePicker } from '@/components/ui/forms';
+import { ImagePickerField } from '@/components/ui/forms/ImagePickerField';
 import CurrencySelector from '@/components/ui/CurrencySelector';
 import { useCreateVacation } from '@/hooks/queries';
 import { useTranslation } from '@/lib/i18n';
@@ -33,6 +34,7 @@ export default function AddVacationScreen() {
     endDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
     budget: '',
     currency: defaultCurrency || 'CHF',
+    imageUrl: null as string | null,
   });
 
   const handleSave = async () => {
@@ -70,6 +72,7 @@ export default function AddVacationScreen() {
         // the system default - otherwise "1500" in EUR would persist as CHF.
         budgetCurrency: formData.currency,
         currency: formData.currency,                // Vacation currency for expenses
+        imageUrl: formData.imageUrl ?? undefined,
       });
       // Use replace instead of dismiss to trigger useFocusEffect and refresh vacation list
       router.replace('/(tabs)');
@@ -113,6 +116,12 @@ export default function AddVacationScreen() {
           </View>
 
           <View style={styles.formContainer}>
+            <ImagePickerField
+              label={t('vacation.form.image.label')}
+              value={formData.imageUrl}
+              onChange={(uri) => setFormData((prev) => ({ ...prev, imageUrl: uri }))}
+            />
+
             <FormInput
               label={t('vacation.form.destination')}
               value={formData.destination}

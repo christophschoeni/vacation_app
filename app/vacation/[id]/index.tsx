@@ -253,7 +253,10 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
+    // center, not baseline: the sort control is an Icon with no text baseline,
+    // so baseline alignment dropped it below the title. center puts the icon on
+    // the same line as "Letzte Ausgaben".
+    alignItems: 'center',
     paddingTop: 22,
     paddingBottom: 8,
   },

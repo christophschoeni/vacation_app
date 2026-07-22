@@ -47,7 +47,13 @@
       "budget": "Presupuesto",
       "budget_placeholder": "p. ej. 2000",
       "currency": "Moneda",
-      "currency_hint": "para los gastos"
+      "currency_hint": "para los gastos",
+      "image": {
+        "label": "Foto",
+        "add": "Añadir foto",
+        "change": "Cambiar",
+        "remove": "Quitar"
+      }
     },
     "empty": {
       "title": "No hay viajes",
