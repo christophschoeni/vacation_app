@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Card, Icon, GroupedList, StatusBadge } from '@/components/design';
+import { Card, Icon, GroupedList, GroupedListHeader, GroupedListFooter, StatusBadge } from '@/components/design';
 import { useIOSTheme } from '@/constants/ios-theme';
 import AppHeader from '@/components/ui/AppHeader';
 import { currencyService, POPULAR_CURRENCIES, ALL_CURRENCIES, CurrencyInfo } from '@/lib/currency';
@@ -297,45 +297,31 @@ export default function ExchangeRatesScreen() {
           )}
         </View>
 
-        {/* Info Card */}
-        <Card variant="clean" style={[styles.infoCard, { backgroundColor: theme.tile }]}>
-          <View style={styles.infoContent}>
-            <Icon name="info" size={20} color={theme.accent} />
-            <Text style={[styles.infoText, { color: theme.secondaryLabel }]}>
-              {t('settings.exchange_rates.info')}
+        {/* Base Currency */}
+        <GroupedListHeader title={t('settings.exchange_rates.base_currency')} />
+        <GroupedList>
+          <View style={styles.baseCurrencyRow}>
+            <Text style={styles.baseCurrencyFlag}>
+              {POPULAR_CURRENCIES.find(c => c.code === defaultCurrency)?.flag || '🌍'}
+            </Text>
+            <Text style={[styles.baseCurrencyText, { color: theme.label }]}>
+              {defaultCurrency}
             </Text>
           </View>
-        </Card>
+        </GroupedList>
 
-        {/* Base Currency Display */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.label }]}>
-            {t('settings.exchange_rates.base_currency')}
-          </Text>
-          <Card variant="clean" style={styles.baseCurrencyCard}>
-            <View style={styles.baseCurrencyContent}>
-              <Text style={styles.baseCurrencyFlag}>
-                {POPULAR_CURRENCIES.find(c => c.code === defaultCurrency)?.flag || '🌍'}
-              </Text>
-              <Text style={[styles.baseCurrencyText, { color: theme.label }]}>
-                {defaultCurrency}
-              </Text>
-            </View>
-          </Card>
-        </View>
+        <GroupedListFooter text={t('settings.exchange_rates.info')} />
 
         {/* Rates List */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: theme.label }]}>
-              {t('settings.exchange_rates.rates_title')}
+        <View style={styles.ratesHeaderRow}>
+          <GroupedListHeader title={t('settings.exchange_rates.rates_title')} />
+          <TouchableOpacity onPress={handleDeleteAllManualRates} style={styles.deleteAllTouch}>
+            <Text style={[styles.deleteAllButton, { color: theme.danger }]}>
+              {t('settings.exchange_rates.delete_all_button')}
             </Text>
-            <TouchableOpacity onPress={handleDeleteAllManualRates}>
-              <Text style={[styles.deleteAllButton, { color: '#FF3B30' }]}>
-                {t('settings.exchange_rates.delete_all_button')}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.section}>
 
           {filteredRates.length === 0 ? (
             <Card variant="clean" style={styles.rateCard}>
@@ -481,55 +467,35 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'System',
   },
-  infoCard: {
-    marginBottom: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  infoContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 14,
-    fontFamily: 'System',
-    lineHeight: 20,
-  },
   section: {
     marginBottom: 24,
   },
-  sectionHeader: {
+  ratesHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
   },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '600',
-    fontFamily: 'System',
+  deleteAllTouch: {
+    paddingRight: 20,
+    paddingTop: 16,
+    paddingBottom: 8,
   },
   deleteAllButton: {
     fontSize: 15,
-    fontWeight: '400',
     fontFamily: 'System',
   },
-  baseCurrencyCard: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  baseCurrencyContent: {
+  baseCurrencyRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
   },
   baseCurrencyFlag: {
-    fontSize: 32,
+    fontSize: 28,
   },
   baseCurrencyText: {
-    fontSize: 24,
+    fontSize: 17,
     fontWeight: '600',
     fontFamily: 'System',
   },
