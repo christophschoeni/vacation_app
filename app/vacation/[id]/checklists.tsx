@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, useColorScheme, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { goBack } from '@/lib/utils/navigation';
@@ -25,7 +25,6 @@ export default function VacationChecklistsScreen() {
   const tabBarPadding = useTabBarPadding();
   const vacationId = useRouteParam('id');
 
-  const colorScheme = useColorScheme();
   const theme = useIOSTheme();
   const { t } = useTranslation();
 
@@ -135,7 +134,6 @@ export default function VacationChecklistsScreen() {
     );
   };
 
-  const isDark = colorScheme === 'dark';
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]} edges={['top']}>
@@ -149,8 +147,8 @@ export default function VacationChecklistsScreen() {
               onPress={handleShowTemplates}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon name="book-template" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
+              <View style={[styles.headerButtonInner, { backgroundColor: theme.groupedBackground }]}>
+                <Icon name="book-template" size={18} color={theme.accent} />
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -158,8 +156,8 @@ export default function VacationChecklistsScreen() {
               onPress={handleCreateList}
               activeOpacity={0.8}
             >
-              <View style={[styles.headerButtonInner, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.98)' }]}>
-                <Icon name="plus" size={18} color={colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E'} />
+              <View style={[styles.headerButtonInner, { backgroundColor: theme.groupedBackground }]}>
+                <Icon name="plus" size={18} color={theme.accent} />
               </View>
             </TouchableOpacity>
           </View>
@@ -195,7 +193,7 @@ export default function VacationChecklistsScreen() {
           ) : (
             <View style={styles.emptyState}>
               <Text style={styles.emptyIcon}>📋</Text>
-              <Text style={[styles.emptyTitle, { color: isDark ? '#007AFF' : '#007AFF' }]}>{t('vacation.checklists.empty.title')}</Text>
+              <Text style={[styles.emptyTitle, { color: theme.accent }]}>{t('vacation.checklists.empty.title')}</Text>
               <Text style={[styles.emptyText, { color: theme.secondaryLabel }]}>
                 {t('vacation.checklists.empty.description')}
               </Text>
@@ -216,7 +214,7 @@ export default function VacationChecklistsScreen() {
           activeOpacity={1}
           onPress={() => setShowTemplateModal(false)}
         >
-          <View style={[styles.modalContent, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
+          <View style={[styles.modalContent, { backgroundColor: theme.groupedBackground }]}>
             <Text style={[styles.modalTitle, { color: theme.label }]}>
               {t('vacation.checklists.templates.select_title')}
             </Text>
@@ -227,14 +225,14 @@ export default function VacationChecklistsScreen() {
               {templates.map((template) => (
                 <TouchableOpacity
                   key={template.id}
-                  style={[styles.templateItem, { borderBottomColor: isDark ? '#2C2C2E' : '#E5E5E5' }]}
+                  style={[styles.templateItem, { borderBottomColor: theme.separator }]}
                   onPress={() => handleSelectTemplate(template.id)}
                   activeOpacity={0.7}
                 >
                   <Text style={[styles.templateTitle, { color: theme.label }]}>
                     {template.title}
                   </Text>
-                  <Icon name="chevron-right" size={16} color={isDark ? '#8E8E93' : '#6D6D70'} />
+                  <Icon name="chevron-right" size={16} color={theme.tertiaryLabel} />
                 </TouchableOpacity>
               ))}
             </ScrollView>
