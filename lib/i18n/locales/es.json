@@ -10,7 +10,8 @@
     "success": "Correcto",
     "add": "Añadir",
     "create": "Crear",
-    "edit": "Editar"
+    "edit": "Editar",
+    "info": "Aviso"
   },
   "navigation": {
     "vacations": "Viajes",
@@ -505,6 +506,15 @@
         "cannot_delete_title": "No se puede eliminar",
         "cannot_delete_message": "Solo se pueden eliminar los tipos de cambio manuales"
       }
+    },
+    "subscription": {
+      "title": "Suscripción",
+      "manage": "Gestionar suscripción",
+      "manage_subtitle": "Duración y cancelación",
+      "restore": "Restaurar compra",
+      "restore_subtitle": "Restaurar compras anteriores",
+      "pro_active": "Pro activo",
+      "free": "Versión gratuita"
     }
   },
   "errors": {
@@ -612,5 +622,28 @@
       "title": "Ningún viaje planificado",
       "subtitle": "En cuanto haya un viaje futuro, el temporizador contará aquí."
     }
+  },
+  "paywall": {
+    "title": "Desbloquea todas las funciones",
+    "subtitle": "Prueba 7 días gratis y luego continúa con flexibilidad.",
+    "feature_unlimited": "Viajes y gastos ilimitados",
+    "feature_reports": "Análisis detallados",
+    "feature_widget": "Widget de pantalla de inicio",
+    "feature_sync": "Todas las funciones futuras",
+    "trial_note": "7 días gratis, luego {{price}} al {{period}}. Cancela cuando quieras.",
+    "period_year": "año",
+    "period_month": "mes",
+    "plan_yearly": "Anual",
+    "plan_monthly": "Mensual",
+    "badge_best_value": "Mejor opción",
+    "cta_trial": "Empezar 7 días gratis",
+    "cta_subscribe": "Suscribirse",
+    "restore": "Restaurar compra",
+    "terms": "Términos de uso",
+    "privacy": "Privacidad",
+    "legal_note": "La suscripción se renueva automáticamente a menos que se cancele al menos 24 horas antes del final del período. La facturación se realiza a través de tu cuenta de App Store.",
+    "error_purchase": "La compra falló. Inténtalo de nuevo.",
+    "error_restore": "No se encontraron compras para restaurar.",
+    "restored": "Compras restauradas."
   }
 }

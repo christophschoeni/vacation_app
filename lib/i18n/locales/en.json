@@ -10,7 +10,8 @@
     "success": "Success",
     "add": "Add",
     "create": "Create",
-    "edit": "Edit"
+    "edit": "Edit",
+    "info": "Note"
   },
   "navigation": {
     "vacations": "Vacations",
@@ -505,6 +506,15 @@
         "cannot_delete_title": "Cannot Delete",
         "cannot_delete_message": "Only manual exchange rates can be deleted"
       }
+    },
+    "subscription": {
+      "title": "Subscription",
+      "manage": "Manage subscription",
+      "manage_subtitle": "Term and cancellation",
+      "restore": "Restore purchase",
+      "restore_subtitle": "Restore previous purchases",
+      "pro_active": "Pro active",
+      "free": "Free version"
     }
   },
   "errors": {
@@ -612,5 +622,28 @@
       "title": "No upcoming trip",
       "subtitle": "Once a trip lies in the future, the timer counts down here."
     }
+  },
+  "paywall": {
+    "title": "Unlock all features",
+    "subtitle": "Try 7 days free, then continue flexibly.",
+    "feature_unlimited": "Unlimited trips & expenses",
+    "feature_reports": "Detailed reports",
+    "feature_widget": "Home screen widget",
+    "feature_sync": "All future features",
+    "trial_note": "7 days free, then {{price}} per {{period}}. Cancel anytime.",
+    "period_year": "year",
+    "period_month": "month",
+    "plan_yearly": "Yearly",
+    "plan_monthly": "Monthly",
+    "badge_best_value": "Best value",
+    "cta_trial": "Start 7 days free",
+    "cta_subscribe": "Subscribe",
+    "restore": "Restore purchase",
+    "terms": "Terms of Use",
+    "privacy": "Privacy",
+    "legal_note": "The subscription renews automatically unless cancelled at least 24 hours before the end of the period. Billing is handled through your App Store account.",
+    "error_purchase": "Purchase failed. Please try again.",
+    "error_restore": "No purchases found to restore.",
+    "restored": "Purchases restored."
   }
 }

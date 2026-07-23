@@ -15,6 +15,8 @@ import { appInitialization } from '@/lib/app-initialization';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
 import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
+import { EntitlementProvider, useEntitlement } from '@/contexts/EntitlementContext';
+import Paywall from '@/components/paywall/Paywall';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
 import { migrateExpensesToSQLite } from '@/lib/db/migrate-expenses-to-sqlite';
@@ -31,6 +33,7 @@ function RootNavigation({
   const isDark = colorScheme === 'dark';
   const { success, error } = useMigrations(db, migrations);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
+  const { isPro, isLoading: entitlementLoading } = useEntitlement();
 
   // Keeps the home-screen widgets in step with the app's own data. Mounted
   // here because it needs the query and currency providers above it.
@@ -133,6 +136,29 @@ function RootNavigation({
     );
   }
 
+  // While RevenueCat resolves the first CustomerInfo, wait rather than flash the
+  // paywall at a subscriber who is actually entitled.
+  if (entitlementLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#007AFF'} />
+      </View>
+    );
+  }
+
+  // Hard paywall: without an active Pro entitlement (trial or paid), the app is
+  // gated. During the 7-day free trial the entitlement is active, so the app is
+  // open; once it lapses without a purchase, the paywall returns. A successful
+  // purchase updates isPro via the SDK listener and this re-renders into the app.
+  if (!isPro) {
+    return (
+      <>
+        <Paywall />
+        <StatusBar style="auto" />
+      </>
+    );
+  }
+
   return (
     <>
       {/*
@@ -177,12 +203,14 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
           <CurrencyProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <RootNavigation
-                key={migrationAttempt}
-                onRetryMigration={() => setMigrationAttempt(attempt => attempt + 1)}
-              />
-            </GestureHandlerRootView>
+            <EntitlementProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <RootNavigation
+                  key={migrationAttempt}
+                  onRetryMigration={() => setMigrationAttempt(attempt => attempt + 1)}
+                />
+              </GestureHandlerRootView>
+            </EntitlementProvider>
           </CurrencyProvider>
         </SafeAreaProvider>
       </QueryClientProvider>

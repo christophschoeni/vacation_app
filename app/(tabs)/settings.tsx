@@ -12,10 +12,14 @@ import {
   TouchableOpacity,
   View,
   Linking,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Purchases from 'react-native-purchases';
+import Constants from 'expo-constants';
 import { useTranslation, type TranslationKey } from '@/lib/i18n';
 import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
+import { useEntitlement } from '@/contexts/EntitlementContext';
 
 interface SettingsItem {
   id: string;
@@ -111,11 +115,32 @@ export default function SettingsScreen() {
   const theme = useIOSTheme();
   const { t } = useTranslation();
 
+  const { isPro, restore } = useEntitlement();
+
   const handleSettingsItemPress = async (route: Href) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     // route is a typed Href, so a mistyped path is now a compile error rather
     // than a dead button — no `as any` and no silent try/catch needed.
     router.push(route);
+  };
+
+  const handleManageSubscription = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Opens the system subscription-management sheet (App Store).
+    await Purchases.showManageSubscriptions().catch(() => {});
+  };
+
+  const handleRestore = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    try {
+      const restored = await restore();
+      Alert.alert(
+        restored ? t('common.success') : t('common.info'),
+        restored ? t('paywall.restored') : t('paywall.error_restore')
+      );
+    } catch {
+      Alert.alert(t('common.error'), t('paywall.error_restore'));
+    }
   };
 
 
@@ -145,6 +170,23 @@ export default function SettingsScreen() {
           ))}
         </GroupedList>
 
+        <GroupedListHeader title={t('settings.subscription.title')} />
+
+        <GroupedList>
+          <SettingsRow
+            icon="currency"
+            title={t('settings.subscription.manage')}
+            subtitle={isPro ? t('settings.subscription.pro_active') : t('settings.subscription.free')}
+            onPress={handleManageSubscription}
+          />
+          <SettingsRow
+            icon="arrow-left-right"
+            title={t('settings.subscription.restore')}
+            subtitle={t('settings.subscription.restore_subtitle')}
+            onPress={handleRestore}
+          />
+        </GroupedList>
+
         <GroupedListHeader title={t('settings.about.title')} />
 
         <GroupedList>
@@ -164,7 +206,7 @@ export default function SettingsScreen() {
         </GroupedList>
 
         <Text style={[styles.version, { color: theme.secondaryLabel }]}>
-          Reise Budget · {t('settings.about.version')} 1.0.0
+          Reise Budget · {t('settings.about.version')} {Constants.expoConfig?.version ?? ''}
         </Text>
       </ScrollView>
     </SafeAreaView>

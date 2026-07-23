@@ -10,7 +10,8 @@
     "success": "成功",
     "add": "添加",
     "create": "创建",
-    "edit": "编辑"
+    "edit": "编辑",
+    "info": "提示"
   },
   "navigation": {
     "vacations": "旅行",
@@ -505,6 +506,15 @@
         "cannot_delete_title": "无法删除",
         "cannot_delete_message": "只能删除手动汇率"
       }
+    },
+    "subscription": {
+      "title": "订阅",
+      "manage": "管理订阅",
+      "manage_subtitle": "期限与取消",
+      "restore": "恢复购买",
+      "restore_subtitle": "恢复以前的购买",
+      "pro_active": "Pro 已启用",
+      "free": "免费版"
     }
   },
   "errors": {
@@ -612,5 +622,28 @@
       "title": "没有计划中的旅行",
       "subtitle": "当有未来的旅行时，计时器将在此倒计时。"
     }
+  },
+  "paywall": {
+    "title": "解锁所有功能",
+    "subtitle": "免费试用 7 天，之后灵活续订。",
+    "feature_unlimited": "无限行程和支出",
+    "feature_reports": "详细分析",
+    "feature_widget": "主屏幕小组件",
+    "feature_sync": "所有未来功能",
+    "trial_note": "7 天免费，之后每{{period}} {{price}}。随时可取消。",
+    "period_year": "年",
+    "period_month": "月",
+    "plan_yearly": "按年",
+    "plan_monthly": "按月",
+    "badge_best_value": "最超值",
+    "cta_trial": "开始 7 天免费试用",
+    "cta_subscribe": "订阅",
+    "restore": "恢复购买",
+    "terms": "使用条款",
+    "privacy": "隐私",
+    "legal_note": "订阅将自动续订，除非在期末前至少 24 小时取消。费用通过您的 App Store 账户结算。",
+    "error_purchase": "购买失败，请重试。",
+    "error_restore": "未找到可恢复的购买。",
+    "restored": "购买已恢复。"
   }
 }

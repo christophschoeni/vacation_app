@@ -10,7 +10,8 @@
     "success": "Erfolgreich",
     "add": "Hinzufügen",
     "create": "Erstellen",
-    "edit": "Bearbeiten"
+    "edit": "Bearbeiten",
+    "info": "Hinweis"
   },
   "navigation": {
     "vacations": "Reisen",
@@ -505,6 +506,15 @@
         "cannot_delete_title": "Kann nicht gelöscht werden",
         "cannot_delete_message": "Nur manuelle Wechselkurse können gelöscht werden"
       }
+    },
+    "subscription": {
+      "title": "Abo",
+      "manage": "Abo verwalten",
+      "manage_subtitle": "Laufzeit und Kündigung",
+      "restore": "Kauf wiederherstellen",
+      "restore_subtitle": "Frühere Käufe wiederherstellen",
+      "pro_active": "Pro aktiv",
+      "free": "Kostenlose Version"
     }
   },
   "errors": {
@@ -612,5 +622,28 @@
       "title": "Keine geplante Reise",
       "subtitle": "Sobald eine Reise in der Zukunft liegt, zählt der Timer hier herunter."
     }
+  },
+  "paywall": {
+    "title": "Alle Funktionen freischalten",
+    "subtitle": "7 Tage kostenlos testen, danach flexibel weiter.",
+    "feature_unlimited": "Unbegrenzte Reisen & Ausgaben",
+    "feature_reports": "Detaillierte Auswertungen",
+    "feature_widget": "Home-Bildschirm-Widget",
+    "feature_sync": "Alle zukünftigen Funktionen",
+    "trial_note": "7 Tage gratis, danach {{price}} pro {{period}}. Jederzeit kündbar.",
+    "period_year": "Jahr",
+    "period_month": "Monat",
+    "plan_yearly": "Jährlich",
+    "plan_monthly": "Monatlich",
+    "badge_best_value": "Beste Wahl",
+    "cta_trial": "7 Tage kostenlos starten",
+    "cta_subscribe": "Abonnieren",
+    "restore": "Kauf wiederherstellen",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutz",
+    "legal_note": "Das Abo verlängert sich automatisch, sofern es nicht mindestens 24 Stunden vor Ende der Laufzeit gekündigt wird. Die Abrechnung erfolgt über deinen App-Store-Account.",
+    "error_purchase": "Kauf fehlgeschlagen. Bitte versuche es erneut.",
+    "error_restore": "Keine Käufe zum Wiederherstellen gefunden.",
+    "restored": "Käufe wiederhergestellt."
   }
 }

@@ -10,7 +10,8 @@
     "success": "Succès",
     "add": "Ajouter",
     "create": "Créer",
-    "edit": "Modifier"
+    "edit": "Modifier",
+    "info": "Information"
   },
   "navigation": {
     "vacations": "Vacances",
@@ -505,6 +506,15 @@
         "cannot_delete_title": "Impossible de supprimer",
         "cannot_delete_message": "Seuls les taux de change manuels peuvent être supprimés"
       }
+    },
+    "subscription": {
+      "title": "Abonnement",
+      "manage": "Gérer l'abonnement",
+      "manage_subtitle": "Durée et résiliation",
+      "restore": "Restaurer l'achat",
+      "restore_subtitle": "Restaurer les achats précédents",
+      "pro_active": "Pro actif",
+      "free": "Version gratuite"
     }
   },
   "errors": {
@@ -612,5 +622,28 @@
       "title": "Aucun voyage prévu",
       "subtitle": "Dès qu’un voyage est à venir, le minuteur démarre ici."
     }
+  },
+  "paywall": {
+    "title": "Débloquer toutes les fonctions",
+    "subtitle": "Essayez 7 jours gratuitement, puis continuez librement.",
+    "feature_unlimited": "Voyages et dépenses illimités",
+    "feature_reports": "Analyses détaillées",
+    "feature_widget": "Widget d'écran d'accueil",
+    "feature_sync": "Toutes les fonctions futures",
+    "trial_note": "7 jours gratuits, puis {{price}} par {{period}}. Annulable à tout moment.",
+    "period_year": "an",
+    "period_month": "mois",
+    "plan_yearly": "Annuel",
+    "plan_monthly": "Mensuel",
+    "badge_best_value": "Meilleur choix",
+    "cta_trial": "Commencer 7 jours gratuits",
+    "cta_subscribe": "S'abonner",
+    "restore": "Restaurer l'achat",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Confidentialité",
+    "legal_note": "L'abonnement se renouvelle automatiquement sauf annulation au moins 24 heures avant la fin de la période. La facturation est gérée via votre compte App Store.",
+    "error_purchase": "Échec de l'achat. Veuillez réessayer.",
+    "error_restore": "Aucun achat à restaurer.",
+    "restored": "Achats restaurés."
   }
 }

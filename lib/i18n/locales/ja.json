@@ -10,7 +10,8 @@
     "success": "成功しました",
     "add": "追加",
     "create": "作成",
-    "edit": "編集"
+    "edit": "編集",
+    "info": "お知らせ"
   },
   "navigation": {
     "vacations": "旅行",
@@ -505,6 +506,15 @@
         "cannot_delete_title": "削除できません",
         "cannot_delete_message": "削除できるのは手動の為替レートのみです"
       }
+    },
+    "subscription": {
+      "title": "サブスクリプション",
+      "manage": "サブスクリプションを管理",
+      "manage_subtitle": "期間と解約",
+      "restore": "購入を復元",
+      "restore_subtitle": "以前の購入を復元",
+      "pro_active": "Pro 有効",
+      "free": "無料版"
     }
   },
   "errors": {
@@ -612,5 +622,28 @@
       "title": "予定の旅行はありません",
       "subtitle": "今後の旅行があると、ここでカウントダウンします。"
     }
+  },
+  "paywall": {
+    "title": "すべての機能をアンロック",
+    "subtitle": "7日間無料でお試し、その後は柔軟に継続。",
+    "feature_unlimited": "無制限の旅行と支出",
+    "feature_reports": "詳細な分析",
+    "feature_widget": "ホーム画面ウィジェット",
+    "feature_sync": "今後のすべての機能",
+    "trial_note": "7日間無料、その後{{period}}あたり{{price}}。いつでも解約可能。",
+    "period_year": "年",
+    "period_month": "月",
+    "plan_yearly": "年額",
+    "plan_monthly": "月額",
+    "badge_best_value": "おすすめ",
+    "cta_trial": "7日間無料で始める",
+    "cta_subscribe": "登録する",
+    "restore": "購入を復元",
+    "terms": "利用規約",
+    "privacy": "プライバシー",
+    "legal_note": "サブスクリプションは、期間終了の24時間前までに解約しない限り自動更新されます。請求はApp Storeアカウントを通じて行われます。",
+    "error_purchase": "購入に失敗しました。もう一度お試しください。",
+    "error_restore": "復元できる購入がありません。",
+    "restored": "購入を復元しました。"
   }
 }

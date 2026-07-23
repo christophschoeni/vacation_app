@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ferien Budget",
     "slug": "vacation-assist",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "vacationassist",
@@ -13,6 +13,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.vomschoeni.ferien-budget",
+      "appleTeamId": "9RJFL9M743",
       "buildNumber": "1",
       "config": {
         "usesNonExemptEncryption": false
@@ -72,7 +73,9 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Erlaube den Zugriff auf deine Fotos, um ein Bild für deine Reise auszuwählen."
+          "photosPermission": "Erlaube den Zugriff auf deine Fotos, um ein Bild für deine Reise auszuwählen.",
+          "cameraPermission": false,
+          "microphonePermission": false
         }
       ]
     ],

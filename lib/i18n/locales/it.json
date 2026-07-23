@@ -10,7 +10,8 @@
     "success": "Successo",
     "add": "Aggiungi",
     "create": "Crea",
-    "edit": "Modifica"
+    "edit": "Modifica",
+    "info": "Informazione"
   },
   "navigation": {
     "vacations": "Vacanze",
@@ -505,6 +506,15 @@
         "cannot_delete_title": "Impossibile eliminare",
         "cannot_delete_message": "Solo i tassi di cambio manuali possono essere eliminati"
       }
+    },
+    "subscription": {
+      "title": "Abbonamento",
+      "manage": "Gestisci abbonamento",
+      "manage_subtitle": "Durata e disdetta",
+      "restore": "Ripristina acquisto",
+      "restore_subtitle": "Ripristina acquisti precedenti",
+      "pro_active": "Pro attivo",
+      "free": "Versione gratuita"
     }
   },
   "errors": {
@@ -612,5 +622,28 @@
       "title": "Nessun viaggio in programma",
       "subtitle": "Quando un viaggio è nel futuro, il timer parte qui."
     }
+  },
+  "paywall": {
+    "title": "Sblocca tutte le funzioni",
+    "subtitle": "Prova 7 giorni gratis, poi continua liberamente.",
+    "feature_unlimited": "Viaggi e spese illimitati",
+    "feature_reports": "Analisi dettagliate",
+    "feature_widget": "Widget schermata Home",
+    "feature_sync": "Tutte le funzioni future",
+    "trial_note": "7 giorni gratis, poi {{price}} al {{period}}. Disdici quando vuoi.",
+    "period_year": "anno",
+    "period_month": "mese",
+    "plan_yearly": "Annuale",
+    "plan_monthly": "Mensile",
+    "badge_best_value": "Scelta migliore",
+    "cta_trial": "Inizia 7 giorni gratis",
+    "cta_subscribe": "Abbonati",
+    "restore": "Ripristina acquisto",
+    "terms": "Termini di utilizzo",
+    "privacy": "Privacy",
+    "legal_note": "L'abbonamento si rinnova automaticamente se non viene disdetto almeno 24 ore prima della fine del periodo. La fatturazione avviene tramite il tuo account App Store.",
+    "error_purchase": "Acquisto non riuscito. Riprova.",
+    "error_restore": "Nessun acquisto da ripristinare.",
+    "restored": "Acquisti ripristinati."
   }
 }
