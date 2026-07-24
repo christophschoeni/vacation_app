@@ -20,6 +20,7 @@ import Paywall from '@/components/paywall/Paywall';
 import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
 import { migrateExpensesToSQLite } from '@/lib/db/migrate-expenses-to-sqlite';
+import { migrateBudgetCurrency } from '@/lib/db/migrate-budget-currency';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/query/client';
 import { useWidgetSync } from '@/hooks/use-widget-sync';
@@ -57,6 +58,11 @@ function RootNavigation({
           // SQLite. Idempotent; a no-op on fresh installs and after the first
           // successful run.
           await migrateExpensesToSQLite();
+
+          // One-time conversion of each vacation's budget into the home currency
+          // (budgetCurrency now means the home currency, not the trip currency).
+          // Idempotent and offline-safe: defers records it cannot convert yet.
+          await migrateBudgetCurrency();
 
           // Initialize notification service
           await notificationService.initialize();

@@ -48,7 +48,8 @@
       "end_date": "Fecha y hora de fin",
       "budget": "Presupuesto",
       "budget_placeholder": "p. ej. 2000",
-      "currency": "Moneda",
+      "budget_hint": "en tu moneda principal",
+      "currency": "Moneda del viaje",
       "currency_hint": "para los gastos",
       "image": {
         "label": "Foto",

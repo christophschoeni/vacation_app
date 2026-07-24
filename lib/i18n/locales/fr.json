@@ -48,7 +48,8 @@
       "end_date": "Date & Heure de fin",
       "budget": "Budget",
       "budget_placeholder": "p.ex. 2000",
-      "currency": "Devise",
+      "budget_hint": "dans votre devise principale",
+      "currency": "Devise du voyage",
       "currency_hint": "pour les dépenses",
       "image": {
         "label": "Photo",

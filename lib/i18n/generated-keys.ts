@@ -414,6 +414,7 @@ export type TranslationKey =
   | 'vacation.empty.subtitle'
   | 'vacation.empty.title'
   | 'vacation.form.budget'
+  | 'vacation.form.budget_hint'
   | 'vacation.form.budget_placeholder'
   | 'vacation.form.country'
   | 'vacation.form.country_placeholder'

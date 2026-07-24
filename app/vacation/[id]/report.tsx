@@ -35,7 +35,6 @@ import { ExpenseCategory } from '@/types';
 import { getExpenseCategoryLabel } from '@/lib/constants/expense-categories';
 import { formatCurrency, parseAmount } from '@/lib/utils/formatters';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { currencyService } from '@/lib/currency';
 import { useTabBarPadding } from '@/hooks/use-tab-bar-padding';
 import { calculateBudgetAnalysisAsync, type BudgetAnalysis } from '@/lib/budget-calculations';
 
@@ -154,11 +153,10 @@ export default function VacationReportScreen() {
       let total = 0;
 
       for (const expense of expenses) {
-        const convertedAmount = await currencyService.convertCurrency(
-          expense.amountCHF,
-          'CHF',
-          defaultCurrency
-        );
+        // amountCHF is captured in the home currency (defaultCurrency) and is
+        // the single source of truth - summed directly, not re-converted, so
+        // the report agrees with the expense list and the budget overview.
+        const convertedAmount = expense.amountCHF;
 
         total += convertedAmount;
 

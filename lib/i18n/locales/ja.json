@@ -48,7 +48,8 @@
       "end_date": "終了日時",
       "budget": "予算",
       "budget_placeholder": "例：2000",
-      "currency": "通貨",
+      "budget_hint": "ホーム通貨で",
+      "currency": "旅行の通貨",
       "currency_hint": "支出用",
       "image": {
         "label": "写真",

@@ -6,7 +6,7 @@ export interface CategoryLimit {
   id: string;
   vacationId: string;
   category: string;
-  /** Cap in the vacation's budgetCurrency. */
+  /** Cap in the vacation's budgetCurrency (= the home currency, defaultCurrency). */
   limitAmount: number;
   createdAt: Date;
   updatedAt: Date;

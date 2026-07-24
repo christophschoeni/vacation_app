@@ -48,7 +48,8 @@
       "end_date": "结束日期和时间",
       "budget": "预算",
       "budget_placeholder": "例如：2000",
-      "currency": "货币",
+      "budget_hint": "以您的主货币计",
+      "currency": "旅行货币",
       "currency_hint": "用于支出",
       "image": {
         "label": "照片",

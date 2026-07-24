@@ -48,7 +48,8 @@
       "end_date": "Enddatum & Uhrzeit",
       "budget": "Budget",
       "budget_placeholder": "z.B. 2000",
-      "currency": "Währung",
+      "budget_hint": "in deiner Heimatwährung",
+      "currency": "Reisewährung",
       "currency_hint": "für Ausgaben",
       "image": {
         "label": "Foto",

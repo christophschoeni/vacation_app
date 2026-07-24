@@ -11,7 +11,6 @@ import {
 } from '@/lib/constants/expense-categories';
 import type { Expense } from '@/types';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { currencyService } from '@/lib/currency';
 
 interface ExpenseCardProps {
   expense: Expense;
@@ -23,6 +22,12 @@ interface ExpenseCardProps {
  * A single expense as a grouped-list row: category swatch, description with
  * "category · date", and the amount in the display currency with the original
  * foreign amount beneath it.
+ *
+ * The home-currency figure is the amount stored at capture time
+ * (expense.amountCHF, held in the home currency), NOT a live re-conversion of
+ * the original amount. This is the single source of truth: the totals shown on
+ * the budget overview sum exactly these values, so the list and the summary can
+ * never disagree because of a rate that moved since the expense was entered.
  */
 export default function ExpenseCard({
   expense,
@@ -31,42 +36,13 @@ export default function ExpenseCard({
 }: ExpenseCardProps) {
   const theme = useIOSTheme();
   const { defaultCurrency } = useCurrency();
-  const [convertedAmount, setConvertedAmount] = React.useState<number | null>(null);
 
-  React.useEffect(() => {
-    let cancelled = false;
+  // The expense was paid in a foreign currency when its input currency differs
+  // from the home figure's currency. In that case the home-currency amount
+  // (amountCHF) leads and the amount actually paid is the secondary line.
+  const isForeign = expense.currency !== defaultCurrency;
 
-    async function convert() {
-      if (expense.currency !== defaultCurrency) {
-        try {
-          const result = await currencyService.convertCurrency(
-            expense.amount,
-            expense.currency,
-            defaultCurrency
-          );
-          if (!cancelled) setConvertedAmount(result);
-        } catch {
-          // Failed to convert - the original amount is shown on its own.
-        }
-      } else {
-        setConvertedAmount(null);
-      }
-    }
-
-    convert();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [expense.amount, expense.currency, defaultCurrency]);
-
-  const isForeign = convertedAmount !== null;
-
-  // Lead with the amount in the user's own currency when we have it, and keep
-  // the amount actually paid as the secondary line.
-  const primary = isForeign
-    ? formatCurrency(convertedAmount, defaultCurrency)
-    : formatCurrency(expense.amount, expense.currency);
+  const primary = formatCurrency(expense.amountCHF, defaultCurrency);
   const secondary = isForeign
     ? formatCurrency(expense.amount, expense.currency)
     : null;

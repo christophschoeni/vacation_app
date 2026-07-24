@@ -189,6 +189,11 @@ export default function AddExpenseScreen() {
       // Imperative one-shot read after saving: the freshly written total is not
       // part of any rendered data flow, so it is read straight from the
       // repository instead of going through a cached query.
+      //
+      // Both sides are in the home currency: getTotalSpent sums expense.amountCHF
+      // (stored in defaultCurrency), and vacation.budget is now stored in the
+      // home currency too (budgetCurrency == defaultCurrency). So the comparison
+      // is a like-for-like currency match and needs no conversion.
       const totalSpent = await expenseRepository.getTotalSpent(targetVacationId);
       const percentageUsed = (totalSpent / vacation.budget) * 100;
 

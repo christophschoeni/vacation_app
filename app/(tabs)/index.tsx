@@ -148,6 +148,9 @@ export default function VacationsScreen() {
                 vacation={vacation}
                 totalBudget={budgetSummaries?.get(vacation.id)?.totalBudget ?? 0}
                 totalSpent={budgetSummaries?.get(vacation.id)?.totalSpent ?? 0}
+                totalBudgetTrip={budgetSummaries?.get(vacation.id)?.totalBudgetTrip}
+                totalSpentTrip={budgetSummaries?.get(vacation.id)?.totalSpentTrip}
+                tripCurrency={budgetSummaries?.get(vacation.id)?.tripCurrency}
               />
             </SwipeableCard>
           ))

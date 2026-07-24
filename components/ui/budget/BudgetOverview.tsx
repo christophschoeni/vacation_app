@@ -10,6 +10,7 @@ import {
   formatCurrency,
   BudgetAnalysis,
 } from '@/lib/budget-calculations';
+import { currencyService } from '@/lib/currency';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useTranslation } from '@/lib/i18n';
 
@@ -19,7 +20,7 @@ interface BudgetOverviewProps {
 }
 
 /** One of the three compact figures under the ring. */
-function StatTile({ label, value }: { label: string; value: string }) {
+function StatTile({ label, value, subValue }: { label: string; value: string; subValue?: string }) {
   const theme = useIOSTheme();
   return (
     <View style={[styles.tile, { backgroundColor: theme.tile }]}>
@@ -34,6 +35,11 @@ function StatTile({ label, value }: { label: string; value: string }) {
       >
         {value}
       </Text>
+      {subValue && (
+        <Text style={[styles.tileSubValue, { color: theme.secondaryLabel }]} numberOfLines={1}>
+          {subValue}
+        </Text>
+      )}
     </View>
   );
 }
@@ -49,6 +55,17 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
   const [analysis, setAnalysis] = React.useState<BudgetAnalysis | null>(null);
   const [loading, setLoading] = React.useState(true);
 
+  // The trip currency is shown as a small secondary figure alongside the home
+  // currency, so the user gets a feel for the local-money amounts. Only
+  // meaningful when the trip currency differs from the home currency.
+  const tripCurrency = vacation.currency || defaultCurrency;
+  const showTrip = Boolean(tripCurrency) && tripCurrency !== defaultCurrency;
+  const [tripValues, setTripValues] = React.useState<{
+    budget: number;
+    spent: number;
+    perDay: number;
+  } | null>(null);
+
   React.useEffect(() => {
     let cancelled = false;
 
@@ -60,7 +77,24 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
           expenses,
           defaultCurrency
         );
-        if (!cancelled) setAnalysis(result);
+        if (cancelled) return;
+        setAnalysis(result);
+
+        if (showTrip) {
+          try {
+            const [budget, spent, perDay] = await Promise.all([
+              currencyService.convertCurrency(result.totalBudget, defaultCurrency, tripCurrency),
+              currencyService.convertCurrency(result.totalExpenses, defaultCurrency, tripCurrency),
+              currencyService.convertCurrency(result.averageSpentPerDay, defaultCurrency, tripCurrency),
+            ]);
+            if (!cancelled) setTripValues({ budget, spent, perDay });
+          } catch {
+            // No rate available - just omit the secondary figure.
+            if (!cancelled) setTripValues(null);
+          }
+        } else if (!cancelled) {
+          setTripValues(null);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -71,7 +105,7 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
     return () => {
       cancelled = true;
     };
-  }, [vacation, expenses, defaultCurrency]);
+  }, [vacation, expenses, defaultCurrency, showTrip, tripCurrency]);
 
   if (loading || !analysis) {
     return (
@@ -104,14 +138,17 @@ export default function BudgetOverview({ vacation, expenses }: BudgetOverviewPro
         <StatTile
           label={t('components.budget_overview.total_budget')}
           value={formatCurrency(analysis.totalBudget, defaultCurrency)}
+          subValue={tripValues ? formatCurrency(tripValues.budget, tripCurrency) : undefined}
         />
         <StatTile
           label={t('vacation.detail.spent')}
           value={formatCurrency(analysis.totalExpenses, defaultCurrency)}
+          subValue={tripValues ? formatCurrency(tripValues.spent, tripCurrency) : undefined}
         />
         <StatTile
           label={t('vacation.detail.per_day')}
           value={formatCurrency(analysis.averageSpentPerDay, defaultCurrency)}
+          subValue={tripValues ? formatCurrency(tripValues.perDay, tripCurrency) : undefined}
         />
       </View>
     </View>
@@ -148,5 +185,9 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.subheadline,
     fontWeight: Typography.fontWeight.semibold,
     marginTop: 2,
+  },
+  tileSubValue: {
+    fontSize: Typography.fontSize.caption2,
+    marginTop: 1,
   },
 });

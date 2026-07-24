@@ -44,6 +44,15 @@ export interface WidgetSnapshot {
   /** Currency code the two amounts above are expressed in. */
   currency: string;
 
+  /**
+   * Budget and spend also in the trip currency, shown small alongside the home
+   * currency. Absent (undefined) when the trip currency equals the display
+   * currency or no rate was available.
+   */
+  budgetTrip?: number;
+  spentTrip?: number;
+  tripCurrency?: string;
+
   /** When this snapshot was produced, ISO 8601. */
   updatedAt: string;
 }
@@ -67,9 +76,17 @@ export const EMPTY_SNAPSHOT: WidgetSnapshot = {
  * would let the widget disagree with the app, which is the currency trap the
  * cards already fell into once.
  */
+type WidgetBudgetSummary = {
+  totalBudget: number;
+  totalSpent: number;
+  totalBudgetTrip?: number;
+  totalSpentTrip?: number;
+  tripCurrency?: string;
+};
+
 export function buildWidgetSnapshot(
   vacations: Vacation[],
-  summaries: Map<string, { totalBudget: number; totalSpent: number }> | undefined,
+  summaries: Map<string, WidgetBudgetSummary> | undefined,
   currency: string,
   now: Date = new Date()
 ): WidgetSnapshot {
@@ -94,6 +111,9 @@ export function buildWidgetSnapshot(
     budget: summary?.totalBudget ?? 0,
     spent: summary?.totalSpent ?? 0,
     currency,
+    budgetTrip: summary?.totalBudgetTrip,
+    spentTrip: summary?.totalSpentTrip,
+    tripCurrency: summary?.tripCurrency,
     updatedAt: now.toISOString(),
   };
 }
@@ -123,6 +143,11 @@ export interface WidgetSnapshotV2 {
   /** Currency code the two amounts above are expressed in. */
   currency: string;
 
+  /** Budget and spend also in the trip currency (small secondary figure). */
+  budgetTrip?: number;
+  spentTrip?: number;
+  tripCurrency?: string;
+
   /** When this entry was produced, ISO 8601. */
   updatedAt: string;
 }
@@ -140,7 +165,7 @@ export interface WidgetSnapshotV2 {
  */
 export function buildWidgetSnapshots(
   vacations: Vacation[],
-  summaries: Map<string, { totalBudget: number; totalSpent: number }> | undefined,
+  summaries: Map<string, WidgetBudgetSummary> | undefined,
   currency: string,
   now: Date = new Date()
 ): { featuredId: string | null; trips: WidgetSnapshotV2[] } {
@@ -162,6 +187,9 @@ export function buildWidgetSnapshots(
       budget: summary?.totalBudget ?? 0,
       spent: summary?.totalSpent ?? 0,
       currency,
+      budgetTrip: summary?.totalBudgetTrip,
+      spentTrip: summary?.totalSpentTrip,
+      tripCurrency: summary?.tripCurrency,
       updatedAt,
     };
   });

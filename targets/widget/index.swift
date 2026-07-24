@@ -17,6 +17,11 @@ struct WidgetSnapshot: Codable {
     var budget: Double
     var spent: Double
     var currency: String
+    // Optional so older payloads (written before the trip-currency feature)
+    // still decode: JSONDecoder tolerates missing keys for optional fields.
+    var budgetTrip: Double?
+    var spentTrip: Double?
+    var tripCurrency: String?
     var updatedAt: String
 
     static let empty = WidgetSnapshot(
@@ -27,6 +32,9 @@ struct WidgetSnapshot: Codable {
         budget: 0,
         spent: 0,
         currency: "CHF",
+        budgetTrip: nil,
+        spentTrip: nil,
+        tripCurrency: nil,
         updatedAt: ""
     )
 
@@ -37,6 +45,12 @@ struct WidgetSnapshot: Codable {
     }
 
     var remaining: Double { budget - spent }
+
+    /// Remaining budget in the trip currency, when available.
+    var remainingTrip: Double? {
+        guard let budgetTrip, let spentTrip else { return nil }
+        return budgetTrip - spentTrip
+    }
 
     /// Days recomputed from the target date so the number stays right between
     /// timeline refreshes, falling back to the value the app supplied.
@@ -67,6 +81,9 @@ struct WidgetSnapshotV2: Codable {
     var budget: Double
     var spent: Double
     var currency: String
+    var budgetTrip: Double?
+    var spentTrip: Double?
+    var tripCurrency: String?
     var updatedAt: String
 
     /// Adapt a V2 trip into the view model the SwiftUI views already consume.
@@ -79,6 +96,9 @@ struct WidgetSnapshotV2: Codable {
             budget: budget,
             spent: spent,
             currency: currency,
+            budgetTrip: budgetTrip,
+            spentTrip: spentTrip,
+            tripCurrency: tripCurrency,
             updatedAt: updatedAt
         )
     }
@@ -332,9 +352,17 @@ struct MediumWidgetView: View {
                                 .font(.system(size: 11))
                                 .foregroundStyle(.white.opacity(0.6))
                             Spacer()
-                            Text(formatAmount(entry.snapshot.remaining, currency: entry.snapshot.currency))
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundStyle(.white)
+                            VStack(alignment: .trailing, spacing: 1) {
+                                Text(formatAmount(entry.snapshot.remaining, currency: entry.snapshot.currency))
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(.white)
+                                if let remainingTrip = entry.snapshot.remainingTrip,
+                                   let tripCurrency = entry.snapshot.tripCurrency {
+                                    Text(formatAmount(remainingTrip, currency: tripCurrency))
+                                        .font(.system(size: 9))
+                                        .foregroundStyle(.white.opacity(0.55))
+                                }
+                            }
                         }
 
                         BudgetBar(progress: entry.snapshot.progress)

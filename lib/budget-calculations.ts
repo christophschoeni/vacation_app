@@ -65,15 +65,15 @@ export async function calculateBudgetAnalysisAsync(
     targetCurrency
   );
 
-  // Convert all expenses to target currency
+  // expense.amountCHF is the amount captured at entry time, already in the home
+  // currency (defaultCurrency == targetCurrency here). It is the single source
+  // of truth - the expense list shows exactly this value - so it is summed
+  // directly, NOT re-converted. Re-converting (it is not really CHF, despite the
+  // field name) would drift from the list and, for a non-CHF home currency,
+  // corrupt the total.
   let totalExpenses = 0;
   for (const expense of expenses) {
-    const convertedAmount = await currencyService.convertCurrency(
-      expense.amountCHF,
-      'CHF',
-      targetCurrency
-    );
-    totalExpenses += convertedAmount;
+    totalExpenses += expense.amountCHF;
   }
 
   const remainingBudget = totalBudget - totalExpenses;

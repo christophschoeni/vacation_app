@@ -11,6 +11,14 @@ export interface BudgetSummary {
   totalSpent: number;
   remaining: number;
   isOverBudget: boolean;
+  /**
+   * Budget and spend also converted into the trip currency, shown as a small
+   * secondary figure. `tripCurrency` is undefined when it equals the display
+   * currency (no secondary figure needed) or when no rate was available.
+   */
+  totalBudgetTrip?: number;
+  totalSpentTrip?: number;
+  tripCurrency?: string;
 }
 
 /**
@@ -30,9 +38,9 @@ export function useBudgetSummaries(
   const { defaultCurrency } = useCurrency();
 
   // Keyed on the inputs that change the result: the target currency, the
-  // vacations' budgets and the per-vacation CHF totals.
+  // vacations' budgets, their trip currency and the per-vacation CHF totals.
   const signature = vacations
-    .map(v => `${v.id}:${v.budget ?? 0}:${v.budgetCurrency ?? 'CHF'}:${spentByVacationCHF?.get(v.id) ?? 0}`)
+    .map(v => `${v.id}:${v.budget ?? 0}:${v.budgetCurrency ?? 'CHF'}:${v.currency ?? 'CHF'}:${spentByVacationCHF?.get(v.id) ?? 0}`)
     .join('|');
 
   return useQuery({
@@ -46,17 +54,38 @@ export function useBudgetSummaries(
           vacation.budgetCurrency || 'CHF',
           defaultCurrency
         );
-        const totalSpent = await currencyService.convertCurrency(
-          spentByVacationCHF?.get(vacation.id) ?? 0,
-          'CHF',
-          defaultCurrency
-        );
+        // spentByVacationCHF sums expense.amountCHF, which is captured in the
+        // home currency (defaultCurrency). It is the single source of truth for
+        // spend, so it is used directly - NOT re-converted from 'CHF', which
+        // would drift from the expense list and corrupt a non-CHF home total.
+        const totalSpent = spentByVacationCHF?.get(vacation.id) ?? 0;
+
+        // Secondary figures in the trip currency, only when it differs from the
+        // display currency. On a missing rate we simply omit them.
+        const tripCurrency = vacation.currency || defaultCurrency;
+        let totalBudgetTrip: number | undefined;
+        let totalSpentTrip: number | undefined;
+        if (tripCurrency !== defaultCurrency) {
+          try {
+            totalBudgetTrip = await currencyService.convertCurrency(totalBudget, defaultCurrency, tripCurrency);
+            totalSpentTrip = await currencyService.convertCurrency(totalSpent, defaultCurrency, tripCurrency);
+          } catch {
+            totalBudgetTrip = undefined;
+            totalSpentTrip = undefined;
+          }
+        }
 
         summaries.set(vacation.id, {
           totalBudget,
           totalSpent,
           remaining: totalBudget - totalSpent,
           isOverBudget: totalSpent > totalBudget,
+          totalBudgetTrip,
+          totalSpentTrip,
+          tripCurrency:
+            tripCurrency !== defaultCurrency && totalBudgetTrip !== undefined
+              ? tripCurrency
+              : undefined,
         });
       }
 

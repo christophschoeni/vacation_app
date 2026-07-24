@@ -26,6 +26,14 @@ interface VacationCardProps {
    */
   totalSpent: number;
   totalBudget: number;
+  /**
+   * Same figures in the trip currency, shown small under the main line so the
+   * user gets a feel for the local-money amounts. Omitted when the trip
+   * currency equals the display currency or no rate was available.
+   */
+  totalSpentTrip?: number;
+  totalBudgetTrip?: number;
+  tripCurrency?: string;
 }
 
 /**
@@ -36,6 +44,9 @@ export default function VacationCard({
   vacation,
   totalSpent,
   totalBudget,
+  totalSpentTrip,
+  totalBudgetTrip,
+  tripCurrency,
 }: VacationCardProps) {
   const { t } = useTranslation();
   const theme = useIOSTheme();
@@ -116,10 +127,18 @@ export default function VacationCard({
               <Text style={[styles.budgetLabel, { color: theme.secondaryLabel }]}>
                 {t('components.vacation_card.budget')}
               </Text>
-              <Text style={[styles.budgetValue, { color: theme.label }]}>
-                {formatCurrencyCompact(totalSpent, defaultCurrency)} /{' '}
-                {formatCurrencyCompact(totalBudget, defaultCurrency)}
-              </Text>
+              <View style={styles.budgetValues}>
+                <Text style={[styles.budgetValue, { color: theme.label }]}>
+                  {formatCurrencyCompact(totalSpent, defaultCurrency)} /{' '}
+                  {formatCurrencyCompact(totalBudget, defaultCurrency)}
+                </Text>
+                {tripCurrency && totalSpentTrip !== undefined && totalBudgetTrip !== undefined && (
+                  <Text style={[styles.budgetSubValue, { color: theme.secondaryLabel }]} numberOfLines={1}>
+                    {formatCurrencyCompact(totalSpentTrip, tripCurrency)} /{' '}
+                    {formatCurrencyCompact(totalBudgetTrip, tripCurrency)}
+                  </Text>
+                )}
+              </View>
             </View>
             <ProgressBar progress={ratio} color={budgetColor(theme, ratio)} />
           </View>
@@ -175,12 +194,20 @@ const styles = StyleSheet.create({
   budgetRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   budgetLabel: {
     fontSize: Typography.fontSize.footnote,
   },
+  budgetValues: {
+    alignItems: 'flex-end',
+  },
   budgetValue: {
     fontSize: Typography.fontSize.footnote,
     fontWeight: Typography.fontWeight.semibold,
+  },
+  budgetSubValue: {
+    fontSize: Typography.fontSize.caption2,
+    marginTop: 1,
   },
 });

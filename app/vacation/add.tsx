@@ -68,10 +68,10 @@ export default function AddVacationScreen() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budget: budget,
-        // The budget is entered in the currency the user picked for the trip
-        // (labelled with it above), so store that as budgetCurrency rather than
-        // the system default - otherwise "1500" in EUR would persist as CHF.
-        budgetCurrency: formData.currency,
+        // Budget is always entered in the user's home currency (defaultCurrency),
+        // decoupled from the trip currency. The budget field above is labelled
+        // with defaultCurrency; expenses use `currency` (the trip's currency).
+        budgetCurrency: defaultCurrency || 'CHF',
         currency: formData.currency,                // Vacation currency for expenses
         imageUrl: formData.imageUrl ?? undefined,
       });
@@ -162,9 +162,9 @@ export default function AddVacationScreen() {
             />
 
             {/*
-              Currency first, then budget: the budget is entered in the trip's
-              chosen currency, so the picker precedes it and its label reflects
-              the current selection.
+              Trip currency (for expenses) and budget currency are decoupled:
+              the picker selects the trip currency, while the budget is always
+              entered in the user's home currency (defaultCurrency).
             */}
             <CurrencySelector
               label={`${t('vacation.form.currency')} (${t('vacation.form.currency_hint')})`}
@@ -173,7 +173,7 @@ export default function AddVacationScreen() {
             />
 
             <FormInput
-              label={`${t('vacation.form.budget')} (${formData.currency})`}
+              label={`${t('vacation.form.budget')} (${defaultCurrency || 'CHF'}) · ${t('vacation.form.budget_hint')}`}
               value={formData.budget}
               onChangeText={(value) => updateField('budget', value)}
               placeholder={t('vacation.form.budget_placeholder')}
