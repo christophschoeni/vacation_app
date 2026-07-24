@@ -41,7 +41,17 @@
       "Bash(node -e \"const de=require\\('./lib/i18n/locales/de.json'\\); console.log\\(JSON.stringify\\(de.vacation?.form, null, 2\\)\\)\")",
       "Bash(uv --version)",
       "Bash(docker --version)",
-      "Bash(pnpm --version)"
+      "Bash(pnpm --version)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm --filter mobile typecheck)",
+      "Bash(mkdir -p .expo/types)",
+      "Bash(node scripts/gen-route-types.mjs)",
+      "Bash(echo \"=== EXIT: $? ===\")",
+      "Bash(echo \"===== EXIT jest: $? =====\")",
+      "Bash(echo \"===== EXIT lint: $? =====\")",
+      "Bash(echo \"===== EXIT: $? =====\")",
+      "Bash(awk '{print $2, $11, $12, $13, $14}')",
+      "Bash(echo \"===== COMMIT EXIT: $? =====\")"
     ],
     "deny": [
       "Read(./.env)",

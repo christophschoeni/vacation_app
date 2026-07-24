@@ -40,6 +40,9 @@ yarn-error.*
 
 app-example
 
-# generated native folders
-/ios
-/android
+# turborepo
+.turbo/
+
+# generated native folders (Expo prebuild)
+/apps/mobile/ios/
+/apps/mobile/android/
