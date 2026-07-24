@@ -14,7 +14,6 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.vomschoeni.ferien-budget",
       "appleTeamId": "9RJFL9M743",
-      "buildNumber": "1",
       "config": {
         "usesNonExemptEncryption": false
       },

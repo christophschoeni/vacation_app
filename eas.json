@@ -27,7 +27,8 @@
     "production": {
       "ios": {
         "appleId": "christoph.schoeni@gmail.com",
-        "appleTeamId": "9RJFL9M743"
+        "appleTeamId": "9RJFL9M743",
+        "ascAppId": "6793841398"
       }
     }
   }

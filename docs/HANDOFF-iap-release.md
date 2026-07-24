@@ -1,8 +1,57 @@
 # Handoff: App-Release + 7-Tage-Trial/Abo (Hard Paywall) — Zwischenstand
 
-Stand: 2026-07-23. Branch: `chore/deps-security-cleanup`. Dieses Dokument fasst
-zusammen, was fertig ist und was als Nächstes kommt, damit eine neue Session
-nahtlos weitermachen kann.
+Stand: 2026-07-23 (2. Session). Branch: `chore/deps-security-cleanup`. Dieses
+Dokument fasst zusammen, was fertig ist und was als Nächstes kommt, damit eine
+neue Session nahtlos weitermachen kann.
+
+## 🟢 UPDATE 2026-07-23 (Nachmittag): Paywall lädt live, beide Abos verifiziert
+
+Der komplette RevenueCat-Flow wurde im Simulator (iPhone 17 Pro, UDID
+A14E5A1C-…) end-to-end zum Laufen gebracht und per Screenshot verifiziert:
+- **Paywall zeigt beide echten Produkte mit Preisen + 7-Tage-Trial-Text:**
+  Jährlich $9.99 / Jahr, Monatlich $0.99 / Monat.
+- RevenueCat konfiguriert sauber, Offering wird geladen, Kauf-Dialog öffnet.
+- **`eas.json`:** `ascAppId` = `6793841398` ergänzt (submit.production.ios) —
+  committfähig, noch nicht committet.
+
+### Vier Stolpersteine, die dabei gelöst wurden (wichtig für Verständnis):
+1. **`.env.dev`/`.env.prod` werden von Expo NIE geladen.** Expo/Metro lädt nur
+   `.env`, `.env.local`, `.env.development`, `.env.production`. Der Key war in
+   `.env.dev` → zur Laufzeit unsichtbar → Purchases.configure lief nie. **Fix:**
+   User hat Key in **`.env.local`** gelegt (von .gitignore `.env*` geschützt).
+2. **Falscher Key-TYP:** Erst lag ein Secret-Key (`sk_…`) in .env.local →
+   RC-Fehler 7243 „Secret API keys should not be used in your app". **Fix:**
+   öffentlicher **`appl_…`** App-Store-SDK-Key (RevenueCat → Apps → App →
+   Public API Key).
+3. **Offering zeigte auf Test-Store-Produkte** statt App-Store-Produkte, und die
+   Produkte waren nicht ans Entitlement `pro` attached. User hat beide in
+   RevenueCat gefixt (Attach + Offering-Packages auf `com.vomschoeni.…` +
+   Current gesetzt).
+4. **Monats-Abo fehlte** (`🍎 Could not find products …pro.monthly`): In App
+   Store Connect fehlte die **Localization** beim Monats-Abo. Nach Nachtragen
+   (DE Display Name + Beschreibung) lädt es. **Merke:** ein Abo ohne komplette
+   Metadaten liefert StoreKit gar nicht aus, während das andere problemlos lädt.
+
+### ⏳ Einziger offener Verifikationsschritt: Kauf-Abschluss → Gate öffnet
+Sandbox-Kauf im **Simulator** bricht ab (`Purchase was cancelled`) — bekanntes
+Simulator-Sandbox-Problem, KEIN App-Bug (Code behandelt userCancelled sauber).
+**Am echten iPhone testen:** Sandbox-Tester `christoph.schoeni+sandbox@gmail.com`
+existiert in ASC. Auf dem iPhone unter Einstellungen → Developer → Sandbox
+Account einloggen, kaufen → Gate muss öffnen (isPro flippt via CustomerInfo-
+Listener). Restore ebenfalls testen.
+
+### 🔑 Noch zu tun vor echtem Release (NICHT vergessen):
+- **EAS-Build braucht den `appl_…`-Key als EAS-Secret** — lokale `.env.local`
+  wird NICHT in den Cloud-Build übernommen. `eas env:create` (oder eas.json
+  `env`) mit `EXPO_PUBLIC_REVENUECAT_IOS_KEY`.
+- Aufräumen erwägen: `.env.dev`/`.env.prod` werden nie geladen — falls dort
+  weitere EXPO_PUBLIC_-Vars stehen, greifen die auch nicht.
+- Monats-Abo: Preis $0.99 ist evtl. Platzhalter — vor Release prüfen.
+- Review-Screenshot + Image an beiden Abos für die echte Apple-Einreichung.
+
+---
+
+## (Ältere Notizen der 1. Session unten)
 
 ## Ziel
 App „Ferien Budget" veröffentlichen. Monetarisierung: **7 Tage gratis, danach
