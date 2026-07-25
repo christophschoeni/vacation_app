@@ -1,0 +1,36 @@
+[project]
+name = "api"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "django>=5.1,<5.2",
+    "django-cors-headers>=4.4",
+    "django-environ>=0.11",
+    "djangorestframework>=3.15",
+    "drf-spectacular>=0.28",
+    "pgvector>=0.3",
+    "psycopg[binary]>=3.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-django>=4.9",
+    "ruff>=0.6",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+# Django auto-generates migrations; don't lint machine-written code.
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "DJ"]
+# DJ001: our nullable URL fields mirror the app's schema, where "no image" is a
+# genuine NULL rather than an empty string. Keeping null=True is deliberate.
+ignore = ["DJ001"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["test_*.py", "tests.py"]

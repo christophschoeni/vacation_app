@@ -46,3 +46,12 @@ app-example
 # generated native folders (Expo prebuild)
 /apps/mobile/ios/
 /apps/mobile/android/
+
+# python / django backend (apps/api)
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+db.sqlite3
