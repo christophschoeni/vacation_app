@@ -51,7 +51,13 @@
       "Bash(echo \"===== EXIT lint: $? =====\")",
       "Bash(echo \"===== EXIT: $? =====\")",
       "Bash(awk '{print $2, $11, $12, $13, $14}')",
-      "Bash(echo \"===== COMMIT EXIT: $? =====\")"
+      "Bash(echo \"===== COMMIT EXIT: $? =====\")",
+      "Bash(awk '{print $2}')",
+      "Bash(pkill -f 'expo start')",
+      "Bash(pkill -f 'metro')",
+      "Bash(awk '{print \"  noch aktiv:\", $2}')",
+      "Bash(awk '{print $2, $11, $12}')",
+      "Bash(echo \"===== RUN:IOS BEENDET, EXIT: $? =====\")"
     ],
     "deny": [
       "Read(./.env)",

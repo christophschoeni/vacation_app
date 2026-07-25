@@ -5,8 +5,13 @@ import type { CustomerInfo } from 'react-native-purchases';
  * with this entitlement active — whether via the 7-day free trial or a paid
  * subscription — has full access. RevenueCat reports both the same way, so the
  * app never has to track trial timing itself.
+ *
+ * NOTE: This must match the entitlement's Identifier in RevenueCat EXACTLY
+ * (Product catalog → Entitlements). It is "Ferien Budget" (with a space), not
+ * "pro" — a mismatch leaves entitlements.active empty after a successful
+ * purchase, so the paywall never opens.
  */
-export const PRO_ENTITLEMENT = 'pro';
+export const PRO_ENTITLEMENT = 'Ferien Budget';
 
 /**
  * Whether the customer currently has Pro access.
