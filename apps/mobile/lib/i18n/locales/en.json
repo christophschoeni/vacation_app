@@ -545,6 +545,26 @@
       "weak_password": "The password is too weak.",
       "invalid_email": "Please enter a valid email address.",
       "network": "Could not reach the server. Please try again."
+    },
+    "forgot_link": "Forgot password?",
+    "forgot": {
+      "title": "Reset password",
+      "subtitle": "Enter your email. We'll send you a code to reset it.",
+      "submit": "Send code",
+      "back_to_login": "Back to sign in"
+    },
+    "reset": {
+      "title": "New password",
+      "subtitle": "Enter the code from the email and your new password.",
+      "code": "Code",
+      "code_placeholder": "6-digit code",
+      "new_password": "New password",
+      "new_password_placeholder": "New password",
+      "submit": "Change password",
+      "success": "Password changed. You can sign in now."
+    },
+    "reset_errors": {
+      "invalid_code": "The code is invalid or has expired."
     }
   },
   "errors": {

@@ -104,6 +104,14 @@ export default function LoginScreen() {
               )}
             </Pressable>
 
+            <Pressable
+              onPress={() => router.push('/(auth)/forgot-password')}
+              hitSlop={8}
+              style={styles.forgotRow}
+            >
+              <Text style={styles.switchLink}>{t('auth.forgot_link')}</Text>
+            </Pressable>
+
             <View style={styles.switchRow}>
               <Text style={styles.switchText}>{t('auth.login.no_account')}</Text>
               <Pressable onPress={() => router.replace('/(auth)/register')} hitSlop={8}>
@@ -139,6 +147,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   buttonText: { color: '#FFFFFF', fontSize: 17, fontWeight: '600', fontFamily: 'System' },
+  forgotRow: {
+    alignItems: 'center',
+    marginTop: 16,
+  },
   switchRow: {
     flexDirection: 'row',
     justifyContent: 'center',

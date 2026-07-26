@@ -545,6 +545,26 @@
       "weak_password": "Das Passwort ist zu schwach.",
       "invalid_email": "Bitte gib eine gültige E-Mail-Adresse ein.",
       "network": "Verbindung zum Server fehlgeschlagen. Bitte versuche es erneut."
+    },
+    "forgot_link": "Passwort vergessen?",
+    "forgot": {
+      "title": "Passwort zurücksetzen",
+      "subtitle": "Gib deine E-Mail ein. Wir senden dir einen Code zum Zurücksetzen.",
+      "submit": "Code senden",
+      "back_to_login": "Zurück zur Anmeldung"
+    },
+    "reset": {
+      "title": "Neues Passwort",
+      "subtitle": "Gib den Code aus der E-Mail und dein neues Passwort ein.",
+      "code": "Code",
+      "code_placeholder": "6-stelliger Code",
+      "new_password": "Neues Passwort",
+      "new_password_placeholder": "Neues Passwort",
+      "submit": "Passwort ändern",
+      "success": "Passwort geändert. Du kannst dich jetzt anmelden."
+    },
+    "reset_errors": {
+      "invalid_code": "Der Code ist ungültig oder abgelaufen."
     }
   },
   "errors": {

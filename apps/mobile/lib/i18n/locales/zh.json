@@ -545,6 +545,26 @@
       "weak_password": "密码太弱。",
       "invalid_email": "请输入有效的电子邮件地址。",
       "network": "无法连接到服务器，请重试。"
+    },
+    "forgot_link": "忘记密码？",
+    "forgot": {
+      "title": "重置密码",
+      "subtitle": "输入您的电子邮件，我们将发送重置代码。",
+      "submit": "发送代码",
+      "back_to_login": "返回登录"
+    },
+    "reset": {
+      "title": "新密码",
+      "subtitle": "输入邮件中的代码和您的新密码。",
+      "code": "代码",
+      "code_placeholder": "6 位代码",
+      "new_password": "新密码",
+      "new_password_placeholder": "新密码",
+      "submit": "更改密码",
+      "success": "密码已更改，您现在可以登录。"
+    },
+    "reset_errors": {
+      "invalid_code": "代码无效或已过期。"
     }
   },
   "errors": {

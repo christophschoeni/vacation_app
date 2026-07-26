@@ -190,6 +190,8 @@ function RootNavigation({
         <Stack.Protected guard={!!onboardingCompleted && !isAuthenticated}>
           <Stack.Screen name="(auth)/login" options={{ gestureEnabled: false }} />
           <Stack.Screen name="(auth)/register" />
+          <Stack.Screen name="(auth)/forgot-password" />
+          <Stack.Screen name="(auth)/reset-password" />
         </Stack.Protected>
 
         {/* Full app: onboarding done, signed in, and Pro */}

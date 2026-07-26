@@ -545,6 +545,26 @@
       "weak_password": "La password è troppo debole.",
       "invalid_email": "Inserisci un indirizzo e-mail valido.",
       "network": "Impossibile raggiungere il server. Riprova."
+    },
+    "forgot_link": "Password dimenticata?",
+    "forgot": {
+      "title": "Reimposta password",
+      "subtitle": "Inserisci la tua e-mail. Ti invieremo un codice.",
+      "submit": "Invia codice",
+      "back_to_login": "Torna all'accesso"
+    },
+    "reset": {
+      "title": "Nuova password",
+      "subtitle": "Inserisci il codice ricevuto via e-mail e la nuova password.",
+      "code": "Codice",
+      "code_placeholder": "Codice a 6 cifre",
+      "new_password": "Nuova password",
+      "new_password_placeholder": "Nuova password",
+      "submit": "Cambia password",
+      "success": "Password modificata. Ora puoi accedere."
+    },
+    "reset_errors": {
+      "invalid_code": "Il codice non è valido o è scaduto."
     }
   },
   "errors": {

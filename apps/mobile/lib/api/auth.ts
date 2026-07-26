@@ -40,3 +40,26 @@ export async function logout(refresh: string): Promise<void> {
     auth: false,
   });
 }
+
+/** Request a 6-digit reset code by email. Always resolves (never reveals if the
+ * email exists), so callers show the same "check your email" message. */
+export async function requestPasswordReset(email: string): Promise<void> {
+  await apiRequest<void>('/api/auth/password-reset/', {
+    method: 'POST',
+    body: { email },
+    auth: false,
+  });
+}
+
+/** Confirm a reset: code + new password. Throws ApiError(400) on bad/expired code. */
+export async function confirmPasswordReset(
+  email: string,
+  code: string,
+  newPassword: string,
+): Promise<void> {
+  await apiRequest<void>('/api/auth/password-reset/confirm/', {
+    method: 'POST',
+    body: { email, code, new_password: newPassword },
+    auth: false,
+  });
+}

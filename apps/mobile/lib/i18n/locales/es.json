@@ -545,6 +545,26 @@
       "weak_password": "La contraseña es demasiado débil.",
       "invalid_email": "Introduce una dirección de correo válida.",
       "network": "No se pudo conectar con el servidor. Inténtalo de nuevo."
+    },
+    "forgot_link": "¿Olvidaste tu contraseña?",
+    "forgot": {
+      "title": "Restablecer contraseña",
+      "subtitle": "Introduce tu correo. Te enviaremos un código.",
+      "submit": "Enviar código",
+      "back_to_login": "Volver al inicio de sesión"
+    },
+    "reset": {
+      "title": "Nueva contraseña",
+      "subtitle": "Introduce el código del correo y tu nueva contraseña.",
+      "code": "Código",
+      "code_placeholder": "Código de 6 dígitos",
+      "new_password": "Nueva contraseña",
+      "new_password_placeholder": "Nueva contraseña",
+      "submit": "Cambiar contraseña",
+      "success": "Contraseña cambiada. Ya puedes iniciar sesión."
+    },
+    "reset_errors": {
+      "invalid_code": "El código no es válido o ha caducado."
     }
   },
   "errors": {

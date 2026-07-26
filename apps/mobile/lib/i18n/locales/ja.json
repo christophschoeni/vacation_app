@@ -545,6 +545,26 @@
       "weak_password": "パスワードが弱すぎます。",
       "invalid_email": "有効なメールアドレスを入力してください。",
       "network": "サーバーに接続できませんでした。もう一度お試しください。"
+    },
+    "forgot_link": "パスワードをお忘れですか？",
+    "forgot": {
+      "title": "パスワードのリセット",
+      "subtitle": "メールアドレスを入力してください。リセット用コードを送信します。",
+      "submit": "コードを送信",
+      "back_to_login": "ログインに戻る"
+    },
+    "reset": {
+      "title": "新しいパスワード",
+      "subtitle": "メールのコードと新しいパスワードを入力してください。",
+      "code": "コード",
+      "code_placeholder": "6桁のコード",
+      "new_password": "新しいパスワード",
+      "new_password_placeholder": "新しいパスワード",
+      "submit": "パスワードを変更",
+      "success": "パスワードを変更しました。ログインできます。"
+    },
+    "reset_errors": {
+      "invalid_code": "コードが無効か期限切れです。"
     }
   },
   "errors": {
