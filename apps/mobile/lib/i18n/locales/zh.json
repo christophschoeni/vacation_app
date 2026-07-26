@@ -518,6 +518,35 @@
       "free": "免费版"
     }
   },
+  "auth": {
+    "login": {
+      "title": "登录",
+      "subtitle": "登录以同步您的假期。",
+      "email": "电子邮件",
+      "email_placeholder": "name@example.com",
+      "password": "密码",
+      "password_placeholder": "您的密码",
+      "submit": "登录",
+      "no_account": "还没有账户？",
+      "go_register": "注册"
+    },
+    "register": {
+      "title": "创建账户",
+      "subtitle": "创建账户以备份您的数据。",
+      "display_name": "名称",
+      "display_name_placeholder": "我们该怎么称呼您？",
+      "submit": "创建账户",
+      "have_account": "已经有账户了？",
+      "go_login": "登录"
+    },
+    "errors": {
+      "invalid_credentials": "电子邮件或密码不正确。",
+      "email_taken": "该电子邮件已被使用。",
+      "weak_password": "密码太弱。",
+      "invalid_email": "请输入有效的电子邮件地址。",
+      "network": "无法连接到服务器，请重试。"
+    }
+  },
   "errors": {
     "generic": "发生错误。请重试。",
     "storage": "保存数据时出错。请重试。",

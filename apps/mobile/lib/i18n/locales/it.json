@@ -518,6 +518,35 @@
       "free": "Versione gratuita"
     }
   },
+  "auth": {
+    "login": {
+      "title": "Accedi",
+      "subtitle": "Accedi per sincronizzare le tue vacanze.",
+      "email": "E-mail",
+      "email_placeholder": "nome@esempio.com",
+      "password": "Password",
+      "password_placeholder": "La tua password",
+      "submit": "Accedi",
+      "no_account": "Non hai ancora un account?",
+      "go_register": "Registrati"
+    },
+    "register": {
+      "title": "Crea account",
+      "subtitle": "Crea un account per salvare i tuoi dati.",
+      "display_name": "Nome",
+      "display_name_placeholder": "Come dobbiamo chiamarti?",
+      "submit": "Crea account",
+      "have_account": "Hai già un account?",
+      "go_login": "Accedi"
+    },
+    "errors": {
+      "invalid_credentials": "E-mail o password non corretti.",
+      "email_taken": "Questa e-mail è già in uso.",
+      "weak_password": "La password è troppo debole.",
+      "invalid_email": "Inserisci un indirizzo e-mail valido.",
+      "network": "Impossibile raggiungere il server. Riprova."
+    }
+  },
   "errors": {
     "generic": "Si è verificato un errore. Riprova.",
     "storage": "Errore durante il salvataggio dei dati. Riprova.",

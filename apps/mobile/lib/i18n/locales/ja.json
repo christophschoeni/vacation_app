@@ -518,6 +518,35 @@
       "free": "無料版"
     }
   },
+  "auth": {
+    "login": {
+      "title": "ログイン",
+      "subtitle": "ログインして休暇を同期します。",
+      "email": "メール",
+      "email_placeholder": "name@example.com",
+      "password": "パスワード",
+      "password_placeholder": "パスワード",
+      "submit": "ログイン",
+      "no_account": "アカウントをお持ちでないですか？",
+      "go_register": "登録"
+    },
+    "register": {
+      "title": "アカウント作成",
+      "subtitle": "アカウントを作成してデータをバックアップします。",
+      "display_name": "名前",
+      "display_name_placeholder": "何とお呼びすればよいですか？",
+      "submit": "アカウントを作成",
+      "have_account": "すでにアカウントをお持ちですか？",
+      "go_login": "ログイン"
+    },
+    "errors": {
+      "invalid_credentials": "メールアドレスまたはパスワードが正しくありません。",
+      "email_taken": "このメールアドレスはすでに使用されています。",
+      "weak_password": "パスワードが弱すぎます。",
+      "invalid_email": "有効なメールアドレスを入力してください。",
+      "network": "サーバーに接続できませんでした。もう一度お試しください。"
+    }
+  },
   "errors": {
     "generic": "エラーが発生しました。もう一度お試しください。",
     "storage": "データの保存中にエラーが発生しました。もう一度お試しください。",

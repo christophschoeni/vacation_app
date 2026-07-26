@@ -15,6 +15,7 @@ import { appInitialization } from '@/lib/app-initialization';
 import { ensureDefaultTemplates } from '@/lib/seed-templates';
 import { translationService } from '@/lib/i18n';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { EntitlementProvider, useEntitlement } from '@/contexts/EntitlementContext';
 import Paywall from '@/components/paywall/Paywall';
 import { onboardingService } from '@/lib/onboarding-service';
@@ -35,6 +36,7 @@ function RootNavigation({
   const { success, error } = useMigrations(db, migrations);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
   const { isPro, isLoading: entitlementLoading } = useEntitlement();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   // Keeps the home-screen widgets in step with the app's own data. Mounted
   // here because it needs the query and currency providers above it.
@@ -142,6 +144,29 @@ function RootNavigation({
     );
   }
 
+  // Auth gate — sits after onboarding and before the paywall, so a user signs
+  // in (creating a backend account) before being asked to subscribe. While the
+  // session is being restored from stored tokens we wait rather than flash the
+  // login screen at an already-authenticated user.
+  if (authLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#007AFF'} />
+      </View>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(auth)" options={{ headerShown: false, gestureEnabled: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </>
+    );
+  }
+
   // While RevenueCat resolves the first CustomerInfo, wait rather than flash the
   // paywall at a subscriber who is actually entitled.
   if (entitlementLoading) {
@@ -208,16 +233,18 @@ export default function RootLayout() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
-          <CurrencyProvider>
-            <EntitlementProvider>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                <RootNavigation
-                  key={migrationAttempt}
-                  onRetryMigration={() => setMigrationAttempt(attempt => attempt + 1)}
-                />
-              </GestureHandlerRootView>
-            </EntitlementProvider>
-          </CurrencyProvider>
+          <AuthProvider>
+            <CurrencyProvider>
+              <EntitlementProvider>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <RootNavigation
+                    key={migrationAttempt}
+                    onRetryMigration={() => setMigrationAttempt(attempt => attempt + 1)}
+                  />
+                </GestureHandlerRootView>
+              </EntitlementProvider>
+            </CurrencyProvider>
+          </AuthProvider>
         </SafeAreaProvider>
       </QueryClientProvider>
     </ErrorBoundary>

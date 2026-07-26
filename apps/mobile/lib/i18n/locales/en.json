@@ -518,6 +518,35 @@
       "free": "Free version"
     }
   },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Sign in to sync your vacations.",
+      "email": "Email",
+      "email_placeholder": "name@example.com",
+      "password": "Password",
+      "password_placeholder": "Your password",
+      "submit": "Sign in",
+      "no_account": "No account yet?",
+      "go_register": "Sign up"
+    },
+    "register": {
+      "title": "Create account",
+      "subtitle": "Create an account to back up your data.",
+      "display_name": "Name",
+      "display_name_placeholder": "What should we call you?",
+      "submit": "Create account",
+      "have_account": "Already have an account?",
+      "go_login": "Sign in"
+    },
+    "errors": {
+      "invalid_credentials": "Email or password is incorrect.",
+      "email_taken": "This email is already in use.",
+      "weak_password": "The password is too weak.",
+      "invalid_email": "Please enter a valid email address.",
+      "network": "Could not reach the server. Please try again."
+    }
+  },
   "errors": {
     "generic": "An error occurred. Please try again.",
     "storage": "Error saving data. Please try again.",

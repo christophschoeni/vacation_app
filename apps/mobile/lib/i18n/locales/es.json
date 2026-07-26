@@ -518,6 +518,35 @@
       "free": "Versión gratuita"
     }
   },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "subtitle": "Inicia sesión para sincronizar tus vacaciones.",
+      "email": "Correo electrónico",
+      "email_placeholder": "nombre@ejemplo.com",
+      "password": "Contraseña",
+      "password_placeholder": "Tu contraseña",
+      "submit": "Iniciar sesión",
+      "no_account": "¿Aún no tienes cuenta?",
+      "go_register": "Registrarse"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "subtitle": "Crea una cuenta para guardar tus datos.",
+      "display_name": "Nombre",
+      "display_name_placeholder": "¿Cómo debemos llamarte?",
+      "submit": "Crear cuenta",
+      "have_account": "¿Ya tienes una cuenta?",
+      "go_login": "Iniciar sesión"
+    },
+    "errors": {
+      "invalid_credentials": "El correo o la contraseña son incorrectos.",
+      "email_taken": "Este correo ya está en uso.",
+      "weak_password": "La contraseña es demasiado débil.",
+      "invalid_email": "Introduce una dirección de correo válida.",
+      "network": "No se pudo conectar con el servidor. Inténtalo de nuevo."
+    }
+  },
   "errors": {
     "generic": "Se ha producido un error. Inténtelo de nuevo.",
     "storage": "Error al guardar los datos. Inténtelo de nuevo.",

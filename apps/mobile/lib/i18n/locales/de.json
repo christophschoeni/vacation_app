@@ -518,6 +518,35 @@
       "free": "Kostenlose Version"
     }
   },
+  "auth": {
+    "login": {
+      "title": "Anmelden",
+      "subtitle": "Melde dich an, um deine Ferien zu synchronisieren.",
+      "email": "E-Mail",
+      "email_placeholder": "name@beispiel.ch",
+      "password": "Passwort",
+      "password_placeholder": "Dein Passwort",
+      "submit": "Anmelden",
+      "no_account": "Noch kein Konto?",
+      "go_register": "Registrieren"
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "subtitle": "Erstelle ein Konto, um deine Daten zu sichern.",
+      "display_name": "Name",
+      "display_name_placeholder": "Wie sollen wir dich nennen?",
+      "submit": "Konto erstellen",
+      "have_account": "Bereits ein Konto?",
+      "go_login": "Anmelden"
+    },
+    "errors": {
+      "invalid_credentials": "E-Mail oder Passwort ist falsch.",
+      "email_taken": "Diese E-Mail wird bereits verwendet.",
+      "weak_password": "Das Passwort ist zu schwach.",
+      "invalid_email": "Bitte gib eine gültige E-Mail-Adresse ein.",
+      "network": "Verbindung zum Server fehlgeschlagen. Bitte versuche es erneut."
+    }
+  },
   "errors": {
     "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
     "storage": "Fehler beim Speichern der Daten. Bitte versuchen Sie es erneut.",
