@@ -3,6 +3,7 @@
 from django.db import connection
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +11,8 @@ from rest_framework.views import APIView
 
 class HealthView(APIView):
     """Liveness/readiness probe: reports app status and database connectivity."""
+
+    permission_classes = [AllowAny]
 
     @extend_schema(
         summary="Health check",

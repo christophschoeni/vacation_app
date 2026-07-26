@@ -4,10 +4,13 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APIClient
 
 from .models import Expense, Vacation
+
+User = get_user_model()
 
 
 @pytest.mark.django_db
@@ -27,7 +30,9 @@ def test_schema_endpoint_serves_openapi():
 
 @pytest.mark.django_db
 def test_vacation_and_expense_persist_with_cascade():
+    owner = User.objects.create_user(email="owner@example.com", password="pw-12345678")
     vacation = Vacation.objects.create(
+        owner=owner,
         destination="Lisbon",
         country="Portugal",
         hotel="Hotel Alfama",
@@ -37,6 +42,7 @@ def test_vacation_and_expense_persist_with_cascade():
         currency="EUR",
     )
     Expense.objects.create(
+        owner=owner,
         vacation=vacation,
         amount=Decimal("42.50"),
         currency="EUR",

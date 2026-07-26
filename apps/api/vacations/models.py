@@ -11,6 +11,7 @@ point these gain an `owner` (and, for collaboration, a membership model).
 
 from decimal import Decimal
 
+from django.conf import settings
 from django.db import models
 
 from core.models import BaseModel
@@ -26,6 +27,11 @@ class ExpenseCategory(models.TextChoices):
 
 
 class Vacation(BaseModel):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="vacations",
+    )
     destination = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     hotel = models.CharField(max_length=255)
@@ -51,6 +57,11 @@ class Vacation(BaseModel):
 
 
 class Expense(BaseModel):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="expenses",
+    )
     vacation = models.ForeignKey(
         Vacation,
         on_delete=models.CASCADE,
