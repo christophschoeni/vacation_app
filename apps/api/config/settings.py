@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "drf_spectacular",
     "corsheaders",
+    "anymail",
     # Local
     "core",
     "accounts",
@@ -146,3 +147,19 @@ SPECTACULAR_SETTINGS = {
 # CORS — the Expo app calls this API from a different origin during development.
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
 CORS_ALLOW_ALL_ORIGINS = DEBUG
+
+
+# Email via Resend (django-anymail). In DEBUG without a key we fall back to the
+# console backend so password-reset codes print to the runserver log instead of
+# being sent — no external calls needed for local testing.
+RESEND_API_KEY = env("RESEND_API_KEY", default="")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Ferien Budget <support@laflax.com>")
+
+if RESEND_API_KEY:
+    EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+    ANYMAIL = {"RESEND_API_KEY": RESEND_API_KEY}
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# How long a password-reset code stays valid.
+PASSWORD_RESET_CODE_TTL_MINUTES = 15

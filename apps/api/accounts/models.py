@@ -5,8 +5,11 @@ painful in Django, which is why the local database is reset when this lands.
 Social logins (Apple, Google) attach to the same user via a later migration.
 """
 
+import secrets
 import uuid
+from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
@@ -54,3 +57,38 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return self.email
+
+
+def _generate_code() -> str:
+    """A 6-digit numeric code, zero-padded (e.g. '004271')."""
+    return f"{secrets.randbelow(1_000_000):06d}"
+
+
+class PasswordResetCode(models.Model):
+    """A short-lived 6-digit code emailed to a user to reset their password.
+
+    Codes are single-use and expire after settings.PASSWORD_RESET_CODE_TTL_MINUTES.
+    We keep the flow in-app (code entry) rather than using web reset links.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="password_reset_codes",
+    )
+    code = models.CharField(max_length=6, default=_generate_code)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["user", "code"])]
+
+    def __str__(self) -> str:
+        return f"reset code for {self.user.email}"
+
+    def is_valid(self) -> bool:
+        if self.used_at is not None:
+            return False
+        ttl = timedelta(minutes=settings.PASSWORD_RESET_CODE_TTL_MINUTES)
+        return timezone.now() <= self.created_at + ttl

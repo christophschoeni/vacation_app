@@ -37,3 +37,17 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
             display_name=validated_data.get("display_name", ""),
         )
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(min_length=6, max_length=6)
+    new_password = serializers.CharField(write_only=True)
+
+    def validate_new_password(self, value: str) -> str:
+        validate_password(value)
+        return value

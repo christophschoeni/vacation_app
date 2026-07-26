@@ -7,7 +7,12 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import MeView, RegisterView
+from .views import (
+    MeView,
+    PasswordResetConfirmView,
+    PasswordResetRequestView,
+    RegisterView,
+)
 
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
@@ -17,4 +22,15 @@ urlpatterns = [
     # Logout: POST {refresh} -> blacklists the refresh token
     path("logout/", TokenBlacklistView.as_view(), name="logout"),
     path("me/", MeView.as_view(), name="me"),
+    # Password reset (6-digit code by email)
+    path(
+        "password-reset/",
+        PasswordResetRequestView.as_view(),
+        name="password-reset",
+    ),
+    path(
+        "password-reset/confirm/",
+        PasswordResetConfirmView.as_view(),
+        name="password-reset-confirm",
+    ),
 ]
