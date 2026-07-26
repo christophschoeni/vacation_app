@@ -132,23 +132,19 @@ function RootNavigation({
     );
   }
 
-  // Show onboarding or main app based on completion status
-  if (!onboardingCompleted) {
+  // Two non-route "still loading" gates stay as early returns: while the auth
+  // session is being restored, or while RevenueCat resolves the first
+  // CustomerInfo, show a spinner rather than flash the wrong screen. Only run
+  // the entitlement spinner once onboarding is done and the user is signed in,
+  // so it never blocks the onboarding or login screens.
+  if (onboardingCompleted && authLoading) {
     return (
-      <>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
+        <ActivityIndicator size="large" color={isDark ? '#fff' : '#007AFF'} />
+      </View>
     );
   }
-
-  // Auth gate — sits after onboarding and before the paywall, so a user signs
-  // in (creating a backend account) before being asked to subscribe. While the
-  // session is being restored from stored tokens we wait rather than flash the
-  // login screen at an already-authenticated user.
-  if (authLoading) {
+  if (onboardingCompleted && isAuthenticated && entitlementLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
         <ActivityIndicator size="large" color={isDark ? '#fff' : '#007AFF'} />
@@ -156,32 +152,10 @@ function RootNavigation({
     );
   }
 
-  if (!isAuthenticated) {
-    return (
-      <>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" options={{ headerShown: false, gestureEnabled: false }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </>
-    );
-  }
-
-  // While RevenueCat resolves the first CustomerInfo, wait rather than flash the
-  // paywall at a subscriber who is actually entitled.
-  if (entitlementLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#000' : '#fff' }}>
-        <ActivityIndicator size="large" color={isDark ? '#fff' : '#007AFF'} />
-      </View>
-    );
-  }
-
-  // Hard paywall: without an active Pro entitlement (trial or paid), the app is
-  // gated. During the 7-day free trial the entitlement is active, so the app is
-  // open; once it lapses without a purchase, the paywall returns. A successful
-  // purchase updates isPro via the SDK listener and this re-renders into the app.
-  if (!isPro) {
+  // Hard paywall (not a route, so it stays a plain gate): a signed-in user
+  // without an active Pro entitlement is blocked. A successful purchase updates
+  // isPro via the SDK listener and this re-renders into the app.
+  if (onboardingCompleted && isAuthenticated && !isPro) {
     return (
       <>
         <Paywall />
@@ -190,18 +164,16 @@ function RootNavigation({
     );
   }
 
+  // A single always-rendered root Stack with every group registered. Route
+  // visibility is driven by Stack.Protected guards, not by swapping which Stack
+  // is rendered — Expo Router decides the active route from navigation state, so
+  // conditionally rendering different Stacks does NOT switch route groups
+  // (that's why the earlier onboarding-style gate failed for (auth)). When a
+  // guard flips, the router auto-redirects to the first available route, so the
+  // login screen itself must not call router.replace — flipping isAuthenticated
+  // is enough.
   return (
     <>
-      {/*
-        Expo Router registers every file under app/ as a route automatically, so
-        push screens need no explicit <Stack.Screen>. But `presentation: 'card'`
-        must be the DEFAULT: without it, screens pushed on top of the
-        transparentModal `(tabs)` surface inherit a modal presentation instead of
-        a normal push — which turned the vacation detail (itself a tabs group)
-        into a modal. Only the screens that genuinely deviate are listed below.
-        On iOS the native stack's default push already is the slide-from-right
-        transition, so no custom interpolator is needed.
-      */}
       <Stack
         screenOptions={{
           headerShown: false,
@@ -209,15 +181,29 @@ function RootNavigation({
           contentStyle: { backgroundColor: 'transparent' },
         }}
       >
-        <Stack.Screen
-          name="(tabs)"
-          options={{ presentation: 'transparentModal', animation: 'none' }}
-        />
-        <Stack.Screen name="vacation/add" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="expense/add" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="expense/edit" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="vacation-edit" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        {/* Onboarding gate */}
+        <Stack.Protected guard={!onboardingCompleted}>
+          <Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
+        </Stack.Protected>
+
+        {/* Auth gate: onboarding done, but not signed in */}
+        <Stack.Protected guard={!!onboardingCompleted && !isAuthenticated}>
+          <Stack.Screen name="(auth)/login" options={{ gestureEnabled: false }} />
+          <Stack.Screen name="(auth)/register" />
+        </Stack.Protected>
+
+        {/* Full app: onboarding done, signed in, and Pro */}
+        <Stack.Protected guard={!!onboardingCompleted && isAuthenticated && isPro}>
+          <Stack.Screen
+            name="(tabs)"
+            options={{ presentation: 'transparentModal', animation: 'none' }}
+          />
+          <Stack.Screen name="vacation/add" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="expense/add" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="expense/edit" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="vacation-edit" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        </Stack.Protected>
       </Stack>
       <StatusBar style="auto" />
     </>

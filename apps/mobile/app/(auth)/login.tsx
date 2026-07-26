@@ -36,8 +36,9 @@ export default function LoginScreen() {
     setError(null);
     setSubmitting(true);
     try {
+      // No manual navigation: signing in flips isAuthenticated, and the auth
+      // guard in the root layout swaps the (auth) group for the app.
       await signIn(email.trim(), password);
-      router.replace('/(tabs)');
     } catch (e) {
       setError(t(authErrorKey(e)));
     } finally {
@@ -58,6 +59,7 @@ export default function LoginScreen() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
         >
           <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
             {t('auth.login.title')}
@@ -83,7 +85,7 @@ export default function LoginScreen() {
               placeholder={t('auth.login.password_placeholder')}
               secureTextEntry
               autoCapitalize="none"
-              textContentType="password"
+              autoCorrect={false}
               returnKeyType="go"
               onSubmitEditing={handleSubmit}
             />
@@ -118,7 +120,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1 },
   flex: { flex: 1 },
-  content: { paddingHorizontal: 24, paddingTop: 32, paddingBottom: 24 },
+  content: { flexGrow: 1, paddingHorizontal: 24, paddingTop: 32, paddingBottom: 24 },
   title: { fontSize: 34, fontWeight: '700', fontFamily: 'System', marginBottom: 8 },
   subtitle: { fontSize: 16, color: '#8E8E93', fontFamily: 'System', marginBottom: 32 },
   form: { marginTop: 8 },

@@ -1,6 +1,14 @@
-import React from 'react';
-import { View, Text, TextInput, TextInputProps, StyleSheet , useColorScheme } from 'react-native';
-import { Card } from '@/components/design';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TextInputProps,
+  StyleSheet,
+  Pressable,
+  useColorScheme,
+} from 'react-native';
+import { Card, Icon } from '@/components/design';
 
 type PassthroughTextInputProps = Pick<
   TextInputProps,
@@ -39,39 +47,63 @@ export default function FormInput({
   numberOfLines = 1,
   required = false,
   error,
+  secureTextEntry,
   ...textInputProps
 }: FormInputProps) {
   const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  // Password fields start hidden and can be revealed with the eye toggle.
+  const [revealed, setRevealed] = useState(false);
+  const isPassword = !!secureTextEntry;
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.label, { color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E' }]}>
-        {label}{required && ' *'}
-      </Text>
+      {label ? (
+        <Text style={[styles.label, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
+          {label}{required && ' *'}
+        </Text>
+      ) : null}
 
       <Card style={styles.inputContainer}>
-        <TextInput
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor={colorScheme === 'dark' ? '#8E8E93' : '#6D6D70'}
-          keyboardType={keyboardType}
-          multiline={multiline}
-          numberOfLines={numberOfLines}
-          {...textInputProps}
-          style={[
-            styles.input,
-            {
-              color: colorScheme === 'dark' ? '#FFFFFF' : '#1C1C1E',
-              height: multiline ? numberOfLines * 22 + 16 : 44,
-            }
-          ]}
-        />
+        <View style={styles.inputRow}>
+          <TextInput
+            value={value}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            placeholderTextColor={isDark ? '#8E8E93' : '#6D6D70'}
+            keyboardType={keyboardType}
+            multiline={multiline}
+            numberOfLines={numberOfLines}
+            secureTextEntry={isPassword && !revealed}
+            {...textInputProps}
+            style={[
+              styles.input,
+              {
+                color: isDark ? '#FFFFFF' : '#1C1C1E',
+                height: multiline ? numberOfLines * 22 + 16 : 44,
+              },
+            ]}
+          />
+
+          {isPassword ? (
+            <Pressable
+              onPress={() => setRevealed((v) => !v)}
+              hitSlop={10}
+              accessibilityRole="button"
+              style={styles.eyeButton}
+            >
+              <Icon
+                name={revealed ? 'eye-off' : 'eye'}
+                size={20}
+                color={isDark ? '#8E8E93' : '#6D6D70'}
+              />
+            </Pressable>
+          ) : null}
+        </View>
       </Card>
 
-      {error && (
-        <Text style={styles.error}>{error}</Text>
-      )}
+      {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 }
@@ -90,10 +122,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 2,
   },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   input: {
+    flex: 1,
     fontSize: 16,
     fontFamily: 'System',
     textAlignVertical: 'top',
+  },
+  eyeButton: {
+    paddingLeft: 12,
+    height: 44,
+    justifyContent: 'center',
   },
   error: {
     color: '#FF3B30',

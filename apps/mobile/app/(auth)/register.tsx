@@ -37,8 +37,9 @@ export default function RegisterScreen() {
     setError(null);
     setSubmitting(true);
     try {
+      // No manual navigation: signing up flips isAuthenticated, and the auth
+      // guard in the root layout swaps the (auth) group for the app.
       await signUp(email.trim(), password, displayName.trim() || undefined);
-      router.replace('/(tabs)');
     } catch (e) {
       setError(t(authErrorKey(e)));
     } finally {
@@ -59,6 +60,7 @@ export default function RegisterScreen() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
         >
           <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1C1C1E' }]}>
             {t('auth.register.title')}
@@ -94,7 +96,10 @@ export default function RegisterScreen() {
               placeholder={t('auth.login.password_placeholder')}
               secureTextEntry
               autoCapitalize="none"
-              textContentType="newPassword"
+              autoCorrect={false}
+              // No textContentType: avoids iOS's "Automatic Strong Password"
+              // overlay taking over our own field. The eye toggle in FormInput
+              // lets the user check what they typed instead.
               returnKeyType="go"
               onSubmitEditing={handleSubmit}
               required
@@ -130,7 +135,7 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1 },
   flex: { flex: 1 },
-  content: { paddingHorizontal: 24, paddingTop: 32, paddingBottom: 24 },
+  content: { flexGrow: 1, paddingHorizontal: 24, paddingTop: 32, paddingBottom: 24 },
   title: { fontSize: 34, fontWeight: '700', fontFamily: 'System', marginBottom: 8 },
   subtitle: { fontSize: 16, color: '#8E8E93', fontFamily: 'System', marginBottom: 32 },
   form: { marginTop: 8 },

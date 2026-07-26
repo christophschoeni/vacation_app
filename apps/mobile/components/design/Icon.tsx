@@ -80,6 +80,8 @@ import {
   ArrowLeftRight,
   Calculator,
   Globe,
+  Eye,
+  EyeOff,
   LucideIcon,
 } from 'lucide-react-native';
 
@@ -192,6 +194,10 @@ const iconMap: Record<string, LucideIcon> = {
   'list-checks': ListChecks,
   'check-square': ClipboardList,
   'bug': Bug,
+
+  // Auth
+  'eye': Eye,
+  'eye-off': EyeOff,
 };
 
 export type IconName = keyof typeof iconMap;
