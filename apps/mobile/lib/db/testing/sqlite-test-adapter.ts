@@ -14,6 +14,23 @@ interface ExpoLikeDb {
   withExclusiveTransactionAsync(fn: (txn: ExpoLikeDb) => Promise<void>): Promise<void>;
 }
 
+/**
+ * Apply a drizzle `.sql.js` migration body EXACTLY like the expo-sqlite migrator
+ * does: split on `--> statement-breakpoint` and run each piece as its own
+ * statement. A migration missing those markers will therefore only apply its
+ * first statement here too — which is how a test can catch that bug (the real
+ * migrator silently records the migration as done regardless).
+ */
+export function applyMigrationLikeExpo(db: Database.Database, sqlBody: string): void {
+  const statements = sqlBody
+    .split('--> statement-breakpoint')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  for (const stmt of statements) {
+    db.prepare(stmt.replace(/;$/, '')).run();
+  }
+}
+
 export function createExpoLikeDb(db: Database.Database): ExpoLikeDb {
   const api: ExpoLikeDb = {
     async execAsync(sql: string): Promise<void> {
