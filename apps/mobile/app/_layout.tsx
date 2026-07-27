@@ -1,3 +1,8 @@
+// MUST be the very first import: installs crypto.getRandomValues globally so
+// uuid.v4() (used for all entity ids) works in Hermes. Anything importing a
+// repository before this would crash, so it goes above everything else.
+import 'react-native-get-random-values';
+
 // Removed NavigationThemeProvider to avoid conflicts with DynamicColorIOS
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';

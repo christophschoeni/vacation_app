@@ -37,12 +37,6 @@ jest.mock('../database', () => ({
   },
 }));
 
-// expo-crypto's native randomUUID returns undefined under jest (no native
-// module). Back it with Node's real crypto so the migration gets real UUIDs —
-// otherwise the id map fills with undefined and nothing is a fair test.
-jest.mock('expo-crypto', () => ({
-  randomUUID: () => require('crypto').randomUUID(),
-}));
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

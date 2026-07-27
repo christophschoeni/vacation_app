@@ -1,4 +1,4 @@
-import * as Crypto from 'expo-crypto';
+import { v4 as uuidv4 } from 'uuid';
 
 import { db } from '../database';
 
@@ -6,11 +6,12 @@ import { db } from '../database';
 export abstract class BaseRepository {
   protected db = db;
 
-  // Globally-unique UUIDv4. Uses expo-crypto (native, works in Hermes without a
-  // polyfill) rather than Math.random, so IDs stay collision-safe across
-  // devices — a hard requirement for syncing and sharing a vacation.
+  // Globally-unique UUIDv4 instead of Math.random, so IDs stay collision-safe
+  // across devices — a hard requirement for syncing and sharing a vacation.
+  // uuid uses crypto.getRandomValues, polyfilled app-wide by
+  // react-native-get-random-values (imported first in app/_layout.tsx).
   protected generateId(): string {
-    return Crypto.randomUUID();
+    return uuidv4();
   }
 
   // Helper to convert Date objects to ISO strings for storage

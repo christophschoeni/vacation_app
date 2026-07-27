@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Crypto from 'expo-crypto';
 import type { SQLiteDatabase } from 'expo-sqlite';
-import { v5 as uuidv5 } from 'uuid';
+import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 
 import { expo } from './database';
 import { logger } from '@/lib/utils/logger';
@@ -96,7 +95,7 @@ export async function migrateToUuidAndSync(): Promise<{ alreadyDone: boolean; re
           const uuid =
             table === 'categories'
               ? categoryUuidForSlug(row.id)
-              : Crypto.randomUUID();
+              : uuidv4();
           idMap.set(`${table}:${row.id}`, uuid);
         }
       }
@@ -292,7 +291,7 @@ async function backfillCustomCategoriesFromAsyncStorage(): Promise<void> {
     await expo.runAsync(
       'INSERT INTO `categories` (id, name, icon, is_default, type, slug, created_at, updated_at, sync_status) ' +
         "VALUES (?, ?, ?, 0, 'expense', NULL, ?, ?, 'pending')",
-      Crypto.randomUUID(),
+      uuidv4(),
       name,
       cat.icon ?? 'other',
       now,
