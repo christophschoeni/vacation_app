@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { Platform } from 'react-native';
 import Purchases, {
+  LOG_LEVEL,
   type CustomerInfo,
   type PurchasesPackage,
 } from 'react-native-purchases';
@@ -58,6 +59,11 @@ export function EntitlementProvider({ children }: { children: ReactNode }) {
 
     let cancelled = false;
 
+    // Keep RevenueCat quiet: at DEBUG it routes even normal outcomes (like a
+    // user-cancelled purchase) through console.error, which React Native's
+    // LogBox then shows as a full-screen red error on every app load. WARN keeps
+    // real problems visible without the noise.
+    Purchases.setLogLevel(LOG_LEVEL.WARN);
     Purchases.configure({ apiKey: IOS_KEY });
     setIsConfigured(true);
 
