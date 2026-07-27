@@ -129,6 +129,9 @@ if $RUN_BACKEND; then
 fi
 
 # --- 3. start the servers ----------------------------------------------------
+# The API runs in the background; Metro runs in the FOREGROUND so it keeps the
+# interactive terminal — that's what makes Expo's keys (i = iOS, s = switch,
+# r = reload, etc.) work. Ctrl-C / quitting Metro triggers cleanup of the API.
 if $RUN_BACKEND; then
   log "Starting Django API on http://127.0.0.1:8000 …"
   ( cd "$API_DIR" && uv run --no-sync python manage.py runserver 127.0.0.1:8000 ) &
@@ -143,10 +146,12 @@ if $RUN_MOBILE; then
   fi
   EXPO_ARGS=""
   $CLEAR_CACHE && EXPO_ARGS="--clear"
-  log "Starting Expo Metro bundler${EXPO_ARGS:+ (cache cleared)}…"
-  ( cd "$MOBILE_DIR" && pnpm exec expo start $EXPO_ARGS ) &
-  PIDS+=("$!")
+  ok "Stack is up. Metro is interactive below (i = iOS, r = reload, q = quit)."
+  # Foreground (NOT exec) so Expo owns the TTY and its keypresses work, while
+  # the EXIT trap still fires afterwards to stop the backgrounded API.
+  ( cd "$MOBILE_DIR" && pnpm exec expo start $EXPO_ARGS )
+else
+  # Backend-only: nothing interactive to hand the terminal to, so just wait.
+  ok "Backend is up. Press Ctrl-C to stop."
+  wait
 fi
-
-ok "Stack is up. Press Ctrl-C to stop."
-wait
