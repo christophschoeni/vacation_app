@@ -62,6 +62,44 @@ cleanup() {
 }
 trap cleanup INT TERM EXIT
 
+# --- 0. Pre-flight: clear stale processes from a previous run ----------------
+# A leftover Metro/API from an earlier session holds ports 8081/8000 and makes
+# the new one fail to bind (silently). We only touch processes belonging to THIS
+# repo — other projects (e.g. on :8060) are never affected. Ports are matched to
+# this repo's own working dir before killing, so a foreign server on 8000/8081
+# is left alone and reported instead.
+kill_repo_procs() {
+  # $1 = pgrep pattern (must include the repo path so it's scoped to us)
+  local pattern="$1"
+  local pids
+  pids="$(pgrep -f "$pattern" 2>/dev/null || true)"
+  [ -n "$pids" ] && kill $pids 2>/dev/null || true
+}
+
+free_repo_port() {
+  # $1 = port, $2 = human name. Kill the listener only if it's ours (cwd under
+  # this repo); otherwise warn and let the later bind fail loudly.
+  local port="$1" name="$2" pid
+  pid="$(lsof -tiTCP:"$port" -sTCP:LISTEN 2>/dev/null | head -1 || true)"
+  [ -z "$pid" ] && return 0
+  local cwd
+  cwd="$(lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p' | head -1 || true)"
+  if [[ "$cwd" == "$ROOT"* ]]; then
+    warn "Freeing stale $name on port $port (leftover from a previous run)…"
+    kill "$pid" 2>/dev/null || true
+    sleep 1
+  else
+    warn "Port $port is used by another process (not this repo: ${cwd:-unknown}); leaving it alone"
+  fi
+}
+
+log "Pre-flight: clearing stale processes from a previous run…"
+kill_repo_procs "$ROOT/node_modules/.bin/expo"
+kill_repo_procs "$ROOT/apps/mobile.*expo start"
+kill_repo_procs "$ROOT/apps/api/.venv/bin/python.*manage.py runserver"
+$RUN_MOBILE  && free_repo_port 8081 "Metro"
+$RUN_BACKEND && free_repo_port 8000 "API"
+
 # --- 1. Postgres -------------------------------------------------------------
 if $RUN_BACKEND; then
   log "Starting Postgres 18 + pgvector…"
