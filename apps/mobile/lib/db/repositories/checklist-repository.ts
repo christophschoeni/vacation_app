@@ -307,6 +307,7 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
       order = (maxOrder[0]?.maxOrder || 0) + 1;
     }
 
+    const now = this.getTimestamp();
     const itemData = {
       id,
       checklistId: data.checklistId,
@@ -317,6 +318,8 @@ export class ChecklistRepository extends BaseRepository implements IRepository<C
       dueDate: data.dueDate ? this.dateToString(data.dueDate) : null,
       quantity: data.quantity ?? null,
       order,
+      createdAt: now,
+      updatedAt: now,
     };
 
     await this.db.insert(schema.checklistItems).values(itemData);

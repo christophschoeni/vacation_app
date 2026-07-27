@@ -103,6 +103,7 @@ export class ExpenseRepository
 
   async create(data: CreateExpenseInput): Promise<Expense> {
     const id = data.id || this.generateId();
+    const now = this.getTimestamp();
 
     const values = {
       id,
@@ -114,7 +115,8 @@ export class ExpenseRepository
       description: data.description,
       date: this.dateToString(data.date),
       imageUrl: data.imageUrl,
-      createdAt: data.createdAt ? this.dateToString(data.createdAt) : this.getTimestamp(),
+      createdAt: data.createdAt ? this.dateToString(data.createdAt) : now,
+      updatedAt: now,
     };
 
     await this.db.insert(schema.expenses).values(values);

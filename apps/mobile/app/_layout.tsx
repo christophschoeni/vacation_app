@@ -22,6 +22,7 @@ import { onboardingService } from '@/lib/onboarding-service';
 import { notificationService } from '@/lib/services/notification-service';
 import { migrateExpensesToSQLite } from '@/lib/db/migrate-expenses-to-sqlite';
 import { migrateBudgetCurrency } from '@/lib/db/migrate-budget-currency';
+import { migrateToUuidAndSync } from '@/lib/db/migrate-to-uuid-and-sync';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/query/client';
 import { useWidgetSync } from '@/hooks/use-widget-sync';
@@ -65,6 +66,12 @@ function RootNavigation({
           // (budgetCurrency now means the home currency, not the trip currency).
           // Idempotent and offline-safe: defers records it cannot convert yet.
           await migrateBudgetCurrency();
+
+          // One-time UUID + sync-foundation backfill. MUST run after the two
+          // migrations above so it catches all rows (expenses moved from
+          // AsyncStorage, budgets converted). Atomic + idempotent; rewrites all
+          // ids to UUIDs and fills the sync columns added in migration 0004.
+          await migrateToUuidAndSync();
 
           // Initialize notification service
           await notificationService.initialize();

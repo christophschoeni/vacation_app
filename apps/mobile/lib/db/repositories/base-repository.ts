@@ -1,12 +1,16 @@
+import * as Crypto from 'expo-crypto';
+
 import { db } from '../database';
 
 // Base repository class with common functionality
 export abstract class BaseRepository {
   protected db = db;
 
-  // Generate a unique ID (can be overridden for different ID strategies)
+  // Globally-unique UUIDv4. Uses expo-crypto (native, works in Hermes without a
+  // polyfill) rather than Math.random, so IDs stay collision-safe across
+  // devices — a hard requirement for syncing and sharing a vacation.
   protected generateId(): string {
-    return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    return Crypto.randomUUID();
   }
 
   // Helper to convert Date objects to ISO strings for storage
