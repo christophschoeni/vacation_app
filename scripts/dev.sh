@@ -126,7 +126,24 @@ if $RUN_BACKEND; then
   log "Applying Django migrations…"
   uv run --no-sync python manage.py migrate --noinput
   ok "Database is migrated"
+
+  # Ensure the local test accounts exist (survives db:reset) and capture their
+  # credentials to show below.
+  log "Ensuring test users…"
+  TEST_LOGINS="$(uv run --no-sync python manage.py seed_test_users 2>/dev/null \
+    | sed -n '/TEST_LOGINS_BEGIN/,/TEST_LOGINS_END/p' \
+    | grep -vE 'TEST_LOGINS_(BEGIN|END)' || true)"
 fi
+
+# Print the test logins in a box so they're easy to spot in the terminal.
+show_test_logins() {
+  [ -z "${TEST_LOGINS:-}" ] && return 0
+  printf '\033[1;35m┌─ Test logins ───────────────────────────────\033[0m\n'
+  while IFS= read -r line; do
+    [ -n "$line" ] && printf '\033[1;35m│\033[0m  %s\n' "$line"
+  done <<< "$TEST_LOGINS"
+  printf '\033[1;35m└─────────────────────────────────────────────\033[0m\n'
+}
 
 # --- 3. start the servers ----------------------------------------------------
 # The API runs in the background; Metro runs in the FOREGROUND so it keeps the
@@ -137,6 +154,8 @@ if $RUN_BACKEND; then
   ( cd "$API_DIR" && uv run --no-sync python manage.py runserver 127.0.0.1:8000 ) &
   PIDS+=("$!")
 fi
+
+show_test_logins
 
 if $RUN_MOBILE; then
   if $CLEAR_ALL; then
