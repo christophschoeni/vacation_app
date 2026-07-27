@@ -7,6 +7,18 @@
     "node": ">=20"
   },
   "scripts": {
+    "dev": "./scripts/dev.sh",
+    "dev:clear": "./scripts/dev.sh --clear",
+    "dev:clear-all": "./scripts/dev.sh --clear-all",
+    "dev:backend": "./scripts/dev.sh --backend-only",
+    "dev:mobile": "./scripts/dev.sh --mobile-only",
+    "db:up": "docker compose -f infra/docker-compose.yml up -d",
+    "db:down": "docker compose -f infra/docker-compose.yml down",
+    "db:reset": "docker compose -f infra/docker-compose.yml down -v && docker compose -f infra/docker-compose.yml up -d",
+    "api": "cd apps/api && uv run --no-sync python manage.py",
+    "api:migrate": "cd apps/api && uv run --no-sync python manage.py migrate",
+    "test:api": "cd apps/api && uv run --no-sync pytest",
+    "test:api:fresh": "cd apps/api && uv run --no-sync pytest --create-db",
     "mobile": "pnpm --filter mobile",
     "start": "pnpm --filter mobile start",
     "ios": "pnpm --filter mobile ios",

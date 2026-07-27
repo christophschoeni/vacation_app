@@ -9,6 +9,18 @@ those are Phase 2 (accounts) and Phase 3 (field-based merge sync).
 
 ## Local development
 
+The easiest way is the root dev script, which starts Postgres, applies
+migrations automatically, and runs both the API and the Expo bundler:
+
+```bash
+# from the repo root
+pnpm dev              # Postgres + Django (auto-migrate) + Metro
+pnpm dev:backend      # just Postgres + Django
+pnpm dev:clear        # everything, with the Metro cache cleared
+```
+
+Or drive the backend by hand:
+
 ```bash
 # 1. Start Postgres 18 + pgvector (from the repo root)
 docker compose -f infra/docker-compose.yml up -d
@@ -29,6 +41,17 @@ Then:
 - OpenAPI:  http://127.0.0.1:8000/api/schema/
 - Swagger UI:  http://127.0.0.1:8000/api/docs/
 - Admin:  http://127.0.0.1:8000/admin/  (`uv run python manage.py createsuperuser`)
+
+## Tests
+
+Tests run against the **same engine as production — Postgres 18 + pgvector**
+(the docker container), never SQLite. Django builds a throwaway `test_vacation`
+database there and runs every migration into it.
+
+```bash
+pnpm test:api          # from repo root (reuses the test DB, fast)
+pnpm test:api:fresh    # rebuild the test DB (after a schema/migration change)
+```
 
 ## Checks
 

@@ -36,3 +36,10 @@ ignore = ["DJ001"]
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings"
 python_files = ["test_*.py", "tests.py"]
+# Tests run against the SAME database engine as production: Postgres 18 +
+# pgvector (the infra/docker-compose.yml container). Django creates a throwaway
+# `test_vacation` DB there and runs every migration into it, so pgvector and all
+# constraints are exercised exactly as in prod — never SQLite or an in-memory DB.
+# --reuse-db keeps that test DB between runs for speed; use `pytest --create-db`
+# (pnpm test:api:fresh) to rebuild it after a schema change.
+addopts = "--reuse-db"
