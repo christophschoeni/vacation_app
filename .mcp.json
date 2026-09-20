@@ -7,7 +7,20 @@
     "ios-simulator": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "ios-simulator-mcp"]
+      "args": [
+        "-y",
+        "ios-simulator-mcp"
+      ]
+    },
+    "laflax-template-feedback": {
+      "command": "node",
+      "args": [
+        "/Users/christophschoni/Projekte/LAFLAX/laflax_template/tools/laflax-template-feedback-mcp/src/index.mjs"
+      ],
+      "env": {
+        "LAFLAX_TEMPLATE_ROOT": "/Users/christophschoni/Projekte/LAFLAX/laflax_template",
+        "LAFLAX_SOURCE_APP": "vacation_app"
+      }
     }
   }
 }
