@@ -13,6 +13,8 @@ from rest_framework import generics, permissions, status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from .models import PasswordResetCode
 from .serializers import (
@@ -38,6 +40,28 @@ class MeView(APIView):
     @extend_schema(responses=UserSerializer)
     def get(self, request: Request) -> Response:
         return Response(UserSerializer(request.user).data)
+
+
+class SafeTokenRefreshView(TokenRefreshView):
+    """Refresh view that turns any invalid-token condition into a clean 401.
+
+    With ROTATE_REFRESH_TOKENS + UPDATE_LAST_LOGIN, simplejwt loads the token's
+    user during refresh. If that user no longer exists (e.g. the DB was reset
+    while the app still holds an old token), the stock view lets
+    User.DoesNotExist bubble up as a 500. We treat every such case as "your
+    session is no longer valid" — a 401 the app already handles by signing out.
+    """
+
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        try:
+            return super().post(request, *args, **kwargs)
+        except (InvalidToken, TokenError):
+            raise  # already a 401 from DRF's handler
+        except Exception:
+            return Response(
+                {"detail": "Token is invalid or expired."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
 
 class PasswordResetRequestView(APIView):

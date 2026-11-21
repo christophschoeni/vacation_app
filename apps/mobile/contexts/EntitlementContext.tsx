@@ -38,6 +38,14 @@ const EntitlementContext = createContext<EntitlementContextValue | undefined>(un
 // and production; the store environment, not the key, decides which).
 const IOS_KEY = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY;
 
+// Dev-only paywall bypass. StoreKit sandbox purchases do NOT work in the iOS
+// simulator (no connection to Apple's sandbox purchase flow), so the hard
+// paywall would otherwise make the app untestable there. Guarded by __DEV__ as
+// well as the env var, so it can never be switched on in a release build even
+// if the variable leaks into a production .env.
+const BYPASS_PAYWALL =
+  __DEV__ && process.env.EXPO_PUBLIC_BYPASS_PAYWALL === '1';
+
 export function EntitlementProvider({ children }: { children: ReactNode }) {
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [packages, setPackages] = useState<PurchasesPackage[]>([]);
@@ -45,6 +53,13 @@ export function EntitlementProvider({ children }: { children: ReactNode }) {
   const [isConfigured, setIsConfigured] = useState(false);
 
   useEffect(() => {
+    if (BYPASS_PAYWALL) {
+      logger.warn(
+        '⚠️ Paywall bypassed (EXPO_PUBLIC_BYPASS_PAYWALL=1, dev build only) — ' +
+          'isPro is forced true and no real entitlement is checked'
+      );
+    }
+
     // RevenueCat is iOS-only here for now (Android store setup is separate). On
     // other platforms we resolve "not pro, not loading" so the gate can decide.
     if (Platform.OS !== 'ios' || !IOS_KEY) {
@@ -116,8 +131,10 @@ export function EntitlementProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value: EntitlementContextValue = {
-    isLoading,
-    isPro: isProActive(customerInfo),
+    // With the bypass on, never block the app behind the entitlement spinner —
+    // the RevenueCat round-trip is irrelevant once isPro is forced true.
+    isLoading: BYPASS_PAYWALL ? false : isLoading,
+    isPro: BYPASS_PAYWALL || isProActive(customerInfo),
     packages,
     purchase,
     restore,
